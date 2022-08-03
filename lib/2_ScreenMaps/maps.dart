@@ -1,11 +1,14 @@
 import 'package:buff_lisa/3_ScreenAddPin/addPinScreen.dart';
 import 'package:buff_lisa/2_ScreenMaps/bootMethods.dart';
 import 'package:buff_lisa/Files/locationClass.dart';
+import 'package:fluster/fluster.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../Files/global.dart' as global;
 import '../Files/io.dart';
+import '../Files/mapHelper.dart';
+import '../Files/mapMarker.dart';
 
 class MapSample extends StatefulWidget {
   const MapSample({Key? key}) : super(key: key);
@@ -20,6 +23,41 @@ class MapSampleState extends State<MapSample> {
   final LatLng _initCamera =  global.startLocation;
   late IO io = IO();
   bool loopBool = true;
+  late Fluster<MapMarker> fluster;
+  late Set<Marker> googleMarkers = {};
+  double oldZoom =  5;
+
+  /// Map loading flag
+  bool _isMapLoading = true;
+
+  /// Markers loading flag
+  bool _areMarkersLoading = true;
+
+  Fluster<MapMarker> createFluster() {
+    print("tedt${io.markers.markers.length}");
+    return Fluster<MapMarker>(
+      minZoom: 0, // The min zoom at clusters will show
+      maxZoom: 19, // The max zoom at clusters will show
+      radius: 150, // Cluster radius in pixels
+      extent: 2048, // Tile extent. Radius is calculated with it.
+      nodeSize: 64, // Size of the KD-tree leaf node.
+      points: io.markers.markers, // The list of markers created before
+      createCluster: ( // Create cluster marker
+          BaseCluster cluster,
+          double lng,
+          double lat,
+          ) => MapMarker(
+        id: cluster.id.toString(),
+        position: LatLng(lat, lng),
+        icon: BitmapDescriptor.defaultMarker,
+        isCluster: cluster.isCluster,
+        clusterId: cluster.id,
+        pointsSize: cluster.pointsSize,
+        childMarkerId: cluster.childMarkerId,
+        onMarkerTap: () {},
+      ),
+    );
+  }
 
   Future<void> loop() async {
     while (loopBool) {
@@ -35,12 +73,17 @@ class MapSampleState extends State<MapSample> {
     });
   }
 
-  void getPins() async{
+  void getPins() async {
       await BootMethods.boot(io, callback);
+
   }
 
   void callback(dynamic d) {
-    setState(() {});
+    setState(() {
+      _isMapLoading = true;
+      MapHelper.initClusterManager(io.markers.markers, 0, 19).then((value) => fluster = value);
+      _isMapLoading = false;
+    });
   }
 
   void setStartLocation() async {
@@ -49,9 +92,13 @@ class MapSampleState extends State<MapSample> {
     await _controller.animateCamera(
         CameraUpdate.newCameraPosition(
             CameraPosition(target: latLong, zoom: 17)
+
         )
     );
-    setState(() {});
+
+    setState(() {
+      oldZoom = 17;
+    });
   }
 
 
@@ -60,8 +107,8 @@ class MapSampleState extends State<MapSample> {
     super.initState();
     getPins(); //new thread
     loop(); //new thread
-  }
 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +131,12 @@ class MapSampleState extends State<MapSample> {
               scrollGesturesEnabled: true,
               rotateGesturesEnabled: true,
               tiltGesturesEnabled: false,
-              markers: io.markers.markers,
+              markers: googleMarkers,
               onMapCreated: (controller) { //method called when map is created
                 _controller = controller;
                 setStartLocation();
-              }
+              },
+              onCameraMove: (position) => _updateMarkers(position.zoom),
             ),
           ],
         ),
@@ -136,4 +184,33 @@ class MapSampleState extends State<MapSample> {
       loopBool = true;
     });
   }
+
+  Future<void> _updateMarkers(double zoom) async {
+
+    if (_isMapLoading|| oldZoom == zoom) return;
+    oldZoom == zoom;
+
+    setState(() {
+      _areMarkersLoading = true;
+    });
+    List<Marker> updatedMarkers;
+    try {
+      updatedMarkers = MapHelper.getClusterMarkers(
+        fluster,
+        zoom,
+      );
+    } catch(e) {
+      updatedMarkers = [];
+    }
+
+
+    googleMarkers
+      ..clear()
+      ..addAll(updatedMarkers);
+
+    setState(() {
+      _areMarkersLoading = false;
+    });
+  }
+
 }

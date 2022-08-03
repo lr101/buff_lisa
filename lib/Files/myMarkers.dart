@@ -7,13 +7,14 @@ import '../Files/global.dart' as global;
 import 'package:buff_lisa/Files/pin.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../main.dart';
+import 'mapMarker.dart';
 
 class MyMarkers {
   Set<Pin> userPinsCreated = {};
   Set<Pin> userPinsFound = {};
   Set<Mona> userNewCreatedPins = {};
   List<Pin> notUserPins = [];
-  Set<Marker> markers = {};
+  List<MapMarker> markers = [];
   List<Pin> notUserPinsInRadius = [];
   int versionId = -1;
 
@@ -40,9 +41,9 @@ class MyMarkers {
   }
 
   void removeById(int id) {
-    Marker? m2;
-    for (Marker m in markers) {
-      if (m.markerId.value == id.toString()) {
+    MapMarker? m2;
+    for (MapMarker m in markers) {
+      if (m.id == id.toString()) {
         m2 = m;
       }
     }
@@ -138,8 +139,8 @@ class MyMarkers {
     notUserPinsInRadius.remove(pin);
     notUserPins.remove(pin);
     userPinsFound.add(pin);
-    for (Marker marker in markers) {
-      if (marker.markerId.value == pin.id.toString()) {
+    for (MapMarker marker in markers) {
+      if (marker.id == pin.id.toString()) {
         markers.remove(marker);
         addPinToMarkers(pin, false, null);
         break;
@@ -161,11 +162,11 @@ class MyMarkers {
     getBitMapDescriptor(pin.type.id)
         .then((d) {
       //customIcon = BitmapDescriptor.defaultMarkerWithHue(bitmapDescriptor);
-      Marker marker = Marker(
-          markerId: MarkerId((newPin ? "new${pin.id.toString()}" : pin.id.toString())),
+      MapMarker marker = MapMarker(
+          id: (newPin ? "new${pin.id.toString()}" : pin.id.toString()),
           position: LatLng(pin.latitude, pin.longitude),
           icon: d ,
-          onTap: () {
+          onMarkerTap: () {
             showDialog(
                 context: navigatorKey.currentContext!,
                 builder: (context) => SimpleDialogItem.getPinDialog(pin.id, newPin, image, navigatorKey.currentContext!)
