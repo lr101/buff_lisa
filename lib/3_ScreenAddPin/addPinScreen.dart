@@ -10,9 +10,6 @@ class AddPinScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Second Screen'),
-      ),
       body: Align(
         alignment: Alignment.topRight,
         child: CameraStatefulWidget(io: io),

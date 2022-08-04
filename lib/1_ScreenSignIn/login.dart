@@ -1,4 +1,5 @@
 import 'package:buff_lisa/1_ScreenSignIn/secure.dart';
+import 'package:buff_lisa/2_BottomNavigationBar/bottomNavigationBar.dart';
 import 'package:buff_lisa/2_ScreenMaps/maps.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Secure.tryLocalLogin(storage).then((value) { if (value) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const MapSample(),
+          builder: (context) => const BottomNavigationWidget(),
         ));
       }
     });
@@ -71,7 +72,7 @@ class LoginScreen extends StatelessWidget {
       onSubmitAnimationCompleted: () {
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const MapSample(),
+          builder: (context) =>const BottomNavigationWidget(),
         ));
       },
       onRecoverPassword: _recoverPassword,

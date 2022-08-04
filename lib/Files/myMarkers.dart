@@ -7,6 +7,7 @@ import '../Files/global.dart' as global;
 import 'package:buff_lisa/Files/pin.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../main.dart';
+import 'io.dart';
 import 'mapMarker.dart';
 
 class MyMarkers {
@@ -14,6 +15,9 @@ class MyMarkers {
   List<Mona> userNewCreatedPins = [];
   List<MapMarker> markers = [];
   int versionId = -1;
+  final IO io;
+
+  MyMarkers({required this.io});
 
   Future<void> loop() async {
     while (true) {
@@ -77,7 +81,7 @@ class MyMarkers {
   void addAllPins(Pin pin) {
     allPins.add(pin);
     addPinToMarkers(pin, false, null);
-
+    io.initFluster();
   }
 
   void setUserPinsNewCreated(List<Mona> monas) {
@@ -90,6 +94,7 @@ class MyMarkers {
   void addUserPinsNewCreated(Mona mona) {
     userNewCreatedPins.add(mona);
     addPinToMarkers(mona.pin, true, mona.image);
+    io.initFluster();
   }
 
   void removeUserPinsNewCreated(Mona mona) {
@@ -100,6 +105,7 @@ class MyMarkers {
     for (Pin pin in pins) {
         addPinToMarkers(pin, newPin, null);
     }
+    io.initFluster();
   }
 
 

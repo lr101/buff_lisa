@@ -2,19 +2,65 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:buff_lisa/Files/myMarkers.dart';
 import 'package:buff_lisa/Files/pin.dart';
+import 'package:fluster/fluster.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
+import '../Files/global.dart' as global;
+import 'mapHelper.dart';
+import 'mapMarker.dart';
+import 'package:buff_lisa/2_ScreenMaps/bootMethods.dart';
 
 class IO {
 
   File? _fileNew;
-  File? _fileCreated;
-  File? _fileFound;
   static const _fileNameNew = 'pin_new.txt';
-  static const _fileNameCreated = 'pin_created.txt';
-  static const _fileNameFound = 'pin_Found.txt';
-  final MyMarkers markers = MyMarkers();
+  late MyMarkers markers = MyMarkers(io: this);
+  late Fluster<MapMarker> fluster;
+  bool _isMapLoading = true;
+  bool _isListUpdating = false;
+  bool _isRadiusUpdating = false;
+  CameraPosition initCamera =  CameraPosition(target: global.startLocation,zoom: 5);
+  double oldZoom =  5;
+  late Set<Marker> googleMarkers = {};
+  late List<Pin> pinsInRadius = [];
+  Location location = Location();
+  late GlobalKey globalKey;
+  bool mapBooted = false;
+
+  IO({required this.globalKey});
+
+  void initFluster() {
+    _isMapLoading = true;
+    MapHelper.initClusterManager(markers.markers, 0, 19).then((value) => fluster = value);
+    _isMapLoading = false;
+  }
+
+  Future<void> updateMarkers(CameraPosition position) async {
+    initCamera = position;
+    double zoom = position.zoom;
+    setPinsInsideCircle();
+    if (_isMapLoading|| oldZoom == zoom || _isListUpdating) return;
+    _isListUpdating = true;
+    oldZoom == zoom;
+
+    List<Marker> updatedMarkers;
+    try {
+      updatedMarkers = MapHelper.getClusterMarkers(
+        fluster,
+        zoom,
+      );
+    } catch(e) {
+      updatedMarkers = [];
+    }
 
 
+    googleMarkers
+      ..clear()
+      ..addAll(updatedMarkers);
+    _isListUpdating = false;
+  }
 
   // Get the data file
   Future<File> get fileNew async {
@@ -22,6 +68,15 @@ class IO {
 
     _fileNew = await _initFile(_fileNameNew);
     return _fileNew!;
+  }
+
+  Future<void> setPinsInsideCircle() async {
+    if (_isRadiusUpdating) {
+      _isRadiusUpdating = true;
+      LocationData loc = await location.getLocation();
+      pinsInRadius = markers.calcPinsInRadius(loc.latitude!, loc.longitude!);
+      _isRadiusUpdating = false;
+    }
   }
 
   // Inititalize file
@@ -67,58 +122,4 @@ class IO {
   }
 
 
-  /*
-  Future<File> get fileFound async {
-    if (_fileFound != null) return _fileFound!;
-
-    _fileFound = await _initFile(_fileNameFound);
-    return _fileFound!;
-  }
-
-  Future<File> get fileCreated async {
-    if (_fileCreated != null) return _fileCreated!;
-
-    _fileCreated = await _initFile(_fileNameCreated);
-    return _fileCreated!;
-  }
-
-  Future<void> addCreatedPin(Pin pin) async {
-    final File fl = await fileCreated;
-    markers.userPinsCreated.add(pin);
-    final userListMap = markers.userPinsCreated.map((e) => e.toJson()).toList();
-    await fl.writeAsString(jsonEncode(userListMap));
-  }
-
-  Future<void> readCreatedPin() async {
-    final File fl = await fileCreated;
-    final content = await fl.readAsString();
-    final List<dynamic> jsonData = jsonDecode(content);
-    final List<Pin> pin = jsonData.map(
-            (e) => Pin.fromJson(e as Map<String, dynamic>)).toList();
-    markers.userPinsCreated = pin.toSet();
-  }
-
-  Future<void> addFoundOffline(Pin pin) async {
-    final File fl = await fileFound;
-    markers.userPinsFound.add(pin);
-    final userListMap = markers.userPinsFound.map((e) => e.toJson()).toList();
-    await fl.writeAsString(jsonEncode(userListMap));
-  }
-
-  Future<void> readFoundPin() async {
-    final File fl = await fileFound;
-    final content = await fl.readAsString();
-    final List<dynamic> jsonData = jsonDecode(content);
-    final List<Pin> pin = jsonData.map(
-            (e) => Pin.fromJson(e as Map<String, dynamic>)).toList();
-    markers.userPinsFound = pin.toSet();
-  }*/
-
-}
-
-class _SecItem {
-  _SecItem(this.key, this.value);
-
-  final String key;
-  final String value;
 }

@@ -13,8 +13,8 @@ LatLng startLocation = const LatLng(49.006889, 8.403653); //Karlsruhe
 String username =  "";
 
 //http
-String host1 = "https://mona-sticker.herokuapp.com";
-String host = "http://10.0.2.2:8080";
+String host = "https://mona-sticker.herokuapp.com";
+String host1 = "http://10.0.2.2:8080";
 String getPinsOfUser = '$host/users/$username/pins';
 String getOtherPins = '$host/pins/$username/radius';
 String getOtherPinsCount = '$host/pins/$username/radiusCount';

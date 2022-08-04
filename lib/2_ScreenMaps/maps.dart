@@ -12,7 +12,8 @@ import '../Files/mapMarker.dart';
 import '../Files/pin.dart';
 
 class MapSample extends StatefulWidget {
-  const MapSample({Key? key}) : super(key: key);
+  final IO io;
+  const MapSample({super.key, required this.io});
 
   @override
   State<MapSample> createState() => MapSampleState();
@@ -20,44 +21,15 @@ class MapSample extends StatefulWidget {
 
 class MapSampleState extends State<MapSample> {
   late GoogleMapController _controller;
-  final Location _location = Location();
-  final LatLng _initCamera =  global.startLocation;
-  late IO io = IO();
-  bool loopBool = true;
-  late Fluster<MapMarker> fluster;
-  late Set<Marker> googleMarkers = {};
-  double oldZoom =  5;
-  late List<Pin> pinsInRadius = [];
 
-  /// Map loading flag
-  bool _isMapLoading = true;
-  bool _isListUpdating = false;
-
-
-  Future<void> loop() async {
-    while (loopBool) {
-      LocationData loc = await _location.getLocation();
-      setPinsInsideCircle(loc);
-      await Future.delayed(const Duration(seconds: 20));
+  void getPins() async {
+    if (!widget.io.mapBooted) {
+      BootMethods.boot(widget.io, callback);
     }
   }
 
-  void setPinsInsideCircle(LocationData loc) {
-    setState(() {
-      pinsInRadius = io.markers.calcPinsInRadius(loc.latitude!, loc.longitude!);
-    });
-  }
-
-  void getPins() async {
-      await BootMethods.boot(io, callback);
-  }
-
   void callback(dynamic d) {
-    setState(() {
-      _isMapLoading = true;
-      MapHelper.initClusterManager(io.markers.markers, 0, 19).then((value) => fluster = value);
-      _isMapLoading = false;
-    });
+    setState(() {});
   }
 
   void setStartLocation() async {
@@ -70,7 +42,7 @@ class MapSampleState extends State<MapSample> {
     );
 
     setState(() {
-      oldZoom = 17;
+      widget.io.oldZoom = 17;
     });
   }
 
@@ -79,23 +51,18 @@ class MapSampleState extends State<MapSample> {
   void initState(){
     super.initState();
     getPins(); //new thread
-    loop(); //new thread
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Sticker Map --  ${io.markers.numAllPins()}"),
-      ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
             GoogleMap(
-              initialCameraPosition: CameraPosition(target: _initCamera, zoom: 5),
+              initialCameraPosition: widget.io.initCamera,
               mapType: MapType.normal,
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
@@ -104,12 +71,12 @@ class MapSampleState extends State<MapSample> {
               scrollGesturesEnabled: true,
               rotateGesturesEnabled: true,
               tiltGesturesEnabled: false,
-              markers: googleMarkers,
+              markers: widget.io.googleMarkers,
               onMapCreated: (controller) { //method called when map is created
                 _controller = controller;
                 setStartLocation();
               },
-              onCameraMove: (position) => _updateMarkers(position.zoom),
+              onCameraMove: (position) => setState((){widget.io.updateMarkers(position);}),
             ),
           ],
         ),
@@ -125,61 +92,13 @@ class MapSampleState extends State<MapSample> {
               tooltip: 'Pins near you',
               elevation: 5,
               splashColor: Colors.grey,
-              child: Text(pinsInRadius.length.toString()),
+              child: Text(widget.io.pinsInRadius.length.toString()),
             ),
-            const SizedBox(width: 10),
-            FloatingActionButton(
-              heroTag: "btn2",
-              onPressed: () {
-                _navigateAndDisplaySelection(context); //new thread
-              },
-              tooltip: 'Add a Sticker',
-              elevation: 20,
-              splashColor: Colors.grey,
-              child: const Icon(Icons.add),
-            )
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
-  }
-  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the Selection Screen.
-    loopBool = false;
-    await Navigator.push(
-      context,
-      // Create the SelectionScreen in the next step.
-      MaterialPageRoute(builder: (context) => AddPinScreen(io : io)),
-    );
-    setState(() {
-      loopBool = true;
-    });
-  }
-
-  Future<void> _updateMarkers(double zoom) async {
-
-    if (_isMapLoading|| oldZoom == zoom || _isListUpdating) return;
-    print("test");
-    _isListUpdating = true;
-    oldZoom == zoom;
-
-    List<Marker> updatedMarkers;
-    try {
-      updatedMarkers = MapHelper.getClusterMarkers(
-        fluster,
-        zoom,
-      );
-    } catch(e) {
-      updatedMarkers = [];
-    }
-
-
-    googleMarkers
-      ..clear()
-      ..addAll(updatedMarkers);
-    _isListUpdating = false;
   }
 
 }

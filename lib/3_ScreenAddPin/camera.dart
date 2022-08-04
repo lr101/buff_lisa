@@ -166,7 +166,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       onPressed: (){
         buttonPressCamera().then((element) {
           if (element) {
-            Navigator.pop(context);
+          final BottomNavigationBar navigationBar = widget.io.globalKey.currentWidget! as BottomNavigationBar;
+          navigationBar.onTap!(0);
           }
         });
       },
