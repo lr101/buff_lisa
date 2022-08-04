@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../2_ScreenMaps/maps.dart';
 import '../3_ScreenAddPin/addPinScreen.dart';
+import '../5_Ranking/ranking.dart';
 import '../Files/io.dart';
 
 
@@ -20,11 +20,12 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   late final List<Widget> _widgetOptions = <Widget>[
     MapSample(io : io),
     AddPinScreen(io : io),
+    RankingPage(io: io),
     const Text(
-      'Index 0: Home',
+      'SHOP'
     ),
     const Text(
-      'Index 0: Home',
+      'SETTINGS',
     ),
   ];
 
@@ -56,6 +57,11 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
           BottomNavigationBarItem(
             icon: Icon(Icons.groups),
             label: 'Ranking',
+            backgroundColor: Colors.purple,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Shop',
             backgroundColor: Colors.purple,
           ),
           BottomNavigationBarItem(

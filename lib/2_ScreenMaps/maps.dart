@@ -1,15 +1,11 @@
 import 'package:buff_lisa/3_ScreenAddPin/addPinScreen.dart';
-import 'package:buff_lisa/2_ScreenMaps/bootMethods.dart';
 import 'package:buff_lisa/Files/locationClass.dart';
 import 'package:fluster/fluster.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../Files/global.dart' as global;
+import '../2_ScreenMaps/bootMethods.dart';
 import '../Files/io.dart';
-import '../Files/mapHelper.dart';
-import '../Files/mapMarker.dart';
-import '../Files/pin.dart';
 
 class MapSample extends StatefulWidget {
   final IO io;

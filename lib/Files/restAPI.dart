@@ -64,6 +64,20 @@ class RestAPI {
     }
   }
 
+  static Future<List<Ranking>> fetchRanking() async {
+    final response = await http.get(Uri.parse(global.getRanking));
+    if (response.statusCode == 200) {
+      List<dynamic> values = json.decode(response.body);
+      List<Ranking> ranking = [];
+      for (var element in values) {
+        ranking.add(Ranking.fromJson(element));
+      }
+      return ranking;
+    } else {
+      return [];
+    }
+  }
+
   static Future<http.BaseResponse> putPin(Mona mona) async {
     final String json = jsonEncode(<String, dynamic> {
       "image": await mona.image.readAsBytes(),
@@ -136,5 +150,6 @@ class RestAPI {
     }
     return null;
   }
+
 }
 

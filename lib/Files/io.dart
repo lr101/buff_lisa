@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:buff_lisa/Files/myMarkers.dart';
 import 'package:buff_lisa/Files/pin.dart';
+import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,7 +11,6 @@ import 'package:path_provider/path_provider.dart';
 import '../Files/global.dart' as global;
 import 'mapHelper.dart';
 import 'mapMarker.dart';
-import 'package:buff_lisa/2_ScreenMaps/bootMethods.dart';
 
 class IO {
 
@@ -30,6 +30,10 @@ class IO {
   bool mapBooted = false;
 
   IO({required this.globalKey});
+
+  Future<List<Ranking>> getRanking() async {
+    return await RestAPI.fetchRanking();
+  }
 
   void initFluster() {
     _isMapLoading = true;

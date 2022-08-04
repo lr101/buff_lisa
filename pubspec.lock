@@ -268,6 +268,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  foldable_list:
+    dependency: "direct main"
+    description:
+      name: foldable_list
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   font_awesome_flutter:
     dependency: transitive
     description:
