@@ -1,3 +1,4 @@
+import 'package:buff_lisa/6_Shop/shopPage.dart';
 import 'package:flutter/material.dart';
 import '../2_ScreenMaps/maps.dart';
 import '../3_ScreenAddPin/addPinScreen.dart';
@@ -21,9 +22,7 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     MapSample(io : io),
     AddPinScreen(io : io),
     RankingPage(io: io),
-    const Text(
-      'SHOP'
-    ),
+    const ShopPage(),
     const Text(
       'SETTINGS',
     ),
