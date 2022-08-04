@@ -46,7 +46,7 @@ class IO {
     final content = await fl.readAsString();
     try {
       final List<dynamic> jsonData = await jsonDecode(content);
-      Set<Mona> monas = {};
+      List<Mona> monas = [];
       for (Map<String, dynamic> data in jsonData) {
         monas.add(Mona.fromJson(data));
       }

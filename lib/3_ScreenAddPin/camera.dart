@@ -89,7 +89,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   final CarouselController controller = CarouselController();
   Widget? dialog;
   List<Widget> images = [];
-  int index = -1;
 
   @override
   void initState() {
@@ -103,47 +102,10 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     _initializeControllerFuture = _controller.initialize();
   }
 
-  void setIndex(int index, int length)  {
-    this.index = index % (length - 1);
-  }
-
-  Widget buildDialogNew(BuildContext context) {
-    List<Widget> dialogImages = [];
-    for (Widget image in global.stickerTypeImages) {
-      dialogImages.add(GestureDetector(
-          onTap: () {
-            if (index == -1) {
-              index = 0;
-            }
-            Navigator.pop(navigatorKey.currentContext!);
-          }, // Image tapped
-          child: image
-      ));
-    }
-    return SimpleDialogItem.getSwipeDialog(context, widget.io, setIndex, dialogImages);
-  }
-
-  void buildDialogOld(BuildContext context) {
-    for (Pin pin in widget.io.markers.notUserPinsInRadius) {
-      images.add(GestureDetector(
-          onTap: () {
-            if (index == -1) {
-              index = 0;
-            }
-            Navigator.pop(navigatorKey.currentContext!);
-          }, // Image tapped
-          child: SimpleDialogItem.getImageWidget(pin.id, false, null, context)
-      ));
-    }
-    dialog = SimpleDialogItem.getSwipeDialog(context, widget.io, setIndex, images);
-  }
-
-
 
 
   @override
   Widget build(BuildContext context) {
-    buildDialogOld(navigatorKey.currentContext!);
     var size = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,7 +130,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [switchOldNew()]
+              children: [switchType()]
           ),
         ),
         Padding(
@@ -214,7 +176,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
 
 
-  Widget switchOldNew()  {
+  Widget switchType()  {
     return ToggleButtons(
       onPressed: (int index) {
         setState(() {
@@ -226,31 +188,32 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               isSelected[buttonIndex] = false;
             }
           }
-          this.index = -1;
-          Widget dialogWidget = (isSelected[1] ? dialog! : buildDialogNew(context));
-          showDialog(
-              context: navigatorKey.currentContext!,
-              builder: (context) => dialogWidget
-          );
         });
       },
       isSelected: isSelected,
       children: const <Widget>[
-        Text("NEW"),
-        Text("OLD")
+        Image(
+          image: AssetImage('images/mona.png'),
+          width: 30,
+          height: 38,
+          fit: BoxFit.cover,
+        ),
+        Image(
+          image: AssetImage("images/tornado-da-vinci-v2.png"),
+          width: 30,
+          height: 38,
+          fit: BoxFit.cover,
+        ),
       ],
     );
   }
 
   Future<bool> buttonPressCamera() async {
     try {
-      if (index == -1) {
-        return false;
-      }
+      if (getSelectedIndex() == -1) return false;
       await _initializeControllerFuture;
       final image = await _controller.takePicture();
-      Pin? foundPin = (isSelected[1] ? widget.io.markers.movePinToFound(index) : null);
-      await preparePin(image, foundPin);
+      await preparePin(image);
     } catch (e) {
       print(e);
       return false;
@@ -258,31 +221,29 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     return true;
   }
 
-  Future<void> preparePin(image, Pin? foundPin) async {
-    Pin pin;
-    if (foundPin != null) {
-      pin = foundPin;
-    } else {
-      //location
-      LocationData locationData = await LocationClass.getLocation();
-      pin = Pin(latitude: locationData.latitude!, longitude: locationData.longitude!, id: widget.io.markers.markers.length, distance: Double(), type: global.stickerTypes[index], creationDate: DateTime.now());
+  int getSelectedIndex() {
+    for (int i = 0; i < isSelected.length; i++) {
+      if (isSelected[i]) {
+        return i;
+      }
     }
+    return -1;
+  }
+
+  Future<void> preparePin(image) async {
+    //location
+    LocationData locationData = await LocationClass.getLocation();
+    Pin pin = Pin(latitude: locationData.latitude!, longitude: locationData.longitude!, id: widget.io.markers.markers.length, distance: Double(), type: global.stickerTypes[getSelectedIndex()], creationDate: DateTime.now());
+
     Mona mona = Mona(image: image, pin: pin);
-    if (isSelected[0]) {
-      await widget.io.addNewCreatedPinOffline(mona);
-    }
+    await widget.io.addNewCreatedPinOffline(mona);
     postPin(mona); //new thread
   }
 
   Future<void> postPin(Mona mona) async {
-    if (isSelected[0]) {
-      final response = await RestAPI.postPin(mona);
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        await widget.io.deletePinOffline(mona);
-      }
-    } else {
-      await RestAPI.putPin(mona);
-      //TODO save pin if response code not 200 to disk
+    final response = await RestAPI.postPin(mona);
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      await widget.io.deletePinOffline(mona);
     }
     _controller.dispose();
   }

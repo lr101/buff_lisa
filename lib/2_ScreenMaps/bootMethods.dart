@@ -9,14 +9,15 @@ class BootMethods {
   static Future<void> boot(IO io, Function callback) async {
     await io.readNewCreatedPinOffline();
     await tryOfflinePins(io);
-    (RestAPI.fetchMyCreatedPins()).then((value) => callback(io.markers.setUserPinsCreated(value.toSet()))); //new thread
+    /*(RestAPI.fetchMyCreatedPins()).then((value) => callback(io.markers.setUserPinsCreated(value.toSet()))); //new thread
     (RestAPI.fetchMyFoundPins()).then((value) => callback(io.markers.setUserPinsFound(value.toSet()))); //new thread
     (RestAPI.fetchOtherPins()).then((value) async {
       LocationData loc = await LocationClass.getLocation();
       io.markers.setNotUserPins(value);
       io.markers.calcNotUserPinsInRadius(loc.latitude!, loc.longitude!);
       callback(null);
-      }); //new thread
+      });*/ //new thread
+    (RestAPI.fetchAllPins()).then((value) => callback(io.markers.setAllPins(value)));
     RestAPI.getLastVersion().then((value) {
       if (value != null) {
         io.markers.versionId = value;

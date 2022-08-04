@@ -9,6 +9,7 @@ import '../Files/global.dart' as global;
 import '../Files/io.dart';
 import '../Files/mapHelper.dart';
 import '../Files/mapMarker.dart';
+import '../Files/pin.dart';
 
 class MapSample extends StatefulWidget {
   const MapSample({Key? key}) : super(key: key);
@@ -26,38 +27,12 @@ class MapSampleState extends State<MapSample> {
   late Fluster<MapMarker> fluster;
   late Set<Marker> googleMarkers = {};
   double oldZoom =  5;
+  late List<Pin> pinsInRadius = [];
 
   /// Map loading flag
   bool _isMapLoading = true;
+  bool _isListUpdating = false;
 
-  /// Markers loading flag
-  bool _areMarkersLoading = true;
-
-  Fluster<MapMarker> createFluster() {
-    print("tedt${io.markers.markers.length}");
-    return Fluster<MapMarker>(
-      minZoom: 0, // The min zoom at clusters will show
-      maxZoom: 19, // The max zoom at clusters will show
-      radius: 150, // Cluster radius in pixels
-      extent: 2048, // Tile extent. Radius is calculated with it.
-      nodeSize: 64, // Size of the KD-tree leaf node.
-      points: io.markers.markers, // The list of markers created before
-      createCluster: ( // Create cluster marker
-          BaseCluster cluster,
-          double lng,
-          double lat,
-          ) => MapMarker(
-        id: cluster.id.toString(),
-        position: LatLng(lat, lng),
-        icon: BitmapDescriptor.defaultMarker,
-        isCluster: cluster.isCluster,
-        clusterId: cluster.id,
-        pointsSize: cluster.pointsSize,
-        childMarkerId: cluster.childMarkerId,
-        onMarkerTap: () {},
-      ),
-    );
-  }
 
   Future<void> loop() async {
     while (loopBool) {
@@ -69,13 +44,12 @@ class MapSampleState extends State<MapSample> {
 
   void setPinsInsideCircle(LocationData loc) {
     setState(() {
-      io.markers.calcNotUserPinsInRadius(loc.latitude!, loc.longitude!);
+      pinsInRadius = io.markers.calcPinsInRadius(loc.latitude!, loc.longitude!);
     });
   }
 
   void getPins() async {
       await BootMethods.boot(io, callback);
-
   }
 
   void callback(dynamic d) {
@@ -92,7 +66,6 @@ class MapSampleState extends State<MapSample> {
     await _controller.animateCamera(
         CameraUpdate.newCameraPosition(
             CameraPosition(target: latLong, zoom: 17)
-
         )
     );
 
@@ -114,7 +87,7 @@ class MapSampleState extends State<MapSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sticker Map --  ${io.markers.numUserPins()}/${io.markers.numAllPins()}"),
+        title: Text("Sticker Map --  ${io.markers.numAllPins()}"),
       ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -152,7 +125,7 @@ class MapSampleState extends State<MapSample> {
               tooltip: 'Pins near you',
               elevation: 5,
               splashColor: Colors.grey,
-              child: Text(io.markers.notUserPinsInRadius.length.toString()),
+              child: Text(pinsInRadius.length.toString()),
             ),
             const SizedBox(width: 10),
             FloatingActionButton(
@@ -187,12 +160,11 @@ class MapSampleState extends State<MapSample> {
 
   Future<void> _updateMarkers(double zoom) async {
 
-    if (_isMapLoading|| oldZoom == zoom) return;
+    if (_isMapLoading|| oldZoom == zoom || _isListUpdating) return;
+    print("test");
+    _isListUpdating = true;
     oldZoom == zoom;
 
-    setState(() {
-      _areMarkersLoading = true;
-    });
     List<Marker> updatedMarkers;
     try {
       updatedMarkers = MapHelper.getClusterMarkers(
@@ -207,10 +179,7 @@ class MapSampleState extends State<MapSample> {
     googleMarkers
       ..clear()
       ..addAll(updatedMarkers);
-
-    setState(() {
-      _areMarkersLoading = false;
-    });
+    _isListUpdating = false;
   }
 
 }

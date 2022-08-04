@@ -10,12 +10,9 @@ import '../main.dart';
 import 'mapMarker.dart';
 
 class MyMarkers {
-  Set<Pin> userPinsCreated = {};
-  Set<Pin> userPinsFound = {};
-  Set<Mona> userNewCreatedPins = {};
-  List<Pin> notUserPins = [];
+  List<Pin> allPins = [];
+  List<Mona> userNewCreatedPins = [];
   List<MapMarker> markers = [];
-  List<Pin> notUserPinsInRadius = [];
   int versionId = -1;
 
   Future<void> loop() async {
@@ -27,7 +24,7 @@ class MyMarkers {
           if (v.type == 0) {
             Pin? pin = await RestAPI.fetchPin(v.pinId);
             if (pin != null) {
-              addNotUserPin(pin);
+              addAllPins(pin);
             }
           } else if (v.type == 1) {
             removeById(v.pinId);
@@ -49,18 +46,12 @@ class MyMarkers {
     }
     markers.remove(m2);
     Pin? p;
-    for (Pin pin in notUserPins) {
+    for (Pin pin in allPins) {
       if (pin.id == id) {
         p = pin;
       }
     }
-    notUserPins.remove(p);
-    notUserPinsInRadius.remove(p);
-    if (p != null) {
-      if (removePinFromSet(userPinsFound, id)) {
-        removePinFromSet(userPinsCreated, id);
-      }
-    }
+    allPins.remove(p);
   }
 
   bool removePinFromSet(Set<Pin> pins, int id) {
@@ -73,38 +64,25 @@ class MyMarkers {
     return false;
   }
 
-  int numUserPins() {
-    return userPinsCreated.length + userNewCreatedPins.length + userPinsFound.length;
-  }
 
   int numAllPins() {
     return markers.length;
   }
 
-  void setUserPinsCreated(Set<Pin> pins) {
-    userPinsCreated = pins;
-    addPinsToMarker(userPinsCreated, false);
+  void setAllPins(List<Pin> pins) {
+    allPins = pins;
+    addPinsToMarker(allPins, false);
   }
 
-  void addUserPinsCreated(Pin pin) {
-    userPinsCreated.add(pin);
+  void addAllPins(Pin pin) {
+    allPins.add(pin);
     addPinToMarkers(pin, false, null);
 
   }
 
-  void setUserPinsFound(Set<Pin> pins) {
-    userPinsFound = pins;
-    addPinsToMarker(userPinsFound, false);
-  }
-
-  void addUserPinsFound(Pin pin) {
-    userPinsFound.add(pin);
-    addPinToMarkers(pin, false, null);
-  }
-
-  void setUserPinsNewCreated(Set<Mona> monas) {
+  void setUserPinsNewCreated(List<Mona> monas) {
     userNewCreatedPins = monas;
-    Set<Pin> pins = {};
+    List<Pin> pins = [];
     for (var element in userNewCreatedPins) {pins.add(element.pin);}
     addPinsToMarker(pins,true);
   }
@@ -118,36 +96,12 @@ class MyMarkers {
     userNewCreatedPins.remove(mona);
   }
 
-  void setNotUserPins(List<Pin> pins) {
-    notUserPins = pins;
-    addPinsToMarker(notUserPins.toSet(), false);
-  }
-
-  void addNotUserPin(Pin pin) {
-    notUserPins.add(pin);
-    addPinToMarkers(pin, false, null);
-  }
-
-  void addPinsToMarker(Set<Pin> pins, bool newPin) {
+  void addPinsToMarker(List<Pin> pins, bool newPin) {
     for (Pin pin in pins) {
         addPinToMarkers(pin, newPin, null);
     }
   }
 
-  Pin movePinToFound(int index) {
-    Pin pin = notUserPinsInRadius[index];
-    notUserPinsInRadius.remove(pin);
-    notUserPins.remove(pin);
-    userPinsFound.add(pin);
-    for (MapMarker marker in markers) {
-      if (marker.id == pin.id.toString()) {
-        markers.remove(marker);
-        addPinToMarkers(pin, false, null);
-        break;
-      }
-    }
-    return pin;
-  }
 
   Future<BitmapDescriptor> getBitMapDescriptor (int type) async {
     BitmapDescriptor bitmapDescriptor = BitmapDescriptor.defaultMarker;
@@ -179,14 +133,15 @@ class MyMarkers {
   }
 
 
-  void calcNotUserPinsInRadius(double lat, double long) {
-    notUserPinsInRadius.clear();
-    for (var element in notUserPins) {
+  List<Pin> calcPinsInRadius(double lat, double long) {
+    List<Pin> pins = [];
+    for (Pin element in allPins) {
       if (filter(element, lat, long)) {
-        notUserPinsInRadius.add(element);
+        pins.add(element);
       }
     }
-    notUserPinsInRadius.sort((a,b) => sort(a, b, lat, long));
+    pins.sort((a,b) => sort(a, b, lat, long));
+    return pins;
   }
 
   static int sort(Pin a, Pin b, double lat, double lang) {

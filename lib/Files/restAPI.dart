@@ -5,6 +5,10 @@ import 'global.dart' as global;
 
 class RestAPI {
 
+  static Future<List<Pin>> fetchAllPins() async {
+    return fetchPins(global.getPin);
+  }
+
   static Future<List<Pin>> fetchMyCreatedPins() async {
     return fetchPins("${global.getPinsOfUser}?type=1");
   }
@@ -115,7 +119,7 @@ class RestAPI {
   }
 
   static Future<Pin?> fetchPin(int id) async {
-    final response = await http.get(Uri.parse("${global.getPin}/$id?username=${global.username}"));
+    final response = await http.get(Uri.parse("${global.getPin}$id?username=${global.username}"));
     if (response.statusCode == 200 && response.body != "") {
       Map<String, dynamic> json = jsonDecode(response.body) as Map<String, dynamic>;
       if (json.isNotEmpty) {
