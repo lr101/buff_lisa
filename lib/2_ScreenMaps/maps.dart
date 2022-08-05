@@ -77,23 +77,6 @@ class MapSampleState extends State<MapSample> {
           ],
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FloatingActionButton(
-              heroTag: "btn1",
-              onPressed: () {},
-              tooltip: 'Pins near you',
-              elevation: 5,
-              splashColor: Colors.grey,
-              child: Text(widget.io.pinsInRadius.length.toString()),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
