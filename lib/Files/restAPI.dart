@@ -151,5 +151,13 @@ class RestAPI {
     return null;
   }
 
+  static Future<String?> getUsernameByPin(int id) async {
+    final response = await http.get(Uri.parse("${global.getUsernameByPin}$id/user"));
+    if (response.statusCode == 200) {
+      return response.body;
+    }
+    return null;
+  }
+
 }
 

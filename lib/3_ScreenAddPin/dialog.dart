@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import '../Files/io.dart';
 import '../Files/pin.dart';
 import '../Files/restAPI.dart';
@@ -13,39 +14,38 @@ class SimpleDialogItem {
     var size = MediaQuery.of(context).size.width;
     return Dialog(
       child: SizedBox(
-          width: size - 100,
-          height: (size - 100) * (4 / 3),
-          child: getImageWidget(id, newPin, image,  context),
-      )
+         width: size - 100,
+         height: (size - 100) * (4 / 3),
+         child: Column(
+          children: [
+            SizedBox(
+               width: size - 150,
+               height: (size - 150) * (4 / 3),
+               child:getImageWidget(id, newPin, image,  context)
+            ),
+           getUsernameOfPin(id, newPin)],
+         )
+       ),
     );
   }
 
-  static Widget getSwipeDialog(BuildContext context, IO io, Function callback, List<Widget> images) {
-    var size = MediaQuery.of(context).size.width;
-    return Dialog(
-        child: SizedBox(
-          width: size - 100,
-          height: (size - 100) * (4 / 3),
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CarouselSlider(
-                    options: CarouselOptions(
-                      height: (size - 150) * (4 / 3),
-                      autoPlay: true,
-                      aspectRatio: 0.5,
-                      enlargeCenterPage: true,
-                      onPageChanged: (index, reason) => callback(index, images.length)
-                    ),
-                    items: images
-                ),
-                const Text("Select by tapping on image"),
-              ]
-          ),
-        )
-    );
+  static Widget getUsernameOfPin(int? id, bool newPin) {
+    if (newPin) {
+      return Text("username: ${global.username}");
+    } else {
+      return FutureBuilder<String?> (
+        future: RestAPI.getUsernameByPin(id!),
+        builder: (context, AsyncSnapshot<String?> snapshot) {
+          if (snapshot.hasData) {
+            return Text("username: ${snapshot.data}");
+          } else{
+            return const Text("username: ---");
+          }
+        }
+      );
+    }
   }
+
 
   static Widget getImageWidget(int? id, bool newPin, XFile? image, BuildContext context) {
     if (newPin) {
