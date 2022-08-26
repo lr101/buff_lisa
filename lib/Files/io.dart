@@ -37,7 +37,7 @@ class IO {
 
   void initFluster() {
     _isMapLoading = true;
-    MapHelper.initClusterManager(markers.markers, 0, 19).then((value) => fluster = value);
+    MapHelper.initClusterManager(markers.markers, 0, 16).then((value) => fluster = value);
     _isMapLoading = false;
   }
 

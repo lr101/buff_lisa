@@ -2,87 +2,21 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
-
+import 'package:image/image.dart' as images;
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:flutter/services.dart' show ByteData, rootBundle;
 import 'mapMarker.dart';
 
 /// In here we are encapsulating all the logic required to get marker icons from url images
 /// and to show clusters using the [Fluster] package.
 class MapHelper {
 
-  static Future<BitmapDescriptor> getMarkerImageFromUrl() async {
-    return BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_lisa_200px.png');
-  }
-
-  /// Draw a [clusterColor] circle with the [clusterSize] text inside that is [width] wide.
-  ///
-  /// Then it will convert the canvas to an image and generate the [BitmapDescriptor]
-  /// to be used on the cluster marker icons.
-  static Future<BitmapDescriptor> _getClusterMarker(
-      int clusterSize,
-      Color clusterColor,
-      Color textColor,
-      int width,
-      ) async {
-    final PictureRecorder pictureRecorder = PictureRecorder();
-    final Canvas canvas = Canvas(pictureRecorder);
-    final Paint paint = Paint()..color = clusterColor;
-    final TextPainter textPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-    );
-
-    final double radius = width / 2;
-
-    canvas.drawCircle(
-      Offset(radius, radius),
-      radius,
-      paint,
-    );
-
-    textPainter.text = TextSpan(
-      text: clusterSize.toString(),
-      style: TextStyle(
-        fontSize: radius - 5,
-        fontWeight: FontWeight.bold,
-        color: textColor,
-      ),
-    );
-
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      Offset(radius - textPainter.width / 2, radius - textPainter.height / 2),
-    );
-
-    final image = await pictureRecorder.endRecording().toImage(
-      radius.toInt() * 2,
-      radius.toInt() * 2,
-    );
-    final data = await image.toByteData(format: ImageByteFormat.png);
-
-    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
-  }
-
-  /// Resizes the given [imageBytes] with the [targetWidth].
-  ///
-  /// We don't want the marker image to be too big so we might need to resize the image.
-  static Future<Uint8List> _resizeImageBytes(
-      Uint8List imageBytes,
-      int targetWidth,
-      ) async {
-    final Codec imageCodec = await instantiateImageCodec(
-      imageBytes,
-      targetWidth: targetWidth,
-    );
-
-    final FrameInfo frameInfo = await imageCodec.getNextFrame();
-
-    final data = await frameInfo.image.toByteData(format: ImageByteFormat.png);
-
-    return data!.buffer.asUint8List();
+  static Future<images.Image> setMarkerImage() async {
+    ByteData data = await rootBundle.load('images/c_marker_cluster_105px.png');
+    List<int> bytes = Uint8List.view(data.buffer);
+    return images.decodeImage(bytes)!;
   }
 
   /// Inits the cluster manager with all the [MapMarker] to be displayed on the map.
@@ -94,12 +28,12 @@ class MapHelper {
       int minZoom,
       int maxZoom,
       ) async {
-    BitmapDescriptor icon = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster_105px.png');
+    Map<int,BitmapDescriptor> icons = await getClusterIcons();
     return Fluster<MapMarker>(
       minZoom: minZoom,
       maxZoom: maxZoom,
       radius: 150,
-      extent: 2048,
+      extent: 1024,
       nodeSize: 64,
       points: markers,
       createCluster: (
@@ -114,12 +48,51 @@ class MapHelper {
             clusterId: cluster.id,
             pointsSize: cluster.pointsSize,
             childMarkerId: cluster.childMarkerId,
-            icon: icon,
+            icon: getClusterIcon(cluster.pointsSize!, icons)!,
             onMarkerTap: () {  },
           ),
     );
   }
 
+  static BitmapDescriptor? getClusterIcon(int size, Map<int, BitmapDescriptor> icons) {
+    if (size == 2) {
+      return icons[2];
+    } else if (size == 3) {
+      return icons[3];
+    } else if (size == 4) {
+      return icons[4];
+    } else if (size == 5) {
+      return icons[5];
+    } else if (size < 10) {
+      return icons[10];
+    } else if (size < 25) {
+      return icons[25];
+    } else if (size < 50) {
+      return icons[50];
+    } else if (size <= 99) {
+      return icons[99];
+    } else if (size >= 100) {
+      return icons[100];
+    } else {
+      return icons[0];
+    }
+  }
+
+  static Future<Map<int, BitmapDescriptor>> getClusterIcons() async{
+    Map<int, BitmapDescriptor> icons = {};
+    icons[0] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster_105px.png');
+    icons[2] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster2.png');
+    icons[3] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster3.png');
+    icons[4] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster4.png');
+    icons[5] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster5.png');
+    icons[10] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster10.png');
+    icons[25] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster25.png');
+    icons[50] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster50.png');
+    icons[99] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster100.png');
+    icons[100] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster100+.png');
+    print("${icons.length}");
+    return icons;
+  }
   /// Gets a list of markers and clusters that reside within the visible bounding box for
   /// the given [currentZoom]. For more info check [Fluster.clusters].
   static List<Marker> getClusterMarkers(
