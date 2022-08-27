@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.buff_lisa">
    <application
-        android:label="buff_lisa"
-        android:name="Sticker Map"
+        android:label="Sticker Map"
+        android:name="${applicationName}"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher">
         <activity
