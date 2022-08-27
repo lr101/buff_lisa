@@ -123,11 +123,11 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_native_splash:
-  background_image: images/mona.png
+  background_image: images/c_logo.png
   android_12:
-    image: images/mona.png
+    image: images/c_logo.png
 
 flutter_icons:
   android: true
   ios: true
-  image_path: "images/mona_logo.png"
+  image_path: "images/c_logo.png"

@@ -2,7 +2,7 @@
     package="com.example.buff_lisa">
    <application
         android:label="buff_lisa"
-        android:name="${applicationName}"
+        android:name="Sticker Map"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher">
         <activity
