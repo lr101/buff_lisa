@@ -20,11 +20,10 @@ class BootMethods {
       }
       io.markers.loop(); //new thread
     });
+    int? p = await RestAPI.getUserPoints();
+    io.userPoints = p!;
   }
 
-  static Future<List<Pin>> getNotUserPins() async {
-    return await RestAPI.fetchOtherPins();
-  }
 
   static Future<void> tryOfflinePins( IO io) async {
     List<Mona> monas = List<Mona>.from(io.markers.userNewCreatedPins);

@@ -1,4 +1,4 @@
-# buff_lisa
+    # buff_lisa
 
 A new Flutter project.
 
@@ -16,7 +16,12 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 ### Set new icon
-change asset path in pubspec.yaml 
+- change asset path in pubspec.yaml
+- run: ```flutter packages pub run flutter_launcher_icons:main```
+### Build apk
+- run: ```flutter build apk```
 
-run:
-```flutter packages pub run flutter_launcher_icons:main```
+### Build app bundle release (android)
+
+- run: ```flutter build appbundle```
+

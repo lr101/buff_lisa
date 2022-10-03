@@ -1,4 +1,5 @@
 import 'package:buff_lisa/6_Shop/shopPage.dart';
+import 'package:buff_lisa/7_Settings/settings.dart';
 import 'package:flutter/material.dart';
 import '../2_ScreenMaps/maps.dart';
 import '../3_ScreenAddPin/addPinScreen.dart';
@@ -23,9 +24,7 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     AddPinScreen(io : io),
     RankingPage(io: io),
     const ShopPage(),
-    const Text(
-      'SETTINGS',
-    ),
+    const Settings()
   ];
 
   void onItemTapped(int index) {

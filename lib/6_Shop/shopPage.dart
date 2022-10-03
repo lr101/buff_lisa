@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ShopPage extends StatelessWidget {
@@ -12,19 +14,29 @@ class ShopPage extends StatelessWidget {
     }
   }
 
+  copyToClip() {
+    Clipboard.setData(const ClipboardData(text: "https://www.etsy.com/de/shop/MonaSticker"));
+    Fluttertoast.showToast(
+        msg: "Shop URL copied to clipboard",  // message
+        toastLength: Toast.LENGTH_SHORT, // length
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ElevatedButton(
         onPressed: () {
-          launchURL();
+          copyToClip();
         },
         child: SizedBox (
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: const Center(
             child: Text(
-              "PRESS TO LAUNCH SHOP",
+              "PRESS TO COPY SHOP URL TO CLIPBOARD\n\nURL = https://www.etsy.com/de/shop/MonaSticker",
               textAlign: TextAlign.center,
             ),
           ),

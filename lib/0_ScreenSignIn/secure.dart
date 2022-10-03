@@ -7,7 +7,7 @@ import '../Files/restAPI.dart';
 class Secure {
 
 
-  static String setPassword(String username, String password) {
+  static String setPassword(String password) {
     String hashedPassword = Crypt.sha256(password).toString();
     return hashedPassword;
   }
@@ -15,6 +15,11 @@ class Secure {
   static void setUsername(String username, FlutterSecureStorage storage) {
     global.username = username;
     storage.write(key: "username", value: username);
+  }
+
+  static void removeUsername(FlutterSecureStorage storage) {
+    global.username = "";
+    storage.delete(key: "username");
   }
 
   static Future<bool> tryLocalLogin(FlutterSecureStorage storage) async {
@@ -27,7 +32,7 @@ class Secure {
   }
 
   static Future<bool> checkPasswordOnline(String username, String password, FlutterSecureStorage storage) async {
-    return RestAPI.checkUser().then((String? element) {
+    return RestAPI.checkUser(null).then((String? element) {
       if (element == null || element.isEmpty || !Crypt(element).match(password)) {
         return false;
       }

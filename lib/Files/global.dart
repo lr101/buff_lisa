@@ -12,22 +12,9 @@ LatLng startLocation = const LatLng(49.006889, 8.403653); //Karlsruhe
 //user
 String username =  "";
 
-//http
-String host1 = "https://mona-sticker.herokuapp.com";
-String host = "http://10.0.2.2:8080";
-String getPinsOfUser = '$host/users/$username/pins';
-String getOtherPins = '$host/pins/$username/radius';
-String getOtherPinsCount = '$host/pins/$username/radiusCount';
-String getMonaByPinId = '$host/monas?id=';
-String postOrPutPin = '$host/users/$username/pins';
-String postConsistency = '$host/pins/$username/check';
-String checkUser = '$host/users/$username/check';
-String postUsername = '$host/users/';
-String checkVersion = '$host/version?number=';
-String getPin = '$host/pins/';
-String getLastVersion = '$host/version/last';
-String getRanking = '$host/users/ranking';
-String getUsernameByPin = '$host/pins/';
+String host = "54.234.245.153";
+int port = 8081;
+String host1 = "10.0.2.2";
 
 //sticker types
 List<SType> stickerTypes = [SType(id: 0, name: "mona"), SType(id: 1, name: "TornadoDaVinci")];

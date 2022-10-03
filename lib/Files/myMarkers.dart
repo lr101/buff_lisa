@@ -35,6 +35,8 @@ class MyMarkers {
           }
           versionId = v.id;
         }
+        int? p = await RestAPI.getUserPoints();
+        io.userPoints = p!;
       } catch (e) {
         print(e);
       }

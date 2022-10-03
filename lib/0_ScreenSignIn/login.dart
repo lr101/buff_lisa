@@ -5,6 +5,7 @@ import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path/path.dart';
 import '../Files/global.dart' as global;
 
 
@@ -28,9 +29,9 @@ class LoginScreen extends StatelessWidget {
   Future<String?> _signupUser(SignupData data) {
     debugPrint('Signup Name: ${data.name}, Password: ${data.password}');
     return Future.delayed(loginTime).then((_) async {
-      if (data.name != null) {
-        String psw = Secure.setPassword(data.name!, data.password!);
-        bool response = await RestAPI.postUsername(data.name!, psw);
+      if (data.name != null && emailValidator(data.additionalSignupData!["email"])) {
+        String psw = Secure.setPassword(data.password!);
+        bool response = await RestAPI.postUsername(data.name!, psw, data.additionalSignupData!["email"]!);
         if (response) {
           Secure.setUsername(data.name!, storage);
           return null;
@@ -38,13 +39,13 @@ class LoginScreen extends StatelessWidget {
           return 'Username already exists or check your internet';
         }
       }
-      return 'Username is null';
+      return 'Signup not possible';
     });
   }
 
   Future<String?> _recoverPassword(String name) {
     debugPrint('Name: $name');
-    return RestAPI.checkUser().then((element) {
+    return RestAPI.checkUser(name).then((element) {
       if (element == null || element.isEmpty) {
         return 'username or password are wrong';
       }
@@ -76,14 +77,23 @@ class LoginScreen extends StatelessWidget {
         ));
       },
       onRecoverPassword: _recoverPassword,
+      additionalSignupFields: const [UserFormField(keyName: "email", userType: LoginUserType.email)],
     );
   }
 
-  String? validator(String? s) {
-    final alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
+  static String? validator(String? s) {
+    final alphanumeric = RegExp(r'^[a-zA-Z][a-zA-Z0-9]+$');
     if (s == null || s.length < 2 || s.length > 30 || !alphanumeric.hasMatch(s)) {
       return "input not valid";
     }
     return null;
+  }
+
+  static bool emailValidator(String? s) {
+    if (s != null && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(s)){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

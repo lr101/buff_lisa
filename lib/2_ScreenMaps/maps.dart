@@ -52,29 +52,47 @@ class MapSampleState extends State<MapSample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Stack(
-          children: [
-            GoogleMap(
-              initialCameraPosition: widget.io.initCamera,
-              mapType: MapType.normal,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              zoomGesturesEnabled: true,
-              compassEnabled: true,
-              scrollGesturesEnabled: true,
-              rotateGesturesEnabled: true,
-              tiltGesturesEnabled: false,
-              markers: widget.io.googleMarkers,
-              onMapCreated: (controller) { //method called when map is created
-                _controller = controller;
-                setStartLocation();
-              },
-              onCameraMove: (position) => setState((){widget.io.updateMarkers(position);}),
-            ),
-          ],
+      body: SafeArea(
+        child:SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Stack(
+            children: [
+              GoogleMap(
+                initialCameraPosition: widget.io.initCamera,
+                mapType: MapType.normal,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                zoomGesturesEnabled: true,
+                compassEnabled: true,
+                scrollGesturesEnabled: true,
+                rotateGesturesEnabled: true,
+                tiltGesturesEnabled: false,
+                markers: widget.io.googleMarkers,
+                onMapCreated: (controller) { //method called when map is created
+                  _controller = controller;
+                  setStartLocation();
+                },
+                onCameraMove: (position) => setState((){widget.io.updateMarkers(position);}),
+              ),
+              SizedBox(
+                height: 100,
+                width: 150,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child:Text("Total: ${widget.io.markers.allPins.length + widget.io.markers.userNewCreatedPins.length}")
+                    ),
+                    SizedBox(
+                      width:  double.infinity,
+                      child: Text("Score: ${widget.io.userPoints + widget.io.markers.userNewCreatedPins.length}"),
+                    )
+                  ],
+                )
+              ),
+            ],
+          ),
         ),
       ),
     );

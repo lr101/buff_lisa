@@ -28,6 +28,7 @@ class IO {
   Location location = Location();
   late GlobalKey globalKey;
   bool mapBooted = false;
+  int userPoints = 0;
 
   IO({required this.globalKey});
 
