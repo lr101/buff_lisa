@@ -11,11 +11,25 @@ LatLng startLocation = const LatLng(49.006889, 8.403653); //Karlsruhe
 
 //user
 String username =  "";
+String token = "";
 
-String host = "54.234.245.153";
+String host1 = "54.234.245.153";
 int port = 8081;
-String host1 = "10.0.2.2";
+String host = "10.0.2.2";
 
 //sticker types
 List<SType> stickerTypes = [SType(id: 0, name: "mona"), SType(id: 1, name: "TornadoDaVinci")];
 List<Widget> stickerTypeImages = [const Image(image: AssetImage('images/mona.png')), const Image(image : AssetImage('images/tornado-da-vinci-v2.png'))];
+
+String fileName = 'pin_new.txt';
+CameraPosition initCamera =  CameraPosition(target: startLocation,zoom: 5);
+
+const Color cPrime = Color(0xFF455a64);
+const Color cSecond = Color(0xFFcfdbd5);
+const Color cThird = Color(0xFF2085B8);
+const Color cFourth = Color(0xFFf06449);
+const Color cFifth = Color(0xFFb5446e);
+
+const int barHeight = 58;
+
+String shopUrl = "https://www.etsy.com/de/shop/MonaSticker";

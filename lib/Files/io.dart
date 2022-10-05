@@ -6,7 +6,6 @@ import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:path_provider/path_provider.dart';
 import '../Files/global.dart' as global;
 import 'mapHelper.dart';
@@ -15,17 +14,13 @@ import 'mapMarker.dart';
 class IO {
 
   File? _fileNew;
-  static const _fileNameNew = 'pin_new.txt';
   late MyMarkers markers = MyMarkers(io: this);
   late Fluster<MapMarker> fluster;
   bool _isMapLoading = true;
   bool _isListUpdating = false;
-  bool _isRadiusUpdating = false;
-  CameraPosition initCamera =  CameraPosition(target: global.startLocation,zoom: 5);
   double oldZoom =  5;
   late Set<Marker> googleMarkers = {};
   late List<Pin> pinsInRadius = [];
-  Location location = Location();
   late GlobalKey globalKey;
   bool mapBooted = false;
   int userPoints = 0;
@@ -43,9 +38,8 @@ class IO {
   }
 
   Future<void> updateMarkers(CameraPosition position) async {
-    initCamera = position;
+    global.initCamera = position;
     double zoom = position.zoom;
-    setPinsInsideCircle();
     if (_isMapLoading|| oldZoom == zoom || _isListUpdating) return;
     _isListUpdating = true;
     oldZoom == zoom;
@@ -71,18 +65,10 @@ class IO {
   Future<File> get fileNew async {
     if (_fileNew != null) return _fileNew!;
 
-    _fileNew = await _initFile(_fileNameNew);
+    _fileNew = await _initFile(global.fileName);
     return _fileNew!;
   }
 
-  Future<void> setPinsInsideCircle() async {
-    if (_isRadiusUpdating) {
-      _isRadiusUpdating = true;
-      LocationData loc = await location.getLocation();
-      pinsInRadius = markers.calcPinsInRadius(loc.latitude!, loc.longitude!);
-      _isRadiusUpdating = false;
-    }
-  }
 
   // Inititalize file
   Future<File> _initFile(String name) async {

@@ -34,7 +34,9 @@ class RankingPageState extends State<RankingPage> {
             return Scaffold(
               appBar: AppBar(
                 centerTitle: true,
-                title: const Text('Leaderboard'),
+                title: const Text('Leaderboard',style: TextStyle(color: Colors.white)),
+                backgroundColor: global.cThird,
+
               ),
               backgroundColor: Colors.white,
               body: ListView.separated(
@@ -42,11 +44,18 @@ class RankingPageState extends State<RankingPage> {
                 padding: const EdgeInsets.all(8.0),
                 separatorBuilder: (BuildContext context, int index) => const Divider(),
                 itemBuilder: (BuildContext context, int index) {
-                  bool me = false;
                   if (snapshot.data![index].username == global.username) {
-                    me = true;
+                    return  Card(shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                        color:  Colors.green[200],
+                        child: ListTile(title: Text(snapshot.data![index].username, style: const TextStyle(color: global.cPrime)), leading: Text("${index+1}.", style: const TextStyle(color: global.cPrime)),trailing: Text("${snapshot.data![index].points} points", style: const TextStyle(color: global.cPrime)),));
                   }
-                  return renderSimpleWidget(snapshot.data![index], index, me);
+                  return  Card(shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      child: ListTile(title: Text(snapshot.data![index].username, style: const TextStyle(color: global.cPrime)), leading: Text("${index+1}.", style: const TextStyle(color: global.cPrime),),trailing: Text("${snapshot.data![index].points} points", style: const TextStyle(color: global.cPrime))));
+                  //return renderSimpleWidget(snapshot.data![index], index, me);
                 },
             ));
           } else {

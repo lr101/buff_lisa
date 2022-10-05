@@ -1,10 +1,11 @@
+import 'package:buff_lisa/3_ScreenAddPin/camera.dart';
 import 'package:buff_lisa/6_Shop/shopPage.dart';
 import 'package:buff_lisa/7_Settings/settings.dart';
 import 'package:flutter/material.dart';
 import '../2_ScreenMaps/maps.dart';
-import '../3_ScreenAddPin/addPinScreen.dart';
 import '../5_Ranking/ranking.dart';
 import '../Files/io.dart';
+import '../Files/global.dart' as global;
 
 
 class BottomNavigationWidget extends StatefulWidget {
@@ -21,9 +22,9 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
   late final List<Widget> _widgetOptions = <Widget>[
     MapSample(io : io),
-    AddPinScreen(io : io),
+    CameraStatefulWidget(io : io),
     RankingPage(io: io),
-    const ShopPage(),
+    ShopPage(),
     const Settings()
   ];
 
@@ -39,39 +40,36 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: SizedBox(height: 58, child:BottomNavigationBar(
+        backgroundColor: Colors.white,
+        unselectedIconTheme: const IconThemeData(color: global.cPrime),
         key: globalKey,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.map_outlined),
             label: 'Map',
-            backgroundColor: Colors.red,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add_location_alt_outlined),
             label: 'Camera',
-            backgroundColor: Colors.green,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.groups),
             label: 'Ranking',
-            backgroundColor: Colors.purple,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Shop',
-            backgroundColor: Colors.purple,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
-            backgroundColor: Colors.pink,
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: global.cFifth,
         onTap: onItemTapped,
-      ),
+      )),
     );
   }
 }

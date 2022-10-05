@@ -1,11 +1,10 @@
-import 'package:buff_lisa/3_ScreenAddPin/addPinScreen.dart';
 import 'package:buff_lisa/Files/locationClass.dart';
-import 'package:fluster/fluster.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../2_ScreenMaps/bootMethods.dart';
 import '../Files/io.dart';
+import '../Files/global.dart' as global;
 
 class MapSample extends StatefulWidget {
   final IO io;
@@ -59,7 +58,7 @@ class MapSampleState extends State<MapSample> {
           child: Stack(
             children: [
               GoogleMap(
-                initialCameraPosition: widget.io.initCamera,
+                initialCameraPosition: global.initCamera,
                 mapType: MapType.normal,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,

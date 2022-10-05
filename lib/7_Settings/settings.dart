@@ -19,38 +19,40 @@ class Settings extends StatelessWidget {
           centerTitle: true,
           automaticallyImplyLeading: false,
           title: const Text('Settings'),
+          backgroundColor: global.cThird,
         ),
         backgroundColor: Colors.white,
         body: ListView(
           children: [
-            TextButton(
+            Card(child: TextButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const Password()),
                 );
               },
-              child: const Text("Change Password"),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Email()),
-                );
-              },
-              child: const Text("Change email"),
-            ),
-            TextButton(
-              onPressed: () {
-                Secure.removeUsername(const FlutterSecureStorage());
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              },
-              child: const Text("Logout"),
-            ),
+              child: const Text("Change Password", style: TextStyle(color: global.cPrime)),
+            ),),
+            Card(child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Email()),
+                  );
+                },
+                child: const Text("Change email", style: TextStyle(color: global.cPrime)),
+              ),),
+              Card(child: TextButton(
+                onPressed: () {
+                  Secure.removeSecure(const FlutterSecureStorage(), "auth");
+                  Secure.removeSecure(const FlutterSecureStorage(), "username");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  );
+                },
+                child: const Text("Logout", style: TextStyle(color: global.cPrime)),
+            ),)
           ],
         ));
   }

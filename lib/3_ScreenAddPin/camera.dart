@@ -24,28 +24,33 @@ class _CameraStatefulWidgetState extends State<CameraStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Widget>(
-      future: mainCamera(),
-      builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-        Widget child;
-        if (snapshot.hasData) {
-          child = (snapshot.data) as Widget;
-        } else if (snapshot.hasError) {
-          child = const Icon(
-            Icons.error_outline,
-            color: Colors.red,
-            size: 60,
-          );
-        }else {
-          child =
-            const SizedBox(
-              width: 60,
-              height: 60,
-              child: CircularProgressIndicator(),
-            );
-        }
-        return child;
-      },
+    return Scaffold(
+        body: Align(
+        alignment: Alignment.topRight,
+        child: FutureBuilder<Widget>(
+          future: mainCamera(),
+          builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+            Widget child;
+            if (snapshot.hasData) {
+              child = (snapshot.data) as Widget;
+            } else if (snapshot.hasError) {
+              child = const Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 60,
+              );
+            }else {
+              child =
+                const SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(color: global.cSecond,),
+                );
+            }
+            return child;
+          },
+        )
+      )
     );
   }
 
@@ -171,7 +176,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           }
         });
       },
-      child: const Icon(Icons.camera_alt),
+      backgroundColor: global.cThird,
+      child: const Icon(Icons.camera_alt, color: Colors.white,),
     );
   }
 
@@ -179,6 +185,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
   Widget switchType()  {
     return ToggleButtons(
+      fillColor: global.cSecond,
+      borderColor: global.cPrime,
+      selectedBorderColor:global.cPrime ,
+      splashColor: global.cPrime,
+      borderWidth: 0.8,
       onPressed: (int index) {
         setState(() {
           for (int buttonIndex = 0; buttonIndex <

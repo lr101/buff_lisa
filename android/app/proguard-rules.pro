@@ -1,0 +1,1 @@
+-keep class com.TheGermanApps.buff_lisa.BuildConfig { *; }

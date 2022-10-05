@@ -15,6 +15,7 @@ class Email extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Change Email'),
+        backgroundColor: global.cThird,
       ),
       body: SizedBox(
           width: size,
@@ -23,13 +24,13 @@ class Email extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Type Email:"),
+                const Text("Type Email:", style: TextStyle(color: global.cPrime)),
                 SizedBox (
                   height: 50,
                   width: 200,
-                  child: TextFormField(controller: controller1,),
+                  child: TextFormField(controller: controller1, style: const TextStyle(color: global.cPrime,))
                 ),
-                const Text("Repeat Email:"),
+                const Text("Repeat Email:", style: TextStyle(color: global.cPrime)),
                 SizedBox (
                   height: 50,
                   width: 200,
@@ -41,11 +42,14 @@ class Email extends StatelessWidget {
                   children: [
                     TextButton(
                         onPressed: () => changeMail(controller1,controller2,context),
-                        child: const Text("Submit")
+                        style: TextButton.styleFrom(backgroundColor: global.cThird),
+                        child: const Text("Submit", style: TextStyle(color: Colors.white))
                     ),
+                    const SizedBox(width: 10,),
                     TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text("Cancel")
+                        style: TextButton.styleFrom(backgroundColor: global.cFourth),
+                        child: const Text("Cancel", style: TextStyle(color: Colors.white))
                     )
                   ],
                 )

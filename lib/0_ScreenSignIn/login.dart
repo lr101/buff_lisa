@@ -1,13 +1,10 @@
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/bottomNavigationBar.dart';
-import 'package:buff_lisa/2_ScreenMaps/maps.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:path/path.dart';
 import '../Files/global.dart' as global;
-
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -17,30 +14,21 @@ class LoginScreen extends StatelessWidget {
 
   Future<String?> _authUser(LoginData data) {
     global.username = data.name;
-    return Secure.checkPasswordOnline(data.name, data.password, storage).then((value) {
-      if (value) {
-        return null;
-      } else {
-        return 'username or password are wrong';
-      }
+    return Secure.loginAuthentication(data.name, data.password, storage).then((value) {
+      return value ? null : 'username or password are wrong';
     });
   }
 
   Future<String?> _signupUser(SignupData data) {
-    debugPrint('Signup Name: ${data.name}, Password: ${data.password}');
     return Future.delayed(loginTime).then((_) async {
-      if (data.name != null && emailValidator(data.additionalSignupData!["email"])) {
-        String psw = Secure.setPassword(data.password!);
-        bool response = await RestAPI.postUsername(data.name!, psw, data.additionalSignupData!["email"]!);
-        if (response) {
-          Secure.setUsername(data.name!, storage);
-          return null;
-        } else {
-          return 'Username already exists or check your internet';
-        }
+      if (data.name != null && data.password != null && emailValidator(data.additionalSignupData!["email"])) {
+        return Secure.signupAuthentication(data.name!, data.password!, data.additionalSignupData!["email"]!, storage).then((value) {
+          return value ? null : 'Username already exists or check your internet';
+        });
       }
       return 'Signup not possible';
     });
+
   }
 
   Future<String?> _recoverPassword(String name) {
@@ -64,6 +52,11 @@ class LoginScreen extends StatelessWidget {
       }
     });
     return FlutterLogin(
+      theme: LoginTheme(
+          buttonTheme: const LoginButtonTheme(backgroundColor: global.cThird),
+          titleStyle: const TextStyle(color: Colors.white),
+          primaryColor: global.cThird,
+      ),
       title: 'Mona',
       onLogin: _authUser,
       onSignup: _signupUser,
@@ -82,7 +75,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   static String? validator(String? s) {
-    final alphanumeric = RegExp(r'^[a-zA-Z][a-zA-Z0-9]+$');
+    final alphanumeric = RegExp(r'^[a-zA-Z][a-zA-Z0-9!?#$%&+]+$');
     if (s == null || s.length < 2 || s.length > 30 || !alphanumeric.hasMatch(s)) {
       return "input not valid";
     }

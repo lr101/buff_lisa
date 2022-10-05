@@ -18,7 +18,7 @@ class BootMethods {
       if (value != null) {
         io.markers.versionId = value;
       }
-      io.markers.loop(); //new thread
+      //io.markers.loop(); //new thread
     });
     int? p = await RestAPI.getUserPoints();
     io.userPoints = p!;

@@ -3,7 +3,6 @@ import 'package:buff_lisa/3_ScreenAddPin/dialog.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import '../Files/global.dart' as global;
 import 'package:buff_lisa/Files/pin.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../main.dart';
@@ -19,7 +18,7 @@ class MyMarkers {
 
   MyMarkers({required this.io});
 
-  Future<void> loop() async {
+  /*Future<void> loop() async {
     while (true) {
       await Future.delayed(const Duration(seconds: 10));
       try {
@@ -41,7 +40,7 @@ class MyMarkers {
         print(e);
       }
     }
-  }
+  }*/
 
   void removeById(int id) {
     MapMarker? m2;
@@ -139,41 +138,4 @@ class MyMarkers {
     });
 
   }
-
-
-  List<Pin> calcPinsInRadius(double lat, double long) {
-    List<Pin> pins = [];
-    for (Pin element in allPins) {
-      if (filter(element, lat, long)) {
-        pins.add(element);
-      }
-    }
-    pins.sort((a,b) => sort(a, b, lat, long));
-    return pins;
-  }
-
-  static int sort(Pin a, Pin b, double lat, double lang) {
-    double d1 = calcDistance(a.latitude, a.longitude, lat, lang);
-    double d2 = calcDistance(b.latitude, b.longitude, lat, lang);
-    a.distance.d = d1;
-    b.distance.d = d2;
-    if (d1 < d2) {
-      return (d2 - d1).round();
-    } else {
-      return (d1 - d2).round();
-    }
-  }
-
-  static bool filter(Pin a,  double lat, double long) {
-    return (calcDistance(a.latitude, a.longitude, lat, long) <= global.circleRadius);
-  }
-
-  static double calcDistance(double lat1,double lon1,double lat2,double lon2) {
-    double p = 0.017453292519943295;
-    double a = 0.5 - cos((lat2 - lat1) * p)/2 +
-        cos(lat1 * p) * cos(lat2 * p) *
-            (1 - cos((lon2 - lon1) * p))/2;
-    return 12742 * asin(sqrt(a)) * 1000;
-  }
-
 }

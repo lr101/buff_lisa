@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:buff_lisa/Files/pin.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_config/flutter_config.dart';
-import 'package:http/http.dart' as http;
 import 'global.dart' as global;
 
 class RestAPI {
@@ -19,24 +17,45 @@ class RestAPI {
 
   static Future<String?> checkUser(String? name) async {
     name ??= global.username;
-    HttpClientResponse response = await createHttpsRequest("/api/users/$name/password", {}, 0, null);
+    HttpClientResponse response = await createHttpsRequest("/login/$name/", {}, 0, null);
     if (response.statusCode == 200) {
       return await response.transform(utf8.decoder).join();
     }
     return null;
   }
 
-  static Future<bool> postUsername(String username, String hash, String email) async {
+  static Future<String?> checkUserToken(String? name, String password) async {
+    final String json = jsonEncode(<String, dynamic>{
+      "password" : password,
+    });
+    HttpClientResponse response = await createHttpsRequest("/token/$name/", {}, 2, json);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return await response.transform(utf8.decoder).join();
+    }
+    return null;
+  }
+
+  static Future<String?> auth(String? name, String password) async {
+    final String json = jsonEncode(<String, dynamic>{
+      "password" : password,
+      "username" : name,
+    });
+    HttpClientResponse response = await createHttpsRequest("/login/", {}, 1, json);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return await response.transform(utf8.decoder).join();
+    }
+    return null;
+  }
+
+  static Future<String?> postUsername(String username, String hash, String email) async {
     final String json = jsonEncode(<String, dynamic>{
       "username" : username,
       "password" : hash,
       "email" : email
     });
-    HttpClientResponse response = await createHttpsRequest("/api/users/", {}, 1, json);
+    HttpClientResponse response = await createHttpsRequest("/signup/", {}, 1, json);
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      return false;
+      return await response.transform(utf8.decoder).join();
     }
   }
 
@@ -171,8 +190,7 @@ class RestAPI {
       case 3: request = await client.deleteUrl(url);break;
       default: throw Exception("HTTPS Request method does not exist");
     }
-    request.headers.add(FlutterConfig.get('API_KEY_NAME'), FlutterConfig.get('API_KEY_VALUE'));
-    request.headers.add(FlutterConfig.get('API_KEY_ADMIN_NAME'), FlutterConfig.get('API_KEY_ADMIN_VALUE'));
+    request.headers.add("Authorization", "Bearer ${global.token}");
     if ((requestType == 1 || requestType == 2) && encode != null) {
       request.headers.contentType =  ContentType('application', 'json', charset: 'utf-8');
       request.write(encode);
