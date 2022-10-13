@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:buff_lisa/Files/pin.dart';
 import 'package:image/image.dart' as images;
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class MapHelper {
     return Fluster<MapMarker>(
       minZoom: minZoom,
       maxZoom: maxZoom,
-      radius: 150,
+      radius: 50,
       extent: 1024,
       nodeSize: 64,
       points: markers,
@@ -90,18 +91,17 @@ class MapHelper {
     icons[50] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster50.png');
     icons[99] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster100.png');
     icons[100] = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_marker_cluster100+.png');
-    print("${icons.length}");
     return icons;
   }
   /// Gets a list of markers and clusters that reside within the visible bounding box for
   /// the given [currentZoom]. For more info check [Fluster.clusters].
   static List<Marker> getClusterMarkers(
       Fluster<MapMarker>? clusterManager,
-      double currentZoom,) {
+      int currentZoom,) {
     if (clusterManager == null) return [];
     return clusterManager.clusters(
       [-180, -85, 180, 85],
-      currentZoom.toInt(),
+      currentZoom,
     ).map((mapMarker) => mapMarker.toMarker()).toList();
   }
 }

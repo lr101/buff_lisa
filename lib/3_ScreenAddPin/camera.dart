@@ -1,14 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
+import 'package:buff_lisa/2_ScreenMaps/bootMethods.dart';
+import 'package:buff_lisa/3_ScreenAddPin/checkImageWidget.dart';
 import 'package:buff_lisa/Files/locationClass.dart';
+import 'package:buff_lisa/Files/pointsNotifier.dart';
 import 'package:camera/camera.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 import '../Files/io.dart';
 import '../Files/pin.dart';
 import '../main.dart';
-import 'dialog.dart';
+import '../2_ScreenMaps/imageWidget.dart';
 import '../Files/global.dart' as global;
 
 class CameraStatefulWidget extends StatefulWidget {
@@ -20,10 +28,11 @@ class CameraStatefulWidget extends StatefulWidget {
   State<CameraStatefulWidget> createState() => _CameraStatefulWidgetState();
 }
 
-class _CameraStatefulWidgetState extends State<CameraStatefulWidget> {
+class _CameraStatefulWidgetState extends State<CameraStatefulWidget> with AutomaticKeepAliveClientMixin<CameraStatefulWidget>{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
         body: Align(
         alignment: Alignment.topRight,
@@ -63,6 +72,9 @@ class _CameraStatefulWidgetState extends State<CameraStatefulWidget> {
 
     return TakePictureScreen(camera: firstCamera, io : widget.io);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
 }
 
@@ -168,11 +180,14 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
   Widget button() {
     return FloatingActionButton(
+      heroTag: "cameraBtn",
       onPressed: (){
-        buttonPressCamera().then((element) {
-          if (element) {
-          final BottomNavigationBar navigationBar = widget.io.globalKey.currentWidget! as BottomNavigationBar;
-          navigationBar.onTap!(0);
+        buttonPressCamera().then((value) {
+          if (value) {
+            Provider.of<PointsNotifier>(context, listen: false).incrementPoints();
+            Provider.of<PointsNotifier>(context, listen: false).incrementNumAll();
+            final BottomNavigationBar navigationBar = widget.io.globalKey.currentWidget! as BottomNavigationBar;
+            navigationBar.onTap!(0);
           }
         });
       },
@@ -223,11 +238,16 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   Future<bool> buttonPressCamera() async {
     try {
       if (getSelectedIndex() == -1) return false;
+      final navigator = Navigator.of(context);
       await _initializeControllerFuture;
       final image = await _controller.takePicture();
-      await preparePin(image);
+      final result = await navigator.push(
+        MaterialPageRoute(builder: (context) => CheckImageWidget(image: image,)),
+      );
+      if (!mounted || !result) return false;
+      preparePin(image);
     } catch (e) {
-      print(e);
+      print("Method: bttonPressCamera with Error: $e");
       return false;
     }
     return true;
@@ -245,19 +265,19 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   Future<void> preparePin(image) async {
     //location
     LocationData locationData = await LocationClass.getLocation();
-    Pin pin = Pin(latitude: locationData.latitude!, longitude: locationData.longitude!, id: widget.io.markers.markers.length, distance: Double(), type: global.stickerTypes[getSelectedIndex()], creationDate: DateTime.now());
+
+    Pin pin = Pin(latitude: locationData.latitude!, longitude: locationData.longitude!, id: widget.io.clusterHandler.markerHandler.userNewCreatedPins.length, username: global.username, type: global.stickerTypes[getSelectedIndex()], creationDate: DateTime.now());
 
     Mona mona = Mona(image: image, pin: pin);
-    await widget.io.addNewCreatedPinOffline(mona);
+    await widget.io.addOfflinePin(mona);
     postPin(mona); //new thread
   }
 
   Future<void> postPin(Mona mona) async {
-    final response = await RestAPI.postPin(mona);
+    HttpClientResponse response = await RestAPI.postPin(mona);
     if (response.statusCode == 201 || response.statusCode == 200) {
-      await widget.io.deletePinOffline(mona);
+      await BootMethods.setTempToSavedPin(mona, response, widget.io);
     }
-    _controller.dispose();
   }
 
 

@@ -15,6 +15,15 @@ class RestAPI {
     }
   }
 
+  static Future<List<int>> fetchAllPinIds() async {
+    HttpClientResponse response = await createHttpsRequest("/api/pins-ids", {}, 0, null);
+    if (response.statusCode == 200) {
+      return (jsonDecode(await response.transform(utf8.decoder).join()) as List<dynamic>).map((e) => e as int).toList();
+    } else {
+      throw Exception("Pins could not be loaded: ${response.statusCode} error code");
+    }
+  }
+
   static Future<String?> checkUser(String? name) async {
     name ??= global.username;
     HttpClientResponse response = await createHttpsRequest("/login/$name/", {}, 0, null);
@@ -95,19 +104,6 @@ class RestAPI {
     return await createHttpsRequest("/api/monas/", {}, 1, json);
   }
 
-  static Future<List<Version>> checkVersion(int versionId) async {
-    HttpClientResponse response = await createHttpsRequest("/api/versions", {"number" : versionId.toString()}, 0, null);
-    if (response.statusCode == 200) {
-      List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
-      List<Version> versions = [];
-      for (var element in values) {
-        versions.add(Version.fromJson(element));
-      }
-      return versions;
-    } else {
-     return [];
-    }
-  }
 
   static Future<Pin?> fetchPin(int id) async {
     HttpClientResponse response = await createHttpsRequest("/api/pins/$id/", {}, 0, null);
@@ -116,15 +112,6 @@ class RestAPI {
       if (json.isNotEmpty) {
         return Pin.fromJson(json);
       }
-    }
-    return null;
-  }
-
-  static Future<int?> getLastVersion() async {
-    HttpClientResponse response = await createHttpsRequest("/api/versions/last/", {}, 0, null);
-    if (response.statusCode == 200) {
-
-      return int.parse(await response.transform(utf8.decoder).join());
     }
     return null;
   }
@@ -167,8 +154,18 @@ class RestAPI {
     return false;
   }
 
+
+  static Future<bool> deleteMonaFromPinId(int id) async {
+    HttpClientResponse response = await createHttpsRequest("/api/monas/$id", {}, 3, null);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    }
+    return false;
+  }
+
   static Future<List<Pin>> toPinList(HttpClientResponse response) async {
     List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
+
     List<Pin> pins = [];
     for (var element in values) {
       pins.add(Pin.fromJson(element));

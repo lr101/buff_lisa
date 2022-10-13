@@ -3,18 +3,16 @@ import 'package:buff_lisa/1_BottomNavigationBar/bottomNavigationBar.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../Files/global.dart' as global;
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   Duration get loginTime => const Duration(milliseconds: 200);
-  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<String?> _authUser(LoginData data) {
     global.username = data.name;
-    return Secure.loginAuthentication(data.name, data.password, storage).then((value) {
+    return Secure.loginAuthentication(data.name, data.password, ).then((value) {
       return value ? null : 'username or password are wrong';
     });
   }
@@ -22,7 +20,7 @@ class LoginScreen extends StatelessWidget {
   Future<String?> _signupUser(SignupData data) {
     return Future.delayed(loginTime).then((_) async {
       if (data.name != null && data.password != null && emailValidator(data.additionalSignupData!["email"])) {
-        return Secure.signupAuthentication(data.name!, data.password!, data.additionalSignupData!["email"]!, storage).then((value) {
+        return Secure.signupAuthentication(data.name!, data.password!, data.additionalSignupData!["email"]!).then((value) {
           return value ? null : 'Username already exists or check your internet';
         });
       }
@@ -45,12 +43,6 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Secure.tryLocalLogin(storage).then((value) { if (value) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const BottomNavigationWidget(),
-        ));
-      }
-    });
     return FlutterLogin(
       theme: LoginTheme(
           buttonTheme: const LoginButtonTheme(backgroundColor: global.cThird),

@@ -9,22 +9,27 @@ import '../Files/restAPI.dart';
 
 class Secure {
 
-  static void saveSecure(String username, FlutterSecureStorage storage,
-      String key) {
-    global.username = username;
-    storage.write(key: key, value: username);
+  static void saveSecure(String value, String key) {
+    const FlutterSecureStorage().write(key: key, value: value);
   }
 
-  static void removeSecure(FlutterSecureStorage storage, String key) {
-    storage.delete(key: key);
+  static Future<String?> readSecure(String key) async {
+    return await const FlutterSecureStorage().read(key: key);
   }
 
-  static Future<bool> tryLocalLogin(FlutterSecureStorage storage) async {
+  static void removeSecure(String key) {
+    const FlutterSecureStorage().delete(key: key);
+  }
+
+  static Future<bool> tryLocalLogin() async {
+    const storage = FlutterSecureStorage();
     String? storedUsername = await storage.read(key: "username");
     String? storedToken = await storage.read(key: "auth");
     if (storedUsername != null && storedToken != null) {
       global.username = storedUsername;
       global.token = storedToken;
+      print(global.username);
+      print(global.token);
       return true;
     }
     return false;
@@ -34,12 +39,12 @@ class Secure {
     return sha256.convert(utf8.encode(password)).toString();
   }
 
-  static Future<bool> signupAuthentication(String username, String password, String email, FlutterSecureStorage storage) async {
+  static Future<bool> signupAuthentication(String username, String password, String email) async {
     String psw = Secure.encryptPassword(password);
     String? response = await RestAPI.postUsername(username, psw, email);
     if (response != null) {
-      Secure.saveSecure(response, storage, "auth");
-      Secure.saveSecure(username, storage, "username");
+      Secure.saveSecure(response, "auth");
+      Secure.saveSecure(username, "username");
       global.token = response;
       global.username = username;
       return true;
@@ -48,8 +53,7 @@ class Secure {
     }
   }
 
-  static Future<bool> loginAuthentication(String username, String password,
-      FlutterSecureStorage storage) async {
+  static Future<bool> loginAuthentication(String username, String password,) async {
     String? element = await RestAPI.checkUser(username);
     String? token;
     //TODO delete first part of if, when all password are changed to new format
@@ -61,8 +65,8 @@ class Secure {
       token = await RestAPI.auth(username, encryptPassword(password));
     }
     if (token != null) {
-      saveSecure(username, storage, "username");
-      saveSecure(token, storage, "auth");
+      saveSecure(username, "username");
+      saveSecure(token, "auth");
       global.token = token;
       global.username = username;
       return true;

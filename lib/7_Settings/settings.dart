@@ -6,14 +6,11 @@ import '../0_ScreenSignIn/secure.dart';
 import '../Files/global.dart' as global;
 import 'email.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends StatelessWidget  {
   const Settings({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -44,8 +41,8 @@ class Settings extends StatelessWidget {
               ),),
               Card(child: TextButton(
                 onPressed: () {
-                  Secure.removeSecure(const FlutterSecureStorage(), "auth");
-                  Secure.removeSecure(const FlutterSecureStorage(), "username");
+                  Secure.removeSecure("auth");
+                  Secure.removeSecure("username");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginScreen()),

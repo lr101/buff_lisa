@@ -1,38 +1,42 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:camera/camera.dart';
 
-class Pin {
+class Pin implements ToJson {
   final double latitude;
   final double longitude;
   final int id;
-  final Double distance;
   final DateTime creationDate;
   final SType type;
+  final String? username;
 
   const Pin({
     required this.latitude,
     required this.longitude,
     required this.id,
-    required this.distance,
     required this.creationDate,
     required this.type,
+    required this.username
   });
 
+  @override
   Pin.fromJson(Map<String, dynamic> json) :
         latitude = json['latitude'],
         longitude = json['longitude'],
         id = json['id'],
-        distance = Double(),
         type =  SType.fromJson(json['type']),
+        username = json.containsKey('username') ? json['username'] : null,
         creationDate = DateTime.parse((json['creationDate']).toString());
 
-  Map<String, dynamic> toJson() {
+
+  @override
+  Future<Map<String, dynamic>> toJson() async {
     return {"longitude": longitude,
       "latitude": latitude,
       "id": id,
       "creationDate": formatDateTim(creationDate),
-      "type": type.toJson()
+      "type": await type.toJson()
     };
   }
 
@@ -43,11 +47,12 @@ class Pin {
 
 }
 
-class SType {
+class SType implements ToJson{
   final int id;
   final String name;
 
-  Map<String, dynamic> toJson() {
+  @override
+  Future<Map<String, dynamic>> toJson() async {
     return {
       'id' : id,
       'name' : name
@@ -59,17 +64,13 @@ class SType {
     required this.name
   });
 
-  SType.fromJson(Map<String,dynamic> map)
-      : id = map['id'],
-        name = map['name'];
+  @override
+  SType.fromJson(Map<String, dynamic> map) :
+    id = map['id'],
+    name = map['name'];
 
 }
-
-class Double {
-  late double d = 0;
-}
-
-class Mona {
+class Mona implements ToJson {
   final XFile image;
   final Pin pin;
 
@@ -78,38 +79,28 @@ class Mona {
     required this.pin
   });
 
+  @override
   Future<Map<String, dynamic>> toJson() async {
-    return {"id": 0,
-      "pin": pin.toJson(),
+    return {
+      "id": 0,
+      "pin": await pin.toJson(),
       "image": await image.readAsBytes()
     };
   }
-
-  Mona.fromJson(Map<String,dynamic> map)
-    : image = XFile.fromData(_getImageBinary(map['image'])),
-      pin = Pin.fromJson(map['pin']);
 
   static Uint8List _getImageBinary(String dynamicList) {
     return base64Decode(dynamicList);
   }
 
-}
+  Mona.fromJson2(Map<String, dynamic> map) :
+        image = XFile.fromData(Uint8List.fromList(map['image'].cast<int>().toList())),
+        pin = Pin.fromJson(map['pin']);
 
-class Version {
-  final int id;
-  final int pinId;
-  final int type;
+  @override
+  Mona.fromJson(Map<String, dynamic> map) :
+        image = XFile.fromData(_getImageBinary(map['image'])),
+        pin = Pin.fromJson(map['pin']);
 
-  Version( {
-    required this.id,
-    required this.type,
-    required this.pinId
-  });
-
-  Version.fromJson(Map<String,dynamic> map)
-      : id = map['id'],
-        type = map['type'],
-        pinId = map['pinId'];
 }
 
 class Ranking {
@@ -125,4 +116,9 @@ class Ranking {
       : username = map['username'],
         points = map['points'];
 
+}
+
+abstract class ToJson {
+  ToJson.fromJson(Map<String, dynamic> map);
+  Future<Map<String, dynamic>> toJson();
 }
