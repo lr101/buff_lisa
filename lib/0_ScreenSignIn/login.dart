@@ -44,6 +44,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
+      // STYLES
       theme: LoginTheme(
           buttonTheme: const LoginButtonTheme(backgroundColor: global.cThird),
           titleStyle: const TextStyle(color: Colors.white),

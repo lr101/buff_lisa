@@ -170,6 +170,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
 
   Future<void> _onMapCreated(GoogleMapController controller) async {
     _controller = controller;
+    //STYLES
     _controller.setMapStyle(await DefaultAssetBundle.of(context).loadString('images/style.json'));
     _setLocation();
   }

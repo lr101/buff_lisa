@@ -61,8 +61,12 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
           children: _widgetOptions,
         ),
         bottomNavigationBar: SizedBox(height: 58, child:BottomNavigationBar(
+
+          // STYLES
           backgroundColor: Colors.white,
           unselectedIconTheme: const IconThemeData(color: global.cPrime),
+          selectedItemColor: global.cFifth,
+
           key: globalKey,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -87,7 +91,6 @@ class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: global.cFifth,
           onTap: onItemTapped,
         )
       ),
