@@ -25,3 +25,10 @@ samples, guidance on mobile development, and a full API reference.
 
 - run: ```flutter build appbundle```
 
+### TODO IOS 
+- location: ![img.png](img.png)
+- flutter_secure_storage: 'You also need to add Keychain Sharing as capability to your macOS runner.'
+- path_provider: access to external storage is not officially supported by package
+- shared_preferences: might be another name...
+- fluttertoast: package doesn't really support ios
+

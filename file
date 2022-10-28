@@ -1,0 +1,399 @@
+@startuml
+set namespaceSeparator ::
+
+class "buff_lisa::0_ScreenSignIn::login.dart::LoginScreen" {
+  +Duration loginTime
+  -Future<String?> _authUser()
+  -Future<String?> _signupUser()
+  -Future<String?> _recoverPassword()
+  +Widget build()
+  {static} +String? validator()
+  {static} +bool emailValidator()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "buff_lisa::0_ScreenSignIn::login.dart::LoginScreen"
+
+class "buff_lisa::0_ScreenSignIn::secure.dart::Secure" {
+  {static} +void saveSecure()
+  {static} +Future<String?> readSecure()
+  {static} +void removeSecure()
+  {static} +Future<bool> tryLocalLogin()
+  {static} +String encryptPassword()
+  {static} +Future<bool> signupAuthentication()
+  {static} +Future<bool> loginAuthentication()
+}
+
+class "buff_lisa::1_BottomNavigationBar::bottomNavigationBar.dart::BottomNavigationWidget" {
+  +State<BottomNavigationWidget> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "buff_lisa::1_BottomNavigationBar::bottomNavigationBar.dart::BottomNavigationWidget"
+
+class "buff_lisa::1_BottomNavigationBar::bottomNavigationBar.dart::_BottomNavigationWidgetState" {
+  -int _selectedIndex
+  +GlobalKey<State<StatefulWidget>> globalKey
+  +IO io
+  -PageController _pageController
+  -List<Widget> _widgetOptions
+  +void initState()
+  +void dispose()
+  +void onItemTapped()
+  +Widget build()
+}
+
+"buff_lisa::1_BottomNavigationBar::bottomNavigationBar.dart::_BottomNavigationWidgetState" o-- "flutter::src::widgets::framework.dart::GlobalKey<State<StatefulWidget>>"
+"buff_lisa::1_BottomNavigationBar::bottomNavigationBar.dart::_BottomNavigationWidgetState" o-- "buff_lisa::Files::io.dart::IO"
+"buff_lisa::1_BottomNavigationBar::bottomNavigationBar.dart::_BottomNavigationWidgetState" o-- "flutter::src::widgets::page_view.dart::PageController"
+"flutter::src::widgets::framework.dart::State" <|-- "buff_lisa::1_BottomNavigationBar::bottomNavigationBar.dart::_BottomNavigationWidgetState"
+
+class "buff_lisa::2_ScreenMaps::bootMethods.dart::BootMethods" {
+  {static} +Future<void> getPins()
+  {static} +void updateUserPoints()
+  {static} +Future<void> tryOfflinePins()
+  {static} +Future<void> setTempToSavedPin()
+}
+
+class "buff_lisa::2_ScreenMaps::imageWidget.dart::ShowImageWidget" {
+  +XFile? image
+  +int id
+  +bool newPin
+  +IO io
+  +State<ShowImageWidget> createState()
+}
+
+"buff_lisa::2_ScreenMaps::imageWidget.dart::ShowImageWidget" o-- "cross_file::src::types::interface.dart::XFile"
+"buff_lisa::2_ScreenMaps::imageWidget.dart::ShowImageWidget" o-- "buff_lisa::Files::io.dart::IO"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "buff_lisa::2_ScreenMaps::imageWidget.dart::ShowImageWidget"
+
+class "buff_lisa::2_ScreenMaps::imageWidget.dart::ShowImageWidgetState" {
+  +bool activeDelete
+  +String username
+  +void initState()
+  +Widget build()
+  -Widget _getButton()
+  {static} +Widget getImageWidget()
+  {static} +Widget getImage()
+  -Future<void> _getUsername()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "buff_lisa::2_ScreenMaps::imageWidget.dart::ShowImageWidgetState"
+
+class "buff_lisa::2_ScreenMaps::maps.dart::MapSample" {
+  +IO io
+  +State<MapSample> createState()
+}
+
+"buff_lisa::2_ScreenMaps::maps.dart::MapSample" o-- "buff_lisa::Files::io.dart::IO"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "buff_lisa::2_ScreenMaps::maps.dart::MapSample"
+
+class "buff_lisa::2_ScreenMaps::maps.dart::MapSampleState" {
+  -GoogleMapController _controller
+  -ClusterHandler _cluster
+  -double _currentZoom
+  +int filterState
+  +bool wantKeepAlive
+  +void getPins()
+  +void callback()
+  -void _setLocation()
+  +void initState()
+  +Widget build()
+  -String _buttonText()
+  -Future<void> _setFilter()
+  -void _setFilterDate()
+  -Future<void> _onMapCreated()
+  -void _onCameraMove()
+  -void _onCameraIdle()
+}
+
+"buff_lisa::2_ScreenMaps::maps.dart::MapSampleState" o-- "google_maps_flutter::google_maps_flutter.dart::GoogleMapController"
+"buff_lisa::2_ScreenMaps::maps.dart::MapSampleState" o-- "buff_lisa::Files::ClusterHandler.dart::ClusterHandler"
+"flutter::src::widgets::framework.dart::State" <|-- "buff_lisa::2_ScreenMaps::maps.dart::MapSampleState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "buff_lisa::2_ScreenMaps::maps.dart::MapSampleState"
+
+class "buff_lisa::3_ScreenAddPin::camera.dart::CameraStatefulWidget" {
+  +IO io
+  +State<CameraStatefulWidget> createState()
+}
+
+"buff_lisa::3_ScreenAddPin::camera.dart::CameraStatefulWidget" o-- "buff_lisa::Files::io.dart::IO"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "buff_lisa::3_ScreenAddPin::camera.dart::CameraStatefulWidget"
+
+class "buff_lisa::3_ScreenAddPin::camera.dart::_CameraStatefulWidgetState" {
+  +bool wantKeepAlive
+  +Widget build()
+  +Future<Widget> mainCamera()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "buff_lisa::3_ScreenAddPin::camera.dart::_CameraStatefulWidgetState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "buff_lisa::3_ScreenAddPin::camera.dart::_CameraStatefulWidgetState"
+
+class "buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreen" {
+  +CameraDescription camera
+  +IO io
+  +TakePictureScreenState createState()
+}
+
+"buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreen" o-- "camera_platform_interface::src::types::camera_description.dart::CameraDescription"
+"buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreen" o-- "buff_lisa::Files::io.dart::IO"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreen"
+
+class "buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreenState" {
+  -CameraController _controller
+  -Future<void> _initializeControllerFuture
+  +List<bool> isSelected
+  +CarouselController controller
+  +Widget? dialog
+  +List<Widget> images
+  +void initState()
+  +Widget build()
+  +Widget cameraPreview()
+  +Widget button()
+  +Widget switchType()
+  +Future<bool> buttonPressCamera()
+  +int getSelectedIndex()
+  +Future<void> preparePin()
+  +Future<void> postPin()
+}
+
+"buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreenState" o-- "camera::src::camera_controller.dart::CameraController"
+"buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreenState" o-- "carousel_slider::carousel_controller.dart::CarouselController"
+"buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreenState" o-- "flutter::src::widgets::framework.dart::Widget"
+"flutter::src::widgets::framework.dart::State" <|-- "buff_lisa::3_ScreenAddPin::camera.dart::TakePictureScreenState"
+
+class "buff_lisa::3_ScreenAddPin::checkImageWidget.dart::CheckImageWidget" {
+  +XFile? image
+  +Widget build()
+}
+
+"buff_lisa::3_ScreenAddPin::checkImageWidget.dart::CheckImageWidget" o-- "cross_file::src::types::interface.dart::XFile"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "buff_lisa::3_ScreenAddPin::checkImageWidget.dart::CheckImageWidget"
+
+class "buff_lisa::5_Ranking::ranking.dart::RankingPage" {
+  +IO io
+  +RankingPageState createState()
+}
+
+"buff_lisa::5_Ranking::ranking.dart::RankingPage" o-- "buff_lisa::Files::io.dart::IO"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "buff_lisa::5_Ranking::ranking.dart::RankingPage"
+
+class "buff_lisa::5_Ranking::ranking.dart::RankingPageState" {
+  +List<Ranking> rankings
+  +bool wantKeepAlive
+  +void initState()
+  +Widget build()
+  -Future<void> _pullRefresh()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "buff_lisa::5_Ranking::ranking.dart::RankingPageState"
+"flutter::src::widgets::automatic_keep_alive.dart::AutomaticKeepAliveClientMixin" <|-- "buff_lisa::5_Ranking::ranking.dart::RankingPageState"
+
+class "buff_lisa::6_Shop::shopPage.dart::ShopPage" {
+  +List<Image> images
+  +dynamic copyToClip()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "buff_lisa::6_Shop::shopPage.dart::ShopPage"
+
+class "buff_lisa::7_Settings::email.dart::Email" {
+  +Widget build()
+  +void changeMail()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "buff_lisa::7_Settings::email.dart::Email"
+
+class "buff_lisa::7_Settings::password.dart::Password" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "buff_lisa::7_Settings::password.dart::Password"
+
+class "buff_lisa::7_Settings::settings.dart::Settings" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "buff_lisa::7_Settings::settings.dart::Settings"
+
+class "buff_lisa::Files::ClusterHandler.dart::ClusterHandler" {
+  -int _currentZoom
+  +MarkerHandler markerHandler
+  -StreamController<List<Marker>> _markerController
+  -StreamController<double> _cameraZoomController
+  +List<String> filterUsernames
+  +DateTime? filterDateMax
+  +DateTime? filterDateMin
+  -Fluster<MapMarker> _fluster
+  -StreamSubscription<dynamic> _cameraZoomSubscription
+  +Stream<List<Marker>> markers
+  +Stream<double> cameraZoom
+  +dynamic Function(List<Marker>) addMarkers
+  +dynamic Function(double) setCameraZoom
+  +Future<void> updateValues()
+  +dynamic displayMarkers()
+  +dynamic dispose()
+  -List<MapMarker> _filterUsernames()
+  -List<MapMarker> _filterMinDate()
+  -List<MapMarker> _filterMaxDate()
+}
+
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "buff_lisa::Files::MarkerHandler.dart::MarkerHandler"
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "dart::async::StreamController<List<Marker>>"
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "dart::async::StreamController<double>"
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "fluster::src::fluster.dart::Fluster<MapMarker>"
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "dart::async::StreamSubscription<dynamic>"
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "dart::async::Stream<List<Marker>>"
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "dart::async::Stream<double>"
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "null::dynamic Function(List<Marker>)"
+"buff_lisa::Files::ClusterHandler.dart::ClusterHandler" o-- "null::dynamic Function(double)"
+
+class "buff_lisa::Files::fileHandler.dart::FileHandler" {
+  -File? _file
+  +String fileName
+  +Future<File> getFile()
+  -Future<File> _initFile()
+  +Future<void> saveList()
+  +Future<List<dynamic>> readFile()
+}
+
+"buff_lisa::Files::fileHandler.dart::FileHandler" o-- "dart::io::File"
+
+class "buff_lisa::Files::io.dart::IO" {
+  +FileHandler offlinePins
+  +ClusterHandler clusterHandler
+  +GlobalKey<State<StatefulWidget>> globalKey
+  +bool mapBooted
+  +BuildContext context
+  +Future<void> loadOfflinePins()
+  +Future<void> deleteOfflinePin()
+  +Future<void> addOfflinePin()
+}
+
+"buff_lisa::Files::io.dart::IO" o-- "buff_lisa::Files::fileHandler.dart::FileHandler"
+"buff_lisa::Files::io.dart::IO" o-- "buff_lisa::Files::ClusterHandler.dart::ClusterHandler"
+"buff_lisa::Files::io.dart::IO" o-- "flutter::src::widgets::framework.dart::GlobalKey<State<StatefulWidget>>"
+"buff_lisa::Files::io.dart::IO" o-- "flutter::src::widgets::framework.dart::BuildContext"
+
+class "buff_lisa::Files::locationClass.dart::LocationClass" {
+  {static} +Future<LocationData> getLocation()
+}
+
+class "buff_lisa::Files::mapHelper.dart::MapHelper" {
+  {static} +Future<Image> setMarkerImage()
+  {static} +Future<Fluster<MapMarker>> initClusterManager()
+  {static} +BitmapDescriptor? getClusterIcon()
+  {static} +Future<Map<int, BitmapDescriptor>> getClusterIcons()
+  {static} +List<Marker> getClusterMarkers()
+}
+
+class "buff_lisa::Files::mapMarker.dart::MapMarker" {
+  +String id
+  +LatLng position
+  +BitmapDescriptor icon
+  +void Function() onMarkerTap
+  +Marker toMarker()
+}
+
+"buff_lisa::Files::mapMarker.dart::MapMarker" o-- "google_maps_flutter_platform_interface::src::types::location.dart::LatLng"
+"buff_lisa::Files::mapMarker.dart::MapMarker" o-- "google_maps_flutter_platform_interface::src::types::bitmap.dart::BitmapDescriptor"
+"buff_lisa::Files::mapMarker.dart::MapMarker" o-- "dart::ui::void Function()"
+"fluster::src::clusterable.dart::Clusterable" <|-- "buff_lisa::Files::mapMarker.dart::MapMarker"
+
+class "buff_lisa::Files::MarkerHandler.dart::MarkerHandler" {
+  +List<Pin> allPins
+  +List<Mona> userNewCreatedPins
+  +List<MapMarker> markers
+  +Future<void> addPin()
+  +Future<void> removePin()
+  +Future<void> addUserPinsNewCreated()
+  +Future<void> removeUserPinsNewCreated()
+  +Future<void> addPinsToMarkers()
+  +void removePinFromMarkers()
+  +Future<BitmapDescriptor> getBitMapDescriptor()
+  +void addPinToMarkers()
+}
+
+class "buff_lisa::Files::pin.dart::Pin" {
+  +double latitude
+  +double longitude
+  +int id
+  +DateTime creationDate
+  +SType type
+  +String? username
+  +Future<Map<String, dynamic>> toJson()
+  {static} +String formatDateTim()
+}
+
+"buff_lisa::Files::pin.dart::Pin" o-- "buff_lisa::Files::pin.dart::SType"
+"buff_lisa::Files::pin.dart::ToJson" <|-- "buff_lisa::Files::pin.dart::Pin"
+
+class "buff_lisa::Files::pin.dart::SType" {
+  +int id
+  +String name
+  +Future<Map<String, dynamic>> toJson()
+}
+
+"buff_lisa::Files::pin.dart::ToJson" <|-- "buff_lisa::Files::pin.dart::SType"
+
+class "buff_lisa::Files::pin.dart::Mona" {
+  +XFile image
+  +Pin pin
+  +Future<Map<String, dynamic>> toJson()
+  {static} -Uint8List _getImageBinary()
+}
+
+"buff_lisa::Files::pin.dart::Mona" o-- "cross_file::src::types::interface.dart::XFile"
+"buff_lisa::Files::pin.dart::Mona" o-- "buff_lisa::Files::pin.dart::Pin"
+"buff_lisa::Files::pin.dart::ToJson" <|-- "buff_lisa::Files::pin.dart::Mona"
+
+class "buff_lisa::Files::pin.dart::Ranking" {
+  +String username
+  +int points
+}
+
+abstract class "buff_lisa::Files::pin.dart::ToJson" {
+  +Future<Map<String, dynamic>> toJson()
+}
+
+class "buff_lisa::Files::pointsNotifier.dart::PointsNotifier" {
+  -int _userPoints
+  -int _numAll
+  +int getUserPoints
+  +int getNumAll
+  +void incrementNumAll()
+  +void decrementNumAll()
+  +void setNumAll()
+  +void incrementPoints()
+  +void decrementPoints()
+}
+
+"flutter::src::foundation::change_notifier.dart::ChangeNotifier" <|-- "buff_lisa::Files::pointsNotifier.dart::PointsNotifier"
+
+class "buff_lisa::Files::restAPI.dart::RestAPI" {
+  {static} +Future<List<Pin>> fetchAllPins()
+  {static} +Future<List<int>> fetchAllPinIds()
+  {static} +Future<String?> checkUser()
+  {static} +Future<String?> checkUserToken()
+  {static} +Future<String?> auth()
+  {static} +Future<String?> postUsername()
+  {static} +Future<Mona?> fetchMonaFromPinId()
+  {static} +Future<List<Ranking>> fetchRanking()
+  {static} +Future<HttpClientResponse> postPin()
+  {static} +Future<Pin?> fetchPin()
+  {static} +Future<int?> getUserPoints()
+  {static} +Future<String?> getUsernameByPin()
+  {static} +Future<bool> changePassword()
+  {static} +Future<bool> changeEmail()
+  {static} +Future<bool> deleteMonaFromPinId()
+  {static} +Future<List<Pin>> toPinList()
+  {static} +Future<HttpClientResponse> createHttpsRequest()
+}
+
+class "buff_lisa::main.dart::MyApp" {
+  +bool isLoggedIn
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "buff_lisa::main.dart::MyApp"
+
+
+@enduml

@@ -30,12 +30,8 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String?> _recoverPassword(String name) {
-    debugPrint('Name: $name');
-    return RestAPI.checkUser(name).then((element) {
-      if (element == null || element.isEmpty) {
-        return 'username or password are wrong';
-      }
-      return 'Send personal request to Lukasr101@gmail.com';
+    return RestAPI.recover(name).then((value) {
+      return value ? null : 'User does not have an email address';
     });
   }
 

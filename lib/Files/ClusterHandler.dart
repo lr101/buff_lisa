@@ -45,7 +45,7 @@ class ClusterHandler {
   }
 
   /// markers are already loaded by now
-  Future<void> updateValues() async {
+  Future<void>  updateValues() async {
     List<MapMarker> markers = List.from(markerHandler.markers);
     markers = _filterUsernames(markers);
     markers = _filterMinDate(markers);

@@ -3,7 +3,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../Files/global.dart' as global;
 
 class ShopPage extends StatelessWidget {
@@ -16,14 +15,6 @@ class ShopPage extends StatelessWidget {
     const Image(image: AssetImage('images/tornado-shop-2.png'),),
 
   ];
-
-
-  launchURL() async{
-    final Uri url = Uri.parse(global.shopUrl);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
 
   copyToClip() {
     Clipboard.setData(ClipboardData(text: global.shopUrl));

@@ -56,6 +56,17 @@ class RestAPI {
     return null;
   }
 
+  static Future<bool> recover(String? name) async {
+    final String json = jsonEncode(<String, dynamic>{
+      "username" : name,
+    });
+    HttpClientResponse response = await createHttpsRequest("/recover/", {}, 0, json);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    }
+    return false;
+  }
+
   static Future<String?> postUsername(String username, String hash, String email) async {
     final String json = jsonEncode(<String, dynamic>{
       "username" : username,
