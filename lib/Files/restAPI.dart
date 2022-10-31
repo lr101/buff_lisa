@@ -57,10 +57,7 @@ class RestAPI {
   }
 
   static Future<bool> recover(String? name) async {
-    final String json = jsonEncode(<String, dynamic>{
-      "username" : name,
-    });
-    HttpClientResponse response = await createHttpsRequest("/recover/", {}, 0, json);
+    HttpClientResponse response = await createHttpsRequest("/recover", {"username" : name}, 0, null);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     }
@@ -77,6 +74,7 @@ class RestAPI {
     if (response.statusCode == 200 || response.statusCode == 201) {
       return await response.transform(utf8.decoder).join();
     }
+    return null;
   }
 
   static Future<Mona?> fetchMonaFromPinId(int id) async {
@@ -199,7 +197,7 @@ class RestAPI {
       default: throw Exception("HTTPS Request method does not exist");
     }
     request.headers.add("Authorization", "Bearer ${global.token}");
-    if ((requestType == 1 || requestType == 2) && encode != null) {
+    if (encode != null) {
       request.headers.contentType =  ContentType('application', 'json', charset: 'utf-8');
       request.write(encode);
     }

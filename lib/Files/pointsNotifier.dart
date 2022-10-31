@@ -33,7 +33,7 @@ class PointsNotifier extends ChangeNotifier {
   }
 
   void decrementPoints() {
-    _userPoints++;
+    _userPoints--;
     notifyListeners();
   }
 }

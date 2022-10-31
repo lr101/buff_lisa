@@ -58,6 +58,7 @@ class LoginScreen extends StatelessWidget {
         ));
       },
       onRecoverPassword: _recoverPassword,
+      messages: LoginMessages(recoverPasswordDescription: "Check your mails to reset password"),
       additionalSignupFields: const [UserFormField(keyName: "email", userType: LoginUserType.email)],
     );
   }

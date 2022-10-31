@@ -41,11 +41,16 @@ class Settings extends StatelessWidget  {
               ),),
               Card(child: TextButton(
                 onPressed: () {
+                  global.token = "";
                   Secure.removeSecure("auth");
+                  global.username = "";
                   Secure.removeSecure("username");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginScreen()
+                      ),
+                      ModalRoute.withName("/login")
                   );
                 },
                 child: const Text("Logout", style: TextStyle(color: global.cPrime)),

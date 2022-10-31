@@ -68,8 +68,8 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
               } else {
                 RestAPI.deleteMonaFromPinId(id).then((value) {
                   widget.io.clusterHandler.markerHandler.removePin(id, io);
-                  Provider.of<PointsNotifier>(context, listen: false).decrementNumAll();
-                  Provider.of<PointsNotifier>(context, listen: false).decrementPoints();
+                  Provider.of<PointsNotifier>(widget.io.context, listen: false).decrementNumAll();
+                  Provider.of<PointsNotifier>(widget.io.context, listen: false).decrementPoints();
                   Navigator.pop(context);
                 });
                 }

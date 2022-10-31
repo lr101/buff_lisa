@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/2_ScreenMaps/bootMethods.dart';
 import 'package:buff_lisa/3_ScreenAddPin/checkImageWidget.dart';
 import 'package:buff_lisa/Files/locationClass.dart';
@@ -10,13 +8,10 @@ import 'package:camera/camera.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import '../Files/io.dart';
 import '../Files/pin.dart';
-import '../main.dart';
-import '../2_ScreenMaps/imageWidget.dart';
 import '../Files/global.dart' as global;
 
 class CameraStatefulWidget extends StatefulWidget {
@@ -28,11 +23,10 @@ class CameraStatefulWidget extends StatefulWidget {
   State<CameraStatefulWidget> createState() => _CameraStatefulWidgetState();
 }
 
-class _CameraStatefulWidgetState extends State<CameraStatefulWidget> with AutomaticKeepAliveClientMixin<CameraStatefulWidget>{
+class _CameraStatefulWidgetState extends State<CameraStatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
         body: Align(
         alignment: Alignment.topRight,
@@ -73,14 +67,7 @@ class _CameraStatefulWidgetState extends State<CameraStatefulWidget> with Automa
     return TakePictureScreen(camera: firstCamera, io : widget.io);
   }
 
-  @override
-  bool get wantKeepAlive => true;
-
 }
-
-
-
-
 
 class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen({
@@ -186,6 +173,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           if (value) {
             Provider.of<PointsNotifier>(context, listen: false).incrementPoints();
             Provider.of<PointsNotifier>(context, listen: false).incrementNumAll();
+            _controller.dispose();
             final BottomNavigationBar navigationBar = widget.io.globalKey.currentWidget! as BottomNavigationBar;
             navigationBar.onTap!(0);
           }
@@ -247,7 +235,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       if (!mounted || !result) return false;
       preparePin(image);
     } catch (e) {
-      print("Method: bttonPressCamera with Error: $e");
       return false;
     }
     return true;
