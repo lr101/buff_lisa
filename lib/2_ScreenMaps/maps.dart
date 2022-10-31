@@ -1,16 +1,16 @@
-import 'package:buff_lisa/Files/ClusterHandler.dart';
 import 'package:buff_lisa/Files/locationClass.dart';
-import 'package:buff_lisa/Files/pointsNotifier.dart';
+import 'package:buff_lisa/Providers/pointsNotifier.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../2_ScreenMaps/bootMethods.dart';
-import '../Files/io.dart';
+import '../Files/providerContext.dart';
 import '../Files/global.dart' as global;
+import '../Providers/clusterNotifier.dart';
 
 class MapSample extends StatefulWidget {
-  final IO io;
+  final ProviderContext io;
   const MapSample({super.key, required this.io});
 
   @override
@@ -19,7 +19,6 @@ class MapSample extends StatefulWidget {
 
 class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin<MapSample> {
   late GoogleMapController _controller;
-  late final ClusterHandler _cluster = widget.io.clusterHandler;
   double _currentZoom = global.initialZoom.toDouble();
   int filterState = 0;
 
@@ -59,27 +58,23 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
           width: MediaQuery.of(context).size.width,
           child: Stack(
             children: [
-              StreamBuilder<List<Marker>>(
-                  stream: _cluster.markers,
-                  builder: (context, snapshot) {
-                    return GoogleMap(
-                      initialCameraPosition: global.initCamera,
-                      mapType: MapType.normal,
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: false,
-                      zoomGesturesEnabled: true,
-                      compassEnabled: true,
-                      zoomControlsEnabled: false,
-                      scrollGesturesEnabled: true,
-                      rotateGesturesEnabled: true,
-                      tiltGesturesEnabled: false,
-                      mapToolbarEnabled: false,
-                      markers: (snapshot.data != null) ? snapshot.data!.map((e) => e).toSet() : {},
-                      onMapCreated: _onMapCreated,
-                      onCameraMove: _onCameraMove,
-                      onCameraIdle: _onCameraIdle,
-                    );
-                  }),
+              GoogleMap(
+                initialCameraPosition: global.initCamera,
+                mapType: MapType.normal,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                zoomGesturesEnabled: true,
+                compassEnabled: true,
+                zoomControlsEnabled: false,
+                scrollGesturesEnabled: true,
+                rotateGesturesEnabled: true,
+                tiltGesturesEnabled: false,
+                mapToolbarEnabled: false,
+                markers:  Provider.of<ClusterNotifier>(context).getMarkers,
+                onMapCreated: _onMapCreated,
+                onCameraMove: _onCameraMove,
+                onCameraIdle: () {_onCameraIdle(context);},
+              ),
               SizedBox(
                 height: MediaQuery.of(context).viewPadding.top*2,
                 width: MediaQuery.of(context).size.width,
@@ -145,7 +140,7 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
 
 
 
-  Future<void> _setFilter() async {
+  void _setFilter()  {
     setState(() {
       filterState = (filterState+1) % 5;
     });
@@ -156,15 +151,13 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
       case 3: _setFilterDate(30);break;
       case 4: _setFilterDate(365);break;
     }
-
-    await widget.io.clusterHandler.updateValues();
   }
 
   void _setFilterDate(int? days) {
     if (days == null) {
-      widget.io.clusterHandler.filterDateMin = null;
+      Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterDate(null, null);
     } else {
-      widget.io.clusterHandler.filterDateMin = DateTime.now().subtract(Duration(days: days));
+      Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterDate(DateTime.now().subtract(Duration(days: days)), null);
     }
   }
 
@@ -179,8 +172,8 @@ class MapSampleState extends State<MapSample> with AutomaticKeepAliveClientMixin
     _currentZoom = cameraPosition.zoom;
   }
 
-  void _onCameraIdle() {
-    _cluster.setCameraZoom(_currentZoom);
+  void _onCameraIdle(BuildContext context) {
+    Provider.of<ClusterNotifier>(context, listen:false).setZoom(_currentZoom.toInt());
   }
 
   @override

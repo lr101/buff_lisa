@@ -2,13 +2,10 @@
 import 'package:buff_lisa/3_ScreenAddPin/camera.dart';
 import 'package:buff_lisa/6_Shop/shopPage.dart';
 import 'package:buff_lisa/7_Settings/settings.dart';
-import 'package:buff_lisa/Files/MarkerHandler.dart';
-import 'package:buff_lisa/Files/pointsNotifier.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../2_ScreenMaps/maps.dart';
 import '../5_Ranking/ranking.dart';
-import '../Files/io.dart';
+import '../Files/providerContext.dart';
 import '../Files/global.dart' as global;
 
 
@@ -22,7 +19,7 @@ class BottomNavigationWidget extends StatefulWidget {
 class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   int _selectedIndex = 0;
   final GlobalKey globalKey = GlobalKey(debugLabel: 'btm_app_bar');
-  late IO io = IO(globalKey, MarkerHandler(), context);
+  late ProviderContext io = ProviderContext(globalKey, context);
   late PageController _pageController;
 
   late final List<Widget> _widgetOptions = <Widget>[

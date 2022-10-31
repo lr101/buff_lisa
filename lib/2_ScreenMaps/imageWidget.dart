@@ -1,22 +1,22 @@
 import 'dart:typed_data';
-import 'package:buff_lisa/Files/pointsNotifier.dart';
+import 'package:buff_lisa/Providers/clusterNotifier.dart';
+import 'package:buff_lisa/Providers/pointsNotifier.dart';
 import 'package:camera/camera.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import '../Files/io.dart';
+import '../Files/providerContext.dart';
 import '../Files/pin.dart';
 import '../Files/restAPI.dart';
 import '../Files/global.dart' as global;
 
 class ShowImageWidget extends StatefulWidget {
-  const ShowImageWidget({Key? key, required this.image, required this.id, required this.newPin, required this.io}) : super(key: key);
+  const ShowImageWidget({Key? key, required this.image, required this.id, required this.newPin}) : super(key: key);
 
   final XFile? image;
   final int id;
   final bool newPin;
-  final IO io;
   @override
   State<ShowImageWidget> createState() => ShowImageWidgetState();
 
@@ -50,26 +50,26 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
         children: [
           getImageWidget(widget.id, widget.newPin, widget.image, context),
           Text("username: $username"),
-          _getButton(widget.id, widget.newPin, widget.io, context)
+          _getButton(widget.id, widget.newPin, context)
         ]
       )
     );
   }
 
-  Widget _getButton(int id, bool newPin, IO io, BuildContext context) {
+  Widget _getButton(int id, bool newPin, BuildContext context) {
     return Align(
         alignment: Alignment.topCenter,
         child: OutlinedButton(
           onPressed: () async {
             if (activeDelete) {
               if (newPin) {
-                widget.io.deleteOfflinePin(id);
+                await Provider.of<ClusterNotifier>(context, listen:false).deleteOfflinePin(id);
                 Navigator.pop(this.context);
               } else {
                 RestAPI.deleteMonaFromPinId(id).then((value) {
-                  widget.io.clusterHandler.markerHandler.removePin(id, io);
-                  Provider.of<PointsNotifier>(widget.io.context, listen: false).decrementNumAll();
-                  Provider.of<PointsNotifier>(widget.io.context, listen: false).decrementPoints();
+                  Provider.of<ClusterNotifier>(context, listen:false).removePin(id);
+                  Provider.of<PointsNotifier>(context, listen: false).decrementNumAll();
+                  Provider.of<PointsNotifier>(context, listen: false).decrementPoints();
                   Navigator.pop(context);
                 });
                 }

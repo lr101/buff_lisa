@@ -2,11 +2,11 @@ import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/pin.dart';
 import '../Files/global.dart' as global;
-import '../Files/io.dart';
+import '../Files/providerContext.dart';
 
 
 class RankingPage extends StatefulWidget {
-  final IO io;
+  final ProviderContext io;
   const RankingPage({super.key, required this.io});
 
   @override

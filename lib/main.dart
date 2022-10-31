@@ -1,6 +1,7 @@
 import 'package:buff_lisa/0_ScreenSignIn/login.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/bottomNavigationBar.dart';
+import 'package:buff_lisa/Providers/clusterNotifier.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 
-import 'Files/pointsNotifier.dart';
+import 'Providers/pointsNotifier.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -44,7 +45,11 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider.value(
             value: PointsNotifier(),
-    )],
+          ),
+          ChangeNotifierProvider.value(
+            value: ClusterNotifier(),
+          )
+        ],
     builder: (context, child){
       return MaterialApp (
         title: 'Flutter Google Maps Demo',

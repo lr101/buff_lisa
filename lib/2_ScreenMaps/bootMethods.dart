@@ -1,35 +1,32 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:provider/provider.dart';
-
 import '../Files/global.dart' as global;
-import 'package:camera/camera.dart';
-import '../0_ScreenSignIn/secure.dart';
-import '../Files/io.dart';
+import '../Files/providerContext.dart';
 import '../Files/pin.dart';
-import '../Files/pointsNotifier.dart';
+import '../Providers/clusterNotifier.dart';
+import '../Providers/pointsNotifier.dart';
 import '../Files/restAPI.dart';
 
 class BootMethods {
 
-  static Future<void> getPins(IO io, callback) async {
+  static Future<void> getPins(ProviderContext io, callback) async {
     if (io.mapBooted) return;
     io.mapBooted = true;
-    await io.loadOfflinePins();
+    await Provider.of<ClusterNotifier>(io.context, listen:false).loadOfflinePins();
     await tryOfflinePins(io);
     RestAPI.fetchAllPins().then((pins) async {
-      await io.clusterHandler.markerHandler.addPinsToMarkers(pins, io);
-      await io.clusterHandler.updateValues();
+      await Provider.of<ClusterNotifier>(io.context, listen:false).addPins(pins);
       updateUserPoints(io);
-      callback();
     });
 
 
   }
 
-  static void updateUserPoints(IO io) {
-    Provider.of<PointsNotifier>(io.context, listen: false).setNumAll(io.clusterHandler.markerHandler.allPins.length + io.clusterHandler.markerHandler.userNewCreatedPins.length);
-    for (Pin pin in io.clusterHandler.markerHandler.allPins) {
+  static void updateUserPoints(ProviderContext io) {
+    List<Pin> pins = List.from(Provider.of<ClusterNotifier>(io.context, listen:false).getAllPins());
+    List<Mona> monas = List.from(Provider.of<ClusterNotifier>(io.context, listen:false).getOfflinePins());
+    Provider.of<PointsNotifier>(io.context, listen: false).setNumAll(pins.length + monas.length);
+    for (Pin pin in pins) {
       if (pin.username == global.username) {
         Provider.of<PointsNotifier>(io.context, listen: false).incrementPoints();
       }
@@ -37,20 +34,21 @@ class BootMethods {
   }
 
 
-  static Future<void> tryOfflinePins(IO io) async {
-    List<Mona> monas = List.from(io.clusterHandler.markerHandler.userNewCreatedPins);
+  static Future<void> tryOfflinePins(ProviderContext io) async {
+    List<Mona> monas = List.from(Provider.of<ClusterNotifier>(io.context, listen:false).getOfflinePins());
     for (Mona mona in monas) {
       final response = await RestAPI.postPin(mona);
       if (response.statusCode == 201 || response.statusCode == 200) {
-        await setTempToSavedPin(mona, response, io);
+        Map<String, dynamic> json = jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>;
+        Pin pin = Pin.fromJson(json);
+        _add(pin, mona, io);
       }
     }
   }
 
-  static Future<void> setTempToSavedPin(Mona mona, HttpClientResponse response, IO io) async {
-    Map<String, dynamic> json = jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>;
-    Pin pin = Pin.fromJson(json);
-    await io.deleteOfflinePin(mona.pin.id);
-    await io.clusterHandler.markerHandler.addPin(pin, io);
+  static void _add(Pin pin, Mona mona, ProviderContext io) {
+    Provider.of<ClusterNotifier>(io.context, listen:false).deleteOfflinePin(mona.pin.id);
+    Provider.of<ClusterNotifier>(io.context, listen:false).addPin(pin);
   }
+
 }

@@ -1,21 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
-import 'package:buff_lisa/2_ScreenMaps/bootMethods.dart';
 import 'package:buff_lisa/3_ScreenAddPin/checkImageWidget.dart';
 import 'package:buff_lisa/Files/locationClass.dart';
-import 'package:buff_lisa/Files/pointsNotifier.dart';
+import 'package:buff_lisa/Providers/pointsNotifier.dart';
 import 'package:camera/camera.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
-import '../Files/io.dart';
+import '../Files/providerContext.dart';
 import '../Files/pin.dart';
 import '../Files/global.dart' as global;
+import '../Providers/clusterNotifier.dart';
 
 class CameraStatefulWidget extends StatefulWidget {
-  final IO io;
+  final ProviderContext io;
 
   const CameraStatefulWidget({super.key, required this.io});
 
@@ -77,7 +78,7 @@ class TakePictureScreen extends StatefulWidget {
   });
 
   final CameraDescription camera;
-  final IO io;
+  final ProviderContext io;
 
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
@@ -107,10 +108,12 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size.width;
+    var size = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -168,13 +171,15 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   Widget button() {
     return FloatingActionButton(
       heroTag: "cameraBtn",
-      onPressed: (){
+      onPressed: () {
         buttonPressCamera().then((value) {
           if (value) {
-            Provider.of<PointsNotifier>(context, listen: false).incrementPoints();
-            Provider.of<PointsNotifier>(context, listen: false).incrementNumAll();
-            _controller.dispose();
-            final BottomNavigationBar navigationBar = widget.io.globalKey.currentWidget! as BottomNavigationBar;
+            Provider.of<PointsNotifier>(context, listen: false)
+                .incrementPoints();
+            Provider.of<PointsNotifier>(context, listen: false)
+                .incrementNumAll();
+            final BottomNavigationBar navigationBar = widget.io.globalKey
+                .currentWidget! as BottomNavigationBar;
             navigationBar.onTap!(0);
           }
         });
@@ -185,12 +190,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 
 
-
-  Widget switchType()  {
+  Widget switchType() {
     return ToggleButtons(
       fillColor: global.cSecond,
       borderColor: global.cPrime,
-      selectedBorderColor:global.cPrime ,
+      selectedBorderColor: global.cPrime,
       splashColor: global.cPrime,
       borderWidth: 0.8,
       onPressed: (int index) {
@@ -223,6 +227,13 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     );
   }
 
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   Future<bool> buttonPressCamera() async {
     try {
       if (getSelectedIndex() == -1) return false;
@@ -230,7 +241,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       await _initializeControllerFuture;
       final image = await _controller.takePicture();
       final result = await navigator.push(
-        MaterialPageRoute(builder: (context) => CheckImageWidget(image: image,)),
+        MaterialPageRoute(
+            builder: (context) => CheckImageWidget(image: image,)),
       );
       if (!mounted || !result) return false;
       preparePin(image);
@@ -252,21 +264,38 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   Future<void> preparePin(image) async {
     //location
     LocationData locationData = await LocationClass.getLocation();
+    int length = Provider
+        .of<ClusterNotifier>(widget.io.context, listen: false)
+        .getOfflinePins()
+        .length;
 
-    Pin pin = Pin(latitude: locationData.latitude!, longitude: locationData.longitude!, id: widget.io.clusterHandler.markerHandler.userNewCreatedPins.length, username: global.username, type: global.stickerTypes[getSelectedIndex()], creationDate: DateTime.now());
+    Pin pin = Pin(
+        latitude: locationData.latitude!,
+        longitude: locationData.longitude!,
+        id: length,
+        username: global.username,
+        type: global.stickerTypes[getSelectedIndex()],
+        creationDate: DateTime.now()
+    );
 
     Mona mona = Mona(image: image, pin: pin);
-    await widget.io.addOfflinePin(mona);
+
+    Provider.of<ClusterNotifier>(widget.io.context, listen: false)
+        .addOfflinePin(mona);
     postPin(mona); //new thread
   }
 
   Future<void> postPin(Mona mona) async {
     HttpClientResponse response = await RestAPI.postPin(mona);
     if (response.statusCode == 201 || response.statusCode == 200) {
-      await BootMethods.setTempToSavedPin(mona, response, widget.io);
+      response.transform(utf8.decoder).join().then((value) {
+        Map<String, dynamic> json = jsonDecode(value) as Map<String, dynamic>;
+        Pin pin = Pin.fromJson(json);
+        Provider.of<ClusterNotifier>(widget.io.context, listen: false)
+            .deleteOfflinePin(mona.pin.id);
+        Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(
+            pin);
+      });
     }
   }
-
-
-
 }
