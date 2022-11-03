@@ -9,18 +9,23 @@ import '../Files/restAPI.dart';
 
 class Secure {
 
+  /// save a given value via a given key with the secure flutter storage package
   static void saveSecure(String value, String key) {
     const FlutterSecureStorage().write(key: key, value: value);
   }
 
+  /// read a value via a given key from secure storage
   static Future<String?> readSecure(String key) async {
     return await const FlutterSecureStorage().read(key: key);
   }
 
+  /// remove a value via a given key from secure storage
   static void removeSecure(String key) {
     const FlutterSecureStorage().delete(key: key);
   }
 
+  /// loading username and token to check if user is already logged in on this device
+  /// -> if logged in then the username and token are saved in global file and true is returned
   static Future<bool> tryLocalLogin() async {
     const storage = FlutterSecureStorage();
     String? storedUsername = await storage.read(key: "username");
@@ -33,10 +38,13 @@ class Secure {
     return false;
   }
 
+  /// encrypt a given string with the sh256 encryption package
   static String encryptPassword(String password) {
     return sha256.convert(utf8.encode(password)).toString();
   }
 
+  /// signup with a given username, password and email
+  /// saves on successful account creation the username and token in secure storage and returns true
   static Future<bool> signupAuthentication(String username, String password, String email) async {
     String psw = Secure.encryptPassword(password);
     String? response = await RestAPI.postUsername(username, psw, email);
@@ -51,6 +59,8 @@ class Secure {
     }
   }
 
+  /// signin process sends encoded password to server and obtains a JWT token on success
+  /// saves after successful login username and token in secure storage and returns true
   static Future<bool> loginAuthentication(String username, String password,) async {
     String? element = await RestAPI.checkUser(username);
     String? token;
