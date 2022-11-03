@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
-import 'package:buff_lisa/Files/pin.dart';
 import 'package:image/image.dart' as images;
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/services.dart' show ByteData, rootBundle;
-import 'mapMarker.dart';
+import 'map_marker.dart';
 
 /// In here we are encapsulating all the logic required to get marker icons from url images
 /// and to show clusters using the [Fluster] package.

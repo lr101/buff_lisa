@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:buff_lisa/Files/pin.dart';
 import 'package:path_provider/path_provider.dart';
-import '../Files/global.dart' as global;
 
 class FileHandler {
 

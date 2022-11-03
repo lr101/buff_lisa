@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:ui';
-import 'package:camera/camera.dart';
+import 'package:camera_camera/camera_camera.dart';
 
 class Pin implements ToJson {
   final double latitude;

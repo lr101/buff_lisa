@@ -1,12 +1,13 @@
-import 'package:camera/camera.dart';
+import 'dart:io';
+import 'package:camera_camera/camera_camera.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../Files/global.dart' as global;
-import '../2_ScreenMaps/imageWidget.dart';
-import '../Files/fileHandler.dart';
-import '../Files/mapHelper.dart';
-import '../Files/mapMarker.dart';
+import '../2_ScreenMaps/image_widget_logic.dart';
+import '../Files/file_handler.dart';
+import '../Files/map_helper.dart';
+import '../Files/map_marker.dart';
 import '../Files/pin.dart';
 import '../main.dart';
 
@@ -134,7 +135,7 @@ class ClusterNotifier extends ChangeNotifier {
         onMarkerTap: () {
           Navigator.push(
             navigatorKey.currentContext!,
-            MaterialPageRoute(builder: (context) => ShowImageWidget(image: image, id: pin.id, newPin: newPin)),
+            MaterialPageRoute(builder: (context) => ShowImageWidget(image: image != null ? File(image.path) : null, id: pin.id, newPin: newPin)),
           );
         }
     );

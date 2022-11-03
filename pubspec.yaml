@@ -42,7 +42,7 @@ dependencies:
 
   flutter_secure_storage:
 
-  camera:
+  camera_camera:
 
   path_provider:
 

@@ -188,7 +188,7 @@ class RestAPI {
     HttpClient client = HttpClient(context: context) ..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
     Uri url = Uri(scheme: "https", host: global.host, port: global.port, path: path, queryParameters: queryParameters);
     HttpClientRequest request;
-    print(url);
+    stderr.writeln(url);
     switch (requestType) {
       case 0: request = await client.getUrl(url);break;
       case 1: request = await client.postUrl(url);break;

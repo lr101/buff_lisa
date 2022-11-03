@@ -1,10 +1,12 @@
+import 'package:buff_lisa/7_Settings/password_logic.dart';
+import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import '../Files/global.dart' as global;
-import '../0_ScreenSignIn/login.dart';
-import '../Files/restAPI.dart';
+import '../0_ScreenSignIn/login_logic.dart';
 
-class Email extends StatelessWidget {
-  const Email({Key? key}) : super(key: key);
+class PasswordUI extends StatelessUI<Password> {
+
+  const PasswordUI({super.key, required widget}) : super(widget: widget);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class Email extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Change Email'),
+        title: const Text('Change Password'),
         backgroundColor: global.cThird,
       ),
       body: SizedBox(
@@ -24,30 +26,31 @@ class Email extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Type Email:", style: TextStyle(color: global.cPrime)),
+                const Text("Type Password:", style: TextStyle(color: global.cPrime)),
                 SizedBox (
                   height: 50,
                   width: 200,
-                  child: TextFormField(controller: controller1, style: const TextStyle(color: global.cPrime,))
+                  child: TextFormField(obscureText: true, enableSuggestions: false, autocorrect: false, validator: LoginScreen.validator, controller: controller1,),
                 ),
-                const Text("Repeat Email:", style: TextStyle(color: global.cPrime)),
+                const Text("Repeat Password:", style: TextStyle(color: global.cPrime)),
                 SizedBox (
                   height: 50,
                   width: 200,
-                  child: TextFormField(controller: controller2,),
+                  child: TextFormField(obscureText: true, enableSuggestions: false, autocorrect: false, validator: LoginScreen.validator, controller: controller2,),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TextButton(
-                        onPressed: () => changeMail(controller1,controller2,context),
+                        onPressed: () => widget.handleSubmitPress(controller1, controller2, context),
                         style: TextButton.styleFrom(backgroundColor: global.cThird),
-                        child: const Text("Submit", style: TextStyle(color: Colors.white))
+                        child: const Text("Submit", style: TextStyle(color: Colors.white))),
+                    const SizedBox(
+                      width: 10,
                     ),
-                    const SizedBox(width: 10,),
                     TextButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => widget.handleCancelPress(context),
                         style: TextButton.styleFrom(backgroundColor: global.cFourth),
                         child: const Text("Cancel", style: TextStyle(color: Colors.white))
                     )
@@ -57,11 +60,5 @@ class Email extends StatelessWidget {
           )
       ),
     );
-  }
-
-  void changeMail(TextEditingController controller1, TextEditingController controller2, BuildContext context) {
-    if (controller1.text == controller2.text &&  LoginScreen.emailValidator(controller1.text)) {
-      RestAPI.changeEmail(global.username, controller1.text).then((value) => (value ? Navigator.pop(context) : null));
-    }
   }
 }

@@ -1,22 +1,21 @@
-import 'package:buff_lisa/0_ScreenSignIn/login.dart';
+import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
-import 'package:buff_lisa/1_BottomNavigationBar/bottomNavigationBar.dart';
-import 'package:buff_lisa/Providers/clusterNotifier.dart';
+import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/toggle_notifier.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_config/flutter_config.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
-
-import 'Providers/pointsNotifier.dart';
+import '../Files/global.dart' as global;
+import 'Providers/points_notifier.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterConfig.loadEnvVariables();
   if (defaultTargetPlatform == TargetPlatform.android) {
@@ -48,6 +47,9 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider.value(
             value: ClusterNotifier(),
+          ),
+          ChangeNotifierProvider.value(
+            value: ToggleNotifier(global.stickerTypes.length),
           )
         ],
     builder: (context, child){

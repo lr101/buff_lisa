@@ -1,30 +1,13 @@
 
+import 'package:buff_lisa/6_Shop/shop_logic.dart';
+import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../Files/global.dart' as global;
 
-class ShopPage extends StatelessWidget {
-  ShopPage({Key? key}) : super(key: key);
+class ShopUI extends StatelessUI<ShopPage> {
 
-  final List<Image> images = [
-    const Image(image: AssetImage('images/mona-shop-1.png'),),
-    const Image(image: AssetImage('images/mona-shop-2.jpg'),),
-    const Image(image: AssetImage('images/tornado-shop-1.jpg'),),
-    const Image(image: AssetImage('images/tornado-shop-2.png'),),
-
-  ];
-
-  copyToClip() {
-    Clipboard.setData(ClipboardData(text: global.shopUrl));
-    Fluttertoast.showToast(
-        msg: "Shop URL copied to clipboard",  // message
-        toastLength: Toast.LENGTH_SHORT, // length
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-    );
-  }
+  const ShopUI({super.key, required widget}) : super(widget: widget);
 
   @override
   Widget build(BuildContext context) {
@@ -45,20 +28,18 @@ class ShopPage extends StatelessWidget {
                     enableInfiniteScroll: true,
                     reverse: false,
                     autoPlay: true,
-                    autoPlayInterval: Duration(seconds: 3),
-                    autoPlayAnimationDuration: Duration(milliseconds: 800),
+                    autoPlayInterval: const Duration(seconds: 3),
+                    autoPlayAnimationDuration: const Duration(milliseconds: 800),
                     autoPlayCurve: Curves.fastOutSlowIn,
                     enlargeCenterPage: true,
                     scrollDirection: Axis.horizontal,
                   ),
-                items: images
+                items: widget.images
               )
             )),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(primary: global.cThird),
-                onPressed: () {
-                  copyToClip();
-                },
+                onPressed: widget.copyToClip,
                 child: SizedBox (
                     height: MediaQuery.of(context).size.height / 4,
                     width: MediaQuery.of(context).size.width,
@@ -70,7 +51,6 @@ class ShopPage extends StatelessWidget {
                     ),
                 )
             ),
-
           ],
         ),
       );

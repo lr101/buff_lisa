@@ -28,8 +28,6 @@ class Secure {
     if (storedUsername != null && storedToken != null) {
       global.username = storedUsername;
       global.token = storedToken;
-      print(global.username);
-      print(global.token);
       return true;
     }
     return false;

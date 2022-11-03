@@ -13,7 +13,7 @@ int initialZoom = 17;
 
 String username =  "";
 String token = "";
-
+bool pinsLoaded = false;
 
 String host1 = "54.234.245.153";
 int port = 8081;
