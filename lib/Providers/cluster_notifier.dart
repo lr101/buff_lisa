@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:camera_camera/camera_camera.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -126,7 +125,7 @@ class ClusterNotifier extends ChangeNotifier {
     return bitmapDescriptor;
   }
 
-  Future<void> _addPinToMarkers(Pin pin, bool newPin, XFile? image) async {
+  Future<void> _addPinToMarkers(Pin pin, bool newPin, File? image) async {
     BitmapDescriptor icon = await _getBitMapDescriptor(pin.type.id);
     MapMarker marker = MapMarker(
         id: (newPin ? "new${pin.id.toString()}" : pin.id.toString()),
@@ -135,7 +134,7 @@ class ClusterNotifier extends ChangeNotifier {
         onMarkerTap: () {
           Navigator.push(
             navigatorKey.currentContext!,
-            MaterialPageRoute(builder: (context) => ShowImageWidget(image: image != null ? File(image.path) : null, id: pin.id, newPin: newPin)),
+            MaterialPageRoute(builder: (context) => ShowImageWidget(image: image, id: pin.id, newPin: newPin)),
           );
         }
     );

@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
-import 'package:camera_camera/camera_camera.dart';
 
 class Pin implements ToJson {
   final double latitude;
@@ -70,7 +70,7 @@ class SType implements ToJson{
 
 }
 class Mona implements ToJson {
-  final XFile image;
+  final File image;
   final Pin pin;
 
   Mona({
@@ -92,12 +92,12 @@ class Mona implements ToJson {
   }
 
   Mona.fromJson2(Map<String, dynamic> map) :
-        image = XFile.fromData(Uint8List.fromList(map['image'].cast<int>().toList())),
+        image = File.fromRawPath(Uint8List.fromList(map['image'].cast<int>().toList())),
         pin = Pin.fromJson(map['pin']);
 
   @override
   Mona.fromJson(Map<String, dynamic> map) :
-        image = XFile.fromData(_getImageBinary(map['image'])),
+        image = File.fromRawPath(_getImageBinary(map['image'])),
         pin = Pin.fromJson(map['pin']);
 
 }

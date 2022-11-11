@@ -47,6 +47,8 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     super.initState();
     if (!global.pinsLoaded) {
       _getPins();
+    } else {
+      _updateUserPoints();
     }
     pageController = PageController(initialPage: selectedIndex);
   }

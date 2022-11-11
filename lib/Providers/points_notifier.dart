@@ -36,4 +36,9 @@ class PointsNotifier extends ChangeNotifier {
     _userPoints--;
     notifyListeners();
   }
+
+  void setUserPoints(int num) {
+    _userPoints = num;
+    notifyListeners();
+  }
 }

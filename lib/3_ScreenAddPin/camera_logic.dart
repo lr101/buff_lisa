@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
 import '../Files/global.dart' as global;
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
-import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ import '../Files/restAPI.dart';
 import '../Providers/cluster_notifier.dart';
 import '../Providers/points_notifier.dart';
 import 'check_image_logic.dart';
-
+import 'package:image/image.dart' as imgUtils;
 
 class CameraWidget extends StatefulWidget {
   final ProviderContext io;
@@ -64,7 +65,7 @@ class CameraControllerWidget extends State<CameraWidget> {
         creationDate: DateTime.now()
     );
     //create Mona
-    return Mona(image: XFile.fromData(await image.readAsBytes()), pin: pin);
+    return Mona(image: image, pin: pin);
   }
 
   /// pin in send to the server
@@ -79,6 +80,24 @@ class CameraControllerWidget extends State<CameraWidget> {
         Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
       });
     }
+  }
+
+  double getWidth() {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    if (width * 16.0/9.0 > height) {
+      width = height * 9.0/16.0;
+    }
+    return width;
+  }
+
+  double getHeight() {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    if (width * 16.0/9.0 <= height) {
+      height = width * 16.0/9.0;
+    }
+    return height;
   }
 
 }
