@@ -44,6 +44,8 @@ dependencies:
 
   camera_camera:
 
+  images_picker:
+
   path_provider:
 
   path:

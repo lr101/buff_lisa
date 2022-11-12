@@ -48,6 +48,7 @@ class MapHelper {
             childMarkerId: cluster.childMarkerId,
             icon: getClusterIcon(cluster.pointsSize!, icons)!,
             onMarkerTap: () {  },
+            pin: null,
           ),
     );
   }

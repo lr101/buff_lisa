@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:buff_lisa/Files/pin.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:path_provider/path_provider.dart';
+
+import 'AbstractClasses/to_json.dart';
+import 'DTOClasses/mona.dart';
 
 class FileHandler {
 

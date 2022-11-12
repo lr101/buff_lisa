@@ -1,7 +1,9 @@
 import 'package:buff_lisa/5_Ranking/ranking_ui.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
-import 'package:buff_lisa/Files/pin.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+
+import '../Files/DTOClasses/ranking.dart';
 
 
 class RankingPage extends StatefulWidget {

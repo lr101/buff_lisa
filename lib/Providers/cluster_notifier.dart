@@ -1,20 +1,22 @@
 import 'dart:io';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../Files/DTOClasses/mona.dart';
 import '../Files/global.dart' as global;
 import '../2_ScreenMaps/image_widget_logic.dart';
 import '../Files/file_handler.dart';
 import '../Files/map_helper.dart';
 import '../Files/map_marker.dart';
-import '../Files/pin.dart';
+import '../Files/DTOClasses/pin.dart';
 import '../main.dart';
 
 class ClusterNotifier extends ChangeNotifier {
   final FileHandler _offlineFileHandler = FileHandler(fileName: global.fileName);
-  final List<Pin> _allPins = [];
-  final List<Mona> _offlinePins = [];
-  final List<MapMarker> _markers = [];
+  late  List<Group> _userGroups = [];
+  late List<Mona> _offlinePins = [];
+  late List<MapMarker> _markers = [];
   
   ///cluster
   List<Marker> _googleMapsMarkers = [];
@@ -30,24 +32,60 @@ class ClusterNotifier extends ChangeNotifier {
 
   ///public Methods
 
-  Future<void> addPin(Pin pin) async {
-    _allPins.add(pin);
-    await _addPinToMarkers(pin, false, null);
+  void addGroups(List<Group> groups) {
+    for (Group group in groups) {
+      if(!_userGroups.any((element) => element.groupId == group.groupId)) {
+        _userGroups.add(group);
+      }
+    }
+    notifyListeners();
+  }
+
+  void addGroup(Group group) {
+    if(!_userGroups.any((element) => element.groupId == group.groupId)) {
+      _userGroups.add(group);
+    }
+    notifyListeners();
+  }
+
+  void clearAll() {
+    //TODO remove all offline pins too?
+    _userGroups = [];
+    _offlinePins = [];
+    _markers =  [];
+    _googleMapsMarkers = [];
+    __filterUsernames = [];
+    __filterDateMax = null;
+    __filterDateMin = null;
     _updateValues();
   }
 
-  List<Pin> getAllPins() {return _allPins;}
+  Future<void> addPin(Pin pin, int groupId) async {
+    _userGroups.firstWhere((element) => element.groupId == groupId).pins.add(pin);
+    await _addPinToMarkers(pin, false, null, groupId);
+    _updateValues();
+  }
 
-  Future<void> addPins(List<Pin> pins) async{
+  int getAllPoints() {
+    int points = 0;
+    for (Group group in _userGroups) {
+      points += group.pins.length;
+    }
+    return points;
+  }
+
+  Future<void> addPins(List<Pin> pins, int groupId) async{
+    Group group = _userGroups.firstWhere((element) => element.groupId == groupId);
     for (Pin pin in pins) {
-      await _addPinToMarkers(pin, false, null);
-      _allPins.add(pin);
+      await _addPinToMarkers(pin, false, null, groupId);
+      group.pins.add(pin);
     }
     _updateValues();
   }
 
-  void removePin(int id) {
-    _allPins.removeWhere((e) => e.id == id);
+  void removePin(int id, int groupId) {
+    Group group = _userGroups.firstWhere((element) => element.groupId == groupId);
+    group.pins.removeWhere((e) => e.id == id);
     _removePinFromMarkers(id, false);
     _updateValues();
     //await io.clusterHandler.updateValues();
@@ -58,7 +96,7 @@ class ClusterNotifier extends ChangeNotifier {
   Future<void> loadOfflinePins() async{
     List<Mona> monas = (await _offlineFileHandler.readFile(0)).map((e) => e as Mona).toList();
     for (Mona mona  in monas) {
-      await _addOfflinePinToMarkers(mona);
+      await _addOfflinePinToMarkers(mona, mona.groupId!);
     }
     _updateValues();
   }
@@ -70,7 +108,7 @@ class ClusterNotifier extends ChangeNotifier {
   }
 
   Future<void> addOfflinePin(Mona mona) async{
-    await _addOfflinePinToMarkers(mona);
+    await _addOfflinePinToMarkers(mona, mona.groupId!);
     await _offlineFileHandler.saveList(_offlinePins);
     _updateValues();
   }
@@ -78,6 +116,10 @@ class ClusterNotifier extends ChangeNotifier {
 
   Set<Marker> get getMarkers {
     return _googleMapsMarkers.toSet();
+  }
+
+  List<Group> get getGroups {
+    return _userGroups;
   }
 
   void setZoom(int zoom) {
@@ -100,8 +142,9 @@ class ClusterNotifier extends ChangeNotifier {
 
   ///private Methods
 
-  Future<void> _addOfflinePinToMarkers(Mona mona) async{
-    await _addPinToMarkers(mona.pin, true, mona.image);
+  Future<void> _addOfflinePinToMarkers(Mona mona, int groupId) async{
+    mona.groupId = groupId;
+    await _addPinToMarkers(mona.pin, true, mona.image, groupId);
     _offlinePins.add(mona);
     _updateValues();
   }
@@ -116,25 +159,25 @@ class ClusterNotifier extends ChangeNotifier {
     _markers.removeWhere((e) => e.id == (newPin ? "new${pinId.toString()}" : pinId.toString()));
   }
 
-  Future<BitmapDescriptor> _getBitMapDescriptor (int type) async {
+  Future<BitmapDescriptor> _getBitMapDescriptor (int groupId) async {
+
     BitmapDescriptor bitmapDescriptor = BitmapDescriptor.defaultMarker;
-    switch (type) {
-      case 0 : bitmapDescriptor = await  BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), 'images/c_marker_lisa_100px.png'); break;
-      case 1 : bitmapDescriptor = await  BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(5, 5)), 'images/c_marker_tornado_100px.png'); break;
-    }
+    bitmapDescriptor = BitmapDescriptor.fromBytes(_userGroups.firstWhere((element) => element.groupId == groupId).profileImage.readAsBytesSync());
     return bitmapDescriptor;
+    //TODO return pin image corresponding to groupId
   }
 
-  Future<void> _addPinToMarkers(Pin pin, bool newPin, File? image) async {
-    BitmapDescriptor icon = await _getBitMapDescriptor(pin.type.id);
+  Future<void> _addPinToMarkers(Pin pin, bool newPin, File? image, groupId) async {
+    BitmapDescriptor icon = await _getBitMapDescriptor(groupId);
     MapMarker marker = MapMarker(
         id: (newPin ? "new${pin.id.toString()}" : pin.id.toString()),
+        pin: pin,
         position: LatLng(pin.latitude, pin.longitude),
         icon: icon ,
         onMarkerTap: () {
           Navigator.push(
             navigatorKey.currentContext!,
-            MaterialPageRoute(builder: (context) => ShowImageWidget(image: image, id: pin.id, newPin: newPin)),
+            MaterialPageRoute(builder: (context) => ShowImageWidget(image: image, id: pin.id, newPin: newPin, groupId: groupId)),
           );
         }
     );
@@ -158,21 +201,21 @@ class ClusterNotifier extends ChangeNotifier {
 
   List<MapMarker> _filterUsernames(List<MapMarker> markers) {
     if (__filterUsernames.isEmpty) return markers;
-    List<String> ids = _allPins.where((element) => __filterUsernames.contains(element.username)).toList().map((e) => e.id.toString()).toList();
+    List<String> ids = _markers.where((element) => __filterUsernames.contains(element.pin!.username)).toList().map((e) => e.id.toString()).toList();
     if (__filterUsernames.contains(global.username)) ids.addAll(_offlinePins.map((e) => e.pin.id.toString()));
     return markers.where((element) => ids.contains(element.id)).toList();
   }
 
   List<MapMarker> _filterMinDate(List<MapMarker> markers) {
     if (__filterDateMin == null) return markers;
-    List<String> ids = _allPins.where((element) => element.creationDate.isAfter(__filterDateMin!)).toList().map((e) => e.id.toString()).toList();
+    List<String> ids = _markers.where((element) => element.pin!.creationDate.isAfter(__filterDateMin!)).toList().map((e) => e.id.toString()).toList();
     ids.addAll(_offlinePins.where((element) => element.pin.creationDate.isAfter(__filterDateMin!)).toList().map((e) => e.pin.id.toString()).toList());
     return markers.where((element) => ids.contains(element.id)).toList();
   }
 
   List<MapMarker> _filterMaxDate(List<MapMarker> markers) {
     if (__filterDateMax == null) return markers;
-    List<String> ids = _allPins.where((element) => element.creationDate.isBefore(__filterDateMax!)).toList().map((e) => e.id.toString()).toList();
+    List<String> ids = _markers.where((element) => element.pin!.creationDate.isBefore(__filterDateMax!)).toList().map((e) => e.id.toString()).toList();
     ids.addAll(_offlinePins.where((element) => element.pin.creationDate.isBefore(__filterDateMax!)).toList().map((e) => e.pin.id.toString()).toList());
     return markers.where((element) => ids.contains(element.id)).toList();
   }

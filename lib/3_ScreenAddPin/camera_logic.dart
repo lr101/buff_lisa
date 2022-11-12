@@ -2,17 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
+import '../Files/DTOClasses/mona.dart';
 import '../Files/global.dart' as global;
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import '../Files/location_class.dart';
-import '../Files/pin.dart';
+import '../Files/DTOClasses/pin.dart';
 import '../Files/provider_context.dart';
 import '../Files/restAPI.dart';
 import '../Providers/cluster_notifier.dart';
-import '../Providers/points_notifier.dart';
 import 'check_image_logic.dart';
 import 'package:image/image.dart' as imgUtils;
 
@@ -40,11 +40,9 @@ class CameraControllerWidget extends State<CameraWidget> {
           builder: (context) => CheckImageWidget(image: image,)),
     );
     if (result["approve"] as bool) {
-      SType type = result["type"] as SType;
-      Mona mona = await _createMona(image, type);
+      int groupId = result["type"] as int;
+      Mona mona = await _createMona(image, groupId);
       await Provider.of<ClusterNotifier>(widget.io.context, listen: false).addOfflinePin(mona);
-      Provider.of<PointsNotifier>(widget.io.context, listen: false).incrementPoints();
-      Provider.of<PointsNotifier>(widget.io.context, listen: false).incrementNumAll();
       _postPin(mona);
       final BottomNavigationBar navigationBar = io.globalKey.currentWidget! as BottomNavigationBar;
       navigationBar.onTap!(0);
@@ -52,7 +50,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   }
 
   /// creates a Mona by accessing the location of the user
-  Future<Mona> _createMona(File image, SType type) async {
+  Future<Mona> _createMona(File image, groupId) async {
     int length = Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().length;
     LocationData locationData = await LocationClass.getLocation();
     //create Pin
@@ -61,11 +59,12 @@ class CameraControllerWidget extends State<CameraWidget> {
         longitude: locationData.longitude!,
         id: length,
         username: global.username,
-        type: type,
         creationDate: DateTime.now()
     );
     //create Mona
-    return Mona(image: image, pin: pin);
+    Mona mona =  Mona(image: image, pin: pin);
+    mona.groupId = groupId;
+    return mona;
   }
 
   /// pin in send to the server
@@ -77,7 +76,7 @@ class CameraControllerWidget extends State<CameraWidget> {
         Map<String, dynamic> json = jsonDecode(value) as Map<String, dynamic>;
         Pin pin = Pin.fromJson(json);
         Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona.pin.id);
-        Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
+        Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin, mona.groupId!);
       });
     }
   }

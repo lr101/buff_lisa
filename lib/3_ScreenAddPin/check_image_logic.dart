@@ -1,7 +1,6 @@
 
 import 'dart:io';
 
-import 'package:buff_lisa/Providers/toggle_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Files/global.dart' as global;
@@ -21,17 +20,12 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   @override
   Widget build(BuildContext context)  => CheckImageIU(state: this);
 
-  /// updates selected type by using the provider
-  void handleToggle (int index) {
-    Provider.of<ToggleNotifier>(context, listen: false).setSelected(index);
-  }
-
   /// on button press of approve button
   /// returns back to the camera page with the type information selected by the user
   void handleApprove() {
-    int? index = Provider.of<ToggleNotifier>(context, listen: false).getSelected;
-    if (index != null) {
-      Navigator.pop(context, {"approve" : true, "type": global.stickerTypes[index]});
+    int? groupId; //TODO get groupId
+    if (groupId != null) {
+      Navigator.pop(context, {"approve" : true, "type":groupId});
     }
   }
 

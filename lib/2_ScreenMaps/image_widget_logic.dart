@@ -2,19 +2,20 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:buff_lisa/2_ScreenMaps/image_widget_ui.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
-import 'package:buff_lisa/Providers/points_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Files/pin.dart';
+import '../Files/DTOClasses/mona.dart';
+import '../Files/DTOClasses/pin.dart';
 import '../Files/restAPI.dart';
 import '../Files/global.dart' as global;
 
 class ShowImageWidget extends StatefulWidget {
-  const ShowImageWidget({Key? key, required this.image, required this.id, required this.newPin}) : super(key: key);
+  const ShowImageWidget({Key? key, required this.image, required this.id, required this.newPin, required this.groupId}) : super(key: key);
 
   final File? image;
   final int id;
   final bool newPin;
+  final int groupId;
   @override
   State<ShowImageWidget> createState() => ShowImageWidgetState();
 
@@ -49,9 +50,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
         } else {
           bool deleted = await RestAPI.deleteMonaFromPinId(widget.id);
           if (deleted && mounted) {
-            Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.id);
-            Provider.of<PointsNotifier>(context, listen: false).decrementNumAll();
-            Provider.of<PointsNotifier>(context, listen: false).decrementPoints();
+            Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.id, widget.groupId);
           }
         }
         if (!mounted) return;

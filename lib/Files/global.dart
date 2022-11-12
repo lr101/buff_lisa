@@ -1,4 +1,4 @@
-import 'package:buff_lisa/Files/pin.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -20,7 +20,6 @@ int port = 8081;
 String host2 = "10.0.2.2";
 String host = FlutterConfig.get("HOST") ?? "54.234.245.153";
 //sticker types
-List<SType> stickerTypes = [SType(id: 0, name: "mona"), SType(id: 1, name: "TornadoDaVinci")];
 List<Widget> stickerTypeImages = [const Image(image: AssetImage('images/mona.png')), const Image(image : AssetImage('images/tornado-da-vinci-v2.png'))];
 
 String fileName = 'pin_new.txt';

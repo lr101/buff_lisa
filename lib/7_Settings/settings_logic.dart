@@ -1,7 +1,6 @@
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/7_Settings/password_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_ui.dart';
-import 'package:buff_lisa/Providers/points_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../0_ScreenSignIn/secure.dart';
@@ -37,7 +36,6 @@ class Settings extends StatelessWidget  {
     Secure.removeSecure("auth");
     global.username = "";
     Secure.removeSecure("username");
-    Provider.of<PointsNotifier>(context, listen: false).setUserPoints(0);
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(

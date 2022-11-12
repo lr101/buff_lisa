@@ -22,20 +22,20 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
           key: state.globalKey,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.map_outlined),
-              label: 'Map',
+              icon: Icon(Icons.search),
+              label: 'Search',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.add_location_alt_outlined),
               label: 'Camera',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.groups),
-              label: 'Ranking',
+              icon: Icon(Icons.map_outlined),
+              label: 'Map',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
-              label: 'Shop',
+              icon: Icon(Icons.groups),
+              label: 'Ranking',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),

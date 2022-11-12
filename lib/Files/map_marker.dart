@@ -1,3 +1,4 @@
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -5,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class MapMarker extends Clusterable {
   final String id;
   final LatLng position;
+  final Pin? pin;
   late final BitmapDescriptor icon;
   VoidCallback  onMarkerTap;
 
@@ -13,6 +15,7 @@ class MapMarker extends Clusterable {
     required this.position,
     required this.icon,
     required this.onMarkerTap,
+    required this.pin,
     isCluster = false,
     clusterId,
     pointsSize,

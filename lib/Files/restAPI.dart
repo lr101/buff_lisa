@@ -1,10 +1,48 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:buff_lisa/Files/pin.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/services.dart';
+import 'DTOClasses/mona.dart';
+import 'DTOClasses/ranking.dart';
 import 'global.dart' as global;
 
 class RestAPI {
+
+  static Future<List<Group>> fetchGroups() async {
+    HttpClientResponse response = await createHttpsRequest("/api/users/${global.username}/groups" , {}, 0, null);
+    if (response.statusCode == 200) {
+      return toGroupList(response);
+    } else {
+      throw Exception("Groups could not be loaded: ${response.statusCode} error code");
+    }
+  }
+
+  static Future<List<Group>> fetchAllGroups() async {
+    HttpClientResponse response = await createHttpsRequest("/api/groups" , {}, 0, null);
+    if (response.statusCode == 200) {
+      return toGroupList(response);
+    } else {
+      throw Exception("Groups could not be loaded: ${response.statusCode} error code");
+    }
+  }
+
+  static Future<Group?> postGroup(String name, String description, File image, int visibility) async {
+    final String json = jsonEncode(<String, dynamic> {
+      "name" : name,
+      "groupAdmin": global.username,
+      "description" : description,
+      "profileImage": await image.readAsBytes(),
+      "visibility" : visibility
+    });
+    final response =  await createHttpsRequest("/api/groups", {}, 1, json);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Group.fromJson(jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>);
+    } else {
+      return null;
+    }
+  }
 
   static Future<List<Pin>> fetchAllPins() async {
     HttpClientResponse response = await createHttpsRequest("/api/pins/", {}, 0, null);
@@ -107,7 +145,6 @@ class RestAPI {
       "longitude" : mona.pin.longitude,
       "creationDate" : Pin.formatDateTim(DateTime.now()),
       "image": await mona.image.readAsBytes(),
-      "typeId" : mona.pin.type.id,
       "username": global.username,
     });
     return await createHttpsRequest("/api/monas/", {}, 1, json);
@@ -182,6 +219,16 @@ class RestAPI {
     return pins;
   }
 
+  static Future<List<Group>> toGroupList(HttpClientResponse response) async {
+    List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
+
+    List<Group> groups = [];
+    for (var element in values) {
+      groups.add(Group.fromJson(element));
+    }
+    return groups;
+  }
+
   static Future<HttpClientResponse> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, String? encode) async {
     SecurityContext context = SecurityContext(withTrustedRoots: true);
     context.setTrustedCertificatesBytes(utf8.encode(await rootBundle.loadString('images/cert.pem')), password: "password");
@@ -201,6 +248,7 @@ class RestAPI {
       request.headers.contentType =  ContentType('application', 'json', charset: 'utf-8');
       request.write(encode);
     }
+    print(request.uri.path);
     return await request.close();
   }
 

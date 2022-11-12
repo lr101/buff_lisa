@@ -2,7 +2,6 @@ import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
-import 'package:buff_lisa/Providers/toggle_notifier.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +10,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import '../Files/global.dart' as global;
-import 'Providers/points_notifier.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -43,14 +41,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ChangeNotifierProvider.value(
-            value: PointsNotifier(),
-          ),
-          ChangeNotifierProvider.value(
             value: ClusterNotifier(),
           ),
-          ChangeNotifierProvider.value(
-            value: ToggleNotifier(global.stickerTypes.length),
-          )
         ],
     builder: (context, child){
       return MaterialApp (

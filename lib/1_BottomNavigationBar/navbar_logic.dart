@@ -2,18 +2,18 @@
 import 'dart:convert';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
-import 'package:buff_lisa/6_Shop/shop_logic.dart';
+import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../2_ScreenMaps/maps_logic.dart';
 import '../5_Ranking/ranking_logic.dart';
-import '../Files/pin.dart';
+import '../Files/DTOClasses/mona.dart';
+import '../Files/DTOClasses/pin.dart';
 import '../Files/provider_context.dart';
 import '../Files/global.dart' as global;
 import '../Files/restAPI.dart';
 import '../Providers/cluster_notifier.dart';
-import '../Providers/points_notifier.dart';
 
 
 class BottomNavigationWidget extends StatefulWidget {
@@ -24,16 +24,16 @@ class BottomNavigationWidget extends StatefulWidget {
 }
 
 class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
-  int selectedIndex = 0;
+  int selectedIndex = 2;
   final GlobalKey globalKey = GlobalKey(debugLabel: 'btm_app_bar');
   late ProviderContext io = ProviderContext(globalKey, context);
   late PageController pageController;
 
   late final List<Widget> widgetOptions = <Widget>[
-    MapsWidget(io : io),
+    const SearchGroupPage(),
     CameraWidget(io : io),
+    MapsWidget(io : io),
     const RankingPage(),
-    ShopPage(),
     const Settings()
   ];
 
@@ -45,11 +45,10 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   @override
   void initState() {
     super.initState();
-    if (!global.pinsLoaded) {
-      _getPins();
-    } else {
-      _updateUserPoints();
+    if (global.pinsLoaded) {
+      Provider.of<ClusterNotifier>(context, listen:false).clearAll();
     }
+    _getGroups();
     pageController = PageController(initialPage: selectedIndex);
   }
 
@@ -72,28 +71,14 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   /// tries pushing the offline pins to server
   /// fetches all pins from server and save in provider
   /// update all points and user points via provider context
-  Future<void> _getPins() async {
+  Future<void> _getGroups() async {
     global.pinsLoaded = true;
     await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
     await _tryOfflinePins();
-    RestAPI.fetchAllPins().then((pins) async {
-      await Provider.of<ClusterNotifier>(context, listen:false).addPins(pins);
-      _updateUserPoints();
+    RestAPI.fetchGroups().then((groups) async {
+      Provider.of<ClusterNotifier>(context, listen:false).addGroups(groups);
+      //TODO load saved selected groups
     });
-
-
-  }
-
-  /// update user points by saving values in provider
-  void _updateUserPoints() {
-    List<Pin> pins = List.from(Provider.of<ClusterNotifier>(context, listen:false).getAllPins());
-    List<Mona> monas = List.from(Provider.of<ClusterNotifier>(context, listen:false).getOfflinePins());
-    Provider.of<PointsNotifier>(context, listen: false).setNumAll(pins.length + monas.length);
-    for (Pin pin in pins) {
-      if (pin.username == global.username) {
-        Provider.of<PointsNotifier>(context, listen: false).incrementPoints();
-      }
-    }
   }
 
 
@@ -107,7 +92,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
         Pin pin = Pin.fromJson(json);
         if (!mounted) return;
         Provider.of<ClusterNotifier>(context, listen:false).deleteOfflinePin(mona.pin.id);
-        Provider.of<ClusterNotifier>(context, listen:false).addPin(pin);
+        Provider.of<ClusterNotifier>(context, listen:false).addPin(pin, mona.groupId!);
       }
     }
   }

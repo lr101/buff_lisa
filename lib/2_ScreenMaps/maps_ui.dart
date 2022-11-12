@@ -1,4 +1,3 @@
-import 'package:buff_lisa/Providers/points_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +54,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                           ),
                           child: Center(
                               child: Text(
-                                "Total: ${Provider.of<PointsNotifier>(context).getNumAll} - Your Score: ${Provider.of<PointsNotifier>(context).getUserPoints}",
+                                "Total: ${Provider.of<ClusterNotifier>(context).getAllPoints()}",
                                 style: const TextStyle(color: Colors.white),
                               )
                           )

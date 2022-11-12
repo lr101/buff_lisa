@@ -1,5 +1,4 @@
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
-import 'package:buff_lisa/Providers/toggle_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Files/global.dart' as global;
@@ -35,30 +34,8 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ToggleButtons(
-                            fillColor: global.cSecond,
-                            borderColor: global.cPrime,
-                            selectedBorderColor: global.cPrime,
-                            splashColor: global.cPrime,
-                            borderWidth: 0.8,
-                            onPressed: state.handleToggle,
-                            isSelected: Provider.of<ToggleNotifier>(context).getIsSelected,
-                            children: const <Widget>[
-                              Image(
-                                image: AssetImage('images/mona.png'),
-                                width: 30,
-                                height: 38,
-                                fit: BoxFit.cover,
-                              ),
-                              Image(
-                                image: AssetImage("images/tornado-da-vinci-v2.png"),
-                                width: 30,
-                                height: 38,
-                                fit: BoxFit.cover,
-                              ),
-                            ],
-                        )
+                      children: const [
+                        //TODO choose group
                       ]
                   ),
                 ),
