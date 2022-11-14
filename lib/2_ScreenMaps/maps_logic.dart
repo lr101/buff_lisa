@@ -4,6 +4,7 @@ import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import '../Files/DTOClasses/group.dart';
 import '../Files/provider_context.dart';
 import '../Files/global.dart' as global;
 import '../Providers/cluster_notifier.dart';

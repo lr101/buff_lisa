@@ -12,7 +12,7 @@ import '../Files/global.dart' as global;
 class ShowImageWidget extends StatefulWidget {
   const ShowImageWidget({Key? key, required this.image, required this.id, required this.newPin, required this.groupId}) : super(key: key);
 
-  final File? image;
+  final Uint8List? image;
   final int id;
   final bool newPin;
   final int groupId;
@@ -63,27 +63,13 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   /// An CircularProgressIndicator is returned during the loading time
   Widget getImageWidget() {
     if (widget.image != null) {
-      return FutureBuilder<Uint8List>(
-          future: widget.image?.readAsBytes(),
-          builder: (context, AsyncSnapshot<Uint8List> snapshot) {
-            return (snapshot.hasData)
-                ? Image.memory(snapshot.data!)
-                : const Center(child: CircularProgressIndicator());
-          }
-      );
+      return Image.memory(widget.image!);
     }
     return FutureBuilder<Mona?>(
       future: RestAPI.fetchMonaFromPinId(widget.id),
       builder: (context, AsyncSnapshot<Mona?> snapshot) {
         if (snapshot.hasData) {
-          return FutureBuilder<Uint8List>(
-              future: snapshot.data?.image.readAsBytes(),
-              builder: (context, AsyncSnapshot<Uint8List> snapshot) {
-                return (snapshot.hasData)
-                    ? Image.memory(snapshot.data!)
-                    : const Center(child: CircularProgressIndicator());
-              }
-          );
+          return Image.memory(snapshot.data!.image);
         } else {
           return const Center(child: CircularProgressIndicator());
         }

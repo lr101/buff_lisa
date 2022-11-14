@@ -88,11 +88,8 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     for (Mona mona in monas) {
       final response = await RestAPI.postPin(mona);
       if (response.statusCode == 201 || response.statusCode == 200) {
-        Map<String, dynamic> json = jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>;
-        Pin pin = Pin.fromJson(json);
         if (!mounted) return;
         Provider.of<ClusterNotifier>(context, listen:false).deleteOfflinePin(mona.pin.id);
-        Provider.of<ClusterNotifier>(context, listen:false).addPin(pin, mona.groupId!);
       }
     }
   }

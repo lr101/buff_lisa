@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:camera_camera/camera_camera.dart';
@@ -28,12 +29,12 @@ class RestAPI {
     }
   }
 
-  static Future<Group?> postGroup(String name, String description, File image, int visibility) async {
+  static Future<Group?> postGroup(String name, String description, Uint8List image, int visibility) async {
     final String json = jsonEncode(<String, dynamic> {
       "name" : name,
       "groupAdmin": global.username,
       "description" : description,
-      "profileImage": await image.readAsBytes(),
+      "profileImage": image,
       "visibility" : visibility
     });
     final response =  await createHttpsRequest("/api/groups", {}, 1, json);
@@ -44,10 +45,10 @@ class RestAPI {
     }
   }
 
-  static Future<List<Pin>> fetchAllPins() async {
-    HttpClientResponse response = await createHttpsRequest("/api/pins/", {}, 0, null);
+  static Future<Set<Pin>> fetchGroupPins(int groupId) async {
+    HttpClientResponse response = await createHttpsRequest("/api/groups/$groupId/pins", {}, 0, null);
     if (response.statusCode == 200) {
-      return toPinList(response);
+      return toPinSet(response);
     } else {
       throw Exception("Pins could not be loaded: ${response.statusCode} error code");
     }
@@ -143,8 +144,8 @@ class RestAPI {
     final String json = jsonEncode(<String, dynamic> {
       "latitude" : mona.pin.latitude,
       "longitude" : mona.pin.longitude,
-      "creationDate" : Pin.formatDateTim(DateTime.now()),
-      "image": await mona.image.readAsBytes(),
+      "groupId" : mona.groupId!,
+      "image": mona.image,
       "username": global.username,
     });
     return await createHttpsRequest("/api/monas/", {}, 1, json);
@@ -209,10 +210,10 @@ class RestAPI {
     return false;
   }
 
-  static Future<List<Pin>> toPinList(HttpClientResponse response) async {
+  static Future<Set<Pin>> toPinSet(HttpClientResponse response) async {
     List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
 
-    List<Pin> pins = [];
+    Set<Pin> pins = {};
     for (var element in values) {
       pins.add(Pin.fromJson(element));
     }

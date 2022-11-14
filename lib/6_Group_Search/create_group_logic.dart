@@ -1,18 +1,15 @@
 import 'dart:io';
-import 'dart:math';
-
-import 'package:buff_lisa/5_Ranking/ranking_ui.dart';
-import 'package:buff_lisa/6_Group_Search/search_ui.dart';
+import 'dart:typed_data';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:images_picker/images_picker.dart';
+import 'package:image/image.dart' as dart_image;
+import 'package:image_cropping/image_cropping.dart';
+import 'package:images_picker/images_picker.dart' as picker;
 import 'package:provider/provider.dart';
-import '../Files/DTOClasses/group.dart';
-import '../Files/DTOClasses/ranking.dart';
 import '../Providers/cluster_notifier.dart';
 import 'create_group_ui.dart';
+import 'package:flutter/painting.dart' as painting;
 
 
 class CreateGroupPage extends StatefulWidget {
@@ -54,15 +51,41 @@ class CreateGroupPageState extends State<CreateGroupPage> {
   }
 
   Future<void> handleImageUpload(BuildContext context) async {
-    List<Media>? res = await ImagesPicker.pick(
+    List<picker.Media>? res = await picker.ImagesPicker.pick(
       count: 1,
-      pickType: PickType.image,
+      pickType: picker.PickType.image,
     );
     if (res != null && res.length == 1) {
-      print(res[0].size);
+      Uint8List? croppedBytes = await ImageCropping.cropImage(
+        context: context,
+        imageBytes: File(res[0].path).readAsBytesSync(),
+        isConstrain: true,
+        visibleOtherAspectRatios: false,
+        selectedImageRatio: const CropAspectRatio(
+          ratioX: 1,
+          ratioY: 1,
+        ),
+        squareCircleColor: Colors.red,
+        defaultTextColor: Colors.black,
+        colorForWhiteSpace: Colors.black,
+        outputImageFormat: OutputImageFormat.jpg,
+        onImageDoneListener: (_) {},
+      );
+      if(croppedBytes == null) return;
+      final dimensions = await decodeImageFromList(croppedBytes);
+      if ((dimensions.width < 100 && dimensions.height < 100) || dimensions.width != dimensions.height) return; //TODO error message -> picture to small
       if(!mounted) return;
-      Provider.of<CreateGroupProvider>(context, listen: false).setImage(File(res[0].path));
+      Provider.of<CreateGroupProvider>(context, listen: false).setImage(croppedBytes);
     }
   }
+
+  Widget getImageWidget(Uint8List? image) {
+    if (image != null) {
+      return Image.memory(image);
+    } else {
+      return const Icon(Icons.image);
+    }
+  }
+
 }
 

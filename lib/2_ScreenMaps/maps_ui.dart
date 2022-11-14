@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:status_view/status_view.dart';
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
+import '../Files/DTOClasses/group.dart';
 import '../Files/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
+import '../SelectGroupWidget/select_group_widget_logic.dart';
 import 'maps_logic.dart';
 
 class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
@@ -36,7 +39,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                 onCameraIdle: () {state.onCameraIdle(context);},
               ),
               SizedBox(
-                  height: MediaQuery.of(context).viewPadding.top*2,
+                  height: MediaQuery.of(context).viewPadding.top + 80,
                   width: MediaQuery.of(context).size.width,
                   child: Column(
                     children: [
@@ -45,20 +48,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                           width: double.infinity,
                           color: global.cThird
                       ),
-                      Container(
-                          width: double.infinity,
-                          height: MediaQuery.of(context).viewPadding.top,
-                          decoration: const BoxDecoration(
-                              color: global.cThird,
-                              borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(40), bottomRight: Radius.circular(40))
-                          ),
-                          child: Center(
-                              child: Text(
-                                "Total: ${Provider.of<ClusterNotifier>(context).getAllPoints()}",
-                                style: const TextStyle(color: Colors.white),
-                              )
-                          )
-                      ),
+                      const SelectGroupWidget(multiSelector: true,)
                     ],
                   )
               )

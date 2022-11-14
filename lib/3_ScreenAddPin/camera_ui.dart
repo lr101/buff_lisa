@@ -19,7 +19,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
               child: CameraCamera(
                 enableAudio: false,
                 resolutionPreset: ResolutionPreset.high,
-                onFile: (image) => state.handlePictureTaken(image, widget.io)
+                onFile: (image) => state.handlePictureTaken(image.readAsBytesSync(), widget.io)
             )
           )
         )

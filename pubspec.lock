@@ -183,6 +183,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.0"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -359,6 +366,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.0"
+  image_cropping:
+    dependency: "direct main"
+    description:
+      name: image_cropping
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.13"
   images_picker:
     dependency: "direct main"
     description:
@@ -623,6 +637,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
+  status_view:
+    dependency: "direct main"
+    description:
+      name: status_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.2"
   stream_channel:
     dependency: transitive
     description:

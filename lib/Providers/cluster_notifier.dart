@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -17,7 +19,8 @@ class ClusterNotifier extends ChangeNotifier {
   late  List<Group> _userGroups = [];
   late List<Mona> _offlinePins = [];
   late List<MapMarker> _markers = [];
-  
+  Group? _lastSelected;
+
   ///cluster
   List<Marker> _googleMapsMarkers = [];
   int _currentZoom = global.initialZoom;
@@ -61,7 +64,8 @@ class ClusterNotifier extends ChangeNotifier {
   }
 
   Future<void> addPin(Pin pin, int groupId) async {
-    _userGroups.firstWhere((element) => element.groupId == groupId).pins.add(pin);
+    _userGroups.firstWhere((element) => element.groupId == groupId).pins.
+    add(pin);
     await _addPinToMarkers(pin, false, null, groupId);
     _updateValues();
   }
@@ -74,13 +78,43 @@ class ClusterNotifier extends ChangeNotifier {
     return points;
   }
 
-  Future<void> addPins(List<Pin> pins, int groupId) async{
-    Group group = _userGroups.firstWhere((element) => element.groupId == groupId);
-    for (Pin pin in pins) {
-      await _addPinToMarkers(pin, false, null, groupId);
-      group.pins.add(pin);
+  Future<void> activateGroup(Group group) async{
+    if (!group.active) {
+      //get pins from server of the specific groups if not already loaded
+      if (!group.loaded) {
+        group.pins = await RestAPI.fetchGroupPins(group.groupId);
+        group.loaded = true;
+      }
+      //converts pins to markers on googel maps
+      for (Pin pin in group.pins) {
+        await _addPinToMarkers(pin, false, null, group.groupId);
+      }
+      //converts offline pins to markers if member of group
+      for (Mona mona in _offlinePins) {
+        if (mona.groupId != null && mona.groupId == group.groupId) {
+          await _addPinToMarkers(mona.pin, true, mona.image, group.groupId);
+        }
+      }
+      group.active = true;
+      _updateValues();
     }
-    _updateValues();
+  }
+
+  Future<void> deactivateGroup(Group group) async {
+    if (group.active) {
+      //removes markers from maps
+      for (Pin pin in group.pins) {
+         _removePinFromMarkers(pin.id, false);
+      }
+      //removes offline markers from maps
+      for (Mona mona in _offlinePins) {
+        if (mona.groupId != null && mona.groupId == group.groupId) {
+          _removePinFromMarkers(mona.pin.id, true);
+        }
+      }
+      group.active = false;
+      _updateValues();
+    }
   }
 
   void removePin(int id, int groupId) {
@@ -122,6 +156,15 @@ class ClusterNotifier extends ChangeNotifier {
     return _userGroups;
   }
 
+  Group? get getLastSelected {
+    return _lastSelected;
+  }
+
+  void setLastSelected(Group group) {
+    _lastSelected = group;
+    notifyListeners();
+  }
+
   void setZoom(int zoom) {
     if (_currentZoom != zoom) {
       _currentZoom = zoom;
@@ -161,13 +204,15 @@ class ClusterNotifier extends ChangeNotifier {
 
   Future<BitmapDescriptor> _getBitMapDescriptor (int groupId) async {
 
-    BitmapDescriptor bitmapDescriptor = BitmapDescriptor.defaultMarker;
-    bitmapDescriptor = BitmapDescriptor.fromBytes(_userGroups.firstWhere((element) => element.groupId == groupId).profileImage.readAsBytesSync());
-    return bitmapDescriptor;
-    //TODO return pin image corresponding to groupId
+    try {
+      return BitmapDescriptor.fromBytes(_userGroups.firstWhere((element) => element.groupId == groupId).pinImage!);
+    } catch(_) {
+      //Default image
+      return await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_logo.png');
+    }
   }
 
-  Future<void> _addPinToMarkers(Pin pin, bool newPin, File? image, groupId) async {
+  Future<void> _addPinToMarkers(Pin pin, bool newPin, Uint8List? image, groupId) async {
     BitmapDescriptor icon = await _getBitMapDescriptor(groupId);
     MapMarker marker = MapMarker(
         id: (newPin ? "new${pin.id.toString()}" : pin.id.toString()),

@@ -52,13 +52,24 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                   label: (providerListen.getSliderValue == 0 ? "public" : "private"),
                   onChanged: (_) => state.sliderOnChange(_, context),
                 ),
-                SizedBox (
-                  height: 50,
-                  width: 50,
-                  child: IconButton(
-                      icon: const Icon(Icons.upload_file),
-                      onPressed: () => state.handleImageUpload(context),
-                  )
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox (
+                          height: size /4,
+                          width: size /4,
+                          child: IconButton(
+                            icon: const Icon(Icons.upload_file),
+                            onPressed: () => state.handleImageUpload(context),
+                          )
+                      ),
+                      SizedBox(
+                        height: size/4,
+                        width: size/4,
+                        child: state.getImageWidget(providerListen.getImage),
+                      ),
+                    ]
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

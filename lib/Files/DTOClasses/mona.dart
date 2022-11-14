@@ -3,11 +3,12 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:camera_camera/camera_camera.dart';
 
 import '../AbstractClasses/to_json.dart';
 
 class Mona implements ToJson {
-  final File image;
+  final Uint8List image;
   final Pin pin;
   late int? groupId;
 
@@ -21,7 +22,7 @@ class Mona implements ToJson {
     return {
       "groupId" : groupId,
       "pin": await pin.toJson(),
-      "image": await image.readAsBytes()
+      "image": image
     };
   }
 
@@ -30,13 +31,13 @@ class Mona implements ToJson {
   }
 
   Mona.fromJson2(Map<String, dynamic> map) :
-        image = File.fromRawPath(Uint8List.fromList(map['image'].cast<int>().toList())),
+        image = Uint8List.fromList(map['image'].cast<int>().toList()),
         pin = Pin.fromJson(map['pin']),
         groupId = map['groupId'];
 
   @override
   Mona.fromJson(Map<String, dynamic> map) :
-        image = File.fromRawPath(_getImageBinary(map['image'])),
+        image = _getImageBinary(map['image']),
         pin = Pin.fromJson(map['pin']);
 
 }

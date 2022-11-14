@@ -11,11 +11,14 @@ class Group implements ToJson{
   final String name;
   final String? groupAdmin;
   final String? description;
-  final File profileImage;
+  final Uint8List profileImage;
+  late Uint8List? pinImage;
   final int visibility;
   final Set<String> members = {};
   final String? inviteUrl;
   late Set<Pin> pins = {};
+  late bool loaded = false;
+  late bool active = false;
 
 
   Group({
@@ -25,7 +28,8 @@ class Group implements ToJson{
     required this.description,
     required this.profileImage,
     required this.visibility,
-    required this.inviteUrl
+    required this.inviteUrl,
+    this.pinImage
   });
 
   Group.fromJson(Map<String, dynamic> json):
@@ -33,7 +37,8 @@ class Group implements ToJson{
     name = json['name'],
     groupAdmin = json['groupAdmin'],
     description = json['description'],
-    profileImage = File.fromRawPath(_getImageBinary(json['profileImage'])),
+    profileImage = _getImageBinary(json['profileImage'])!,
+    pinImage = _getImageBinary(json['pinImage']),
     visibility = json['visibility'],
     inviteUrl = json['inviteUrl'];
 
@@ -41,7 +46,7 @@ class Group implements ToJson{
   Future<Map<String, dynamic>> toJson() async {
     return {
       "groupId": groupId,
-      "profileImage": await profileImage.readAsBytes(),
+      "profileImage": profileImage,
       "name" : name,
       "groupAdmin" : groupAdmin,
       "description" : description,
@@ -50,8 +55,13 @@ class Group implements ToJson{
     };
   }
 
-  static Uint8List _getImageBinary(String dynamicList) {
-    return base64Decode(dynamicList);
+  static Uint8List? _getImageBinary(String? dynamicList) {
+    if (dynamicList != null) {
+      return base64Decode(dynamicList);
+    } else {
+      return null;
+    }
+
   }
 
 }

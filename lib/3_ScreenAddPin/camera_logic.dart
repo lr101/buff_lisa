@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 
 import '../Files/DTOClasses/mona.dart';
@@ -34,7 +35,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   /// 1. on approval of the user the image is saved as online pin
   /// 2. pin in send to the server
   /// 3. on success at the server -> offline pin is deleted and replaced by the online pin
-  Future<void> handlePictureTaken(File image, ProviderContext io) async {
+  Future<void> handlePictureTaken(Uint8List image, ProviderContext io) async {
     Map<String, dynamic> result = await Navigator.of(widget.io.context).push(
       MaterialPageRoute(
           builder: (context) => CheckImageWidget(image: image,)),
@@ -50,7 +51,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   }
 
   /// creates a Mona by accessing the location of the user
-  Future<Mona> _createMona(File image, groupId) async {
+  Future<Mona> _createMona(Uint8List image, groupId) async {
     int length = Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().length;
     LocationData locationData = await LocationClass.getLocation();
     //create Pin
