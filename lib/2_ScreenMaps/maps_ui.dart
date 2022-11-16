@@ -38,20 +38,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                 onCameraMove: state.onCameraMove,
                 onCameraIdle: () {state.onCameraIdle(context);},
               ),
-              SizedBox(
-                  height: MediaQuery.of(context).viewPadding.top + 80,
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    children: [
-                      Container(
-                          height: MediaQuery.of(context).viewPadding.top,
-                          width: double.infinity,
-                          color: global.cThird
-                      ),
-                      const SelectGroupWidget(multiSelector: true,)
-                    ],
-                  )
-              )
+              const SelectGroupWidget(multiSelector: true,)
             ],
           ),
         ),

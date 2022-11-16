@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 
-class CreateGroupProvider with ChangeNotifier {
+class CreateGroupNotifier with ChangeNotifier {
 
   Uint8List? image;
   final controller1 = TextEditingController();

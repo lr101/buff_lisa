@@ -74,6 +74,11 @@ dependencies:
 
   status_view:
 
+  google_static_maps_controller:
+
+  flip_card:
+
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

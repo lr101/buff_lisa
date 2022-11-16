@@ -23,23 +23,23 @@ class CreateGroupPageState extends State<CreateGroupPage> {
   @override
   Widget build(BuildContext context) {
     final state = this;
-    return ChangeNotifierProvider<CreateGroupProvider>(
+    return ChangeNotifierProvider<CreateGroupNotifier>(
       create: (_) {
-      return CreateGroupProvider();
+      return CreateGroupNotifier();
       },
         builder: ((context, child) => CreateGroupUI(state: state))
     );
   }
 
   void sliderOnChange(double value, BuildContext context) {
-    Provider.of<CreateGroupProvider>(context, listen: false).setSliderValue(value);
+    Provider.of<CreateGroupNotifier>(context, listen: false).setSliderValue(value);
   }
 
   void createGroup(BuildContext context) {
-    final controller1 = Provider.of<CreateGroupProvider>(context, listen: false).getText1;
-    final controller2 = Provider.of<CreateGroupProvider>(context, listen: false).getText2;
-    final image = Provider.of<CreateGroupProvider>(context, listen: false).getImage;
-    final sliderValue = Provider.of<CreateGroupProvider>(context, listen: false).getSliderValue;
+    final controller1 = Provider.of<CreateGroupNotifier>(context, listen: false).getText1;
+    final controller2 = Provider.of<CreateGroupNotifier>(context, listen: false).getText2;
+    final image = Provider.of<CreateGroupNotifier>(context, listen: false).getImage;
+    final sliderValue = Provider.of<CreateGroupNotifier>(context, listen: false).getSliderValue;
     if (controller1.text.isNotEmpty && controller2.text.isNotEmpty && image != null) {
       RestAPI.postGroup(controller1.text, controller2.text, image, sliderValue.toInt()).then((group) {
         if (group != null) {
@@ -75,7 +75,7 @@ class CreateGroupPageState extends State<CreateGroupPage> {
       final dimensions = await decodeImageFromList(croppedBytes);
       if ((dimensions.width < 100 && dimensions.height < 100) || dimensions.width != dimensions.height) return; //TODO error message -> picture to small
       if(!mounted) return;
-      Provider.of<CreateGroupProvider>(context, listen: false).setImage(croppedBytes);
+      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(croppedBytes);
     }
   }
 

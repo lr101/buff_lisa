@@ -7,7 +7,7 @@ import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../2_ScreenMaps/maps_logic.dart';
-import '../5_Ranking/ranking_logic.dart';
+import '../5_Ranking/feed_logic.dart';
 import '../Files/DTOClasses/mona.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/provider_context.dart';
@@ -33,7 +33,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     const SearchGroupPage(),
     CameraWidget(io : io),
     MapsWidget(io : io),
-    const RankingPage(),
+    const FeedPage(),
     const Settings()
   ];
 

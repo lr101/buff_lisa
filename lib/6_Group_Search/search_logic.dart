@@ -1,4 +1,4 @@
-import 'package:buff_lisa/5_Ranking/ranking_ui.dart';
+import 'package:buff_lisa/5_Ranking/feed_ui.dart';
 import 'package:buff_lisa/6_Group_Search/create_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_ui.dart';
 import 'package:buff_lisa/Files/restAPI.dart';

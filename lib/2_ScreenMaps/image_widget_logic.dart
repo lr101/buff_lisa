@@ -66,7 +66,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
       return Image.memory(widget.image!);
     }
     return FutureBuilder<Mona?>(
-      future: RestAPI.fetchMonaFromPinId(widget.id),
+      future: RestAPI.fetchMonaFromPinId(widget.id, widget.groupId),
       builder: (context, AsyncSnapshot<Mona?> snapshot) {
         if (snapshot.hasData) {
           return Image.memory(snapshot.data!.image);

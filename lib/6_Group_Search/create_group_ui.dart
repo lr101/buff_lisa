@@ -1,4 +1,4 @@
-import 'package:buff_lisa/5_Ranking/ranking_logic.dart';
+import 'package:buff_lisa/5_Ranking/feed_logic.dart';
 import 'package:buff_lisa/6_Group_Search/create_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
@@ -18,12 +18,12 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size.width;
-    final providerListen = Provider.of<CreateGroupProvider>(context);
-    final provider = Provider.of<CreateGroupProvider>(context, listen: false);
+    final providerListen = Provider.of<CreateGroupNotifier>(context);
+    final provider = Provider.of<CreateGroupNotifier>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Change Email'),
+        title: const Text('Create Group'),
         backgroundColor: global.cThird,
       ),
       body: SizedBox(

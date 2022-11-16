@@ -17,20 +17,7 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
         builder: ((context, child) => Scaffold(
           body: Column(
               children: [
-                SizedBox(
-                    height: MediaQuery.of(context).viewPadding.top + 80,
-                    width: MediaQuery.of(context).size.width,
-                    child: Column(
-                      children: [
-                        Container(
-                            height: MediaQuery.of(context).viewPadding.top,
-                            width: double.infinity,
-                            color: global.cThird
-                        ),
-                        const SelectGroupWidget(multiSelector: false,)
-                      ],
-                    )
-                ),
+                const SelectGroupWidget(multiSelector: false,),
                 Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

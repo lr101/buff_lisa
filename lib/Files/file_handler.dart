@@ -44,10 +44,6 @@ class FileHandler {
         for (Map<String, dynamic> data in jsonData) {
           list.add(Mona.fromJson2(data));
         }
-      } else if (type == 1) {
-        for (Map<String, dynamic> data in jsonData) {
-          list.add(Pin.fromJson(data));
-        }
       }
       return list;
     }

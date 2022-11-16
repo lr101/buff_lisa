@@ -1,4 +1,4 @@
-import 'package:buff_lisa/5_Ranking/ranking_logic.dart';
+import 'package:buff_lisa/5_Ranking/feed_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';

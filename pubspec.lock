@@ -211,6 +211,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.2"
+  flip_card:
+    dependency: "direct main"
+    description:
+      name: flip_card
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
   fluster:
     dependency: "direct main"
     description:
@@ -345,6 +352,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1"
+  google_static_maps_controller:
+    dependency: "direct main"
+    description:
+      name: google_static_maps_controller
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   http:
     dependency: "direct main"
     description:

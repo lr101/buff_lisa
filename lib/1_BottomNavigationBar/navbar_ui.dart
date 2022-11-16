@@ -35,7 +35,7 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.groups),
-              label: 'Ranking',
+              label: 'Feed',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),

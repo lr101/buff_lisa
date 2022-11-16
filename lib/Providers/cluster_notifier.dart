@@ -64,8 +64,7 @@ class ClusterNotifier extends ChangeNotifier {
   }
 
   Future<void> addPin(Pin pin, int groupId) async {
-    _userGroups.firstWhere((element) => element.groupId == groupId).pins.
-    add(pin);
+    _userGroups.firstWhere((element) => element.groupId == groupId).pins.add(pin);
     await _addPinToMarkers(pin, false, null, groupId);
     _updateValues();
   }
@@ -91,7 +90,7 @@ class ClusterNotifier extends ChangeNotifier {
       }
       //converts offline pins to markers if member of group
       for (Mona mona in _offlinePins) {
-        if (mona.groupId != null && mona.groupId == group.groupId) {
+        if (mona.pin.groupId == group.groupId) {
           await _addPinToMarkers(mona.pin, true, mona.image, group.groupId);
         }
       }
@@ -108,7 +107,7 @@ class ClusterNotifier extends ChangeNotifier {
       }
       //removes offline markers from maps
       for (Mona mona in _offlinePins) {
-        if (mona.groupId != null && mona.groupId == group.groupId) {
+        if (mona.pin.groupId == group.groupId) {
           _removePinFromMarkers(mona.pin.id, true);
         }
       }
@@ -130,7 +129,7 @@ class ClusterNotifier extends ChangeNotifier {
   Future<void> loadOfflinePins() async{
     List<Mona> monas = (await _offlineFileHandler.readFile(0)).map((e) => e as Mona).toList();
     for (Mona mona  in monas) {
-      await _addOfflinePinToMarkers(mona, mona.groupId!);
+      await _addOfflinePinToMarkers(mona, mona.pin.groupId);
     }
     _updateValues();
   }
@@ -142,7 +141,7 @@ class ClusterNotifier extends ChangeNotifier {
   }
 
   Future<void> addOfflinePin(Mona mona) async{
-    await _addOfflinePinToMarkers(mona, mona.groupId!);
+    await _addOfflinePinToMarkers(mona, mona.pin.groupId);
     await _offlineFileHandler.saveList(_offlinePins);
     _updateValues();
   }
@@ -158,6 +157,14 @@ class ClusterNotifier extends ChangeNotifier {
 
   Group? get getLastSelected {
     return _lastSelected;
+  }
+
+  Set<Group> get getActiveGroups {
+    Set<Group> activeGroups = {};
+    for (Group group in _userGroups) {
+      if (group.active) activeGroups.add(group);
+    }
+    return activeGroups;
   }
 
   void setLastSelected(Group group) {
@@ -186,7 +193,6 @@ class ClusterNotifier extends ChangeNotifier {
   ///private Methods
 
   Future<void> _addOfflinePinToMarkers(Mona mona, int groupId) async{
-    mona.groupId = groupId;
     await _addPinToMarkers(mona.pin, true, mona.image, groupId);
     _offlinePins.add(mona);
     _updateValues();

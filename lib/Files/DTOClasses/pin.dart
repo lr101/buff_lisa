@@ -5,14 +5,16 @@ class Pin implements ToJson {
   final double longitude;
   final int id;
   final DateTime creationDate;
-  final String? username;
+  final String username;
+  final int groupId;
 
-  const Pin({
+  Pin( {
     required this.latitude,
     required this.longitude,
     required this.id,
     required this.creationDate,
-    required this.username
+    required this.username,
+    required this.groupId
   });
 
   @override
@@ -21,7 +23,8 @@ class Pin implements ToJson {
         longitude = json['longitude'],
         id = json['id'],
         username = json.containsKey('username') ? json['username'] : null,
-        creationDate = DateTime.parse((json['creationDate']).toString());
+        creationDate = DateTime.parse((json['creationDate']).toString()),
+        groupId = json['groupId'];
 
 
   @override

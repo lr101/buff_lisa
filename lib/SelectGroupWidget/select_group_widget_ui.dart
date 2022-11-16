@@ -15,17 +15,30 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: double.infinity,
-        height: 80,
-        decoration: const BoxDecoration(
-            color: global.cThird,
-            borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
-        ),
-        child: ListView.builder(
-          itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,
-          itemBuilder: groupCard,
-          scrollDirection: Axis.horizontal,
+    return SizedBox(
+        height: MediaQuery.of(context).viewPadding.top + 80,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: [
+            Container(
+                height: MediaQuery.of(context).viewPadding.top,
+                width: double.infinity,
+                color: global.cThird
+            ),
+            Container(
+                width: double.infinity,
+                height: 80,
+                decoration: const BoxDecoration(
+                    color: global.cThird,
+                    borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
+                ),
+                child: ListView.builder(
+                  itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,
+                  itemBuilder: groupCard,
+                  scrollDirection: Axis.horizontal,
+                )
+            )
+          ],
         )
     );
   }
