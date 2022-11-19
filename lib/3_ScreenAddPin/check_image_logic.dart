@@ -28,7 +28,7 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   void handleApprove() {
     Group? group = Provider.of<ClusterNotifier>(context, listen:false).getLastSelected;
     if (group != null) {
-      Navigator.pop(context, {"approve" : true, "type": group.groupId});
+      Navigator.pop(context, {"approve" : true, "type": group});
     }
   }
 

@@ -17,8 +17,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    Group group = Provider.of<ClusterNotifier>(context, listen: false).getActiveGroups.firstWhere((element) => element.groupId == widget.pin.groupId);
-    state.front = state.getMapOfPin(context, group);
+    state.front = state.getMapOfPin(context, widget.pin.group);
     state.back  = state.getImageOfPin(context);
     return Card(
         shape: RoundedRectangleBorder(
@@ -39,7 +38,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                           radius: 14,
                           backgroundColor: Colors.grey,
                           child: CircleAvatar(
-                            backgroundImage: Image.memory(group.profileImage).image,
+                            backgroundImage: Image.memory(widget.pin.group.profileImage).image,
                             radius: 12,
                           )
                       ),

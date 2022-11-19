@@ -73,12 +73,14 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   /// update all points and user points via provider context
   Future<void> _getGroups() async {
     global.pinsLoaded = true;
-    await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
-    await _tryOfflinePins();
+
     RestAPI.fetchGroups().then((groups) async {
       Provider.of<ClusterNotifier>(context, listen:false).addGroups(groups);
+      await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
+      await _tryOfflinePins();
       //TODO load saved selected groups
     });
+
   }
 
 
@@ -89,7 +91,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
       final response = await RestAPI.postPin(mona);
       if (response.statusCode == 201 || response.statusCode == 200) {
         if (!mounted) return;
-        Provider.of<ClusterNotifier>(context, listen:false).deleteOfflinePin(mona.pin.id);
+        Provider.of<ClusterNotifier>(context, listen:false).deleteOfflinePin(mona);
       }
     }
   }

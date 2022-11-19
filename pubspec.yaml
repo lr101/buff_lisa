@@ -30,7 +30,13 @@ dependencies:
   flutter:
     sdk: flutter
 
-  google_maps_flutter: ^2.1.8
+  flutter_map_marker_cluster:
+
+  flutter_map_location_marker:
+
+  flutter_map:
+
+  latlong2:
 
   location: ^4.2.0
 

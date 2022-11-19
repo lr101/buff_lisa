@@ -10,12 +10,11 @@ import '../Files/restAPI.dart';
 import '../Files/global.dart' as global;
 
 class ShowImageWidget extends StatefulWidget {
-  const ShowImageWidget({Key? key, required this.image, required this.id, required this.newPin, required this.groupId}) : super(key: key);
+  const ShowImageWidget({Key? key, required this.image, required this.pin, required this.newPin}) : super(key: key);
 
   final Uint8List? image;
-  final int id;
   final bool newPin;
-  final int groupId;
+  final Pin pin;
   @override
   State<ShowImageWidget> createState() => ShowImageWidgetState();
 
@@ -36,7 +35,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
     if (widget.newPin) {
       username = global.username;
     } else {
-      _getUsername(widget.id);
+      _getUsername(widget.pin.id);
     }
   }
 
@@ -46,11 +45,12 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   Future<void> handleButtonPress() async{
       if (activeDelete) {
         if (widget.newPin) {
-          await Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePin(widget.id);
+          Mona mona =  Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().firstWhere((element) => element.pin == widget.pin);
+          await Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePin(mona);
         } else {
-          bool deleted = await RestAPI.deleteMonaFromPinId(widget.id);
+          bool deleted = await RestAPI.deleteMonaFromPinId(widget.pin.id);
           if (deleted && mounted) {
-            Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.id, widget.groupId);
+            Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.pin);
           }
         }
         if (!mounted) return;
@@ -66,7 +66,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
       return Image.memory(widget.image!);
     }
     return FutureBuilder<Mona?>(
-      future: RestAPI.fetchMonaFromPinId(widget.id, widget.groupId),
+      future: RestAPI.fetchMonaFromPinId(widget.pin.id, widget.pin.group),
       builder: (context, AsyncSnapshot<Mona?> snapshot) {
         if (snapshot.hasData) {
           return Image.memory(snapshot.data!.image);

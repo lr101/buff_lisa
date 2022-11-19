@@ -1,4 +1,5 @@
 import '../AbstractClasses/to_json.dart';
+import 'group.dart';
 
 class Pin implements ToJson {
   final double latitude;
@@ -6,7 +7,7 @@ class Pin implements ToJson {
   final int id;
   final DateTime creationDate;
   final String username;
-  final int groupId;
+  Group group;
 
   Pin( {
     required this.latitude,
@@ -14,25 +15,26 @@ class Pin implements ToJson {
     required this.id,
     required this.creationDate,
     required this.username,
-    required this.groupId
+    required this.group
   });
 
   @override
-  Pin.fromJson(Map<String, dynamic> json) :
+  Pin.fromJson(Map<String, dynamic> json, this.group) :
         latitude = json['latitude'],
         longitude = json['longitude'],
         id = json['id'],
         username = json.containsKey('username') ? json['username'] : null,
-        creationDate = DateTime.parse((json['creationDate']).toString()),
-        groupId = json['groupId'];
+        creationDate = DateTime.parse((json['creationDate']).toString());
 
 
   @override
   Future<Map<String, dynamic>> toJson() async {
-    return {"longitude": longitude,
+    return {
+      "longitude": longitude,
       "latitude": latitude,
       "id": id,
       "creationDate": formatDateTim(creationDate),
+      "username" : username
     };
   }
 

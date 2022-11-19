@@ -4,13 +4,12 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../Files/DTOClasses/mona.dart';
 import '../Files/global.dart' as global;
 import '../2_ScreenMaps/image_widget_logic.dart';
 import '../Files/file_handler.dart';
-import '../Files/map_helper.dart';
-import '../Files/map_marker.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../main.dart';
 
@@ -18,20 +17,14 @@ class ClusterNotifier extends ChangeNotifier {
   final FileHandler _offlineFileHandler = FileHandler(fileName: global.fileName);
   late  List<Group> _userGroups = [];
   late List<Mona> _offlinePins = [];
-  late List<MapMarker> _markers = [];
   Group? _lastSelected;
 
   ///cluster
-  List<Marker> _googleMapsMarkers = [];
-  int _currentZoom = global.initialZoom;
-  late Fluster<MapMarker> _fluster;
+  Map<Pin, Marker> _allMarkers = {};
+  List<Marker> _shownMarkers = [];
   List<String> __filterUsernames = [];
   DateTime? __filterDateMax;
   DateTime? __filterDateMin;
-
-  ClusterNotifier()  {
-    _updateValues();
-  }
 
   ///public Methods
 
@@ -53,19 +46,25 @@ class ClusterNotifier extends ChangeNotifier {
 
   void clearAll() {
     //TODO remove all offline pins too?
-    _userGroups = [];
-    _offlinePins = [];
-    _markers =  [];
-    _googleMapsMarkers = [];
-    __filterUsernames = [];
+    _userGroups.clear();
+    _offlinePins.clear();
+    _shownMarkers.clear();
+    _allMarkers.clear();
+    __filterUsernames.clear();
     __filterDateMax = null;
     __filterDateMin = null;
-    _updateValues();
+    notifyListeners();
   }
 
-  Future<void> addPin(Pin pin, int groupId) async {
-    _userGroups.firstWhere((element) => element.groupId == groupId).pins.add(pin);
-    await _addPinToMarkers(pin, false, null, groupId);
+  Group getGroupByGroupId(int groupId) {
+    return _userGroups.firstWhere((element) => element.groupId == groupId);
+  }
+
+  void addPin(Pin pin, Group group)  {
+    group.pins.add(pin);
+    if (group.active) {
+      _addPinToMarkers(pin, false, null, group);
+    }
     _updateValues();
   }
 
@@ -81,18 +80,16 @@ class ClusterNotifier extends ChangeNotifier {
     if (!group.active) {
       //get pins from server of the specific groups if not already loaded
       if (!group.loaded) {
-        group.pins = await RestAPI.fetchGroupPins(group.groupId);
+        group.pins = await RestAPI.fetchGroupPins(group);
         group.loaded = true;
       }
       //converts pins to markers on googel maps
       for (Pin pin in group.pins) {
-        await _addPinToMarkers(pin, false, null, group.groupId);
+        await _addPinToMarkers(pin, false, null, group);
       }
       //converts offline pins to markers if member of group
       for (Mona mona in _offlinePins) {
-        if (mona.pin.groupId == group.groupId) {
-          await _addPinToMarkers(mona.pin, true, mona.image, group.groupId);
-        }
+          await _addPinToMarkers(mona.pin, true, mona.image, group);
       }
       group.active = true;
       _updateValues();
@@ -103,12 +100,12 @@ class ClusterNotifier extends ChangeNotifier {
     if (group.active) {
       //removes markers from maps
       for (Pin pin in group.pins) {
-         _removePinFromMarkers(pin.id, false);
+         _removePinFromMarkers(pin);
       }
       //removes offline markers from maps
       for (Mona mona in _offlinePins) {
-        if (mona.pin.groupId == group.groupId) {
-          _removePinFromMarkers(mona.pin.id, true);
+        if (mona.pin.group == group) {
+          _removePinFromMarkers(mona.pin);
         }
       }
       group.active = false;
@@ -116,10 +113,10 @@ class ClusterNotifier extends ChangeNotifier {
     }
   }
 
-  void removePin(int id, int groupId) {
-    Group group = _userGroups.firstWhere((element) => element.groupId == groupId);
-    group.pins.removeWhere((e) => e.id == id);
-    _removePinFromMarkers(id, false);
+  void removePin(Pin pin) {
+    Group group = _userGroups.firstWhere((element) => element == pin.group);
+    group.pins.remove(pin);
+    _removePinFromMarkers(pin);
     _updateValues();
     //await io.clusterHandler.updateValues();
   }
@@ -127,28 +124,30 @@ class ClusterNotifier extends ChangeNotifier {
   List<Mona> getOfflinePins() {return _offlinePins;}
 
   Future<void> loadOfflinePins() async{
-    List<Mona> monas = (await _offlineFileHandler.readFile(0)).map((e) => e as Mona).toList();
+    List<Mona> monas = (await _offlineFileHandler.readFile(0, _userGroups)).map((e) => e as Mona).toList();
     for (Mona mona  in monas) {
-      await _addOfflinePinToMarkers(mona, mona.pin.groupId);
+      await _addOfflinePinToMarkers(mona, mona.pin.group);
     }
     _updateValues();
   }
 
-  Future<void> deleteOfflinePin(int id) async{
-    _removeOfflinePinFromMarkers(id);
-    await _offlineFileHandler.saveList(_offlinePins);
+  Future<void> deleteOfflinePin(Mona mona) async{
+    _removeOfflinePinFromMarkers(mona);
+    await _offlineFileHandler.saveList(_offlinePins, mona.pin.group.groupId);
     _updateValues();
   }
 
   Future<void> addOfflinePin(Mona mona) async{
-    await _addOfflinePinToMarkers(mona, mona.pin.groupId);
-    await _offlineFileHandler.saveList(_offlinePins);
+    if (mona.pin.group.active) {
+      await _addOfflinePinToMarkers(mona, mona.pin.group);
+    }
+    await _offlineFileHandler.saveList(_offlinePins, mona.pin.group.groupId);
     _updateValues();
   }
 
 
-  Set<Marker> get getMarkers {
-    return _googleMapsMarkers.toSet();
+  List<Marker> get getMarkers {
+    return _shownMarkers;
   }
 
   List<Group> get getGroups {
@@ -171,13 +170,7 @@ class ClusterNotifier extends ChangeNotifier {
     _lastSelected = group;
     notifyListeners();
   }
-
-  void setZoom(int zoom) {
-    if (_currentZoom != zoom) {
-      _currentZoom = zoom;
-      _updateValues();
-    }
-  }
+  ///private Methods
 
   void setFilterDate(DateTime? filterDateMin, DateTime? filterDateMax) {
     __filterDateMin = filterDateMin;
@@ -190,84 +183,55 @@ class ClusterNotifier extends ChangeNotifier {
     _updateValues();
   }
 
-  ///private Methods
-
-  Future<void> _addOfflinePinToMarkers(Mona mona, int groupId) async{
-    await _addPinToMarkers(mona.pin, true, mona.image, groupId);
+  Future<void> _addOfflinePinToMarkers(Mona mona, Group group) async{
+    await _addPinToMarkers(mona.pin, true, mona.image, group);
     _offlinePins.add(mona);
     _updateValues();
   }
 
-  void _removeOfflinePinFromMarkers(int id) {
-    _offlinePins.removeWhere((e) => e.pin.id == id);
-    _removePinFromMarkers(id, true);
+  void _removeOfflinePinFromMarkers(Mona mona) {
+    _offlinePins.remove(mona);
+    _removePinFromMarkers(mona.pin);
     _updateValues();
   }
 
-  void _removePinFromMarkers(int pinId, bool newPin) {
-    _markers.removeWhere((e) => e.id == (newPin ? "new${pinId.toString()}" : pinId.toString()));
+  void _removePinFromMarkers(Pin pin) {
+    _allMarkers.remove(pin);
   }
 
-  Future<BitmapDescriptor> _getBitMapDescriptor (int groupId) async {
 
-    try {
-      return BitmapDescriptor.fromBytes(_userGroups.firstWhere((element) => element.groupId == groupId).pinImage!);
-    } catch(_) {
-      //Default image
-      return await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), 'images/c_logo.png');
-    }
-  }
-
-  Future<void> _addPinToMarkers(Pin pin, bool newPin, Uint8List? image, groupId) async {
-    BitmapDescriptor icon = await _getBitMapDescriptor(groupId);
-    MapMarker marker = MapMarker(
-        id: (newPin ? "new${pin.id.toString()}" : pin.id.toString()),
-        pin: pin,
-        position: LatLng(pin.latitude, pin.longitude),
-        icon: icon ,
-        onMarkerTap: () {
-          Navigator.push(
-            navigatorKey.currentContext!,
-            MaterialPageRoute(builder: (context) => ShowImageWidget(image: image, id: pin.id, newPin: newPin, groupId: groupId)),
-          );
-        }
+  _addPinToMarkers(Pin pin, bool newPin, Uint8List? image, Group group) {
+    _allMarkers[pin] = (
+      Marker(
+          key: Key((newPin ? "new${pin.id.toString()}" : pin.id.toString())),
+          point: LatLng(pin.latitude, pin.longitude), 
+          builder: (_)  => GestureDetector(
+            child: Image.memory(group.pinImage!),
+            onTap: () => Navigator.push(
+              navigatorKey.currentContext!,
+              MaterialPageRoute(builder: (context) => ShowImageWidget(image: image, newPin: newPin, pin: pin,)),
+            ),
+          )
+      )
     );
-    _markers.add(marker);
   }
 
 
   Future<void>  _updateValues() async {
-    List<MapMarker> markers = List.from(_markers);
-    markers = _filterUsernames(markers);
-    markers = _filterMinDate(markers);
-    markers = _filterMaxDate(markers);
-    _fluster = await MapHelper.initClusterManager(markers, 0, 14);
-    _displayMarkers();
-  }
-
-  _displayMarkers() {
-    _googleMapsMarkers = MapHelper.getClusterMarkers(_fluster, _currentZoom);
+    Map<Pin, Marker> mark = Map.from(_allMarkers);
+    _filterMaxDate(mark);
+    _filterMinDate(mark);
+    _shownMarkers = List.from(mark.values);
     notifyListeners();
   }
 
-  List<MapMarker> _filterUsernames(List<MapMarker> markers) {
-    if (__filterUsernames.isEmpty) return markers;
-    List<String> ids = _markers.where((element) => __filterUsernames.contains(element.pin!.username)).toList().map((e) => e.id.toString()).toList();
-    if (__filterUsernames.contains(global.username)) ids.addAll(_offlinePins.map((e) => e.pin.id.toString()));
-    return markers.where((element) => ids.contains(element.id)).toList();
+  void _filterMinDate(Map<Pin, Marker> mark) {
+    if (__filterDateMin == null) return;
+    mark.removeWhere((k,v) => k.creationDate.isBefore(__filterDateMin!));
   }
 
-  List<MapMarker> _filterMinDate(List<MapMarker> markers) {
-    if (__filterDateMin == null) return markers;
-    List<String> ids = _markers.where((element) => element.pin!.creationDate.isAfter(__filterDateMin!)).toList().map((e) => e.id.toString()).toList();
-    ids.addAll(_offlinePins.where((element) => element.pin.creationDate.isAfter(__filterDateMin!)).toList().map((e) => e.pin.id.toString()).toList());
-    return markers.where((element) => ids.contains(element.id)).toList();
-  }
-
-  List<MapMarker> _filterMaxDate(List<MapMarker> markers) {
-    if (__filterDateMax == null) return markers;
-    List<String> ids = _markers.where((element) => element.pin!.creationDate.isBefore(__filterDateMax!)).toList().map((e) => e.id.toString()).toList();
-    ids.addAll(_offlinePins.where((element) => element.pin.creationDate.isBefore(__filterDateMax!)).toList().map((e) => e.pin.id.toString()).toList());
-    return markers.where((element) => ids.contains(element.id)).toList();
+  void _filterMaxDate(Map<Pin, Marker> mark) {
+    if (__filterDateMax == null) return;
+    mark.removeWhere((k,v) => k.creationDate.isAfter(__filterDateMax!));
   }
 }

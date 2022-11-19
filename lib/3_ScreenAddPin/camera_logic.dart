@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 
+import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/mona.dart';
 import '../Files/global.dart' as global;
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
@@ -41,17 +42,17 @@ class CameraControllerWidget extends State<CameraWidget> {
           builder: (context) => CheckImageWidget(image: image,)),
     );
     if (result["approve"] as bool) {
-      int groupId = result["type"] as int;
-      Mona mona = await _createMona(image, groupId);
+      Group group = result["type"] as Group;
+      Mona mona = await _createMona(image, group);
       await Provider.of<ClusterNotifier>(widget.io.context, listen: false).addOfflinePin(mona);
-      _postPin(mona, groupId);
+      _postPin(mona, group);
       final BottomNavigationBar navigationBar = io.globalKey.currentWidget! as BottomNavigationBar;
       navigationBar.onTap!(2);
     }
   }
 
   /// creates a Mona by accessing the location of the user
-  Future<Mona> _createMona(Uint8List image, int groupId) async {
+  Future<Mona> _createMona(Uint8List image, Group group) async {
     int length = Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().length;
     LocationData locationData = await LocationClass.getLocation();
     //create Pin
@@ -61,7 +62,7 @@ class CameraControllerWidget extends State<CameraWidget> {
         id: length,
         username: global.username,
         creationDate: DateTime.now(),
-        groupId: groupId
+        group: group
     );
     //create Mona
     Mona mona =  Mona(image: image, pin: pin);
@@ -70,15 +71,14 @@ class CameraControllerWidget extends State<CameraWidget> {
 
   /// pin in send to the server
   /// on success at the server -> offline pin is deleted and replaced by the online pin
-  Future<void> _postPin(Mona mona, int groupId) async {
+  Future<void> _postPin(Mona mona, Group group) async {
     HttpClientResponse response = await RestAPI.postPin(mona);
     if (response.statusCode == 201 || response.statusCode == 200) {
       response.transform(utf8.decoder).join().then((value) {
         Map<String, dynamic> json = jsonDecode(value) as Map<String, dynamic>;
-        json['groupId'] = groupId;
-        Pin pin = Pin.fromJson(json);
-        Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona.pin.id);
-        Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin, mona.pin.groupId);
+        Pin pin = Pin.fromJson(json, group);
+        Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona);
+        Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin, mona.pin.group);
       });
     }
   }

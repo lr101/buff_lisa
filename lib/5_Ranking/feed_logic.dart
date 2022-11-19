@@ -1,20 +1,14 @@
+import 'dart:collection';
 import 'dart:typed_data';
-
-import 'package:buff_lisa/5_Ranking/feed_card_logic.dart';
 import 'package:buff_lisa/5_Ranking/feed_ui.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:flutter_config/flutter_config.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import '../Files/DTOClasses/group.dart';
-import '../Files/DTOClasses/mona.dart';
-import '../Files/global.dart' as global;
-import '../Files/DTOClasses/ranking.dart';
 import '../Providers/cluster_notifier.dart';
-import '../Providers/feed_notifier.dart';
+import 'feed_card_logic.dart';
 
 
 class FeedPage extends StatefulWidget {
@@ -24,15 +18,18 @@ class FeedPage extends StatefulWidget {
   FeedPageState createState() => FeedPageState();
 }
 
-class FeedPageState extends State<FeedPage>{
+class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<FeedPage>{
   static const _pageSize = 2;
-
-  final PagingController<int, Pin> pagingController = PagingController(firstPageKey: 0);
-  late List<Pin> sortedPins = [];
-  late List<Widget> widgets = [];
+  
+  final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 1);
+  late Set<Group> groups = {};
+  late Map<Pin, Uint8List?> allWidgets = {};
 
   @override
-  Widget build(BuildContext context) => FeedUI(state: this);
+  Widget build(BuildContext context) {
+    super.build(context);
+    return FeedUI(state: this);
+  }
 
   @override
   void initState() {
@@ -44,14 +41,22 @@ class FeedPageState extends State<FeedPage>{
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      List<Pin> newItems = [];
-      print(pageKey);
-      print(sortedPins.length);
-      print("TEST--------------");
-      for (int i = 0; i < _pageSize && i + pageKey < sortedPins.length; i++) {
-        newItems.add(sortedPins[i + pageKey]);
+      List<Widget> newItems = [];
+      List<Group> g = [];
+      for (int i = 0; i < _pageSize && i + pageKey < allWidgets.keys.length; i++) {
+        Pin key =  allWidgets.keys.elementAt(pageKey + i);
+        Uint8List? value = allWidgets.values.elementAt(pageKey + i);
+        if (value != null) {
+          Widget w = FeedCard(pin: key, image: value,);
+          if (key.group.active) newItems.add(w);
+        } else {
+          Uint8List image = (await RestAPI.fetchMonaFromPinId(key.id, key.group))!.image;
+          allWidgets[key] = image;
+          Widget w = FeedCard(pin: key, image: image,);
+          if (key.group.active) newItems.add(w);
+        }
+        g.add(key.group);
       }
-      print(newItems.length);
       final isLastPage = newItems.length < _pageSize;
       if (isLastPage) {
         pagingController.appendLastPage(newItems);
@@ -66,16 +71,25 @@ class FeedPageState extends State<FeedPage>{
 
   void initSortedPins() {
     final activeGroups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
-    sortedPins.clear();
-    widgets.clear();
-    for (Group group in activeGroups) {
-      sortedPins.addAll(group.pins);
+    if (activeGroups.length != groups.length) {
+      if (activeGroups.length < groups.length) {
+        allWidgets.removeWhere((key, value) => !activeGroups.any((group) => group == key.group));
+        groups = groups.intersection(activeGroups);
+      } else if (activeGroups.length > groups.length) {
+        Set<Group> oldGroups = Set.from(groups);
+        groups = groups.union(activeGroups);
+        for (Group group in groups) {
+          if (!oldGroups.contains(group)) {
+            for (Pin pin in group.pins) {
+              allWidgets[pin] = null;
+            }
+          }
+        }
+      }
+      allWidgets = SplayTreeMap<Pin, Uint8List?>.from(allWidgets, (k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
+      pagingController.refresh();
     }
-    sortedPins.sort((p1, p2) => -(p1.creationDate.compareTo(p2.creationDate)));
-    for (Pin pin in sortedPins) {
-      widgets.add(FeedCard(pin: pin));
-    }
-    pagingController.refresh();
+
   }
 
   @override
@@ -83,4 +97,7 @@ class FeedPageState extends State<FeedPage>{
     pagingController.dispose();
     super.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

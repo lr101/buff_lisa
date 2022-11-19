@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:status_view/status_view.dart';
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
@@ -21,22 +24,46 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
           width: MediaQuery.of(context).size.width,
           child: Stack(
             children: [
-              GoogleMap(
-                initialCameraPosition: global.initCamera,
-                mapType: MapType.normal,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                zoomGesturesEnabled: true,
-                compassEnabled: true,
-                zoomControlsEnabled: false,
-                scrollGesturesEnabled: true,
-                rotateGesturesEnabled: true,
-                tiltGesturesEnabled: false,
-                mapToolbarEnabled: false,
-                markers:  Provider.of<ClusterNotifier>(context).getMarkers,
-                onMapCreated: state.onMapCreated,
-                onCameraMove: state.onCameraMove,
-                onCameraIdle: () {state.onCameraIdle(context);},
+              FlutterMap(
+                mapController: state.controller,
+                options: MapOptions(
+                    center: global.initCamera,
+                    zoom: 20,
+                    keepAlive: true
+                ),
+                children: [
+                  TileLayerWidget(
+                      options: TileLayerOptions(
+                          urlTemplate: "${global.styleUrl}?api_key={api_key}",
+                          additionalOptions: {
+                            "api_key": global.apiKey
+                          }
+                      ),
+                  ),
+                  LocationMarkerLayerWidget(),
+                  MarkerClusterLayerWidget(
+                      options: MarkerClusterLayerOptions(
+                        disableClusteringAtZoom: 17,
+                        maxClusterRadius: 45,
+                        size: const Size(40, 40),
+                        fitBoundsOptions: const FitBoundsOptions(
+                          padding: EdgeInsets.all(50),
+                        ),
+                        markers: Provider.of<ClusterNotifier>(context).getMarkers,
+                        polygonOptions: const PolygonOptions(
+                            borderColor: Colors.blueAccent,
+                            color: Colors.black12,
+                            borderStrokeWidth: 3),
+                        builder: (context, markers) {
+                          return FloatingActionButton(
+                            key: markers.first.key,
+                            onPressed: null,
+                            child: Text(markers.length.toString()),
+                          );
+                        },
+                      ),
+                  )
+                ],
               ),
               const SelectGroupWidget(multiSelector: true,)
             ],

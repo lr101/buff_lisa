@@ -1,24 +1,28 @@
+import 'dart:typed_data';
+
 import 'package:buff_lisa/5_Ranking/feed_card_ui.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/mona.dart';
-
+import '../Files/global.dart' as global;
 
 class FeedCard extends StatefulWidget {
-  const FeedCard({super.key, required this.pin});
+  const FeedCard({super.key, required this.pin, required this.image});
 
   final Pin pin;
+  final Uint8List image;
 
   @override
   FeedCardState createState() => FeedCardState();
 }
 
-class FeedCardState extends State<FeedCard> {
+class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin<FeedCard>{
 
   late Widget front;
   late Widget back;
@@ -26,6 +30,7 @@ class FeedCardState extends State<FeedCard> {
 
   @override
   Widget build(BuildContext context)  {
+    super.build(context);
     return FeedCardUI(state: this);
   }
 
@@ -46,16 +51,30 @@ class FeedCardState extends State<FeedCard> {
             onTap: () => changeSize(context),
             child: AbsorbPointer(
                 absorbing: true,
-                child: GoogleMap(
-                  mapType: MapType.normal,
-                  zoomControlsEnabled: false,
-                  initialCameraPosition: CameraPosition(
-                      target: LatLng(pin.latitude, pin.longitude), zoom: 10),
-                  markers: <Marker>{
-                    Marker(markerId: const MarkerId("0"),
-                        icon: BitmapDescriptor.fromBytes(group.pinImage!),
-                        position: LatLng(pin.latitude, pin.longitude))
-                  },
+                child: FlutterMap(
+                  options: MapOptions(
+                      center: LatLng(pin.latitude, pin.longitude),
+                      zoom: global.feedZoom,
+                      keepAlive: true
+                  ),
+                  layers: [
+                    TileLayerOptions(
+                        urlTemplate: "${global.styleUrl}?api_key={api_key}",
+                        additionalOptions: {
+                          "api_key": global.apiKey
+                        }
+                    ),
+                    MarkerLayerOptions(
+                        markers: [
+                            Marker(
+                              point: LatLng(pin.latitude, pin.longitude),
+                              width: 50,
+                              height: 50,
+                              builder: (BuildContext context) => Image.memory(group.pinImage!)
+                            )
+                        ]
+                    )
+                  ],
                 )
             ),
           )
@@ -64,24 +83,12 @@ class FeedCardState extends State<FeedCard> {
 
   Widget getImageOfPin(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    Pin pin = widget.pin;
     return SizedBox(
       height: width,
       width: width,
       child: GestureDetector(
           onTap: () => changeSize(context),
-          child: FutureBuilder<Mona?>(
-              future: RestAPI.fetchMonaFromPinId(pin.id, pin.groupId),
-              builder: ((context, snapshot) {
-                if (snapshot.hasData) {
-                  return Image.memory(
-                      snapshot.data!.image,
-                      gaplessPlayback: true,);
-                } else {
-                  return const CircularProgressIndicator();
-                }
-              })
-          ),
+          child: Image.memory(widget.image)
       )
     );
   }
@@ -89,5 +96,8 @@ class FeedCardState extends State<FeedCard> {
   void changeSize(BuildContext context) {
     controller.toggleCard();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
 }

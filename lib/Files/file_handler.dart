@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'AbstractClasses/to_json.dart';
+import 'DTOClasses/group.dart';
 import 'DTOClasses/mona.dart';
 
 class FileHandler {
@@ -25,16 +29,17 @@ class FileHandler {
     return File('$path/$name').create(recursive: true);
   }
 
-  Future<void> saveList(List<ToJson> list) async {
+  Future<void> saveList(List<Mona> list, int groupId) async {
     final File fl = await getFile();
     List<Map<String, dynamic>> l = [];
-    for (ToJson item in list) {
+    for (Mona item in list) {
       l.add(await item.toJson());
+      l.add({'groupId' : groupId});
     }
     await fl.writeAsString(const JsonEncoder().convert(l));
   }
 
-  Future<List<dynamic>> readFile(int type) async {
+  Future<List<dynamic>> readFile(int type, List<Group> groups) async {
     final File fl = await getFile();
     final content = await fl.readAsString();
     if (content.isNotEmpty) {
@@ -42,7 +47,8 @@ class FileHandler {
       List<dynamic> list = [];
       if (type == 0) {
         for (Map<String, dynamic> data in jsonData) {
-          list.add(Mona.fromJson2(data));
+          Group group = groups.firstWhere((element) => element.groupId == data['groupId']);
+          list.add(Mona.fromJson2(data, group));
         }
       }
       return list;

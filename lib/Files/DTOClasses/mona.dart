@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import '../AbstractClasses/to_json.dart';
+import 'group.dart';
 
 class Mona implements ToJson {
   final Uint8List image;
@@ -24,12 +25,12 @@ class Mona implements ToJson {
     return base64Decode(dynamicList);
   }
 
-  Mona.fromJson2(Map<String, dynamic> map) :
+  Mona.fromJson2(Map<String, dynamic> map, Group group) :
         image = Uint8List.fromList(map['image'].cast<int>().toList()),
-        pin = Pin.fromJson(map['pin']);
+        pin = Pin.fromJson(map['pin'], group);
   @override
-  Mona.fromJson(Map<String, dynamic> map) :
+  Mona.fromJson(Map<String, dynamic> map, Group group) :
         image = _getImageBinary(map['image']),
-        pin = Pin.fromJson(map['pin']);
+        pin = Pin.fromJson(map['pin'], group);
 
 }

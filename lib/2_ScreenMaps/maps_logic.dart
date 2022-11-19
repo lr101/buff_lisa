@@ -1,8 +1,9 @@
 import 'package:buff_lisa/2_ScreenMaps/maps_ui.dart';
 import 'package:buff_lisa/Files/location_class.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/provider_context.dart';
@@ -18,9 +19,8 @@ class MapsWidget extends StatefulWidget {
 }
 
 class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMixin<MapsWidget> {
-  late GoogleMapController _controller;
-  double _currentZoom = global.initialZoom.toDouble();
   int filterState = 0;
+  MapController controller = MapController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +28,19 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     return MapsUI(state: this);
   }
 
+  @override
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setLocation();
+    });
+  }
+
   /// sets google maps location to the current user position via GoogleMapsController
   void setLocation() async {
     LocationData loc = await LocationClass.getLocation();
     LatLng latLong = LatLng(loc.latitude!, loc.longitude!);
-    await _controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-            CameraPosition(target: latLong, zoom: global.initialZoom.toDouble())
-        )
-    );
+    controller.move(latLong, global.initialZoom);
   }
 
   /// returns the button text that will be shown depending on @filterState
@@ -74,26 +78,6 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     }
   }
 
-  /// method called on google map created
-  /// inits the gmaps controller
-  /// inits the google maps style via the style.json file
-  /// moves camera view to user location
-  Future<void> onMapCreated(GoogleMapController controller) async {
-    _controller = controller;
-    _controller.setMapStyle(await DefaultAssetBundle.of(context).loadString('images/style.json'));
-    setLocation();
-  }
-
-  /// called when the camera moves
-  /// updates the zoom value to maps zoom
-  void onCameraMove(CameraPosition cameraPosition) {
-    _currentZoom = cameraPosition.zoom;
-  }
-
-  /// sets zoom in provider -> triggers a cluster update of the show google maps markers
-  void onCameraIdle(BuildContext context) {
-    Provider.of<ClusterNotifier>(context, listen:false).setZoom(_currentZoom.toInt());
-  }
 
   @override
   bool get wantKeepAlive => true;

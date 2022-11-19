@@ -45,10 +45,10 @@ class RestAPI {
     }
   }
 
-  static Future<Set<Pin>> fetchGroupPins(int groupId) async {
-    HttpClientResponse response = await createHttpsRequest("/api/groups/$groupId/pins", {}, 0, null);
+  static Future<Set<Pin>> fetchGroupPins(Group group) async {
+    HttpClientResponse response = await createHttpsRequest("/api/groups/${group.groupId}/pins", {}, 0, null);
     if (response.statusCode == 200) {
-      return toPinSet(response, groupId);
+      return toPinSet(response, group);
     } else {
       throw Exception("Pins could not be loaded: ${response.statusCode} error code");
     }
@@ -120,12 +120,11 @@ class RestAPI {
     return null;
   }
 
-  static Future<Mona?> fetchMonaFromPinId(int id, groupId) async {
+  static Future<Mona?> fetchMonaFromPinId(int id, Group group) async {
     HttpClientResponse response = await createHttpsRequest("/api/monas/$id/", {}, 0, null);
     if (response.statusCode == 200) {
       Map<String, dynamic> map = json.decode(await response.transform(utf8.decoder).join());
-      map['pin']['groupId'] = groupId;
-      return Mona.fromJson(map);
+      return Mona.fromJson(map, group);
     } else {
       throw Exception("failed to load mona");
     }
@@ -136,24 +135,11 @@ class RestAPI {
     final String json = jsonEncode(<String, dynamic> {
       "latitude" : mona.pin.latitude,
       "longitude" : mona.pin.longitude,
-      "groupId" : mona.pin.groupId,
+      "groupId" : mona.pin.group.groupId,
       "image": mona.image,
       "username": global.username,
     });
     return await createHttpsRequest("/api/monas/", {}, 1, json);
-  }
-
-
-  static Future<Pin?> fetchPin(int id, groupId) async {
-    HttpClientResponse response = await createHttpsRequest("/api/pins/$id/", {}, 0, null);
-    if (response.statusCode == 200) {
-      Map<String, dynamic> json = jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>;
-      if (json.isNotEmpty) {
-        json['groupId'] = groupId;
-        return Pin.fromJson(json);
-      }
-    }
-    return null;
   }
 
   static Future<int?> getUserPoints() async {
@@ -203,13 +189,13 @@ class RestAPI {
     return false;
   }
 
-  static Future<Set<Pin>> toPinSet(HttpClientResponse response, groupId) async {
+  static Future<Set<Pin>> toPinSet(HttpClientResponse response, Group group) async {
     List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
 
     Set<Pin> pins = {};
     for (var element in values) {
-      element['groupId'] = groupId;
-      pins.add(Pin.fromJson(element));
+      pins.add(Pin.fromJson(element, group));
+
     }
     return pins;
   }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:buff_lisa/5_Ranking/feed_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
@@ -7,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/global.dart' as global;
-import '../Providers/feed_notifier.dart';
 import '../SelectGroupWidget/select_group_widget_logic.dart';
 import 'feed_card_logic.dart';
 
@@ -28,10 +29,10 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState>{
             children: [
               const SelectGroupWidget(multiSelector: true),
               Expanded(
-                  child: PagedListView<int, Pin>(
+                  child: PagedListView<int, Widget> (
                     pagingController: state.pagingController,
-                    builderDelegate: PagedChildBuilderDelegate<Pin>(
-                      itemBuilder: (context, item, index) => state.widgets[index],
+                    builderDelegate: PagedChildBuilderDelegate<Widget>(
+                      itemBuilder: (context, item, index)  => item
                     ),
                   )
               )
