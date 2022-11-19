@@ -2,9 +2,10 @@ import 'package:buff_lisa/5_Ranking/feed_ui.dart';
 import 'package:buff_lisa/6_Group_Search/create_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_ui.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-
+import 'package:provider/provider.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/ranking.dart';
 import 'create_group_ui.dart';
@@ -49,6 +50,17 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
           builder: (context) => const CreateGroupPage()
       ),
     );
+  }
+
+  void handleJoinGroup(Group group) {
+    String? inviteUrl;
+    if (group.visibility != 0) {
+      //TODO join private group
+    } else {
+      RestAPI.joinGroup(group.groupId, inviteUrl)
+          .then((value) => Provider.of<ClusterNotifier>(context, listen: false).addGroup(value));
+    }
+
   }
 
   @override

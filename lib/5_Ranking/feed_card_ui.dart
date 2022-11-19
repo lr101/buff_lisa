@@ -20,7 +20,6 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
     Group group = Provider.of<ClusterNotifier>(context, listen: false).getActiveGroups.firstWhere((element) => element.groupId == widget.pin.groupId);
     state.front = state.getMapOfPin(context, group);
     state.back  = state.getImageOfPin(context);
-    print(Provider.of<ClusterNotifier>(context, listen: false).getActiveGroups.first.groupId);
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),

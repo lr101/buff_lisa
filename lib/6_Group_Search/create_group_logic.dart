@@ -11,7 +11,7 @@ import '../Providers/cluster_notifier.dart';
 import 'create_group_ui.dart';
 import 'package:flutter/painting.dart' as painting;
 
-
+//TODO Gruppen werden dobbelt ge-POST-tet
 class CreateGroupPage extends StatefulWidget {
   const CreateGroupPage({super.key});
 

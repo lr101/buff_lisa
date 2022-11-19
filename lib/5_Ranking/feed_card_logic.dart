@@ -18,7 +18,7 @@ class FeedCard extends StatefulWidget {
   FeedCardState createState() => FeedCardState();
 }
 
-class FeedCardState extends State<FeedCard>  {
+class FeedCardState extends State<FeedCard> {
 
   late Widget front;
   late Widget back;

@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:buff_lisa/5_Ranking/feed_card_logic.dart';
 import 'package:buff_lisa/5_Ranking/feed_ui.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/mona.dart';
@@ -23,40 +25,62 @@ class FeedPage extends StatefulWidget {
 }
 
 class FeedPageState extends State<FeedPage>{
+  static const _pageSize = 2;
 
-  late ScrollController controller;
+  final PagingController<int, Pin> pagingController = PagingController(firstPageKey: 0);
+  late List<Pin> sortedPins = [];
+  late List<Widget> widgets = [];
 
   @override
-  Widget build(BuildContext context) {
-    final state = this;
-    return ChangeNotifierProvider<FeedNotifier>(
-        create: (_) {
-          return FeedNotifier();
-        },
-        builder: ((context, child) => FeedUI(state: state))
-    );
-  }
+  Widget build(BuildContext context) => FeedUI(state: this);
 
-  ///
   @override
   void initState() {
+    pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
     super.initState();
-
   }
 
-  void init(BuildContext context) {
-    controller =ScrollController()..addListener(() => _scrollListener(context));
-    Set<Group> groups = Provider.of<ClusterNotifier>(context).getActiveGroups;
-    Provider.of<FeedNotifier>(context, listen: false).initSortedPins(groups);
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      List<Pin> newItems = [];
+      print(pageKey);
+      print(sortedPins.length);
+      print("TEST--------------");
+      for (int i = 0; i < _pageSize && i + pageKey < sortedPins.length; i++) {
+        newItems.add(sortedPins[i + pageKey]);
+      }
+      print(newItems.length);
+      final isLastPage = newItems.length < _pageSize;
+      if (isLastPage) {
+        pagingController.appendLastPage(newItems);
+      } else {
+        final nextPageKey = pageKey + newItems.length;
+        pagingController.appendPage(newItems, nextPageKey);
+      }
+    } catch (error) {
+      pagingController.error = error;
+    }
   }
 
+  void initSortedPins() {
+    final activeGroups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
+    sortedPins.clear();
+    widgets.clear();
+    for (Group group in activeGroups) {
+      sortedPins.addAll(group.pins);
+    }
+    sortedPins.sort((p1, p2) => -(p1.creationDate.compareTo(p2.creationDate)));
+    for (Pin pin in sortedPins) {
+      widgets.add(FeedCard(pin: pin));
+    }
+    pagingController.refresh();
+  }
 
-
-  void _scrollListener(BuildContext context) {
-    double width = (MediaQuery.of(context).size.width);
-    double height2 = (MediaQuery.of(context).size.height);
-    double scroll = (controller.position.maxScrollExtent) - controller.position.extentAfter +height2;
-    double height = (width+38.5).toDouble();
-    Provider.of<FeedNotifier>(context, listen: false).scrollFeed(scroll, height);
+  @override
+  void dispose() {
+    pagingController.dispose();
+    super.dispose();
   }
 }

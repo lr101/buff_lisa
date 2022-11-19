@@ -54,6 +54,19 @@ class RestAPI {
     }
   }
 
+  static Future<Group> joinGroup(int groupId, String? inviteUrl) async {
+    final String json = jsonEncode(<String, dynamic> {
+      "username" : global.username,
+      "inviteUrl" : inviteUrl
+    });
+    HttpClientResponse response = await createHttpsRequest("/api/groups/$groupId/members", {}, 1, json);
+    if (response.statusCode == 200) {
+      return Group.fromJson(jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>);
+    } else {
+      throw Exception("Group could not be joined: ${response.statusCode} error code");
+    }
+  }
+
   static Future<String?> checkUser(String? name) async {
     name ??= global.username;
     HttpClientResponse response = await createHttpsRequest("/login/$name/", {}, 0, null);

@@ -32,3 +32,8 @@ samples, guidance on mobile development, and a full API reference.
 - shared_preferences: might be another name...
 - fluttertoast: package doesn't really support ios
 
+### TODO all
+- all images from feed-page are reloaded after post new pin
+- all images from feed-page are reloaded after filter button
+- 
+

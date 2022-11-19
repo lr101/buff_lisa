@@ -89,7 +89,7 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
   }
 
   Widget getCardOfOtherGroups(int index) {
-    int visibility = state.groups[index].visibility;
+    Group group = state.groups[index];
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
@@ -102,9 +102,9 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
               "${index + 1}.",
               style: const TextStyle(color: global.cPrime),
             ),
-            trailing: Text(
-                (visibility == 0 ? "public" : "private"),
-                style: const TextStyle(color: global.cPrime)
+            trailing: TextButton(
+              onPressed: () => state.handleJoinGroup(group),
+              child: Text(group.visibility == 0 ? "Join" : "Request"),
             )
         )
     );
