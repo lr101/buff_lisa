@@ -50,7 +50,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           Widget w = FeedCard(pin: key, image: value,);
           if (key.group.active) newItems.add(w);
         } else {
-          Uint8List image = (await RestAPI.fetchMonaFromPinId(key.id, key.group))!.image;
+          Uint8List image = await ClusterNotifier.getPinImage(key);
           allWidgets[key] = image;
           Widget w = FeedCard(pin: key, image: image,);
           if (key.group.active) newItems.add(w);

@@ -62,11 +62,7 @@ dependencies:
 
   shared_preferences:
 
-  carousel_slider: ^4.1.1
-
   flutter_launcher_icons:
-
-  fluster:
 
   image:
 

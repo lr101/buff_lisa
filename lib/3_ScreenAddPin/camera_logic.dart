@@ -43,7 +43,7 @@ class CameraControllerWidget extends State<CameraWidget> {
     );
     if (result["approve"] as bool) {
       Group group = result["type"] as Group;
-      Mona mona = await _createMona(image, group);
+      Pin mona = await _createMona(image, group);
       await Provider.of<ClusterNotifier>(widget.io.context, listen: false).addOfflinePin(mona);
       _postPin(mona, group);
       final BottomNavigationBar navigationBar = io.globalKey.currentWidget! as BottomNavigationBar;
@@ -52,7 +52,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   }
 
   /// creates a Mona by accessing the location of the user
-  Future<Mona> _createMona(Uint8List image, Group group) async {
+  Future<Pin> _createMona(Uint8List image, Group group) async {
     int length = Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().length;
     LocationData locationData = await LocationClass.getLocation();
     //create Pin
@@ -62,23 +62,22 @@ class CameraControllerWidget extends State<CameraWidget> {
         id: length,
         username: global.username,
         creationDate: DateTime.now(),
-        group: group
+        group: group,
+        image: image
     );
-    //create Mona
-    Mona mona =  Mona(image: image, pin: pin);
-    return mona;
+    return pin;
   }
 
   /// pin in send to the server
   /// on success at the server -> offline pin is deleted and replaced by the online pin
-  Future<void> _postPin(Mona mona, Group group) async {
+  Future<void> _postPin(Pin mona, Group group) async {
     HttpClientResponse response = await RestAPI.postPin(mona);
     if (response.statusCode == 201 || response.statusCode == 200) {
       response.transform(utf8.decoder).join().then((value) {
         Map<String, dynamic> json = jsonDecode(value) as Map<String, dynamic>;
         Pin pin = Pin.fromJson(json, group);
         Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona);
-        Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin, mona.pin.group);
+        Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
       });
     }
   }

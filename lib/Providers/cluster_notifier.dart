@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
-import 'package:fluster/fluster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -16,7 +15,7 @@ import '../main.dart';
 class ClusterNotifier extends ChangeNotifier {
   final FileHandler _offlineFileHandler = FileHandler(fileName: global.fileName);
   late  List<Group> _userGroups = [];
-  late List<Mona> _offlinePins = [];
+  late List<Pin> _offlinePins = [];
   Group? _lastSelected;
 
   ///cluster
@@ -60,10 +59,11 @@ class ClusterNotifier extends ChangeNotifier {
     return _userGroups.firstWhere((element) => element.groupId == groupId);
   }
 
-  void addPin(Pin pin, Group group)  {
+  void addPin(Pin pin)  {
+    Group group = pin.group;
     group.pins.add(pin);
     if (group.active) {
-      _addPinToMarkers(pin, false, null, group);
+      _addPinToMarkers(pin, false);
     }
     _updateValues();
   }
@@ -85,11 +85,11 @@ class ClusterNotifier extends ChangeNotifier {
       }
       //converts pins to markers on googel maps
       for (Pin pin in group.pins) {
-        await _addPinToMarkers(pin, false, null, group);
+        await _addPinToMarkers(pin, false);
       }
       //converts offline pins to markers if member of group
-      for (Mona mona in _offlinePins) {
-          await _addPinToMarkers(mona.pin, true, mona.image, group);
+      for (Pin mona in _offlinePins) {
+          await _addPinToMarkers(mona, true);
       }
       group.active = true;
       _updateValues();
@@ -103,9 +103,9 @@ class ClusterNotifier extends ChangeNotifier {
          _removePinFromMarkers(pin);
       }
       //removes offline markers from maps
-      for (Mona mona in _offlinePins) {
-        if (mona.pin.group == group) {
-          _removePinFromMarkers(mona.pin);
+      for (Pin mona in _offlinePins) {
+        if (mona.group == group) {
+          _removePinFromMarkers(mona);
         }
       }
       group.active = false;
@@ -121,27 +121,27 @@ class ClusterNotifier extends ChangeNotifier {
     //await io.clusterHandler.updateValues();
   }
 
-  List<Mona> getOfflinePins() {return _offlinePins;}
+  List<Pin> getOfflinePins() {return _offlinePins;}
 
   Future<void> loadOfflinePins() async{
-    List<Mona> monas = (await _offlineFileHandler.readFile(0, _userGroups)).map((e) => e as Mona).toList();
-    for (Mona mona  in monas) {
-      await _addOfflinePinToMarkers(mona, mona.pin.group);
+    List<Pin> monas = (await _offlineFileHandler.readFile(0, _userGroups)).map((e) => e as Pin).toList();
+    for (Pin mona  in monas) {
+      await _addOfflinePinToMarkers(mona);
     }
     _updateValues();
   }
 
-  Future<void> deleteOfflinePin(Mona mona) async{
+  Future<void> deleteOfflinePin(Pin mona) async{
     _removeOfflinePinFromMarkers(mona);
-    await _offlineFileHandler.saveList(_offlinePins, mona.pin.group.groupId);
+    await _offlineFileHandler.saveList(_offlinePins);
     _updateValues();
   }
 
-  Future<void> addOfflinePin(Mona mona) async{
-    if (mona.pin.group.active) {
-      await _addOfflinePinToMarkers(mona, mona.pin.group);
+  Future<void> addOfflinePin(Pin mona) async{
+    if (mona.group.active) {
+      await _addOfflinePinToMarkers(mona);
     }
-    await _offlineFileHandler.saveList(_offlinePins, mona.pin.group.groupId);
+    await _offlineFileHandler.saveList(_offlinePins);
     _updateValues();
   }
 
@@ -183,15 +183,15 @@ class ClusterNotifier extends ChangeNotifier {
     _updateValues();
   }
 
-  Future<void> _addOfflinePinToMarkers(Mona mona, Group group) async{
-    await _addPinToMarkers(mona.pin, true, mona.image, group);
+  Future<void> _addOfflinePinToMarkers(Pin mona) async{
+    await _addPinToMarkers(mona, true);
     _offlinePins.add(mona);
     _updateValues();
   }
 
-  void _removeOfflinePinFromMarkers(Mona mona) {
+  void _removeOfflinePinFromMarkers(Pin mona) {
     _offlinePins.remove(mona);
-    _removePinFromMarkers(mona.pin);
+    _removePinFromMarkers(mona);
     _updateValues();
   }
 
@@ -200,16 +200,16 @@ class ClusterNotifier extends ChangeNotifier {
   }
 
 
-  _addPinToMarkers(Pin pin, bool newPin, Uint8List? image, Group group) {
+  _addPinToMarkers(Pin pin, bool newPin) {
     _allMarkers[pin] = (
       Marker(
           key: Key((newPin ? "new${pin.id.toString()}" : pin.id.toString())),
           point: LatLng(pin.latitude, pin.longitude), 
           builder: (_)  => GestureDetector(
-            child: Image.memory(group.pinImage!),
+            child: Image.memory(pin.group.pinImage!),
             onTap: () => Navigator.push(
               navigatorKey.currentContext!,
-              MaterialPageRoute(builder: (context) => ShowImageWidget(image: image, newPin: newPin, pin: pin,)),
+              MaterialPageRoute(builder: (context) => ShowImageWidget(image: pin.image, newPin: newPin, pin: pin,)),
             ),
           )
       )
@@ -233,5 +233,13 @@ class ClusterNotifier extends ChangeNotifier {
   void _filterMaxDate(Map<Pin, Marker> mark) {
     if (__filterDateMax == null) return;
     mark.removeWhere((k,v) => k.creationDate.isAfter(__filterDateMax!));
+  }
+
+  static Future<Uint8List> getPinImage(Pin pin) async {
+    if (pin.image != null) {
+      return pin.image!;
+    } else {
+      return (await RestAPI.fetchMonaFromPinId(pin)).image!;
+    }
   }
 }

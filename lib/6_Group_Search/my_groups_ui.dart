@@ -1,4 +1,5 @@
 import 'package:buff_lisa/5_Ranking/feed_logic.dart';
+import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +9,9 @@ import '../Files/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
 
 
-class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
+class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
 
-  const SearchUI({super.key, required state}) : super(state: state);
+  const MyGroupsUI({super.key, required state}) : super(state: state);
 
 
 
@@ -25,43 +26,42 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
               backgroundColor: global.cThird,
         ),
         backgroundColor: Colors.white,
-        body: RefreshIndicator(
-            onRefresh: state.pullRefresh,
-            child: ListView.separated(
-                itemCount: state.groups.length + 1,
-                padding: const EdgeInsets.all(8.0),
-                separatorBuilder: (BuildContext context, int index) => const Divider(),
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == 0) {
-                    return getCardCreateNewGroup();
-                  } else {
-                    index--;
-                    return getCardOfOtherGroups(index);
-                  }
-                },
-              )
-          )
+        body: ListView.separated(
+          itemCount: Provider.of<ClusterNotifier>(context).getGroups.length + 1,
+          padding: const EdgeInsets.all(8.0),
+          separatorBuilder: (BuildContext context, int index) => const Divider(),
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return getCardSearchNewGroup();
+            } else {
+              index--;
+              return getCardOfOtherGroups(index, context);
+            }
+
+          },
+        )
     );
   }
 
-  Widget getCardCreateNewGroup() {
+  Widget getCardSearchNewGroup() {
     return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: ListTile(
+        onTap: state.handlePressNewGroup,
+        title: const Text(
+            "Explore existing groups",
+            style: TextStyle(color: global.cPrime)
         ),
-        child: ListTile(
-          onTap: state.handlePressNewGroup,
-          title: const Text(
-              "Create a new group",
-              style: TextStyle(color: global.cPrime)
-          ),
-          leading: const Icon(Icons.add),
-          ),
-        );
+        leading: const Icon(Icons.add),
+      ),
+    );
   }
 
-  Widget getCardOfOtherGroups(int index) {
-    Group group = state.groups[index];
+
+  Widget getCardOfOtherGroups(int index, BuildContext context) {
+    Group group = Provider.of<ClusterNotifier>(context, listen: false).getGroups[index];
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),

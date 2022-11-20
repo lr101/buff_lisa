@@ -1,12 +1,16 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import '../AbstractClasses/to_json.dart';
 import 'group.dart';
 
-class Pin implements ToJson {
+class Pin {
   final double latitude;
   final double longitude;
   final int id;
   final DateTime creationDate;
   final String username;
+  Uint8List? image;
   Group group;
 
   Pin( {
@@ -15,19 +19,27 @@ class Pin implements ToJson {
     required this.id,
     required this.creationDate,
     required this.username,
-    required this.group
+    required this.group,
+    this.image
   });
 
-  @override
   Pin.fromJson(Map<String, dynamic> json, this.group) :
+      latitude = json['latitude'],
+      longitude = json['longitude'],
+      id = json['id'],
+      username = json.containsKey('username') ? json['username'] : null,
+      creationDate = DateTime.parse((json['creationDate']).toString()),
+      image = null;
+
+  Pin.fromJsonOffline(Map<String, dynamic> json, this.group) :
         latitude = json['latitude'],
         longitude = json['longitude'],
         id = json['id'],
         username = json.containsKey('username') ? json['username'] : null,
-        creationDate = DateTime.parse((json['creationDate']).toString());
+        creationDate = DateTime.parse((json['creationDate']).toString()),
+        image = _getImageBinary(json['image']);
 
 
-  @override
   Future<Map<String, dynamic>> toJson() async {
     return {
       "longitude": longitude,
@@ -38,9 +50,26 @@ class Pin implements ToJson {
     };
   }
 
+  Future<Map<String, dynamic>> toJsonOffline() async {
+    return {
+      "longitude": longitude,
+      "latitude": latitude,
+      "id": id,
+      "creationDate": formatDateTim(creationDate),
+      "username" : username,
+      "image" : image,
+      "groupId" : group.groupId
+    };
+  }
+
+
   static String formatDateTim(DateTime d) {
     DateTime date = DateTime(d.year, d.month, d.day);
     return date.toString().replaceAll(" 00:00:00.000", "");
+  }
+
+  static Uint8List _getImageBinary(String dynamicList) {
+    return base64Decode(dynamicList);
   }
 
 }

@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
+import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   late PageController pageController;
 
   late final List<Widget> widgetOptions = <Widget>[
-    const SearchGroupPage(),
+    const MyGroupsPage(),
     CameraWidget(io : io),
     MapsWidget(io : io),
     const FeedPage(),
@@ -86,8 +87,8 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
   /// load offline pins and try pushing to server
   Future<void> _tryOfflinePins() async {
-    List<Mona> monas = List.from(Provider.of<ClusterNotifier>(context, listen:false).getOfflinePins());
-    for (Mona mona in monas) {
+    List<Pin> monas = List.from(Provider.of<ClusterNotifier>(context, listen:false).getOfflinePins());
+    for (Pin mona in monas) {
       final response = await RestAPI.postPin(mona);
       if (response.statusCode == 201 || response.statusCode == 200) {
         if (!mounted) return;

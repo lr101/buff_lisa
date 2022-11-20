@@ -26,7 +26,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                   child: state.getImageWidget()
                 )
               ),
-              Text("username: ${state.username}"),
+              Text("username: ${state.widget.pin.username}"),
                 Align(
                   alignment: Alignment.topCenter,
                   child: OutlinedButton(

@@ -32,10 +32,9 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.newPin) {
-      username = global.username;
-    } else {
-      _getUsername(widget.pin.id);
+    username = widget.pin.username;
+    if (username == global.username) {
+      activeDelete = true;
     }
   }
 
@@ -45,7 +44,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   Future<void> handleButtonPress() async{
       if (activeDelete) {
         if (widget.newPin) {
-          Mona mona =  Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().firstWhere((element) => element.pin == widget.pin);
+          Pin mona =  Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().firstWhere((element) => element.id == widget.pin.id);
           await Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePin(mona);
         } else {
           bool deleted = await RestAPI.deleteMonaFromPinId(widget.pin.id);
@@ -65,26 +64,16 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
     if (widget.image != null) {
       return Image.memory(widget.image!);
     }
-    return FutureBuilder<Mona?>(
-      future: RestAPI.fetchMonaFromPinId(widget.pin.id, widget.pin.group),
-      builder: (context, AsyncSnapshot<Mona?> snapshot) {
+    return FutureBuilder<Uint8List>(
+      future: ClusterNotifier.getPinImage(widget.pin),
+      builder: (context, AsyncSnapshot<Uint8List> snapshot) {
         if (snapshot.hasData) {
-          return Image.memory(snapshot.data!.image);
+          return Image.memory(snapshot.data!);
         } else {
           return const Center(child: CircularProgressIndicator());
         }
       },
     );
-  }
-
-  /// Fetches the username of the current pin
-  /// Sets @activeDelete to true if the username is the current user
-  Future<void> _getUsername(int id) async{
-    username = (await RestAPI.getUsernameByPin(id))!;
-    if (username == global.username) {
-      activeDelete = true;
-    }
-    setState(() {});
   }
 
 }

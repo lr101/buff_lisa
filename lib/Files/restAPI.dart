@@ -29,6 +29,21 @@ class RestAPI {
     }
   }
 
+  static Future<Set<String>> fetchGroupMembers(Group group) async {
+    HttpClientResponse response = await createHttpsRequest("/api/groups/${group.groupId}/members" , {}, 0, null);
+    if (response.statusCode == 200) {
+      Set<String> members = {};
+      List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
+      for (dynamic d in values) {
+        members.add(d);
+      }
+      group.members = members;
+      return members;
+    } else {
+      throw Exception("Groups could not be loaded: ${response.statusCode} error code");
+    }
+  }
+
   static Future<Group?> postGroup(String name, String description, Uint8List image, int visibility) async {
     final String json = jsonEncode(<String, dynamic> {
       "name" : name,
@@ -120,22 +135,23 @@ class RestAPI {
     return null;
   }
 
-  static Future<Mona?> fetchMonaFromPinId(int id, Group group) async {
-    HttpClientResponse response = await createHttpsRequest("/api/monas/$id/", {}, 0, null);
+  static Future<Pin> fetchMonaFromPinId(Pin pin) async {
+    HttpClientResponse response = await createHttpsRequest("/api/monas/${pin.id}/", {}, 0, null);
     if (response.statusCode == 200) {
       Map<String, dynamic> map = json.decode(await response.transform(utf8.decoder).join());
-      return Mona.fromJson(map, group);
+      pin.image =  base64Decode(map['image']);
+      return pin;
     } else {
       throw Exception("failed to load mona");
     }
   }
 
 
-  static Future<HttpClientResponse> postPin(Mona mona) async {
+  static Future<HttpClientResponse> postPin(Pin mona) async {
     final String json = jsonEncode(<String, dynamic> {
-      "latitude" : mona.pin.latitude,
-      "longitude" : mona.pin.longitude,
-      "groupId" : mona.pin.group.groupId,
+      "latitude" : mona.latitude,
+      "longitude" : mona.longitude,
+      "groupId" : mona.group.groupId,
       "image": mona.image,
       "username": global.username,
     });

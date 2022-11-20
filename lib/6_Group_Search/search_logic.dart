@@ -1,5 +1,6 @@
 import 'package:buff_lisa/5_Ranking/feed_ui.dart';
 import 'package:buff_lisa/6_Group_Search/create_group_logic.dart';
+import 'package:buff_lisa/6_Group_Search/join_group_ui.dart';
 import 'package:buff_lisa/6_Group_Search/search_ui.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
@@ -37,6 +38,9 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
   /// gets the ranking list from the server and replaces the ranking list in widget
   Future<List<Group>> pullRefresh() async {
     List<Group> reloadedGroups = await RestAPI.fetchAllGroups();
+    if (!mounted) return [];
+    List<Group> userGroups = Provider.of<ClusterNotifier>(context, listen: false).getGroups;
+    reloadedGroups.removeWhere((g1) => userGroups.any((g2) => g1.groupId == g2.groupId));
     reloadedGroups.sort((a,b) => a.name.compareTo(b.name));
     setState(() {
       groups = reloadedGroups;
@@ -52,16 +56,15 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
     );
   }
 
-  void handleJoinGroup(Group group) {
-    String? inviteUrl;
-    if (group.visibility != 0) {
-      //TODO join private group
-    } else {
-      RestAPI.joinGroup(group.groupId, inviteUrl)
-          .then((value) => Provider.of<ClusterNotifier>(context, listen: false).addGroup(value));
-    }
-
+  Future<void> handleJoinGroupPress(Group group) async {
+    final size = MediaQuery.of(context).size;
+    showDialog(
+        context: context,
+        builder: (BuildContext alertContext) => JoinGroupUI.build(alertContext, size, group)
+    );
   }
+
+
 
   @override
   bool get wantKeepAlive => true;

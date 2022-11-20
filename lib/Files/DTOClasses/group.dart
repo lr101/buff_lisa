@@ -14,7 +14,7 @@ class Group implements ToJson{
   final Uint8List profileImage;
   late Uint8List? pinImage;
   final int visibility;
-  final Set<String> members = {};
+  late Set<String>? members;
   final String? inviteUrl;
   late Set<Pin> pins = {};
   late bool loaded = false;
@@ -40,6 +40,7 @@ class Group implements ToJson{
     profileImage = _getImageBinary(json['profileImage'])!,
     pinImage = _getImageBinary(json['pinImage']),
     visibility = json['visibility'],
+    members = (json['members'] != null ? Set.from(json['members']) : null),
     inviteUrl = json['inviteUrl'];
 
   @override

@@ -29,12 +29,11 @@ class FileHandler {
     return File('$path/$name').create(recursive: true);
   }
 
-  Future<void> saveList(List<Mona> list, int groupId) async {
+  Future<void> saveList(List<Pin> list) async {
     final File fl = await getFile();
     List<Map<String, dynamic>> l = [];
-    for (Mona item in list) {
-      l.add(await item.toJson());
-      l.add({'groupId' : groupId});
+    for (Pin item in list) {
+      l.add(await item.toJsonOffline());
     }
     await fl.writeAsString(const JsonEncoder().convert(l));
   }
@@ -48,7 +47,7 @@ class FileHandler {
       if (type == 0) {
         for (Map<String, dynamic> data in jsonData) {
           Group group = groups.firstWhere((element) => element.groupId == data['groupId']);
-          list.add(Mona.fromJson2(data, group));
+          list.add(Pin.fromJsonOffline(data, group));
         }
       }
       return list;

@@ -29,7 +29,8 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                 options: MapOptions(
                     center: global.initCamera,
                     zoom: 20,
-                    keepAlive: true
+                    keepAlive: true,
+                    interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
                 ),
                 children: [
                   TileLayerWidget(
