@@ -1,11 +1,10 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../Files/DTOClasses/mona.dart';
+import '../Files/fetch_pins.dart';
 import '../Files/global.dart' as global;
 import '../2_ScreenMaps/image_widget_logic.dart';
 import '../Files/file_handler.dart';
@@ -59,32 +58,21 @@ class ClusterNotifier extends ChangeNotifier {
     return _userGroups.firstWhere((element) => element.groupId == groupId);
   }
 
-  void addPin(Pin pin)  {
+  Future<void> addPin(Pin pin)  async {
     Group group = pin.group;
-    group.pins.add(pin);
+    (await group.getPins()).add(pin);
     if (group.active) {
       _addPinToMarkers(pin, false);
     }
     _updateValues();
   }
 
-  int getAllPoints() {
-    int points = 0;
-    for (Group group in _userGroups) {
-      points += group.pins.length;
-    }
-    return points;
-  }
-
   Future<void> activateGroup(Group group) async{
     if (!group.active) {
       //get pins from server of the specific groups if not already loaded
-      if (!group.loaded) {
-        group.pins = await RestAPI.fetchGroupPins(group);
-        group.loaded = true;
-      }
+      Set<Pin> pins = await group.getPins();
       //converts pins to markers on googel maps
-      for (Pin pin in group.pins) {
+      for (Pin pin in pins) {
         await _addPinToMarkers(pin, false);
       }
       //converts offline pins to markers if member of group
@@ -99,7 +87,7 @@ class ClusterNotifier extends ChangeNotifier {
   Future<void> deactivateGroup(Group group) async {
     if (group.active) {
       //removes markers from maps
-      for (Pin pin in group.pins) {
+      for (Pin pin in group.getSyncPins()) {
          _removePinFromMarkers(pin);
       }
       //removes offline markers from maps
@@ -113,22 +101,22 @@ class ClusterNotifier extends ChangeNotifier {
     }
   }
 
-  void removePin(Pin pin) {
-    Group group = _userGroups.firstWhere((element) => element == pin.group);
-    group.pins.remove(pin);
+  Future<void> removePin(Pin pin) async {
+    await FetchPins.deleteMonaFromPinId(pin.id);
+    pin.group.removePin(pin);
     _removePinFromMarkers(pin);
     _updateValues();
-    //await io.clusterHandler.updateValues();
   }
 
   List<Pin> getOfflinePins() {return _offlinePins;}
 
-  Future<void> loadOfflinePins() async{
-    List<Pin> monas = (await _offlineFileHandler.readFile(0, _userGroups)).map((e) => e as Pin).toList();
-    for (Pin mona  in monas) {
-      await _addOfflinePinToMarkers(mona);
-    }
-    _updateValues();
+  Future<List<Pin>> loadOfflinePins() async{
+    return (await _offlineFileHandler.readFile(0, _userGroups)).map((e) => e as Pin).toList();
+  }
+
+  Future<void> deleteOfflinePinAndAddToOnline(Pin newPin, Pin oldPin) async{
+    await deleteOfflinePin(oldPin);
+    addPin(newPin);
   }
 
   Future<void> deleteOfflinePin(Pin mona) async{
@@ -206,10 +194,10 @@ class ClusterNotifier extends ChangeNotifier {
           key: Key((newPin ? "new${pin.id.toString()}" : pin.id.toString())),
           point: LatLng(pin.latitude, pin.longitude), 
           builder: (_)  => GestureDetector(
-            child: Image.memory(pin.group.pinImage!),
+            child: pin.group.getPinImageWidget(),
             onTap: () => Navigator.push(
               navigatorKey.currentContext!,
-              MaterialPageRoute(builder: (context) => ShowImageWidget(image: pin.image, newPin: newPin, pin: pin,)),
+              MaterialPageRoute(builder: (context) => ShowImageWidget(newPin: newPin, pin: pin,)),
             ),
           )
       )
@@ -235,11 +223,4 @@ class ClusterNotifier extends ChangeNotifier {
     mark.removeWhere((k,v) => k.creationDate.isAfter(__filterDateMax!));
   }
 
-  static Future<Uint8List> getPinImage(Pin pin) async {
-    if (pin.image != null) {
-      return pin.image!;
-    } else {
-      return (await RestAPI.fetchMonaFromPinId(pin)).image!;
-    }
-  }
 }

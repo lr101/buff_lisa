@@ -5,11 +5,12 @@ import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_logic.dart';
+import 'package:buff_lisa/Files/fetch_groups.dart';
+import 'package:buff_lisa/Files/fetch_pins.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../2_ScreenMaps/maps_logic.dart';
 import '../5_Ranking/feed_logic.dart';
-import '../Files/DTOClasses/mona.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/provider_context.dart';
 import '../Files/global.dart' as global;
@@ -75,10 +76,10 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   Future<void> _getGroups() async {
     global.pinsLoaded = true;
 
-    RestAPI.fetchGroups().then((groups) async {
+    FetchGroups.getUserGroups().then((groups) async {
       Provider.of<ClusterNotifier>(context, listen:false).addGroups(groups);
-      await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
-      await _tryOfflinePins();
+      List<Pin> pins = await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
+      await _tryOfflinePins(pins);
       //TODO load saved selected groups
     });
 
@@ -86,15 +87,18 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
 
   /// load offline pins and try pushing to server
-  Future<void> _tryOfflinePins() async {
-    List<Pin> monas = List.from(Provider.of<ClusterNotifier>(context, listen:false).getOfflinePins());
-    for (Pin mona in monas) {
-      final response = await RestAPI.postPin(mona);
-      if (response.statusCode == 201 || response.statusCode == 200) {
+  Future<void> _tryOfflinePins(List<Pin> pins) async {
+    for (Pin mona in pins) {
+      try {
+        Pin newPin = await FetchPins.postPin(mona);
         if (!mounted) return;
-        Provider.of<ClusterNotifier>(context, listen:false).deleteOfflinePin(mona);
+        Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePinAndAddToOnline(newPin, mona);
+      } catch (e) {
+        Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(
+            mona);
       }
     }
   }
+
 
 }

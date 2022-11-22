@@ -1,5 +1,9 @@
+import 'dart:typed_data';
+
+import 'package:buff_lisa/Files/fetch_groups.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 import '../Files/DTOClasses/group.dart';
@@ -26,7 +30,7 @@ class JoinGroupUI {
                         const Text("Logo: "),
                         SizedBox(
                           height: 40,
-                          child: Image.memory(group.profileImage),
+                          child: group.getProfileImageWidget()
                         )
                       ],
                     ),
@@ -96,7 +100,7 @@ class JoinGroupUI {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text("Description:"),
-          Text(group.description!)
+          group.getDescriptionWidget()
         ],
       );
     }
@@ -136,25 +140,21 @@ class JoinGroupLogic {
         ],
       );
     } else {
-      if (group.members != null) {
-        return JoinGroupUI._buildList(group.members!);
-      } else {
-        return FutureBuilder(
-          future: RestAPI.fetchGroupMembers(group),
-          builder: (BuildContext context, snapshot) {
+      return FutureBuilder<Set<String>>(
+          future: group.getMembers(),
+          builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return JoinGroupUI._buildList(group.members!);
+              return JoinGroupUI._buildList(snapshot.requireData);
             } else {
-              return JoinGroupUI._buildList({"LOADING"});
+              return const CircularProgressIndicator();
             }
-          },
-        );
-      }
+          }
+      );
     }
   }
 
   static void joinPublicGroup(Group group, BuildContext context) {
-    RestAPI.joinGroup(group.groupId, null).then((value) {
+    FetchGroups.joinGroup(group.groupId, null).then((value) {
       Provider.of<ClusterNotifier>(context, listen: false).addGroup(value);
       Navigator.pop(context);
     });
@@ -162,7 +162,7 @@ class JoinGroupLogic {
 
   static void joinPrivateGroup(Group group, BuildContext context, TextEditingController controller)  {
     try {
-      RestAPI.joinGroup(group.groupId, controller.text).then((value) {
+      FetchGroups.joinGroup(group.groupId, controller.text).then((value) {
         Provider.of<ClusterNotifier>(context, listen: false).addGroup(value);
         Navigator.pop(context);
       });

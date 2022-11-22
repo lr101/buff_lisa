@@ -1,22 +1,17 @@
 import 'dart:typed_data';
-
 import 'package:buff_lisa/5_Ranking/feed_card_ui.dart';
-import 'package:buff_lisa/Files/restAPI.dart';
-import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../Files/DTOClasses/group.dart';
-import '../Files/DTOClasses/mona.dart';
 import '../Files/global.dart' as global;
 
 class FeedCard extends StatefulWidget {
-  const FeedCard({super.key, required this.pin, required this.image});
+  const FeedCard({super.key, required this.pin});
 
   final Pin pin;
-  final Uint8List image;
 
   @override
   FeedCardState createState() => FeedCardState();
@@ -70,7 +65,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
                               point: LatLng(pin.latitude, pin.longitude),
                               width: 50,
                               height: 50,
-                              builder: (BuildContext context) => Image.memory(group.pinImage!)
+                              builder: (BuildContext context) => pin.group.getPinImageWidget()
                             )
                         ]
                     )
@@ -88,7 +83,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
       width: width,
       child: GestureDetector(
           onTap: () => changeSize(context),
-          child: Image.memory(widget.image)
+          child: widget.pin.getImageWidget()
       )
     );
   }

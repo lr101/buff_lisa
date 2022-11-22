@@ -19,11 +19,11 @@ class FeedPage extends StatefulWidget {
 }
 
 class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<FeedPage>{
-  static const _pageSize = 2;
+  static const _pageSize = 1;
   
-  final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 1);
+  final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 3);
   late Set<Group> groups = {};
-  late Map<Pin, Uint8List?> allWidgets = {};
+  late Map<Pin, Widget?> allWidgets = {};
 
   @override
   Widget build(BuildContext context) {
@@ -41,31 +41,22 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      List<Widget> newItems = [];
-      List<Group> g = [];
-      for (int i = 0; i < _pageSize && i + pageKey < allWidgets.keys.length; i++) {
-        Pin key =  allWidgets.keys.elementAt(pageKey + i);
-        Uint8List? value = allWidgets.values.elementAt(pageKey + i);
-        if (value != null) {
-          Widget w = FeedCard(pin: key, image: value,);
-          if (key.group.active) newItems.add(w);
-        } else {
-          Uint8List image = await ClusterNotifier.getPinImage(key);
-          allWidgets[key] = image;
-          Widget w = FeedCard(pin: key, image: image,);
-          if (key.group.active) newItems.add(w);
+        Pin key = allWidgets.keys.elementAt(pageKey);
+        Widget? value = allWidgets.values.elementAt(pageKey);
+        if (value != null && key.group.active) {
+          allWidgets[key] = value;
+        } else if (key.group.active) {
+          allWidgets[key] = FeedCard(pin: key,);
         }
-        g.add(key.group);
-      }
-      final isLastPage = newItems.length < _pageSize;
-      if (isLastPage) {
-        pagingController.appendLastPage(newItems);
-      } else {
-        final nextPageKey = pageKey + newItems.length;
-        pagingController.appendPage(newItems, nextPageKey);
-      }
+        if (allWidgets[key] != null) {
+          if (allWidgets.length == pageKey + 1) {
+            pagingController.appendLastPage([allWidgets[key]!]);
+          } else {
+            pagingController.appendPage([allWidgets[key]!], pageKey + 1);
+          }
+        }
     } catch (error) {
-      pagingController.error = error;
+      pagingController.appendLastPage([Text("t")]);
     }
   }
 
@@ -80,13 +71,13 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
         groups = groups.union(activeGroups);
         for (Group group in groups) {
           if (!oldGroups.contains(group)) {
-            for (Pin pin in group.pins) {
+            for (Pin pin in group.getSyncPins()) {
               allWidgets[pin] = null;
             }
           }
         }
       }
-      allWidgets = SplayTreeMap<Pin, Uint8List?>.from(allWidgets, (k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
+      allWidgets = SplayTreeMap<Pin, Widget?>.from(allWidgets, (k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
       pagingController.refresh();
     }
 

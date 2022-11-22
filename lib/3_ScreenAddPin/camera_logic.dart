@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:path_provider/path_provider.dart';
+import 'package:buff_lisa/Files/fetch_pins.dart';
 
 import '../Files/DTOClasses/group.dart';
-import '../Files/DTOClasses/mona.dart';
 import '../Files/global.dart' as global;
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,6 @@ import '../Files/provider_context.dart';
 import '../Files/restAPI.dart';
 import '../Providers/cluster_notifier.dart';
 import 'check_image_logic.dart';
-import 'package:image/image.dart' as imgUtils;
 
 class CameraWidget extends StatefulWidget {
   final ProviderContext io;
@@ -71,15 +69,9 @@ class CameraControllerWidget extends State<CameraWidget> {
   /// pin in send to the server
   /// on success at the server -> offline pin is deleted and replaced by the online pin
   Future<void> _postPin(Pin mona, Group group) async {
-    HttpClientResponse response = await RestAPI.postPin(mona);
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      response.transform(utf8.decoder).join().then((value) {
-        Map<String, dynamic> json = jsonDecode(value) as Map<String, dynamic>;
-        Pin pin = Pin.fromJson(json, group);
-        Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona);
-        Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
-      });
-    }
+    final pin = await FetchPins.postPin(mona);
+    Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona);
+    Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
   }
 
   double getWidth() {

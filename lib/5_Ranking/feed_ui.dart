@@ -32,7 +32,7 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState>{
                   child: PagedListView<int, Widget> (
                     pagingController: state.pagingController,
                     builderDelegate: PagedChildBuilderDelegate<Widget>(
-                      itemBuilder: (context, item, index)  => item
+                      itemBuilder: (context, item, index)  => item,
                     ),
                   )
               )

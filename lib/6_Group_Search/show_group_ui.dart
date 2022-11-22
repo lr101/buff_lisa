@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import '../Files/global.dart' as global;
 import '../Files/DTOClasses/group.dart';
@@ -23,7 +25,7 @@ class ShowGroupUI {
                         const Text("Logo: "),
                         SizedBox(
                           height: 40,
-                          child: Image.memory(group.profileImage),
+                          child: group.getProfileImageWidget()
                         )
                       ],
                     ),
@@ -42,13 +44,16 @@ class ShowGroupUI {
                          crossAxisAlignment: CrossAxisAlignment.start,
                          children: [
                            const Text("Description:"),
-                           Text(group.description!)
+                           group.getDescriptionWidget()
                          ],
                        ),
                       )
                     ),
                     const SizedBox(height: 10,),
-                    _buildList(group.members!)
+                    FutureBuilder<Set<String>>(
+                        future: group.getMembers(),
+                        builder: (context, snapshot) => snapshot.hasData ? _buildList(snapshot.requireData) : const CircularProgressIndicator()
+                    )
                   ],
                 ),
               ]

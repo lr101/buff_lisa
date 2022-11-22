@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:buff_lisa/Files/fetch_groups.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,7 @@ class CreateGroupPageState extends State<CreateGroupPage> {
     final image = Provider.of<CreateGroupNotifier>(context, listen: false).getImage;
     final sliderValue = Provider.of<CreateGroupNotifier>(context, listen: false).getSliderValue;
     if (controller1.text.isNotEmpty && controller2.text.isNotEmpty && image != null) {
-      RestAPI.postGroup(controller1.text, controller2.text, image, sliderValue.toInt()).then((group) {
+      FetchGroups.postGroup(controller1.text, controller2.text, image, sliderValue.toInt()).then((group) {
         if (group != null) {
           Provider.of<ClusterNotifier>(context, listen:false).addGroup(group);
           Navigator.pop(context);

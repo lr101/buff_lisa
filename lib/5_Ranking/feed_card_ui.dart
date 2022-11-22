@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:buff_lisa/5_Ranking/feed_card_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
@@ -37,10 +39,16 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                       CircleAvatar(
                           radius: 14,
                           backgroundColor: Colors.grey,
-                          child: CircleAvatar(
-                            backgroundImage: Image.memory(widget.pin.group.profileImage).image,
-                            radius: 12,
-                          )
+                          child: FutureBuilder<Uint8List>(
+                              future: widget.pin.group.getProfileImage(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 12,);
+                                } else {
+                                  return const CircleAvatar(backgroundColor: Colors.grey, radius: 12,);
+                                }
+                              },
+                          ),
                       ),
                       Text(widget.pin.username),
                       const Text(" - "),

@@ -1,6 +1,7 @@
 import 'package:buff_lisa/0_ScreenSignIn/login_ui.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
+import 'package:buff_lisa/Files/fetch_users.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
@@ -50,7 +51,7 @@ class LoginScreen extends StatelessWidget {
   /// This method starts the recovery process for a given existing username
   /// Returns null on a successful call to the server or an error message on errors
   Future<String?> recoverPassword(String name) {
-    return RestAPI.recover(name).then((value) {
+    return FetchUsers.recover(name).then((value) {
       return value ? null : 'User does not have an email address';
     });
   }

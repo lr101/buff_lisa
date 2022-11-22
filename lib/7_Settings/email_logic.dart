@@ -1,4 +1,5 @@
 import 'package:buff_lisa/7_Settings/email_ui.dart';
+import 'package:buff_lisa/Files/fetch_users.dart';
 import 'package:flutter/material.dart';
 import '../Files/global.dart' as global;
 import '../0_ScreenSignIn/login_logic.dart';
@@ -14,7 +15,7 @@ class Email extends StatelessWidget {
   /// on success the page is closed
   void changeMail(TextEditingController controller1, TextEditingController controller2, BuildContext context) {
     if (controller1.text == controller2.text &&  LoginScreen.emailValidator(controller1.text)) {
-      RestAPI.changeEmail(global.username, controller1.text).then((value) => (value ? Navigator.pop(context) : null));
+      FetchUsers.changeEmail(global.username, controller1.text).then((value) => (value ? Navigator.pop(context) : null));
     }
   }
 }

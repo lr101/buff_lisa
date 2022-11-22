@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:crypt/crypt.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../Files/fetch_users.dart';
 import '../Files/global.dart' as global;
 import '../Files/restAPI.dart';
 
@@ -47,7 +48,7 @@ class Secure {
   /// saves on successful account creation the username and token in secure storage and returns true
   static Future<bool> signupAuthentication(String username, String password, String email) async {
     String psw = Secure.encryptPassword(password);
-    String? response = await RestAPI.postUsername(username, psw, email);
+    String? response = await FetchUsers.postUsername(username, psw, email);
     if (response != null) {
       Secure.saveSecure(response, "auth");
       Secure.saveSecure(username, "username");
@@ -62,15 +63,15 @@ class Secure {
   /// signin process sends encoded password to server and obtains a JWT token on success
   /// saves after successful login username and token in secure storage and returns true
   static Future<bool> loginAuthentication(String username, String password,) async {
-    String? element = await RestAPI.checkUser(username);
+    String? element = await FetchUsers.checkUser(username);
     String? token;
     //TODO delete first part of if, when all password are changed to new format
     if (element != null && element.isNotEmpty &&
         Crypt(element).match(password)) {
-      token = await RestAPI.checkUserToken(
+      token = await FetchUsers.checkUserToken(
           username, encryptPassword(password));
     } else {
-      token = await RestAPI.auth(username, encryptPassword(password));
+      token = await FetchUsers.auth(username, encryptPassword(password));
     }
     if (token != null) {
       saveSecure(username, "username");

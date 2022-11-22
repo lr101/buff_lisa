@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:flutter/material.dart';
@@ -58,10 +60,16 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
             child: CircleAvatar(
                 radius: 35,
                 backgroundColor: color,
-                child: CircleAvatar(
-                  backgroundImage: Image.memory(group.profileImage).image,
-                  radius: 33,
-                )
+                child: FutureBuilder<Uint8List>(
+                  future: group.getProfileImage(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 33,);
+                    } else {
+                      return const CircleAvatar(backgroundColor: Colors.grey, radius: 33,);
+                    }
+                  },
+                ),
             )
         )
     );

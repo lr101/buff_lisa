@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:buff_lisa/Files/fetch_pins.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 import '../AbstractClasses/to_json.dart';
 import 'group.dart';
 
@@ -10,8 +14,8 @@ class Pin {
   final int id;
   final DateTime creationDate;
   final String username;
-  Uint8List? image;
-  Group group;
+  final Group group;
+  Uint8List? image;  //
 
   Pin( {
     required this.latitude,
@@ -70,6 +74,21 @@ class Pin {
 
   static Uint8List _getImageBinary(String dynamicList) {
     return base64Decode(dynamicList);
+  }
+
+  Future<Uint8List> getImage() async {
+    if (image != null) {
+      return image!;
+    } else {
+      image = await FetchPins.fetchImageOfPin(this);
+      return image!;
+    }
+  }
+  Widget getImageWidget() {
+    return FutureBuilder<Uint8List>(
+      future: getImage(),
+      builder: (context, snapshot) => snapshot.hasData ? Image.memory(snapshot.data!) : const CircularProgressIndicator(),
+    );
   }
 
 }
