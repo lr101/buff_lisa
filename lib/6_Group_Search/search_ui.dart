@@ -1,7 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:buff_lisa/5_Ranking/feed_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/global.dart' as global;
@@ -18,29 +21,27 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: global.cThird,
           centerTitle: true,
-          title: const Text(
-              'Leaderboard',
-              style: TextStyle(color: Colors.white)),
-              backgroundColor: global.cThird,
+          actions: [
+            IconButton(onPressed: () => state.handleSearch(), icon: state.icon)
+          ],
+          title: state.customSearchBar
         ),
         backgroundColor: Colors.white,
-        body: RefreshIndicator(
-            onRefresh: state.pullRefresh,
-            child: ListView.separated(
-                itemCount: state.groups.length + 1,
-                padding: const EdgeInsets.all(8.0),
-                separatorBuilder: (BuildContext context, int index) => const Divider(),
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == 0) {
-                    return getCardCreateNewGroup();
-                  } else {
-                    index--;
-                    return getCardOfOtherGroups(index);
-                  }
-                },
-              )
-          )
+        body: PagedListView<int, Group>(
+          pagingController: state.pagingController,
+          builderDelegate: PagedChildBuilderDelegate<Group>(
+            itemBuilder: (context, item, index) {
+              if (index == 0) {
+                return getCardCreateNewGroup();
+              } else {
+                index--;
+                return getCardOfOtherGroups(item, index);
+              }
+            }
+          ),
+        )
     );
   }
 
@@ -60,8 +61,7 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
         );
   }
 
-  Widget getCardOfOtherGroups(int index) {
-    Group group = state.groups[index];
+  Widget getCardOfOtherGroups(Group group, int index) {
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
@@ -69,9 +69,22 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
         child: GestureDetector(
           onTap: () => state.handleJoinGroupPress(group),
           child: ListTile(
-            title: Text(
-            group.name,
-            style: const TextStyle(color: global.cPrime)),
+            title: Row(
+                children: [
+                  FutureBuilder<Uint8List>(
+                    future: group.getProfileImage(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 20,);
+                      } else {
+                        return const CircleAvatar(backgroundColor: Colors.grey, radius: 20,);
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 20,),
+                  Text(group.name)
+                ]
+            ),
             leading: Text(
               "${index + 1}.",
               style: const TextStyle(color: global.cPrime),

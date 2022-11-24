@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:buff_lisa/Files/AbstractClasses/to_json.dart';
+import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/fetch_groups.dart';
 import 'package:buff_lisa/Files/fetch_pins.dart';
 import 'package:buff_lisa/Files/fetch_users.dart';
@@ -10,16 +11,16 @@ import 'package:flutter/material.dart';
 
 import 'pin.dart';
 
-class Group implements ToJson{
+class Group {
   final int groupId;
   final String name;
-  final String groupAdmin;
   final int visibility;
   final String? inviteUrl;
+  String? groupAdmin;
   String? description;     //
   Uint8List? profileImage; //
   Uint8List? pinImage;     //
-  Set<String>? members;    //
+  List<Ranking>? members;    //
   Set<Pin>? pins;          //
   bool active = false;
 
@@ -43,10 +44,9 @@ class Group implements ToJson{
     profileImage = _getImageBinary(json['profileImage']),
     pinImage = _getImageBinary(json['pinImage']),
     visibility = json['visibility'],
-    members = (json['members'] != null ? Set.from(json['members']) : null),
+    members = _getRankingList(json['members']),
     inviteUrl = json['inviteUrl'];
 
-  @override
   Future<Map<String, dynamic>> toJson() async {
     return {
       "groupId": groupId,
@@ -57,6 +57,18 @@ class Group implements ToJson{
       "visibility" : visibility,
       "inviteUrl" : inviteUrl
     };
+  }
+
+  static List<Ranking>? _getRankingList(json) {
+    if (json != null) {
+      List<Ranking> rankings = [];
+      for (Map<String, dynamic> entry in json) {
+        rankings.add(Ranking.fromJson(entry));
+      }
+      return rankings;
+    } else {
+      return null;
+    }
   }
 
   static Uint8List? _getImageBinary(String? dynamicList) {
@@ -98,11 +110,14 @@ class Group implements ToJson{
     );
   }
 
-  Future<Set<String>> getMembers() async {
+  Future<List<Ranking>> getMembers() async {
     if (members != null) {
       return members!;
     } else {
-      members = await FetchUsers.fetchGroupMembers(this);
+      List<Ranking> ranking = await FetchUsers.fetchGroupMembers(this);
+      groupAdmin = ranking.last.username;
+      ranking.removeAt(ranking.length - 1);
+      members = ranking;
       return members!;
     }
   }
@@ -118,6 +133,21 @@ class Group implements ToJson{
   Widget getDescriptionWidget() {
     return FutureBuilder<String>(
       future: getDescription(),
+      builder: (context, snapshot) => snapshot.hasData ? Text(snapshot.requireData) : const Text("LOADING..."),
+    );
+  }
+
+  Future<String> getAdmin() async {
+    if (groupAdmin != null) {
+      return groupAdmin!;
+    } else {
+      groupAdmin = await FetchGroups.getGroupAdmin(groupId);
+      return groupAdmin!;
+    }
+  }
+  Widget getAdminWidget() {
+    return FutureBuilder<String>(
+      future: getAdmin(),
       builder: (context, snapshot) => snapshot.hasData ? Text(snapshot.requireData) : const Text("LOADING..."),
     );
   }

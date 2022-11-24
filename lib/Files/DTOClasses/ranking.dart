@@ -1,6 +1,6 @@
 class Ranking {
-  final String username;
-  final int points;
+  String username;
+  int points;
 
   Ranking( {
     required this.username,
@@ -11,4 +11,7 @@ class Ranking {
       : username = map['username'],
         points = map['points'];
 
+  addOnePoint() {
+    points++;
+  }
 }

@@ -56,7 +56,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           }
         }
     } catch (error) {
-      pagingController.appendLastPage([Text("t")]);
+      pagingController.appendLastPage([]);
     }
   }
 

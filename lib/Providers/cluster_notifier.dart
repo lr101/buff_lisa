@@ -35,6 +35,16 @@ class ClusterNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeGroup(Group group) {
+    if (group.active) {
+      for (Pin pin in group.getSyncPins()) {
+        removePin(pin);
+      }
+    }
+    _userGroups.remove(group);
+    notifyListeners();
+  }
+
   void addGroup(Group group) {
     if(!_userGroups.any((element) => element.groupId == group.groupId)) {
       _userGroups.add(group);
@@ -51,7 +61,6 @@ class ClusterNotifier extends ChangeNotifier {
     __filterUsernames.clear();
     __filterDateMax = null;
     __filterDateMin = null;
-    notifyListeners();
   }
 
   Group getGroupByGroupId(int groupId) {
@@ -63,6 +72,10 @@ class ClusterNotifier extends ChangeNotifier {
     (await group.getPins()).add(pin);
     if (group.active) {
       _addPinToMarkers(pin, false);
+    }
+    if (group.members != null) {
+      group.members!.firstWhere((element) => element.username == global.username).addOnePoint();
+      group.members!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
     }
     _updateValues();
   }

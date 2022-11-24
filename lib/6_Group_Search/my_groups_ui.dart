@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:buff_lisa/5_Ranking/feed_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
@@ -21,7 +23,7 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
         appBar: AppBar(
           centerTitle: true,
           title: const Text(
-              'Leaderboard',
+              'My Groups',
               style: TextStyle(color: Colors.white)),
               backgroundColor: global.cThird,
         ),
@@ -69,9 +71,22 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
         child: GestureDetector(
           onTap: () => state.handleJoinGroupPress(group),
           child: ListTile(
-            title: Text(
-            group.name,
-            style: const TextStyle(color: global.cPrime)),
+            title: Row(
+                children: [
+                  FutureBuilder<Uint8List>(
+                    future: group.getProfileImage(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 20,);
+                      } else {
+                        return const CircleAvatar(backgroundColor: Colors.grey, radius: 20,);
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 20,),
+                  Text(group.name)
+                ]
+            ),
             leading: Text(
               "${index + 1}.",
               style: const TextStyle(color: global.cPrime),

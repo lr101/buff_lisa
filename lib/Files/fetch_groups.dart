@@ -18,10 +18,42 @@ class FetchGroups {
     }
   }
 
-  static Future<List<Group>> fetchAllGroupsWithoutUserGroups() async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups" , {"withUser" : "false"}, 0, null);
+  static Future<Group> getGroup(int groupId) async {
+    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId" , {}, 0, null);
+    if (response.statusCode == 200) {
+      return Group.fromJson(jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>);
+    } else {
+      throw Exception("Groups could not be loaded: ${response.statusCode} error code");
+    }
+  }
+
+  static Future<List<Group>> getGroups(List<int> groupIds) async {
+    String ids = "";
+    if (groupIds.isNotEmpty) ids += groupIds[0].toString();
+    for (int i = 1; i < groupIds.length; i ++) { ids+="-"; ids += groupIds[i].toString();}
+    if (ids == "") return [];
+    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups" , {"ids" : ids}, 0, null);
     if (response.statusCode == 200) {
       return _toGroupList(response);
+    } else {
+      throw Exception("Groups could not be loaded: ${response.statusCode} error code");
+    }
+  }
+
+  static Future<List<int>> fetchAllGroupsWithoutUserGroupsIds(String? value) async {
+    Map<String, dynamic> params = {};
+    params["withUser"] = "false";
+    if (value != null) params["search"] = value;
+    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groupIds" , params, 0, null);
+    if (response.statusCode == 200) {
+      String res =  (await response.transform(utf8.decoder).join());
+      if (!res.contains("[]")) {
+        return res.replaceAll('[', '').replaceAll(']', '')
+        .split(',')
+        .map<int>((e) => int.parse(e)).toList();
+      } else {
+        return [];
+      }
     } else {
       throw Exception("Groups could not be loaded: ${response.statusCode} error code");
     }
@@ -56,8 +88,26 @@ class FetchGroups {
     }
   }
 
+  static Future<bool> leaveGroup(int groupId) async {
+    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 3, null);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   static Future<String> getGroupDescription(int groupId) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0, null);
+    if (response.statusCode == 200) {
+      return await response.transform(utf8.decoder).join();
+    } else {
+      throw Exception("Group is private or does not exist");
+    }
+  }
+
+  static Future<String> getGroupAdmin(int groupId) async {
+    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/admin", {}, 0, null);
     if (response.statusCode == 200) {
       return await response.transform(utf8.decoder).join();
     } else {

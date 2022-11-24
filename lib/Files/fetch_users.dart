@@ -5,17 +5,17 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/services.dart';
+import 'DTOClasses/ranking.dart';
 import 'global.dart' as global;
 class FetchUsers {
-  static Future<Set<String>> fetchGroupMembers(Group group) async {
+  static Future<List<Ranking>> fetchGroupMembers(Group group) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/members" , {}, 0, null);
     if (response.statusCode == 200) {
-      Set<String> members = {};
+      List<Ranking> members = [];
       List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
       for (dynamic d in values) {
-        members.add(d);
+        members.add(Ranking.fromJson(d));
       }
-      group.members = members;
       return members;
     } else {
       throw Exception("Groups could not be loaded: ${response.statusCode} error code");

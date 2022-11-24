@@ -39,7 +39,7 @@ class CameraControllerWidget extends State<CameraWidget> {
       MaterialPageRoute(
           builder: (context) => CheckImageWidget(image: image,)),
     );
-    if (result["approve"] as bool) {
+    if (result["approve"] != null && result["approve"] as bool) {
       Group group = result["type"] as Group;
       Pin mona = await _createMona(image, group);
       await Provider.of<ClusterNotifier>(widget.io.context, listen: false).addOfflinePin(mona);
