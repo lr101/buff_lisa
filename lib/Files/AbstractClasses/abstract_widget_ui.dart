@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+/// abstract class to handle seperated ui and logic of a StatefulWidget
 abstract class StatefulUI<T1, T2> extends StatelessWidget {
   final T2 state;
 
@@ -11,6 +12,7 @@ abstract class StatefulUI<T1, T2> extends StatelessWidget {
   Widget build(BuildContext context);
 }
 
+/// abstract class to handle seperated ui and logic of a StatelessWidget
 abstract class StatelessUI<T1> extends StatelessWidget {
   final T1 widget;
 

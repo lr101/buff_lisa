@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:buff_lisa/Files/fetch_pins.dart';
-
+import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import '../2_ScreenMaps/maps_logic.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/global.dart' as global;
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
@@ -11,12 +9,12 @@ import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import '../Files/location_class.dart';
 import '../Files/DTOClasses/pin.dart';
-import '../Files/provider_context.dart';
-import '../Files/restAPI.dart';
 import '../Providers/cluster_notifier.dart';
 import 'check_image_logic.dart';
 
 class CameraWidget extends StatefulWidget {
+
+  /// TODO is it needed?
   final ProviderContext io;
 
   const CameraWidget({super.key, required this.io});
@@ -49,7 +47,7 @@ class CameraControllerWidget extends State<CameraWidget> {
     }
   }
 
-  /// creates a Mona by accessing the location of the user
+  /// creates a Pin (mona) by accessing the location of the user
   Future<Pin> _createMona(Uint8List image, Group group) async {
     int length = Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().length;
     LocationData locationData = await LocationClass.getLocation();
@@ -66,7 +64,7 @@ class CameraControllerWidget extends State<CameraWidget> {
     return pin;
   }
 
-  /// pin in send to the server
+  /// pin is send to the server
   /// on success at the server -> offline pin is deleted and replaced by the online pin
   Future<void> _postPin(Pin mona, Group group) async {
     final pin = await FetchPins.postPin(mona);
@@ -74,6 +72,7 @@ class CameraControllerWidget extends State<CameraWidget> {
     Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
   }
 
+  /// returns the width of the camera to fit a 16:9 camera preview perfectly
   double getWidth() {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -83,6 +82,7 @@ class CameraControllerWidget extends State<CameraWidget> {
     return width;
   }
 
+  /// returns the height of the camera to fit a 16:9 camera preview perfectly
   double getHeight() {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;

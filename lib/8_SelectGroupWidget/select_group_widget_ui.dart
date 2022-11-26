@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
-import 'package:buff_lisa/SelectGroupWidget/select_group_widget_logic.dart';
+import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Files/DTOClasses/group.dart';
@@ -45,7 +45,7 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
     );
   }
 
-
+  /// returns the circle avatar of the group and dynamically loads the image from the server
   Widget groupCard(BuildContext context,int index) {
     Group group = Provider.of<ClusterNotifier>(context, listen: false).getGroups[index];
     Group? lastSelected = Provider.of<ClusterNotifier>(context, listen: false).getLastSelected;

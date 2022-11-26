@@ -2,6 +2,7 @@ import 'package:location/location.dart';
 
 class LocationClass {
 
+  /// returns the location of the user at the current moment
   static Future<LocationData> getLocation () async {
     Location location = Location();
 

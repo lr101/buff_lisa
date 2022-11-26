@@ -1,16 +1,15 @@
-import 'dart:typed_data';
 import 'package:buff_lisa/5_Ranking/feed_card_ui.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../Files/DTOClasses/group.dart';
 import '../Files/global.dart' as global;
 
 class FeedCard extends StatefulWidget {
   const FeedCard({super.key, required this.pin});
 
+  /// Pin shown on this Card shown in the feed
   final Pin pin;
 
   @override
@@ -19,8 +18,13 @@ class FeedCard extends StatefulWidget {
 
 class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin<FeedCard>{
 
+  /// Widget shown on the front of the flip card
   late Widget front;
+
+  /// Widget shown on the back of the flip card
   late Widget back;
+
+  /// FlipcardController is used to toggle Flipcard on button press
   late FlipCardController controller;
 
   @override
@@ -29,6 +33,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
     return FeedCardUI(state: this);
   }
 
+  /// Init FlipCardController before build
   @override
   void initState() {
     super.initState();
@@ -36,14 +41,17 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
   }
 
 
-  Widget getMapOfPin(BuildContext context, Group group) {
+  /// returns the front widget
+  /// Creates a Flutter_Map with the pin location in the center
+  /// All interactions are absorbed instead a single tab toggles the flip card
+  Widget getMapOfPin(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     Pin pin = widget.pin;
     return SizedBox(
         height: width,
         width: width,
         child: GestureDetector(
-            onTap: () => changeSize(context),
+            onTap: () => toggleCard(context),
             child: AbsorbPointer(
                 absorbing: true,
                 child: FlutterMap(
@@ -76,22 +84,27 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
     );
   }
 
+  /// returns the back Widget of the FlipCard
+  /// returns the Image of the pin
+  /// A single tab toggles the FlipCard
   Widget getImageOfPin(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
       height: width,
       width: width,
       child: GestureDetector(
-          onTap: () => changeSize(context),
+          onTap: () => toggleCard(context),
           child: widget.pin.getImageWidget()
       )
     );
   }
 
-  void changeSize(BuildContext context) {
+  /// toggles the card from back to front or front to back
+  void toggleCard(BuildContext context) {
     controller.toggleCard();
   }
 
+  /// keeps the Widget alive (keep toggle state) in the list view
   @override
   bool get wantKeepAlive => true;
 

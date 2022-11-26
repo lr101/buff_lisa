@@ -1,8 +1,8 @@
 import 'package:buff_lisa/0_ScreenSignIn/login_ui.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
-import 'package:buff_lisa/Files/fetch_users.dart';
-import 'package:buff_lisa/Files/restAPI.dart';
+import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
+import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import '../Files/global.dart' as global;
@@ -10,6 +10,7 @@ import '../Files/global.dart' as global;
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
+  /// Login time sleeper used to wait shortly before login
   Duration get loginTime => const Duration(milliseconds: 200);
 
   @override

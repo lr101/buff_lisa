@@ -1,14 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:buff_lisa/5_Ranking/feed_logic.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:provider/provider.dart';
+
 import '../Files/DTOClasses/group.dart';
 import '../Files/global.dart' as global;
-import '../Providers/cluster_notifier.dart';
 
 
 class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
@@ -45,6 +43,8 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
     );
   }
 
+  /// Get Card with button to navigate to create group page
+  /// Is always at the first postion of the list
   Widget getCardCreateNewGroup() {
     return Card(
         shape: RoundedRectangleBorder(
@@ -61,6 +61,8 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
         );
   }
 
+  /// Get Card of a Group
+  /// Shows the name, group image, visibility
   Widget getCardOfOtherGroups(Group group, int index) {
     return Card(
         shape: RoundedRectangleBorder(
@@ -89,6 +91,7 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
               "${index + 1}.",
               style: const TextStyle(color: global.cPrime),
             ),
+            trailing: (group.visibility != 0 ? const Icon(Icons.lock_outline) : const Icon(Icons.lock_open)),
           ),
         )
     );

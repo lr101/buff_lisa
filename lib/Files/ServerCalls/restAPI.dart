@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+
 import 'package:flutter/services.dart';
-import 'global.dart' as global;
+
+import '../global.dart' as global;
 
 class RestAPI {
 

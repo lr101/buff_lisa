@@ -33,7 +33,7 @@ samples, guidance on mobile development, and a full API reference.
 - fluttertoast: package doesn't really support ios
 
 ### TODO all
-- all images from feed-page are reloaded after post new pin
-- all images from feed-page are reloaded after filter button
-- 
+- joining a private groups does not load members
+- show with color the users color
+- adding new pin does not update feed
 

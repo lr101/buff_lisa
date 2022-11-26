@@ -5,13 +5,13 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Files/DTOClasses/group.dart';
-import '../Files/provider_context.dart';
 import '../Files/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
 
 class MapsWidget extends StatefulWidget {
+  //TODO is it actually needed?
   final ProviderContext io;
+
   const MapsWidget({super.key, required this.io});
 
   @override
@@ -19,7 +19,16 @@ class MapsWidget extends StatefulWidget {
 }
 
 class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMixin<MapsWidget> {
+
+  /// state of the filter by date [0-4]
+  /// 0: no filter
+  /// 1: 1 day
+  /// 2: 1 week
+  /// 3: 1 month
+  /// 4: 1 year
   int filterState = 0;
+
+  /// controller of the flutter_map
   MapController controller = MapController();
 
   @override
@@ -28,6 +37,7 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     return MapsUI(state: this);
   }
 
+  /// sets callback for after build is complete to move maps camera to current location
   @override
   void initState(){
     super.initState();
@@ -36,7 +46,7 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     });
   }
 
-  /// sets google maps location to the current user position via GoogleMapsController
+  /// sets google maps location to the current user position via the maps @controller
   void setLocation() async {
     LocationData loc = await LocationClass.getLocation();
     LatLng latLong = LatLng(loc.latitude!, loc.longitude!);
@@ -81,5 +91,15 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
 
   @override
   bool get wantKeepAlive => true;
+
+}
+
+/// class to save information of the current context and bind it to a globally unique key
+class ProviderContext {
+
+  late GlobalKey globalKey;
+  late BuildContext context;
+
+  ProviderContext(this.globalKey, this.context);
 
 }

@@ -2,6 +2,7 @@ import 'package:buff_lisa/6_Group_Search/my_groups_ui.dart';
 import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/6_Group_Search/show_group_logic.dart';
 import 'package:flutter/material.dart';
+
 import '../Files/DTOClasses/group.dart';
 
 
@@ -20,7 +21,8 @@ class MyGroupsPageState extends State<MyGroupsPage> with AutomaticKeepAliveClien
     return MyGroupsUI(state: this);
   }
 
-  void handlePressNewGroup() {
+  /// Opens the SearchGroupPage Widget as a new page
+  void handlePressSearchGroup() {
     Navigator.of(context).push(
       MaterialPageRoute(
           builder: (context) => const SearchGroupPage()
@@ -28,15 +30,16 @@ class MyGroupsPageState extends State<MyGroupsPage> with AutomaticKeepAliveClien
     );
   }
 
-  Future<void> handleJoinGroupPress(Group group) async {
-    showDialog(
-        context: context,
-        builder: (BuildContext alertContext) => ShowGroupPage(group: group, myGroup: true)
+  /// Opens the ShowGroupPage Widget as a new page
+  Future<void> handlePressGroupCard(Group group) async {
+    Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => ShowGroupPage(group: group, myGroup: true)
+        )
     );
   }
 
-
-
+  /// keep Widget alive when changing tabs in navbar
   @override
   bool get wantKeepAlive => true;
 }

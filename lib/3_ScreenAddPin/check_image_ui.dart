@@ -2,7 +2,7 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Files/global.dart' as global;
-import '../SelectGroupWidget/select_group_widget_logic.dart';
+import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'check_image_logic.dart';
 
 class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {

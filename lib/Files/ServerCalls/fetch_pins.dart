@@ -3,10 +3,10 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:buff_lisa/Files/restAPI.dart';
+import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
-import 'global.dart' as global;
+import '../global.dart' as global;
 class FetchPins {
 
 

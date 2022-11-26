@@ -13,15 +13,21 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
     return Container(
           color: Colors.black,
           child: Scaffold(
-            body: SizedBox(
-              width: state.getWidth(),
-              height: state.getHeight(),
-              child: CameraCamera(
-                enableAudio: false,
-                resolutionPreset: ResolutionPreset.high,
-                onFile: (image) => state.handlePictureTaken(image.readAsBytesSync(), widget.io)
-            )
-          )
+              body: Container(
+                  constraints: const BoxConstraints(minWidth: double.infinity, maxWidth: double.infinity),
+                  decoration: const BoxDecoration(
+                    color: Colors.black
+                  ),
+                  child: SizedBox(
+                      width: state.getWidth(),
+                      height: state.getHeight(),
+                      child: CameraCamera(
+                          enableAudio: false,
+                          resolutionPreset: ResolutionPreset.high,
+                          onFile: (image) => state.handlePictureTaken(image.readAsBytesSync(), widget.io)
+                      )
+                  ),
+              )
         )
       );
     }

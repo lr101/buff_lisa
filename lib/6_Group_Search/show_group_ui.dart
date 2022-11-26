@@ -91,6 +91,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     );
   }
 
+  /// returns the leave group or join group button depending on if the current user is a member of the group
   Widget _getButton(BuildContext context) {
     if (state.widget.myGroup) {
       return TextButton(
@@ -125,6 +126,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     }
   }
 
+  /// returns the description of a group
   Widget _getDescription() {
     Group group = state.widget.group;
     if (group.visibility != 0 && !widget.myGroup) {

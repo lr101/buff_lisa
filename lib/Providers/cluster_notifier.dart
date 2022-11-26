@@ -1,24 +1,23 @@
-import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import '../Files/fetch_pins.dart';
-import '../Files/global.dart' as global;
+
 import '../2_ScreenMaps/image_widget_logic.dart';
-import '../Files/file_handler.dart';
 import '../Files/DTOClasses/pin.dart';
+import '../Files/ServerCalls/fetch_pins.dart';
+import '../Files/global.dart' as global;
 import '../main.dart';
+import 'file_handler.dart';
 
 class ClusterNotifier extends ChangeNotifier {
   final FileHandler _offlineFileHandler = FileHandler(fileName: global.fileName);
-  late  List<Group> _userGroups = [];
-  late List<Pin> _offlinePins = [];
+  final  List<Group> _userGroups = [];
+  final List<Pin> _offlinePins = [];
   Group? _lastSelected;
 
   ///cluster
-  Map<Pin, Marker> _allMarkers = {};
+  final Map<Pin, Marker> _allMarkers = {};
   List<Marker> _shownMarkers = [];
   List<String> __filterUsernames = [];
   DateTime? __filterDateMax;

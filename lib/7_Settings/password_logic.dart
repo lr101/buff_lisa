@@ -1,10 +1,10 @@
 import 'package:buff_lisa/7_Settings/password_ui.dart';
 import 'package:flutter/material.dart';
 import '../0_ScreenSignIn/secure.dart';
-import '../Files/fetch_users.dart';
+import '../Files/ServerCalls/fetch_users.dart';
 import '../Files/global.dart' as global;
 import '../0_ScreenSignIn/login_logic.dart';
-import '../Files/restAPI.dart';
+import '../Files/ServerCalls/restAPI.dart';
 
 class Password extends StatelessWidget {
   const Password({Key? key}) : super(key: key);

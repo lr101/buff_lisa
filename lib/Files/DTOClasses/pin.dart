@@ -1,22 +1,36 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:buff_lisa/Files/fetch_pins.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:flutter/material.dart';
 
-import '../AbstractClasses/to_json.dart';
 import 'group.dart';
 
 class Pin {
-  final double latitude;
-  final double longitude;
-  final int id;
-  final DateTime creationDate;
-  final String username;
-  final Group group;
-  Uint8List? image;  //
 
+  /// latitude position of the pin
+  final double latitude;
+
+  /// longitude position of the pin
+  final double longitude;
+
+  /// unique id of the pin
+  final int id;
+
+  /// date of creation of the pin
+  final DateTime creationDate;
+
+  /// user that created the pin
+  final String username;
+
+  /// group the pin belongs to
+  final Group group;
+
+  /// Uint8List:  image as byte list of the pin
+  /// null: not loaded from server yet
+  Uint8List? image;
+
+  /// Constructor of pin
   Pin( {
     required this.latitude,
     required this.longitude,
@@ -27,6 +41,7 @@ class Pin {
     this.image
   });
 
+  /// Constructor of pin from json when pin is loaded from server
   Pin.fromJson(Map<String, dynamic> json, this.group) :
       latitude = json['latitude'],
       longitude = json['longitude'],
@@ -35,6 +50,7 @@ class Pin {
       creationDate = DateTime.parse((json['creationDate']).toString()),
       image = null;
 
+  /// Constructor of pin from json when pin is loaded from offline storage
   Pin.fromJsonOffline(Map<String, dynamic> json, this.group) :
         latitude = json['latitude'],
         longitude = json['longitude'],
@@ -44,6 +60,7 @@ class Pin {
         image = _getImageBinary(json['image']);
 
 
+  /// returns json format for posting pin to server
   Future<Map<String, dynamic>> toJson() async {
     return {
       "longitude": longitude,
@@ -54,6 +71,7 @@ class Pin {
     };
   }
 
+  /// returns json format for saving pin offline
   Future<Map<String, dynamic>> toJsonOffline() async {
     return {
       "longitude": longitude,
@@ -66,16 +84,18 @@ class Pin {
     };
   }
 
-
+  /// format DateTime object to string
   static String formatDateTim(DateTime d) {
     DateTime date = DateTime(d.year, d.month, d.day);
     return date.toString().replaceAll(" 00:00:00.000", "");
   }
 
+  /// decodes a base64 encoded image to a byte list
   static Uint8List _getImageBinary(String dynamicList) {
     return base64Decode(dynamicList);
   }
 
+  /// returns the pin image byte data from local if existing or server
   Future<Uint8List> getImage() async {
     if (image != null) {
       return image!;
@@ -84,6 +104,8 @@ class Pin {
       return image!;
     }
   }
+
+  /// returns the pin image as Image Widget from local if existing or server
   Widget getImageWidget() {
     return FutureBuilder<Uint8List>(
       future: getImage(),

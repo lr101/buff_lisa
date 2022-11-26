@@ -1,19 +1,25 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:buff_lisa/2_ScreenMaps/image_widget_ui.dart';
-import 'package:buff_lisa/Files/fetch_pins.dart';
+import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Files/DTOClasses/pin.dart';
-import '../Files/restAPI.dart';
+import '../Files/ServerCalls/restAPI.dart';
 import '../Files/global.dart' as global;
 
 class ShowImageWidget extends StatefulWidget {
   const ShowImageWidget({Key? key, required this.pin, required this.newPin}) : super(key: key);
 
+  /// Boolean for showing if shown pin is a new pin and therefore an online saved pin
+  /// true: Pin is an offline Pin
+  /// false: Pin is a Pin that is saved on server
   final bool newPin;
+
+  /// The Pin that is shown on this page
   final Pin pin;
+
   @override
   State<ShowImageWidget> createState() => ShowImageWidgetState();
 
@@ -21,6 +27,10 @@ class ShowImageWidget extends StatefulWidget {
 
 class ShowImageWidgetState extends State<ShowImageWidget> {
 
+  /// Boolean for keeping track if the delete Button is usable (Clickable)
+  /// Delete Button will be activated if the current user is also the user that created this pin
+  /// true: Delete Button is clickable
+  /// false: Delete Button is deactivated
   bool activeDelete = false;
   String username = "---";
 
@@ -50,13 +60,6 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
         if (!mounted) return;
         Navigator.pop(context);
       }
-  }
-
-  /// This methods builds the image of the selected pin in a FutureBuilder
-  /// Image can be an offline saved pin (@image not null) or dynamically loaded from server
-  /// An CircularProgressIndicator is returned during the loading time
-  Widget getImageWidget() {
-    return widget.pin.getImageWidget();
   }
 
 }

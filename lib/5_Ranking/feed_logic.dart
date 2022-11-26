@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'dart:typed_data';
 import 'package:buff_lisa/5_Ranking/feed_ui.dart';
-import 'package:buff_lisa/Files/restAPI.dart';
+import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -19,10 +19,16 @@ class FeedPage extends StatefulWidget {
 }
 
 class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<FeedPage>{
-  static const _pageSize = 1;
-  
+
+  /// Controller for the Paged List-view
+  /// always shows first item first and loads 3 items that are out of view
   final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 3);
+
+  /// Set of Groups that are currently shown
+  /// Used to reduce the amounts of Widgets that need to be created everytime the Provider updates its values
   late Set<Group> groups = {};
+
+  /// Saves all Pins that could be seen in the feed with the Widget that is shown if already created
   late Map<Pin, Widget?> allWidgets = {};
 
   @override
@@ -31,6 +37,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     return FeedUI(state: this);
   }
 
+  /// Inits the pagingController and adds the methods to its scroll listener
   @override
   void initState() {
     pagingController.addPageRequestListener((pageKey) {
@@ -39,6 +46,9 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     super.initState();
   }
 
+  /// Adds a new Feed Widget to the Listview by appending it to the pagingController
+  /// Checks if the Pin at the position @pageKey already has an existing Widget
+  /// If not a new one is created
   Future<void> _fetchPage(int pageKey) async {
     try {
         Pin key = allWidgets.keys.elementAt(pageKey);
@@ -60,6 +70,10 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     }
   }
 
+  /// Loads and reloads the pins of active groups shown on the Feed
+  /// If the Provider updates the method checks if an active Group was removed or added
+  /// If an active Group was removed all the pins of this group are removed from the feed
+  /// If an active Group was added the pins of this group are added to the Sorted Tree @allWidgets and sorted again by creationDate
   void initSortedPins() {
     final activeGroups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
     if (activeGroups.length != groups.length) {
@@ -76,19 +90,21 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
             }
           }
         }
+        allWidgets = SplayTreeMap<Pin, Widget?>.from(allWidgets, (k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
       }
-      allWidgets = SplayTreeMap<Pin, Widget?>.from(allWidgets, (k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
       pagingController.refresh();
     }
 
   }
 
+  /// disposed the controller when the page is closed
   @override
   void dispose() {
     pagingController.dispose();
     super.dispose();
   }
 
+  /// keeps Widget alive when changing tabs in navbar
   @override
   bool get wantKeepAlive => true;
 }

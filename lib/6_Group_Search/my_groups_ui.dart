@@ -1,11 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:buff_lisa/5_Ranking/feed_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
-import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../Files/DTOClasses/group.dart';
 import '../Files/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
@@ -14,8 +13,6 @@ import '../Providers/cluster_notifier.dart';
 class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
 
   const MyGroupsUI({super.key, required state}) : super(state: state);
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -34,10 +31,10 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
           separatorBuilder: (BuildContext context, int index) => const Divider(),
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
-              return getCardSearchNewGroup();
+              return getCardExploreExistingGroups();
             } else {
               index--;
-              return getCardOfOtherGroups(index, context);
+              return getCardOfGroup(index, context);
             }
 
           },
@@ -45,13 +42,15 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
     );
   }
 
-  Widget getCardSearchNewGroup() {
+  /// Builds the Card for showing the button that on press navigates to the SearchGroupPage Widget
+  /// Always the first item in List
+  Widget getCardExploreExistingGroups() {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: ListTile(
-        onTap: state.handlePressNewGroup,
+        onTap: state.handlePressSearchGroup,
         title: const Text(
             "Explore existing groups",
             style: TextStyle(color: global.cPrime)
@@ -61,15 +60,17 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
     );
   }
 
-
-  Widget getCardOfOtherGroups(int index, BuildContext context) {
+  /// Builds the Card of the Group of the @index
+  /// Shows the profile picture and name
+  /// opens a page to show more information of group on single press
+  Widget getCardOfGroup(int index, BuildContext context) {
     Group group = Provider.of<ClusterNotifier>(context, listen: false).getGroups[index];
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: GestureDetector(
-          onTap: () => state.handleJoinGroupPress(group),
+          onTap: () => state.handlePressGroupCard(group),
           child: ListTile(
             title: Row(
                 children: [

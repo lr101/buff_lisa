@@ -19,7 +19,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    state.front = state.getMapOfPin(context, widget.pin.group);
+    state.front = state.getMapOfPin(context);
     state.back  = state.getImageOfPin(context);
     return Card(
         shape: RoundedRectangleBorder(

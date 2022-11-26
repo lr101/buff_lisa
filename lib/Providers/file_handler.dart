@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:path_provider/path_provider.dart';
-import 'DTOClasses/group.dart';
+import '../Files/DTOClasses/group.dart';
 
 class FileHandler {
 

@@ -1,19 +1,15 @@
-import 'package:buff_lisa/5_Ranking/feed_logic.dart';
 import 'package:buff_lisa/6_Group_Search/create_group_logic.dart';
-import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../Files/global.dart' as global;
-import '../Providers/cluster_notifier.dart';
 
 
 class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
 
   const CreateGroupUI({super.key, required state}) : super(state: state);
-
-
 
   @override
   Widget build(BuildContext context) {

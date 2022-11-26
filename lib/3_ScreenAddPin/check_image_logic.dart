@@ -10,7 +10,9 @@ import '../Providers/cluster_notifier.dart';
 import 'check_image_ui.dart';
 
 class CheckImageWidget extends StatefulWidget {
-  const CheckImageWidget({Key? key, this.image}) : super(key: key) ;
+  const CheckImageWidget({Key? key, this.image}) : super(key: key);
+
+  /// the image shown for checking if correct
   final Uint8List? image;
 
   @override
@@ -42,8 +44,5 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   Future<Widget> handleFutureImage() async{
     return Image.memory(widget.image!);
   }
-
-
-
 
 }
