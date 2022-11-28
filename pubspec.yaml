@@ -30,54 +30,76 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # BSD-3 Clause License
   flutter_map_marker_cluster:
 
+  # BSD-3 Clause License
   flutter_map_location_marker:
 
+  # BSD-3 Clause License
   flutter_map:
 
+  # Apache License 2.0
   latlong2:
 
+  # MIT License
   location: ^4.2.0
 
+  # BSD-3 Clause License
   http: ^0.13.4
 
+  # BSD-3 Clause License
   crypt:
 
+  # BSD-3 Clause License
   crypto:
 
+  # BSD-3 Clause License
   flutter_secure_storage:
 
+  # MIT License
   camera_camera:
 
+  # MIT License
   images_picker:
 
+  # MIT License
   image_cropping:
 
+  # BSD-3 Clause License
   path_provider:
 
+  # BSD-3 Clause License
   path:
 
+  # MIT License
   flutter_login:
 
+  # BSD-3 Clause License
   shared_preferences:
 
+  # MIT License
   flutter_launcher_icons:
 
+  # MIT License
   image:
 
+  # MIT License
   fluttertoast:
 
+  # BSD-2-Clause
   flutter_config:
 
+  # MIT License
   provider:
 
-  dcdg:
-
+  # BSD-3 Clause License
   status_view:
 
+  # BSD-3 Clause License
   flip_card:
 
+  # MIT License
   infinite_scroll_pagination:
 
   # The following adds the Cupertino Icons font to your application.
