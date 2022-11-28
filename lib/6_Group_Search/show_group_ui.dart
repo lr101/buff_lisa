@@ -2,10 +2,10 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/6_Group_Search/show_group_logic.dart';
 import 'package:flutter/material.dart';
+
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
-import '../Files/DTOClasses/ranking.dart';
-import '../Files/global.dart' as global;
 import '../Files/DTOClasses/group.dart';
+import '../Files/global.dart' as global;
 
 
 class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{

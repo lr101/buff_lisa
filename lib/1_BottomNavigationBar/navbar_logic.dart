@@ -1,19 +1,17 @@
 
-import 'dart:convert';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
-import 'package:buff_lisa/6_Group_Search/search_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../2_ScreenMaps/maps_logic.dart';
 import '../5_Ranking/feed_logic.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/global.dart' as global;
-import '../Files/ServerCalls/restAPI.dart';
 import '../Providers/cluster_notifier.dart';
 
 

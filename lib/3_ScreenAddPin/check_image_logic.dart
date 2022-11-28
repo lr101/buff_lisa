@@ -1,11 +1,10 @@
 
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../Files/DTOClasses/group.dart';
-import '../Files/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
 import 'check_image_ui.dart';
 

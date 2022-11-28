@@ -1,13 +1,13 @@
+import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
-import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'maps_logic.dart';
 
 class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {

@@ -1,12 +1,9 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:buff_lisa/2_ScreenMaps/image_widget_ui.dart';
-import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../Files/DTOClasses/pin.dart';
-import '../Files/ServerCalls/restAPI.dart';
 import '../Files/global.dart' as global;
 
 class ShowImageWidget extends StatefulWidget {

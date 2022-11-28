@@ -1,14 +1,16 @@
 import 'dart:typed_data';
-import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
-import '../2_ScreenMaps/maps_logic.dart';
-import '../Files/DTOClasses/group.dart';
-import '../Files/global.dart' as global;
+
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
+import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
-import '../Files/location_class.dart';
+
+import '../2_ScreenMaps/maps_logic.dart';
+import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/pin.dart';
+import '../Files/global.dart' as global;
+import '../Files/location_class.dart';
 import '../Providers/cluster_notifier.dart';
 import 'check_image_logic.dart';
 
