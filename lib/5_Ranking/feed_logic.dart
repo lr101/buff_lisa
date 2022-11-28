@@ -47,7 +47,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   }
 
   /// Adds a new Feed Widget to the Listview by appending it to the pagingController
-  /// Checks if the Pin at the position @pageKey already has an existing Widget
+  /// Checks if the Pin at the position [pageKey] already has an existing Widget
   /// If not a new one is created
   Future<void> _fetchPage(int pageKey) async {
     try {
@@ -73,7 +73,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   /// Loads and reloads the pins of active groups shown on the Feed
   /// If the Provider updates the method checks if an active Group was removed or added
   /// If an active Group was removed all the pins of this group are removed from the feed
-  /// If an active Group was added the pins of this group are added to the Sorted Tree @allWidgets and sorted again by creationDate
+  /// If an active Group was added the pins of this group are added to the Sorted Tree [allWidgets] and sorted again by creationDate
   void initSortedPins() {
     final activeGroups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
     if (activeGroups.length != groups.length) {

@@ -22,7 +22,7 @@ class FetchGroups {
     }
   }
 
-  /// returns a the group corresponding the @groupId
+  /// returns a the group corresponding the [groupId]
   /// GET request to server
   /// throws an Exception when an error occurs during server call
   static Future<Group> getGroup(int groupId) async {
@@ -34,7 +34,7 @@ class FetchGroups {
     }
   }
 
-  /// returns a list of group corresponding to the list of @groupIds
+  /// returns a list of group corresponding to the list of [groupIds]
   /// GET request to server
   /// throws an Exception when an error occurs during server call
   static Future<List<Group>> getGroups(List<int> groupIds) async {
@@ -74,7 +74,7 @@ class FetchGroups {
     }
   }
 
-  /// returns the group that is created on the server with @name, @description, @image, @visibility
+  /// returns the group that is created on the server with [name], [description], [image], [visibility]
   /// POST request to server
   /// returns null if an Error occurred during server call TODO exception?
   static Future<Group?> postGroup(String name, String description, Uint8List image, int visibility) async {
@@ -93,7 +93,7 @@ class FetchGroups {
     }
   }
 
-  /// returns the group of the group identified by @groupId the current user tries to join
+  /// returns the group of the group identified by [groupId] the current user tries to join
   /// POST request to server
   /// throws an Exception when an error occurs during server call
   static Future<Group> joinGroup(int groupId, String? inviteUrl) async {
@@ -109,7 +109,7 @@ class FetchGroups {
     }
   }
 
-  /// returns true if the user successfully left the group identified by @groupId
+  /// returns true if the user successfully left the group identified by [groupId]
   /// returns false if an error occurred
   /// DELETE request to server
   static Future<bool> leaveGroup(int groupId) async {
@@ -121,6 +121,9 @@ class FetchGroups {
     }
   }
 
+  /// returns the description of a group identified by [groupId]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
   static Future<String> getGroupDescription(int groupId) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0, null);
     if (response.statusCode == 200) {
@@ -130,6 +133,9 @@ class FetchGroups {
     }
   }
 
+  /// returns the username of the group admin of a group identified by [groupId]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
   static Future<String> getGroupAdmin(int groupId) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/admin", {}, 0, null);
     if (response.statusCode == 200) {
@@ -139,21 +145,27 @@ class FetchGroups {
     }
   }
 
+  /// returns the profile image as byte list of a group identified by [groupId]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
   static Future<Uint8List> getProfileImage(Group group) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/profile_image", {}, 0, null);
     if (response.statusCode == 200) {
       return await ByteStream(response.cast()).toBytes();
     } else {
-      throw Exception("failed to load mona");
+      throw Exception("failed to load profile image");
     }
   }
 
+  /// returns the pin image as byte list of a group identified by [groupId]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
   static Future<Uint8List> getPinImage(Group group) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pin_image", {}, 0, null);
     if (response.statusCode == 200) {
       return await ByteStream(response.cast()).toBytes();
     } else {
-      throw Exception("failed to load mona");
+      throw Exception("failed to load pin image");
     }
   }
 
@@ -163,6 +175,7 @@ class FetchGroups {
   //---------------------------------------------------------
 
 
+  /// returns a list of groups by converting the body of a http response to Group objects
   static Future<List<Group>> _toGroupList(HttpClientResponse response) async {
     List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
 

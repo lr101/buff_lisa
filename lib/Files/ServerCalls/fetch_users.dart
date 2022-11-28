@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
+
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
-import 'package:flutter/services.dart';
+
 import '../DTOClasses/ranking.dart';
 import '../global.dart' as global;
 class FetchUsers {
+
+  /// returns a list of members and the amount of points they have of a specific [group]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
   static Future<List<Ranking>> fetchGroupMembers(Group group) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/members" , {}, 0, null);
     if (response.statusCode == 200) {
@@ -22,6 +25,9 @@ class FetchUsers {
     }
   }
 
+  /// returns the hashed password of an user identified by [name] of the server
+  /// returns null if user does not exist
+  /// GET Request to Server
   static Future<String?> checkUser(String? name) async {
     name ??= global.username;
     HttpClientResponse response = await RestAPI.createHttpsRequest("/login/$name/", {}, 0, null);
@@ -31,6 +37,10 @@ class FetchUsers {
     return null;
   }
 
+  /// returns the token of an user identified by [name]
+  /// returns null if the user does not exist
+  /// GET Request to Server
+  /// TODO delete if all users changed to new token auth
   static Future<String?> checkUserToken(String? name, String password) async {
     final String json = jsonEncode(<String, dynamic>{
       "password" : password,
@@ -42,6 +52,9 @@ class FetchUsers {
     return null;
   }
 
+  /// returns the token of an user identified by [name]
+  /// returns null if the user does not exist
+  /// GET Request to Server
   static Future<String?> auth(String? name, String password) async {
     final String json = jsonEncode(<String, dynamic>{
       "password" : password,
@@ -54,6 +67,10 @@ class FetchUsers {
     return null;
   }
 
+  /// This methods send a password recover request to the server
+  /// returns true if email is successfully send
+  /// returns false if a problem occurred at the server
+  /// GET Request to Server
   static Future<bool> recover(String? name) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/recover", {"username" : name}, 0, null);
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -62,7 +79,11 @@ class FetchUsers {
     return false;
   }
 
-  static Future<String?> postUsername(String username, String hash, String email) async {
+  /// creates a new user account on the server
+  /// returns the token of the new account
+  /// returns null if the account creation was unsuccessful
+  /// POST Request to Server
+  static Future<String?> signupNewUser(String username, String hash, String email) async {
     final String json = jsonEncode(<String, dynamic>{
       "username" : username,
       "password" : hash,
@@ -75,14 +96,10 @@ class FetchUsers {
     return null;
   }
 
-  static Future<int?> getUserPoints() async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/users/${global.username}/points/", {}, 0, null);
-    if (response.statusCode == 200) {
-      return int.parse(await response.transform(utf8.decoder).join());
-    }
-    return null;
-  }
-
+  /// changes the [password] of the user identified by [username]
+  /// returns true if change was successful
+  /// returns false if change was unsuccessful
+  /// PUT Request to Server
   static Future<bool> changePassword(String username, String password) async {
     final String json = jsonEncode(<String, dynamic> {
       "password" : password
@@ -94,6 +111,10 @@ class FetchUsers {
     return false;
   }
 
+  /// changes the [email] of the user identified by [username]
+  /// returns true if change was successful
+  /// returns false if change was unsuccessful
+  /// PUT Request to Server
   static Future<bool> changeEmail(String username, String email) async {
     final String json = jsonEncode(<String, dynamic> {
       "email" : email

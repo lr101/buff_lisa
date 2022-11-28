@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
 
 
   /// This method is called when the user tries to login with a username and password to an existing account
-  /// @return returns null when login was successful and an error message on errors
+  /// return returns null when login was successful and an error message on errors
   Future<String?> authUser(LoginData data) {
     global.username = data.name;
     return Secure.loginAuthentication(data.name, data.password, ).then((value) {
@@ -36,7 +36,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   /// This method is called when a user completed the signup form and tries to signup
-  /// @return returns null when signup was successful and an error message on errors
+  /// return returns null when signup was successful and an error message on errors
   Future<String?> signupUser(SignupData data) {
     return Future.delayed(loginTime).then((_) async {
       if (data.name != null && data.password != null && emailValidator(data.additionalSignupData!["email"])) {

@@ -1,39 +1,55 @@
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_config/flutter_config.dart';
 import 'package:latlong2/latlong.dart';
 
-//circle
-var circleRadius = 100.0;
-Color circleColor = const Color(0x50B74093);
-
-//maps
+/// zoom when the maps controller sets the current location to the user location
 double initialZoom = 17;
+
+/// zoom of the map widget of the front of the feed item
 double feedZoom = 12;
 
-String username =  "";
-String token = "";
-bool pinsLoaded = false;
-
-String host1 = "54.234.245.153";
-int port = 8081;
-String host2 = "10.0.2.2";
-String host = FlutterConfig.get("HOST") ?? "54.234.245.153";
-//sticker types
-List<Widget> stickerTypeImages = [const Image(image: AssetImage('images/mona.png')), const Image(image : AssetImage('images/tornado-da-vinci-v2.png'))];
-
-String fileName = 'pin_new.txt';
-String fileNameExisting = 'existing_pins.txt';
-String styleUrl = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
-String apiKey = "1c574330-845b-49b7-9110-dcc8146dc436";
+/// position of flutter map on start
+/// Is set to the center of Karlsruhe, Germany
 LatLng initCamera =  LatLng(49.006889, 8.403653);
 
+/// username of the current user
+/// set on login/signup or loaded from secure storage
+String username =  "";
+
+/// user token to authenticate user on the server
+/// set on login/signup or loaded from secure storage
+String token = "";
+
+/// flag for an already existing login
+/// is set to true when user opens app
+/// resets provider information of pins of the old user when user logs out via logout button
+bool pinsLoaded = false;
+
+/// server ip address loaded from .env file
+/// useful ip addresses:
+/// server: 54.234.245.153
+/// localhost: 10.0.2.2
+String host = FlutterConfig.get("HOST") ?? "54.234.245.153";
+
+/// port of the server
+int port = 8081;
+
+/// filename of the file where offline pins are saved on the device
+String fileName = 'pin_new.txt';
+
+/// url of the stadia map service for the flutter map Widget
+String styleUrl = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
+
+/// api key for the stadia map service
+/// loaded from .env file
+String apiKey = FlutterConfig.get("MAPS_API_KEY");
+
+/// Style color palette
 const Color cPrime = Color(0xFF455a64);
 const Color cSecond = Color(0xFFcfdbd5);
 const Color cThird = Color(0xFF2085B8);
 const Color cFourth = Color(0xFFf06449);
 const Color cFifth = Color(0xFFb5446e);
 
+/// height of the SelectGroupWidget selector
 const int barHeight = 58;
-
-String shopUrl = "https://www.etsy.com/de/shop/MonaSticker";

@@ -48,7 +48,7 @@ class Secure {
   /// saves on successful account creation the username and token in secure storage and returns true
   static Future<bool> signupAuthentication(String username, String password, String email) async {
     String psw = Secure.encryptPassword(password);
-    String? response = await FetchUsers.postUsername(username, psw, email);
+    String? response = await FetchUsers.signupNewUser(username, psw, email);
     if (response != null) {
       Secure.saveSecure(response, "auth");
       Secure.saveSecure(username, "username");

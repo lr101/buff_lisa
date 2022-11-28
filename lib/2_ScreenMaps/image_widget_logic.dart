@@ -49,7 +49,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
 
 
   /// This method tries deleting the selected pin and goes back to the previous page if successful
-  /// Works only if @activeDelete is true
+  /// Works only if [activeDelete] is true
   Future<void> handleButtonPress() async{
       if (activeDelete) {
         if (widget.newPin) {

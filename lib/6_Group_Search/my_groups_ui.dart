@@ -60,7 +60,7 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
     );
   }
 
-  /// Builds the Card of the Group of the @index
+  /// Builds the Card of the Group of the [index]
   /// Shows the profile picture and name
   /// opens a page to show more information of group on single press
   Widget getCardOfGroup(int index, BuildContext context) {

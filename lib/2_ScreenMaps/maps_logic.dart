@@ -46,14 +46,14 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     });
   }
 
-  /// sets google maps location to the current user position via the maps @controller
+  /// sets google maps location to the current user position via the maps [controller]
   void setLocation() async {
     LocationData loc = await LocationClass.getLocation();
     LatLng latLong = LatLng(loc.latitude!, loc.longitude!);
     controller.move(latLong, global.initialZoom);
   }
 
-  /// returns the button text that will be shown depending on @filterState
+  /// returns the button text that will be shown depending on [filterState]
   String buttonText() {
     String t = "";
     switch (filterState) {
@@ -79,7 +79,7 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     }
   }
 
-  /// updates the marker list via provider to filter for the pins created int the last @days
+  /// updates the marker list via provider to filter for the pins created int the last [days]
   void _setFilterDate(int? days) {
     if (days == null) {
       Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterDate(null, null);

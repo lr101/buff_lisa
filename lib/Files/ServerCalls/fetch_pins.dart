@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+
 import '../global.dart' as global;
 class FetchPins {
 
-
+  /// returns a set of all pins contained in a [group]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
   static Future<Set<Pin>> fetchGroupPins(Group group) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pins", {}, 0, null);
     if (response.statusCode == 200) {
@@ -19,6 +22,9 @@ class FetchPins {
     }
   }
 
+  /// returns the image of a pin as a byte list that is identified by [pin]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
   static Future<Uint8List> fetchImageOfPin(Pin pin) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${pin.group.groupId}/pins/${pin.id}/image", {}, 0, null);
     if (response.statusCode == 200) {
@@ -29,6 +35,10 @@ class FetchPins {
   }
 
 
+  /// this method creates a pin by posting the existing information of a pin, contained in [pin], to the server
+  /// returns the pin that is returned by the server
+  /// throws an Exception if an error occurs
+  /// POST Request to Server
   static Future<Pin> postPin(Pin mona) async {
     final String json = jsonEncode(<String, dynamic> {
       "latitude" : mona.latitude,
@@ -46,6 +56,9 @@ class FetchPins {
     throw Exception("Pin could not be created");
   }
 
+  /// deletes a pin on the server identified by [id]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
   static Future<bool> deleteMonaFromPinId(int id) async {
     HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$id/pins", {}, 3, null);
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -56,6 +69,7 @@ class FetchPins {
 
   //---------------------------------------
 
+  /// converts a client response to a pin set
   static Future<Set<Pin>> toPinSet(HttpClientResponse response, Group group) async {
     List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
 

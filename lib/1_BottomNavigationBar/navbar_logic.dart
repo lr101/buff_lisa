@@ -26,7 +26,7 @@ class BottomNavigationWidget extends StatefulWidget {
 
 class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
-  /// the index of the widget opened on start - @selectedIndex = 2 opens the map page
+  /// the index of the widget opened on start - [selectedIndex] = 2 opens the map page
   int selectedIndex = 2;
 
   /// TODO what is global key used for?

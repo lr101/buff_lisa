@@ -103,7 +103,7 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
   }
 
   /// Gets group information of ids from index range [pageKey, pageKey + _numPages -1]
-  /// Adds the Groups to @pagingController to be build in page List
+  /// Adds the Groups to [pagingController] to be build in page List
   Future<void> _fetchPage(int pageKey) async {
     try {
       List<Group> g = [];
@@ -126,7 +126,7 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
   }
 
   /// gets all Group ids that could be shown in page list
-  /// @value is the search term passed to the server to get the corresponding results
+  /// [value] is the search term passed to the server to get the corresponding results
   Future<void> pullRefresh(String? value) async {
     value = (value == null || value.isEmpty ? null : value);
     groups = await FetchGroups.fetchAllGroupsWithoutUserGroupsIds(value);
