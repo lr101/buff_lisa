@@ -1,7 +1,7 @@
 import 'package:buff_lisa/7_Settings/password_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 import '../0_ScreenSignIn/login_logic.dart';
 
 class PasswordUI extends StatelessUI<Password> {

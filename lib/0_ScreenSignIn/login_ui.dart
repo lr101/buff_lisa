@@ -3,7 +3,7 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 
 class LoginUI extends StatelessUI<LoginScreen> {
   const LoginUI({super.key, required widget}) : super(widget: widget);
@@ -11,11 +11,6 @@ class LoginUI extends StatelessUI<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      theme: LoginTheme(
-          buttonTheme: const LoginButtonTheme(backgroundColor: global.cThird),
-          titleStyle: const TextStyle(color: Colors.white),
-          primaryColor: global.cThird,
-      ),
       title: 'Mona',
       onLogin: widget.authUser,
       onSignup: widget.signupUser,

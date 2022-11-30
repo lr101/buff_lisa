@@ -1,7 +1,8 @@
 import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
-import '../Files/global.dart' as global;
+
+import '../Files/Other/global.dart' as global;
 
 class SettingsUI extends StatelessUI<Settings>  {
   const SettingsUI({super.key, required widget}) : super(widget: widget);
@@ -15,7 +16,6 @@ class SettingsUI extends StatelessUI<Settings>  {
           title: const Text('Settings'),
           backgroundColor: global.cThird,
         ),
-        backgroundColor: Colors.white,
         body: ListView(
           children: [
             Card(
@@ -34,6 +34,12 @@ class SettingsUI extends StatelessUI<Settings>  {
               child: TextButton(
                 onPressed: () => widget.handleLogoutPress(context),
                 child: const Text("Logout", style: TextStyle(color: global.cPrime)),
+              ),
+            ),
+            Card(
+              child: TextButton(
+                onPressed: () => widget.handleChangeTheme(context),
+                child: const Text("Change Theme", style: TextStyle(color: global.cPrime)),
               ),
             )
           ],

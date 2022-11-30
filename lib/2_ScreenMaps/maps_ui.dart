@@ -6,7 +6,7 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:provider/provider.dart';
 
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
 import 'maps_logic.dart';
 

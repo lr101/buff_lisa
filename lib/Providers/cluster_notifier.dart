@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import '../2_ScreenMaps/image_widget_logic.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/ServerCalls/fetch_pins.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 import '../main.dart';
 import 'file_handler.dart';
 

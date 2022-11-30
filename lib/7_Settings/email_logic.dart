@@ -3,7 +3,7 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
 
 import '../0_ScreenSignIn/login_logic.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 
 class Email extends StatelessWidget {
   const Email({Key? key}) : super(key: key);

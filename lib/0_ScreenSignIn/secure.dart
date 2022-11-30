@@ -6,7 +6,7 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../Files/ServerCalls/fetch_users.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 
 class Secure {
 

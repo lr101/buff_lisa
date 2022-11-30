@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
+import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../Files/DTOClasses/group.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
 
 
@@ -30,9 +32,9 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
             Container(
                 width: double.infinity,
                 height: 80,
-                decoration: const BoxDecoration(
-                    color: global.cThird,
-                    borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
+                decoration: BoxDecoration(
+                  color: Provider.of<ThemeProvider>(context).getCustomTheme.selectGroupColor,
+                    borderRadius: const BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
                 ),
                 child: ListView.builder(
                   itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,

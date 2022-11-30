@@ -37,3 +37,14 @@ samples, guidance on mobile development, and a full API reference.
 - show with color the users color
 - adding new pin does not update feed
 
+# -------------- BALTI ----------------
+
+### Themes
+- add global ThemeData in *dark_theme.dart* or *light_theme.dart*
+- add local theme variables by adding an attribute in *custom_theme* and init it in *dark_theme.dart* and *light_theme.dart*
+  - use local custom theme by using provider: ```Provider.of<ThemeProvider>(context).getCustomTheme.xxx```
+  - use current ThemeData by using provider: ```Provider.of<ThemeProvider>(context).getTheme```
+  - example: ```color: Provider.of<ThemeProvider>(context).getCustomTheme.selectGroupColor```
+
+### Other
+

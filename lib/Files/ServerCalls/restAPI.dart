@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 
-import '../global.dart' as global;
+import '../Other/global.dart' as global;
 
 class RestAPI {
 

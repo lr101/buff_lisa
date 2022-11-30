@@ -3,7 +3,7 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 import 'check_image_logic.dart';
 
 class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {

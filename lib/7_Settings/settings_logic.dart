@@ -2,9 +2,11 @@ import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/7_Settings/password_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../0_ScreenSignIn/secure.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
+import '../Providers/theme_provider.dart';
 import 'email_logic.dart';
 
 class Settings extends StatelessWidget  {
@@ -43,6 +45,10 @@ class Settings extends StatelessWidget  {
         ),
         ModalRoute.withName("/login")
     );
+  }
+
+  void handleChangeTheme(BuildContext context) {
+    Provider.of<ThemeProvider>(context, listen: false).toggleThemeMode();
   }
 
 }

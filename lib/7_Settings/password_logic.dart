@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../0_ScreenSignIn/login_logic.dart';
 import '../0_ScreenSignIn/secure.dart';
 import '../Files/ServerCalls/fetch_users.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 
 class Password extends StatelessWidget {
   const Password({Key? key}) : super(key: key);

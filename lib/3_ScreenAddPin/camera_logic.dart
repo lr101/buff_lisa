@@ -9,8 +9,8 @@ import 'package:provider/provider.dart';
 import '../2_ScreenMaps/maps_logic.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/pin.dart';
-import '../Files/global.dart' as global;
-import '../Files/location_class.dart';
+import '../Files/Other/global.dart' as global;
+import '../Files/Other/location_class.dart';
 import '../Providers/cluster_notifier.dart';
 import 'check_image_logic.dart';
 

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../Files/DTOClasses/pin.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 
 class ShowImageWidget extends StatefulWidget {
   const ShowImageWidget({Key? key, required this.pin, required this.newPin}) : super(key: key);

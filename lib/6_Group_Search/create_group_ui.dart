@@ -4,7 +4,7 @@ import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 
 
 class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{

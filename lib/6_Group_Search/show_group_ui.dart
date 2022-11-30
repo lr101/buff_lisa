@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/DTOClasses/group.dart';
-import '../Files/global.dart' as global;
+import '../Files/Other/global.dart' as global;
 
 
 class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{

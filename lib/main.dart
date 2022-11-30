@@ -4,6 +4,7 @@ import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_config/flutter_config.dart';
@@ -44,22 +45,25 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
     /// create [ClusterNotifier] used to save all important information
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: ClusterNotifier(),
-          ),
-        ],
-    builder: (context, child){
-      return MaterialApp (
-        title: 'Mona App',
-        initialRoute: isLoggedIn ? '/home' : '/login',
-        routes: {
-          '/login': (context) => const LoginScreen(),
-          '/home': (context) => const BottomNavigationWidget()
-        },
-        navigatorKey: navigatorKey, // Setting a global key for navigator
-      );
-    });
+            providers: [
+              ChangeNotifierProvider.value(
+                value: ClusterNotifier(),
+              ),
+              ChangeNotifierProvider.value(
+                value: ThemeProvider(),
+              ),
+            ],
+            builder: (context, child) => MaterialApp (
+                  theme: Provider.of<ThemeProvider>(context).getTheme,
+                  title: 'Mona App',
+                  initialRoute: isLoggedIn ? '/home' : '/login',
+                  routes: {
+                    '/login': (context) => const LoginScreen(),
+                    '/home': (context) => const BottomNavigationWidget()
+                  },
+                navigatorKey: navigatorKey, // Setting a global key for navigator
+            )
+    );
   }
 }
 
