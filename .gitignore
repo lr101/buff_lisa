@@ -51,3 +51,4 @@ app.*.map.json
 /images/cert.pem
 /.env
 /RELEASES/
+/change_identifier.sh
