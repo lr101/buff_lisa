@@ -32,7 +32,7 @@ bool pinsLoaded = false;
 String host = FlutterConfig.get("HOST") ?? "54.234.245.153";
 
 /// port of the server
-int port = 8081;
+int port = 8082;
 
 /// filename of the file where offline pins are saved on the device
 String fileName = 'pin_new.txt';

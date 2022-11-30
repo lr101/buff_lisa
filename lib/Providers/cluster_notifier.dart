@@ -103,7 +103,7 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> addPin(Pin pin)  async {
     Group group = pin.group;
-    (await group.getPins()).add(pin);
+    await group.setPin(pin); //TODO can also be in another thread
     if (group.active) {
       _addPinToMarkers(pin, false);
     }

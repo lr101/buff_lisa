@@ -20,7 +20,6 @@ class ThemeProvider with ChangeNotifier {
   }
 
   CustomTheme get getCustomTheme {
-    print(_first);
     return (_first ? darkTheme : lightTheme);
   }
 

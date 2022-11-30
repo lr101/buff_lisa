@@ -211,6 +211,18 @@ class Group {
     }
   }
 
+  /// adds a pin to the set of pins of a group
+  /// if the pins are not loaded from the server, the pin will already be online and does not to be added
+  /// if the pins are already loaded from the server, the pin is added to the set
+  /// TODO can also not load the pins if not fetched from server yet
+  Future<void> setPin(Pin pin) async {
+    if (pins != null) {
+      pins!.add(pin);
+    } {
+      pins = await FetchPins.fetchGroupPins(this);
+    }
+  }
+
   /// returns the pin set of a group synchronised
   /// if existing the existing set is returned
   /// if not existing an empty set is returned
