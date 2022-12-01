@@ -17,9 +17,9 @@ class RestAPI {
   /// returns a http response
   static Future<HttpClientResponse> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, String? encode) async {
     SecurityContext context = SecurityContext(withTrustedRoots: true);
-    context.setTrustedCertificatesBytes(utf8.encode(await rootBundle.loadString('images/cert.pem')), password: "password");
-    HttpClient client = HttpClient(context: context) ..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
-    Uri url = Uri(scheme: "https", host: global.host, port: global.port, path: path, queryParameters: queryParameters);
+    //context.setTrustedCertificatesBytes(utf8.encode(await rootBundle.loadString('images/cert.pem')), password: "password");
+    HttpClient client = HttpClient(context: context);// ..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
+    Uri url = Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters);
     HttpClientRequest request;
     stderr.writeln(url);
     switch (requestType) {

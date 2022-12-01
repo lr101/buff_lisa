@@ -36,6 +36,10 @@ samples, guidance on mobile development, and a full API reference.
 - joining a private groups does not load members
 - show with color the users color
 - adding new pin does not update feed
+- New Settings:
+  - dark/light- theme
+  - save taken images to local storage
+  - zoom of map in feed
 
 # -------------- BALTI ----------------
 
