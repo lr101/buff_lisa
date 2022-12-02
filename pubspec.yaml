@@ -87,8 +87,8 @@ dependencies:
   # MIT License
   fluttertoast:
 
-  # BSD-2-Clause
-  flutter_config:
+  # MIT
+  flutter_dotenv:
 
   # MIT License
   provider:
@@ -126,6 +126,7 @@ dev_dependencies:
 flutter:
   assets:
     - images/
+    - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

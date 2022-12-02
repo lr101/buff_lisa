@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:crypt/crypt.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../Files/ServerCalls/fetch_users.dart';
@@ -12,22 +13,26 @@ class Secure {
 
   /// save a given value via a given key with the secure flutter storage package
   static void saveSecure(String value, String key) {
-    const FlutterSecureStorage().write(key: key, value: value);
+    if (!kIsWeb)  const FlutterSecureStorage().write(key: key, value: value);
   }
 
   /// read a value via a given key from secure storage
   static Future<String?> readSecure(String key) async {
-    return await const FlutterSecureStorage().read(key: key);
+    if (!kIsWeb) {
+      return await const FlutterSecureStorage().read(key: key);
+    }
+    return null;
   }
 
   /// remove a value via a given key from secure storage
   static void removeSecure(String key) {
-    const FlutterSecureStorage().delete(key: key);
+    if (!kIsWeb) const FlutterSecureStorage().delete(key: key);
   }
 
   /// loading username and token to check if user is already logged in on this device
   /// -> if logged in then the username and token are saved in global file and true is returned
   static Future<bool> tryLocalLogin() async {
+    if (kIsWeb) return false;
     const storage = FlutterSecureStorage();
     String? storedUsername = await storage.read(key: "username");
     String? storedToken = await storage.read(key: "auth");

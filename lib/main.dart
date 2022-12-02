@@ -7,7 +7,8 @@ import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 /// global key for enabling different routes on startup
@@ -18,8 +19,8 @@ final navigatorKey = GlobalKey<NavigatorState>();
 /// initializes access to env variables
 /// checks if user is logged in on this device by checking device storage
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await FlutterConfig.loadEnvVariables();
+  if (!kIsWeb) WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   runApp(MyApp(isLoggedIn: await Secure.tryLocalLogin()));
 }
 

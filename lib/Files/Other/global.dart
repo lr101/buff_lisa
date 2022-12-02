@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_config/flutter_config.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 
 /// zoom when the maps controller sets the current location to the user location
@@ -29,7 +29,7 @@ bool pinsLoaded = false;
 /// useful ip addresses:
 /// server: 54.234.245.153
 /// localhost: 10.0.2.2
-String host = FlutterConfig.get("HOST") ?? "54.234.245.153";
+String host = dotenv.env["HOST"]!;
 
 /// port of the server
 int port = 8082;
@@ -42,7 +42,7 @@ String styleUrl = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x
 
 /// api key for the stadia map service
 /// loaded from .env file
-String apiKey = FlutterConfig.get("MAPS_API_KEY");
+String apiKey = dotenv.env["MAPS_API_KEY"]!;
 
 /// Style color palette
 const Color cPrime = Color(0xFF455a64);
