@@ -5,11 +5,13 @@ import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'Files/Other/global.dart' as global;
 
 /// global key for enabling different routes on startup
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -20,6 +22,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 /// checks if user is logged in on this device by checking device storage
 Future<void> main() async {
   if (!kIsWeb) WidgetsFlutterBinding.ensureInitialized();
+  global.cameras = await availableCameras();
   await dotenv.load();
   runApp(MyApp(isLoggedIn: await Secure.tryLocalLogin()));
 }

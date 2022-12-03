@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
@@ -53,3 +54,6 @@ const Color cFifth = Color(0xFFb5446e);
 
 /// height of the SelectGroupWidget selector
 const int barHeight = 58;
+
+/// list of available cameras
+late List<CameraDescription> cameras;

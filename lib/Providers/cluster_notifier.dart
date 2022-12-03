@@ -1,4 +1,5 @@
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -201,11 +202,13 @@ class ClusterNotifier extends ChangeNotifier {
   /// REBUILD MAP MARKERS
   /// NOTIFIES CHANGES
   Future<void> addOfflinePin(Pin mona) async{
-    if (mona.group.active) {
-      await _addOfflinePinToMarkers(mona);
+    if (!kIsWeb) {
+      if (mona.group.active) {
+        await _addOfflinePinToMarkers(mona);
+      }
+      await _offlineFileHandler.saveList(_offlinePins);
+      _updateValues();
     }
-    await _offlineFileHandler.saveList(_offlinePins);
-    _updateValues();
   }
 
   /// get method of [_shownMarkers] attribute

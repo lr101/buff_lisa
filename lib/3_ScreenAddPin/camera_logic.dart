@@ -74,24 +74,6 @@ class CameraControllerWidget extends State<CameraWidget> {
     Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
   }
 
-  /// returns the width of the camera to fit a 16:9 camera preview perfectly
-  double getWidth() {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    if (width * 16.0/9.0 > height) {
-      width = height * 9.0/16.0;
-    }
-    return width;
-  }
 
-  /// returns the height of the camera to fit a 16:9 camera preview perfectly
-  double getHeight() {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    if (width * 16.0/9.0 <= height) {
-      height = width * 16.0/9.0;
-    }
-    return height;
-  }
 
 }

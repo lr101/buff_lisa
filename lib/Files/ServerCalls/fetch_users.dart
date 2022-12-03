@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
+import 'package:http/http.dart';
 
 import '../DTOClasses/ranking.dart';
 import '../Other/global.dart' as global;
@@ -12,10 +12,10 @@ class FetchUsers {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<List<Ranking>> fetchGroupMembers(Group group) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/members" , {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/members" , {}, 0, null);
     if (response.statusCode == 200) {
       List<Ranking> members = [];
-      List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
+      List<dynamic> values = json.decode(response.body);
       for (dynamic d in values) {
         members.add(Ranking.fromJson(d));
       }
@@ -30,9 +30,9 @@ class FetchUsers {
   /// GET Request to Server
   static Future<String?> checkUser(String? name) async {
     name ??= global.username;
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/login/$name/", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/login/$name/", {}, 0, null);
     if (response.statusCode == 200) {
-      return await response.transform(utf8.decoder).join();
+      return response.body;
     }
     return null;
   }
@@ -45,9 +45,9 @@ class FetchUsers {
     final String json = jsonEncode(<String, dynamic>{
       "password" : password,
     });
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/token/$name/", {}, 2, json);
+    Response response = await RestAPI.createHttpsRequest("/token/$name/", {}, 2, json);
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return await response.transform(utf8.decoder).join();
+      return response.body;
     }
     return null;
   }
@@ -60,9 +60,9 @@ class FetchUsers {
       "password" : password,
       "username" : name,
     });
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/login/", {}, 1, json);
+    Response response = await RestAPI.createHttpsRequest("/login/", {}, 1, json);
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return await response.transform(utf8.decoder).join();
+      return response.body;
     }
     return null;
   }
@@ -72,7 +72,7 @@ class FetchUsers {
   /// returns false if a problem occurred at the server
   /// GET Request to Server
   static Future<bool> recover(String? name) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/recover", {"username" : name}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/recover", {"username" : name}, 0, null);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     }
@@ -89,9 +89,9 @@ class FetchUsers {
       "password" : hash,
       "email" : email
     });
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/signup/", {}, 1, json);
+    Response response = await RestAPI.createHttpsRequest("/signup/", {}, 1, json);
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return await response.transform(utf8.decoder).join();
+      return response.body;
     }
     return null;
   }
@@ -104,7 +104,7 @@ class FetchUsers {
     final String json = jsonEncode(<String, dynamic> {
       "password" : password
     });
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/users/$username/", {}, 2, json);
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/", {}, 2, json);
     if (response.statusCode == 200) {
       return true;
     }
@@ -119,7 +119,7 @@ class FetchUsers {
     final String json = jsonEncode(<String, dynamic> {
       "email" : email
     });
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/users/$username/", {}, 2, json);
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/", {}, 2, json);
     if (response.statusCode == 200) {
       return true;
     }

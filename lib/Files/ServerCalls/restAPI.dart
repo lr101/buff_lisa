@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import '../Other/global.dart' as global;
 
@@ -15,27 +12,16 @@ class RestAPI {
   /// [queryParameters] are the url params added at the end of the url with '?' as a map; Format: {"NAME": value, ...}
   /// [encode] is the body formatted as json string; null: no body; String: body existing  -> Http ContentType is set to application/json
   /// returns a http response
-  static Future<HttpClientResponse> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, String? encode) async {
-    SecurityContext context = SecurityContext(withTrustedRoots: true);
-    //context.setTrustedCertificatesBytes(utf8.encode(await rootBundle.loadString('images/cert.pem')), password: "password");
-    HttpClient client = HttpClient(context: context);// ..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
-    Uri url = Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters);
-    HttpClientRequest request;
-    stderr.writeln(url);
+  static Future<http.Response> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, String? encode) async {
+    Map<String, String> header = {"Authorization" : "Bearer ${global.token}"};
+    if (encode != null) header["Content-Type"] = "application/json";
     switch (requestType) {
-      case 0: request = await client.getUrl(url);break;
-      case 1: request = await client.postUrl(url);break;
-      case 2: request = await client.putUrl(url);break;
-      case 3: request = await client.deleteUrl(url);break;
+      case 0: return await http.get(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header);
+      case 1: return await http.post(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
+      case 2: return await http.put(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
+      case 3: return await http.delete(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
       default: throw Exception("HTTPS Request method does not exist");
     }
-    request.headers.add("Authorization", "Bearer ${global.token}");
-    if (encode != null) {
-      request.headers.contentType =  ContentType('application', 'json', charset: 'utf-8');
-      request.write(encode);
-    }
-    print(request.uri.path);
-    return await request.close();
   }
 
 }

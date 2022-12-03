@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:http/http.dart' as http;
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
@@ -14,7 +13,7 @@ class FetchPins {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Set<Pin>> fetchGroupPins(Group group) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pins", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pins", {}, 0, null);
     if (response.statusCode == 200) {
       return toPinSet(response, group);
     } else {
@@ -26,9 +25,22 @@ class FetchPins {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Uint8List> fetchImageOfPin(Pin pin) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${pin.group.groupId}/pins/${pin.id}/image", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${pin.group.groupId}/pins/${pin.id}/image", {}, 0, null);
     if (response.statusCode == 200) {
-      return await ByteStream(response.cast()).toBytes();
+      return response.bodyBytes;
+    } else {
+      throw Exception("failed to load mona");
+    }
+  }
+
+
+  /// returns the image of a pin as byte list saved as blob in browser
+  /// throws an Exception if an error occurs
+  /// GET Request to local cash
+  static Future<Uint8List> fetchImageFromBrowserCash(String url) async {
+    Response response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
     } else {
       throw Exception("failed to load mona");
     }
@@ -49,7 +61,7 @@ class FetchPins {
     });
     final response =  await RestAPI.createHttpsRequest("/api/groups/${mona.group.groupId}/pins", {}, 1, json);
     if (response.statusCode == 201 || response.statusCode == 200) {
-      final body = await response.transform(utf8.decoder).join();
+      final body = response.body;
       Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
       return Pin.fromJson(json, mona.group);
     }
@@ -60,7 +72,7 @@ class FetchPins {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<bool> deleteMonaFromPinId(int id) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$id/pins", {}, 3, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$id/pins", {}, 3, null);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     }
@@ -70,8 +82,8 @@ class FetchPins {
   //---------------------------------------
 
   /// converts a client response to a pin set
-  static Future<Set<Pin>> toPinSet(HttpClientResponse response, Group group) async {
-    List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
+  static Future<Set<Pin>> toPinSet(Response response, Group group) async {
+    List<dynamic> values = json.decode(response.body);
 
     Set<Pin> pins = {};
     for (var element in values) {

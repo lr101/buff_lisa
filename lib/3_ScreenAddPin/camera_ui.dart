@@ -1,7 +1,9 @@
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
-import 'package:camera_camera/camera_camera.dart';
+import 'package:buff_lisa/Files/Camera/camera_logic.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import '../Files/Other/global.dart' as global;
 
 class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
 
@@ -9,25 +11,12 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-          color: Colors.black,
-          child: Scaffold(
-              body: Container(
-                  constraints: const BoxConstraints(minWidth: double.infinity, maxWidth: double.infinity),
-                  decoration: const BoxDecoration(
-                    color: Colors.black
-                  ),
-                  child: SizedBox(
-                      width: state.getWidth(),
-                      height: state.getHeight(),
-                      child: CameraCamera(
-                          enableAudio: false,
-                          resolutionPreset: ResolutionPreset.high,
-                          onFile: (image) => state.handlePictureTaken(image.readAsBytesSync(), widget.io)
-                      )
-                  ),
-              )
-        )
+    return SizedBox(
+        height: MediaQuery.of(context).size.height - global.barHeight,
+        child: CameraPage(
+          onImage:(image) =>  state.handlePictureTaken(image, state.widget.io,),
+          resolution: ResolutionPreset.medium,
+        ),
       );
     }
 }

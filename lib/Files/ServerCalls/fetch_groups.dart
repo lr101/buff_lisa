@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
@@ -14,7 +13,7 @@ class FetchGroups {
   /// GET request to server
   /// throws an Exception when an error occurs during server call
   static Future<List<Group>> getUserGroups() async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/users/${global.username}/groups" , {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/groups" , {}, 0, null);
     if (response.statusCode == 200) {
       return _toGroupList(response);
     } else {
@@ -26,9 +25,9 @@ class FetchGroups {
   /// GET request to server
   /// throws an Exception when an error occurs during server call
   static Future<Group> getGroup(int groupId) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId" , {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId" , {}, 0, null);
     if (response.statusCode == 200) {
-      return Group.fromJson(jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>);
+      return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
     } else {
       throw Exception("Groups could not be loaded: ${response.statusCode} error code");
     }
@@ -42,7 +41,7 @@ class FetchGroups {
     if (groupIds.isNotEmpty) ids += groupIds[0].toString();
     for (int i = 1; i < groupIds.length; i ++) { ids+="-"; ids += groupIds[i].toString();}
     if (ids == "") return [];
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups" , {"ids" : ids}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups" , {"ids" : ids}, 0, null);
     if (response.statusCode == 200) {
       return _toGroupList(response);
     } else {
@@ -59,13 +58,13 @@ class FetchGroups {
     Map<String, dynamic> params = {};
     params["withUser"] = "false";
     if (value != null) params["search"] = value;
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groupIds" , params, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groupIds" , params, 0, null);
     if (response.statusCode == 200) {
-      String res =  (await response.transform(utf8.decoder).join());
+      String res =  ( response.body);
       if (!res.contains("[]")) {
         return res.replaceAll('[', '').replaceAll(']', '')
-        .split(',')
-        .map<int>((e) => int.parse(e)).toList();
+            .split(',')
+            .map<int>((e) => int.parse(e)).toList();
       } else {
         return [];
       }
@@ -87,7 +86,7 @@ class FetchGroups {
     });
     final response =  await RestAPI.createHttpsRequest("/api/groups", {}, 1, json);
     if (response.statusCode == 200 || response.statusCode == 201) {
-      return Group.fromJson(jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>);
+      return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
     } else {
       return null;
     }
@@ -101,9 +100,9 @@ class FetchGroups {
       "username" : global.username,
       "inviteUrl" : inviteUrl
     });
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 1, json);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 1, json);
     if (response.statusCode == 200) {
-      return Group.fromJson(jsonDecode(await response.transform(utf8.decoder).join()) as Map<String, dynamic>);
+      return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
     } else {
       throw Exception("Group could not be joined: ${response.statusCode} error code");
     }
@@ -113,7 +112,7 @@ class FetchGroups {
   /// returns false if an error occurred
   /// DELETE request to server
   static Future<bool> leaveGroup(int groupId) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 3, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 3, null);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -125,9 +124,9 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<String> getGroupDescription(int groupId) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0, null);
     if (response.statusCode == 200) {
-      return await response.transform(utf8.decoder).join();
+      return  response.body;
     } else {
       throw Exception("Group is private or does not exist");
     }
@@ -137,9 +136,9 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<String> getGroupAdmin(int groupId) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/$groupId/admin", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/admin", {}, 0, null);
     if (response.statusCode == 200) {
-      return await response.transform(utf8.decoder).join();
+      return  response.body;
     } else {
       throw Exception("Group is private or does not exist");
     }
@@ -149,9 +148,9 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Uint8List> getProfileImage(Group group) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/profile_image", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/profile_image", {}, 0, null);
     if (response.statusCode == 200) {
-      return await ByteStream(response.cast()).toBytes();
+      return response.bodyBytes;
     } else {
       throw Exception("failed to load profile image");
     }
@@ -161,9 +160,9 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Uint8List> getPinImage(Group group) async {
-    HttpClientResponse response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pin_image", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pin_image", {}, 0, null);
     if (response.statusCode == 200) {
-      return await ByteStream(response.cast()).toBytes();
+      return response.bodyBytes;
     } else {
       throw Exception("failed to load pin image");
     }
@@ -176,8 +175,8 @@ class FetchGroups {
 
 
   /// returns a list of groups by converting the body of a http response to Group objects
-  static Future<List<Group>> _toGroupList(HttpClientResponse response) async {
-    List<dynamic> values = json.decode(await response.transform(utf8.decoder).join());
+  static Future<List<Group>> _toGroupList(Response response) async {
+    List<dynamic> values = json.decode( response.body);
 
     List<Group> groups = [];
     for (var element in values) {

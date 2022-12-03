@@ -58,7 +58,7 @@ dependencies:
   flutter_secure_storage:
 
   # MIT License
-  camera_camera:
+  camera:
 
   # MIT License
   images_picker:
