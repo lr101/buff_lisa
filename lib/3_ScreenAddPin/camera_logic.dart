@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
@@ -28,21 +27,35 @@ class CameraWidget extends StatefulWidget {
 
 class CameraControllerWidget extends State<CameraWidget> {
 
-  /// opens a new page to check image
-  /// 1. on approval of the user the image is saved as online pin
-  /// 2. pin in send to the server
-  /// 3. on success at the server -> offline pin is deleted and replaced by the online pin
-
+  /// nativ ratio of the selected camera
   late double ratio;
+
+  /// value of the current zoom
   double scaleFactor = 1.0;
+
+  /// value of the zoom when not zoomed
   double basScaleFactor = 1.0;
+
+  /// fixed min zoom value of the selected camera
   late double _minZoom;
+
+  /// fixed max zoom value of the selected camera
   late double _maxZoom;
+
+  /// flag for an initialized camera controller
+  /// true: controller is initialized
+  /// false: controller is not initialized
   bool init = false;
+
+  /// fixed constant value of the resolution preset (image quality) of the taken images of the camera
   final ResolutionPreset resolution = ResolutionPreset.medium;
+
+  /// list of possible groups shown for selection
   late List<Group> groups;
 
-
+  /// the camera controller
+  /// used for showing the preview, zoom and taking images
+  late CameraController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +73,7 @@ class CameraControllerWidget extends State<CameraWidget> {
     );
   }
 
-  late CameraController controller;
+  /// initializes the camera and its controller and saves relevant values of this camera to the corresponding attributes
   Future<void> initializeControllerFuture(context) async {
     try {
       groups = Provider.of<ClusterNotifier>(context).getGroups;
@@ -76,18 +89,15 @@ class CameraControllerWidget extends State<CameraWidget> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-  }
-
+  /// disposes the camera and its controller
   @override
   void dispose() {
     controller.dispose();
     super.dispose();
   }
 
+  /// takes an image via the controller
+  /// selected group and image byte list used for showing [CheckImageWidget] page
   Future<void> takePicture(context) async {
     if (!init) await initializeControllerFuture(context);
     final image = await controller.takePicture();
@@ -128,6 +138,7 @@ class CameraControllerWidget extends State<CameraWidget> {
     return height;
   }
 
+  /// uses the camera zoom if zoom is inside [_minZoom] and [_maxZoom]
   Future<void> handleZoom(ScaleUpdateDetails scale) async{
     if (scale.scale * basScaleFactor <= _maxZoom && scale.scale * basScaleFactor >= _minZoom) {
       scaleFactor = basScaleFactor * scale.scale;
@@ -135,10 +146,12 @@ class CameraControllerWidget extends State<CameraWidget> {
     }
   }
 
+  /// changes the camera on double tab via provider and its listeners
   Future<void> handleCameraChange(context) async {
     Provider.of<CameraNotifier>(context, listen: false).changeCameraIndex();
   }
 
+  /// changes the selected group index via provider
   void onPageChange(index, context) {
     Provider.of<CameraGroupNotifier>(context, listen: false).setGroupIndex(index);
   }

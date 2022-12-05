@@ -33,7 +33,14 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                           onDoubleTap: () => state.handleCameraChange(context),
                           onScaleStart: (_) => state.basScaleFactor = state.scaleFactor,
                           onScaleUpdate: (details) => state.handleZoom(details),
-                          child: getContainer(child: CameraPreview(state.controller), context: context)
+                          child: SizedBox(
+                            height: state.getHeight(),
+                            width:  state.getWidth(),
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: CameraPreview(state.controller),
+                            ),
+                          )
                       );
                     } else {
                       //TODO show better camera preview
@@ -73,17 +80,8 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
       );
     }
 
-  Widget getContainer({required Widget child, required BuildContext context}) {
-    return SizedBox(
-      height: state.getHeight(),
-      width:  state.getWidth(),
-      child: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: child,
-      ),
-    );
-  }
-
+  /// returns the page view item widget
+  /// returns a round representation (profile image) of the group identified by [index]
   Widget groupCard(BuildContext context,int index) {
     Group group = state.groups[index];
     Color color = Colors.grey;

@@ -35,7 +35,9 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   Widget build(BuildContext context)  => CheckImageIU(state: this);
 
   /// on button press of approve button
-  /// returns back to the camera page with the type information selected by the user
+  /// init save of pin offline and online
+  /// closes page if offline save is successful
+  /// navigates to map screen
   Future<void> handleApprove() async {
     Pin mona = await _createMona(widget.image, widget.group);
     await Provider.of<ClusterNotifier>(widget.io.context, listen: false).addOfflinePin(mona);
