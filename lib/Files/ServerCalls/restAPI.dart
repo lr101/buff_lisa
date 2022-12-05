@@ -15,6 +15,7 @@ class RestAPI {
   static Future<http.Response> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, String? encode) async {
     Map<String, String> header = {"Authorization" : "Bearer ${global.token}"};
     if (encode != null) header["Content-Type"] = "application/json";
+    print("$requestType https://${global.host}$path?${queryParameters.keys.join("&")}");
     switch (requestType) {
       case 0: return await http.get(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header);
       case 1: return await http.post(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);

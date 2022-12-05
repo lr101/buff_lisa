@@ -104,15 +104,17 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> addPin(Pin pin)  async {
     Group group = pin.group;
-    await group.setPin(pin); //TODO can also be in another thread
-    if (group.active) {
-      _addPinToMarkers(pin, false);
+    bool success = await group.setPin(pin);
+    if (success) {
+      if (group.active) {
+        _addPinToMarkers(pin, false);
+      }
+      if (group.members != null) {
+        group.members!.firstWhere((element) => element.username == global.username).addOnePoint();
+        group.members!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
+      }
+      _updateValues();
     }
-    if (group.members != null) {
-      group.members!.firstWhere((element) => element.username == global.username).addOnePoint();
-      group.members!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
-    }
-    _updateValues();
   }
 
   /// activates the [group] : the group will show its marker on the map and the feed
@@ -280,7 +282,7 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// remove [pin] from [_allMarkers]
   void _removePinFromMarkers(Pin pin) {
-    _allMarkers.remove(pin);
+    _allMarkers.removeWhere((key, value) => key.id == pin.id);
   }
 
   /// adds a Marker with attributes from [pin] to [_allMarkers]

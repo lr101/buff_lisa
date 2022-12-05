@@ -55,6 +55,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                             borderStrokeWidth: 3),
                         builder: (context, markers) {
                           return FloatingActionButton(
+                            heroTag: markers.first.key,
                             key: markers.first.key,
                             onPressed: null,
                             child: Text(markers.length.toString()),
