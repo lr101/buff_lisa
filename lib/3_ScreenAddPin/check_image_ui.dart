@@ -1,4 +1,3 @@
-import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +17,6 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
         builder: ((context, child) => Scaffold(
           body: Column(
               children: [
-                const SelectGroupWidget(multiSelector: false,),
                 Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

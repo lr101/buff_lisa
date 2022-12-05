@@ -78,20 +78,17 @@ dependencies:
   # BSD-3 Clause License
   shared_preferences:
 
-  # MIT License
-  flutter_launcher_icons:
 
   # MIT License
   image:
-
-  # MIT License
-  fluttertoast:
 
   # MIT
   flutter_dotenv:
 
   # MIT License
   provider:
+
+  url_launcher:
 
   # BSD-3 Clause License
   status_view:

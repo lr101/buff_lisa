@@ -2,15 +2,16 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
 import '../2_ScreenMaps/maps_logic.dart';
 import '../Files/DTOClasses/group.dart';
-import '../Files/DTOClasses/pin.dart';
 import '../Files/Other/global.dart' as global;
-import '../Files/Other/location_class.dart';
+import '../Providers/camera_group_notifier.dart';
+import '../Providers/camera_notifier.dart';
 import '../Providers/cluster_notifier.dart';
 import 'check_image_logic.dart';
 
@@ -27,53 +28,118 @@ class CameraWidget extends StatefulWidget {
 
 class CameraControllerWidget extends State<CameraWidget> {
 
-  @override
-  Widget build(BuildContext context) => CameraUI(state: this);
-
   /// opens a new page to check image
   /// 1. on approval of the user the image is saved as online pin
   /// 2. pin in send to the server
   /// 3. on success at the server -> offline pin is deleted and replaced by the online pin
-  Future<void> handlePictureTaken(Uint8List image, ProviderContext io) async {
-    Map<String, dynamic> result = await Navigator.of(widget.io.context).push(
-      MaterialPageRoute(
-          builder: (context) => CheckImageWidget(image: image,)),
+
+  late double ratio;
+  double scaleFactor = 1.0;
+  double basScaleFactor = 1.0;
+  late double _minZoom;
+  late double _maxZoom;
+  bool init = false;
+  final ResolutionPreset resolution = ResolutionPreset.medium;
+  late List<Group> groups;
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    final state = this;
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: CameraNotifier(),
+          ),
+          ChangeNotifierProvider.value(
+            value: CameraGroupNotifier(),
+          ),
+        ],
+        builder: ((context, child) => CameraUI(state: state))
     );
-    if (result["approve"] != null && result["approve"] as bool) {
-      Group group = result["type"] as Group;
-      Pin mona = await _createMona(image, group);
-      await Provider.of<ClusterNotifier>(widget.io.context, listen: false).addOfflinePin(mona);
-      _postPin(mona, group);
-      final BottomNavigationBar navigationBar = io.globalKey.currentWidget! as BottomNavigationBar;
-      navigationBar.onTap!(2);
+  }
+
+  late CameraController controller;
+  Future<void> initializeControllerFuture(context) async {
+    try {
+      groups = Provider.of<ClusterNotifier>(context).getGroups;
+      controller = CameraController(global.cameras[Provider.of<CameraNotifier>(context).getCameraIndex] ,resolution );
+      await controller.initialize();
+      init = true;
+      ratio = controller.value.aspectRatio;
+      _minZoom = await controller.getMinZoomLevel();
+      _maxZoom = await controller.getMaxZoomLevel();
+    } catch(_) {
+      _minZoom = basScaleFactor;
+      _maxZoom = basScaleFactor;
     }
   }
 
-  /// creates a Pin (mona) by accessing the location of the user
-  Future<Pin> _createMona(Uint8List image, Group group) async {
-    int length = Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().length;
-    LocationData locationData = await LocationClass.getLocation();
-    //create Pin
-    Pin pin = Pin(
-        latitude: locationData.latitude!,
-        longitude: locationData.longitude!,
-        id: length,
-        username: global.username,
-        creationDate: DateTime.now(),
-        group: group,
-        image: image
-    );
-    return pin;
+  @override
+  void initState() {
+    super.initState();
+
   }
 
-  /// pin is send to the server
-  /// on success at the server -> offline pin is deleted and replaced by the online pin
-  Future<void> _postPin(Pin mona, Group group) async {
-    final pin = await FetchPins.postPin(mona);
-    Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona);
-    Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
+  Future<void> takePicture(context) async {
+    if (!init) await initializeControllerFuture(context);
+    final image = await controller.takePicture();
+    try {
+      Uint8List bytes;
+      if (kIsWeb) {
+        bytes = await FetchPins.fetchImageFromBrowserCash(image.path);
+      } else {
+        bytes = await image.readAsBytes();
+      }
+      Group group = groups[Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex];
+      Navigator.of(widget.io.context).push(
+        MaterialPageRoute(
+            builder: (context) => CheckImageWidget(image: bytes, io: widget.io, group: group,)),
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
 
+  /// returns the width of the camera to fit a 16:9 camera preview perfectly
+  double getWidth() {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height - global.barHeight;
+    if (width * ratio > height) {
+      width = height * ratio;
+    }
+    return width;
+  }
 
+  /// returns the height of the camera to fit a 16:9 camera preview perfectly
+  double getHeight() {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height - global.barHeight;
+    if (width * ratio <= height) {
+      height = width * ratio;
+    }
+    return height;
+  }
+
+  Future<void> handleZoom(ScaleUpdateDetails scale) async{
+    if (scale.scale * basScaleFactor <= _maxZoom && scale.scale * basScaleFactor >= _minZoom) {
+      scaleFactor = basScaleFactor * scale.scale;
+      await controller.setZoomLevel(scaleFactor);
+    }
+  }
+
+  Future<void> handleCameraChange(context) async {
+    Provider.of<CameraNotifier>(context, listen: false).changeCameraIndex();
+  }
+
+  void onPageChange(index, context) {
+    Provider.of<CameraGroupNotifier>(context, listen: false).setGroupIndex(index);
+  }
 }
