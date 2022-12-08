@@ -77,7 +77,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   Future<void> initializeControllerFuture(context) async {
     try {
       groups = Provider.of<ClusterNotifier>(context).getGroups;
-      controller = CameraController(global.cameras[Provider.of<CameraNotifier>(context).getCameraIndex] ,resolution );
+      controller = CameraController(global.cameras[Provider.of<CameraNotifier>(context).getCameraIndex] ,resolution,enableAudio: false );
       await controller.initialize();
       init = true;
       ratio = controller.value.aspectRatio;
