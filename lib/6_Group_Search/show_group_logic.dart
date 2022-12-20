@@ -1,3 +1,4 @@
+import 'package:buff_lisa/6_Group_Search/edit_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/show_group_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -89,8 +90,13 @@ class ShowGroupPageState extends State<ShowGroupPage> {
   /// opens the edit page for admin if the current user is the groups admin
   Future<void> editAsAdmin() async {
     if (widget.group.groupAdmin != null && global.username == widget.group.groupAdmin) {
-      print("editing allowed");
-      //TODO new page to edit
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => EditGroupPage(group: widget.group)
+        ),
+      );
+      //trigger rebuild
+      setState(() {});
     }
   }
 

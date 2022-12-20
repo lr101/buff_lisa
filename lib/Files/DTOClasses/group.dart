@@ -14,17 +14,17 @@ class Group {
   final int groupId;
 
   /// name of the group shown to users to identify the group uniquely
-  final String name;
+  String name;
 
   /// visibility of a group
   /// 0 : public
   /// 1 : private
   /// 2 : TODO not yet implemented
-  final int visibility;
+  int visibility;
 
   /// String: invite url of a private group
   /// null: user is not a member or group is public
-  final String? inviteUrl;
+  String? inviteUrl;
 
   /// String: group admin of a group
   /// null: group admin not yet loaded from server or user is not a member of the private group
@@ -172,6 +172,16 @@ class Group {
     } else {
       description = await FetchGroups.getGroupDescription(groupId);
       return description!;
+    }
+  }
+
+  /// returns the description of a group as String form local if existing or from server
+  Future<String> getInviteUrl() async {
+    if (inviteUrl != null) {
+      return inviteUrl!;
+    } else {
+      inviteUrl = await FetchGroups.getInviteUrl(groupId);
+      return inviteUrl!;
     }
   }
 

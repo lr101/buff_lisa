@@ -13,7 +13,7 @@ import 'file_handler.dart';
 
 class ClusterNotifier extends ChangeNotifier {
 
-  /// FileHandler to save, read, delete offline pins
+  /// FileHandler to save, delete offline pins
   final FileHandler _offlineFileHandler = FileHandler(fileName: global.fileName);
 
   /// list of groups the user is a member of
@@ -68,6 +68,18 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _userGroups.remove(group);
+    notifyListeners();
+  }
+
+  dynamic listening(dynamic d) {return d;}
+
+  void updateGroup(Group group, Group changes) async {
+    group.name = changes.name;
+    group.description = changes.description;
+    group.pinImage = changes.pinImage;
+    group.profileImage = changes.profileImage;
+    group.groupAdmin = changes.groupAdmin;
+    group.visibility = changes.visibility;
     notifyListeners();
   }
 

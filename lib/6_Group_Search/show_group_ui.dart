@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/6_Group_Search/show_group_logic.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/DTOClasses/group.dart';
@@ -35,7 +36,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                 },
               ),
               const SizedBox(width: 20,),
-              Text(state.widget.group.name)
+              Text(state.widget.group.name),
             ]
           ),
       ),
@@ -44,10 +45,12 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _getInviteUrl(),
                     ConstrainedBox(
                       constraints: const BoxConstraints(
                         minWidth: double.infinity,
@@ -123,6 +126,25 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
           child: const Text("Join"),
         );
       }
+    }
+  }
+
+  Widget _getInviteUrl() {
+    if(state.widget.group.visibility != 0 && state.widget.myGroup) {
+      return FutureBuilder<String>(
+          future: state.widget.group.getInviteUrl(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return TextButton(
+                  onPressed: () => Clipboard.setData(ClipboardData(text: snapshot.requireData)),
+                  child: Text("Password: ${snapshot.requireData}"));
+            } else {
+              return const Text("Password: LOADING...");
+            }
+          }
+      );
+    }  else {
+      return const SizedBox(height: 0,);
     }
   }
 

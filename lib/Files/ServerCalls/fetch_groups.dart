@@ -92,6 +92,25 @@ class FetchGroups {
     }
   }
 
+  /// returns the group that is created on the server with [name], [description], [image], [visibility]
+  /// POST request to server
+  /// returns null if an Error occurred during server call TODO exception?
+  static Future<Group?> putGroup(int groupId, String name, String description, Uint8List? image, int visibility, String groupAdmin) async {
+    final String json = jsonEncode(<String, dynamic> {
+      "name" : name,
+      "groupAdmin": groupAdmin,
+      "description" : description,
+      "profileImage": image,
+      "visibility" : visibility
+    });
+    final response =  await RestAPI.createHttpsRequest("/api/groups/$groupId", {}, 2, json);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
+    } else {
+      return null;
+    }
+  }
+
   /// returns the group of the group identified by [groupId] the current user tries to join
   /// POST request to server
   /// throws an Exception when an error occurs during server call
@@ -137,6 +156,18 @@ class FetchGroups {
   /// GET Request to Server
   static Future<String> getGroupAdmin(int groupId) async {
     Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/admin", {}, 0, null);
+    if (response.statusCode == 200) {
+      return  response.body;
+    } else {
+      throw Exception("Group is private or does not exist");
+    }
+  }
+
+  /// returns the invite url of a private group identified by [groupId]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
+  static Future<String> getInviteUrl(int groupId) async {
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/invite_url", {}, 0, null);
     if (response.statusCode == 200) {
       return  response.body;
     } else {
