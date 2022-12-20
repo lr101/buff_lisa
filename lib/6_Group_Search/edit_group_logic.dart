@@ -52,7 +52,7 @@ class EditGroupPageState extends State<EditGroupPage> {
       Provider.of<CreateGroupNotifier>(context, listen: false).setText1(widget.group.name);
       Provider.of<CreateGroupNotifier>(context, listen: false).setText2(await widget.group.getDescription());
       if (!mounted) return;
-      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(await widget.group.getPinImage());
+      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(await widget.group.getProfileImage());
       if (!mounted) return;
       Provider.of<CreateGroupNotifier>(context, listen: false).menuItems = await getMembers();
     });
@@ -81,7 +81,7 @@ class EditGroupPageState extends State<EditGroupPage> {
     final sliderValue = Provider.of<CreateGroupNotifier>(context, listen: false).getSliderValue;
     final groupAdmin = Provider.of<CreateGroupNotifier>(context, listen: false).currentItem;
     if (!Provider.of<CreateGroupNotifier>(context, listen: false).flagImageChange) image = null;
-    if (controller1.text.isNotEmpty && controller2.text.isNotEmpty && image != null && groupAdmin != null) {
+    if (controller1.text.isNotEmpty && controller2.text.isNotEmpty && groupAdmin != null) {
       FetchGroups.putGroup(widget.group.groupId, controller1.text, controller2.text, image, sliderValue.toInt(), groupAdmin).then((group) {
         if (group != null) {
           Provider.of<ClusterNotifier>(context, listen:false).updateGroup(widget.group, group);

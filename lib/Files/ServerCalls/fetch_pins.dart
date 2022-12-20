@@ -21,6 +21,27 @@ class FetchPins {
     }
   }
 
+  /// returns a set of all pins of the currently logged-in user
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
+  static Future<List<Pin>> fetchUserPins() async {
+    Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/pins", {}, 0, null);
+    if (response.statusCode == 200) {
+      List<dynamic> values = json.decode(response.body);
+
+      List<Pin> pins = [];
+      Group group = Group(groupId: 0, name: "", visibility: 0, inviteUrl: "");
+      for (var element in values) {
+        Pin pin = Pin.fromJson(element["pin"], group);
+        pin.image = base64Decode(element["image"]);
+        pins.add(pin);
+      }
+      return pins;
+    } else {
+      throw Exception("Pins could not be loaded: ${response.statusCode} error code");
+    }
+  }
+
   /// returns the image of a pin as a byte list that is identified by [pin]
   /// throws an Exception if an error occurs
   /// GET Request to Server

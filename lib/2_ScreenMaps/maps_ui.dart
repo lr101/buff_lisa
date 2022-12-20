@@ -25,8 +25,10 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
               FlutterMap(
                 mapController: state.controller,
                 options: MapOptions(
+                    minZoom: 2,
+                    maxZoom: 18,
                     center: global.initCamera,
-                    zoom: 20,
+                    zoom: 19,
                     keepAlive: true,
                     interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
                 ),
