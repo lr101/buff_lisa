@@ -18,29 +18,46 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: global.cThird,
-          centerTitle: true,
-          actions: [
-            IconButton(onPressed: () => state.handleSearch(), icon: state.icon)
-          ],
-          title: state.customSearchBar
-        ),
-        backgroundColor: Colors.white,
         body: PagedListView<int, Group>(
           pagingController: state.pagingController,
           builderDelegate: PagedChildBuilderDelegate<Group>(
             itemBuilder: (context, item, index) {
               if (index == 0) {
+                return getTitle(context);
+              } else if (index == 1) {
                 return getCardCreateNewGroup();
               } else {
-                index--;
+                index -= 2;
                 return getCardOfOtherGroups(item, index);
               }
             }
           ),
         )
     );
+  }
+
+  Widget getTitle(BuildContext context) {
+    return SizedBox(
+      height: 200,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)),
+              Row(
+                children: [
+                  SizedBox(width: MediaQuery.of(context).size.width - 100, child: state.customSearchBar),
+                  IconButton(onPressed: () => state.handleSearch(), icon: state.icon),
+                ],
+              )
+            ],
+          ),
+          const SizedBox(height: 18,),
+          const Text("Search Groups", style: TextStyle(fontSize: 20),)
+        ],
+      ),
+    ) ;
   }
 
   /// Get Card with button to navigate to create group page

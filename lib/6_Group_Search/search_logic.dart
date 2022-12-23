@@ -34,7 +34,7 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
   /// Widget shown in center of app bar
   /// shows title if search is not active
   /// shows text input of search if search is active
-  Widget customSearchBar = const Text('Explore Groups');
+  Widget customSearchBar = Container();
 
   /// textController of search input field
   TextEditingController textController = TextEditingController();
@@ -95,7 +95,7 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
         );
       } else {
         icon = const Icon(Icons.search);
-        customSearchBar = const Text('Explore Groups');
+        customSearchBar = Container();
         if (filtered) pullRefresh(null);
         textController.clear();
       }
@@ -107,15 +107,15 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
   Future<void> _fetchPage(int pageKey) async {
     try {
       List<Group> g = [];
-      if (pageKey != 0) {
-        int rangeEnd = (pageKey + _numPages - 1 < groups.length ? pageKey + _numPages - 1 : groups.length);
-        g = await FetchGroups.getGroups(groups.sublist(pageKey - 1, rangeEnd));
+      if (pageKey > 1) {
+        int rangeEnd = (pageKey + _numPages - 2 < groups.length ? pageKey + _numPages - 2 : groups.length);
+        g = await FetchGroups.getGroups(groups.sublist(pageKey - 2, rangeEnd));
       } else {
         g.add(Group(groupId: 0, name: "", groupAdmin: "", inviteUrl: null, visibility: 0));
       }
-      if (g.length < _numPages && pageKey != 0) {
+      if (g.length < _numPages && pageKey > 1) {
         pagingController.appendLastPage(g);
-      } else if (pageKey == 0) {
+      } else if (pageKey == 0 || pageKey == 1) {
         pagingController.appendPage(g, pageKey + 1);
       } else {
         pagingController.appendPage(g, pageKey + _numPages);

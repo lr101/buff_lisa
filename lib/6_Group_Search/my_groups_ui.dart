@@ -17,29 +17,33 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: const Text(
-              'My Groups',
-              style: TextStyle(color: Colors.white)),
-              backgroundColor: global.cThird,
-        ),
-        backgroundColor: Colors.white,
-        body: ListView.separated(
-          itemCount: Provider.of<ClusterNotifier>(context).getGroups.length + 1,
+        body: ListView.builder(
+          itemCount: Provider.of<ClusterNotifier>(context).getGroups.length + 2,
           padding: const EdgeInsets.all(8.0),
-          separatorBuilder: (BuildContext context, int index) => const Divider(),
           itemBuilder: (BuildContext context, int index) {
             if (index == 0) {
+              return getTitle();
+            } else if (index == 1) {
               return getCardExploreExistingGroups();
             } else {
-              index--;
+              index -= 2;
               return getCardOfGroup(index, context);
             }
-
           },
         )
+    );
+  }
+
+  Widget getTitle() {
+    return const SizedBox(
+      height: 200,
+      child: Center(
+        child: Text(
+          "My Groups",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
     );
   }
 

@@ -36,7 +36,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
           decoration: BoxDecoration(
               border: Border.all(color: Colors.black),
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              color: Colors.white
+              color: const Color(0x99ffffff)
           ),
           child: _getButton(context)
       ),
@@ -55,6 +55,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
       if (state.widget.group.visibility != 0) {
         TextEditingController controller = TextEditingController();
         return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
