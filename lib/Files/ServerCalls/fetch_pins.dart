@@ -24,19 +24,22 @@ class FetchPins {
   /// returns a set of all pins of the currently logged-in user
   /// throws an Exception if an error occurs
   /// GET Request to Server
-  static Future<List<Pin>> fetchUserPins() async {
+  static Future<List<int>> fetchUserPins() async {
     Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/pins", {}, 0, null);
     if (response.statusCode == 200) {
-      List<dynamic> values = json.decode(response.body);
+      return (json.decode(response.body) as List<dynamic>).map((e) => e as int).toList();
+    } else {
+      throw Exception("Pins could not be loaded: ${response.statusCode} error code");
+    }
+  }
 
-      List<Pin> pins = [];
-      Group group = Group(groupId: 0, name: "", visibility: 0, inviteUrl: "");
-      for (var element in values) {
-        Pin pin = Pin.fromJson(element["pin"], group);
-        pin.image = base64Decode(element["image"]);
-        pins.add(pin);
-      }
-      return pins;
+  /// returns a set of all pins of the currently logged-in user
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
+  static Future<Pin> fetchUserPin(int pinId) async {
+    Response response = await RestAPI.createHttpsRequest("/api/pins/$pinId", {}, 0, null);
+    if (response.statusCode == 200) {
+      return Pin.fromJson(json.decode(response.body), Group(groupId: -1,name: "default", visibility: 0, inviteUrl: null));
     } else {
       throw Exception("Pins could not be loaded: ${response.statusCode} error code");
     }
@@ -46,7 +49,7 @@ class FetchPins {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Uint8List> fetchImageOfPin(Pin pin) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/${pin.group.groupId}/pins/${pin.id}/image", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/pins/${pin.id}/image", {}, 0, null);
     if (response.statusCode == 200) {
       return response.bodyBytes;
     } else {
@@ -80,7 +83,7 @@ class FetchPins {
       "image": mona.image,
       "username": global.username,
     });
-    final response =  await RestAPI.createHttpsRequest("/api/groups/${mona.group.groupId}/pins", {}, 1, json);
+    final response =  await RestAPI.createHttpsRequest("/api/pins", {}, 1, json);
     if (response.statusCode == 201 || response.statusCode == 200) {
       final body = response.body;
       Map<String, dynamic> json = jsonDecode(body) as Map<String, dynamic>;
@@ -93,7 +96,7 @@ class FetchPins {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<bool> deleteMonaFromPinId(int id) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/$id/pins", {}, 3, null);
+    Response response = await RestAPI.createHttpsRequest("/api/pins", {}, 3, null);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     }

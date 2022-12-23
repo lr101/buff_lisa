@@ -79,7 +79,7 @@ class Pin {
       "id": id,
       "creationDate": formatDateTim(creationDate),
       "username" : username,
-      "image" : image,
+      "image" : base64Encode(image!.toList()),
       "groupId" : group.groupId
     };
   }

@@ -39,7 +39,15 @@ class FileHandler {
     for (Pin item in list) {
       l.add(await item.toJsonOffline());
     }
+    print(l.first);
     await fl.writeAsString(const JsonEncoder().convert(l));
+  }
+
+  /// saves a list of pins to device storage by converting the pins into a json format
+  Future<void> savePin(Pin pin) async {
+    List<Pin> pins = await readFile([]);
+    pins.add(pin);
+    await saveList(pins);
   }
 
   /// reads a list of pins form device storage
@@ -51,7 +59,7 @@ class FileHandler {
       final List<dynamic> jsonData = await jsonDecode(content);
       List<Pin> list = [];
       for (Map<String, dynamic> data in jsonData) {
-        Group group = groups.firstWhere((element) => element.groupId == data['groupId']);
+        Group group = groups.firstWhere((element) => element.groupId == data['groupId'], orElse: () => Group(groupId: -1, name: "default", visibility: 0, inviteUrl: null));
         list.add(Pin.fromJsonOffline(data, group));
       }
       return list;
