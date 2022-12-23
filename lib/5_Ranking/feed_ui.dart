@@ -12,7 +12,6 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState>{
   Widget build(BuildContext context) {
     state.initSortedPins();
     return Scaffold(
-        backgroundColor: Colors.white,
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
