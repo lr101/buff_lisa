@@ -62,7 +62,7 @@ class EditGroupPageState extends State<EditGroupPage> {
     List<Ranking> members = await widget.group.getMembers();
     List<DropdownMenuItem<String>> items = [];
     for (Ranking ranking in members) {
-      items.add(DropdownMenuItem(value: ranking.username,child: Text(ranking.username),));
+      items.add(DropdownMenuItem(value: ranking.username,child: Center(child: Text(ranking.username),)));
     }
     return items;
   }
@@ -127,12 +127,16 @@ class EditGroupPageState extends State<EditGroupPage> {
 
   /// shows image if selected
   /// if not selected an image icon is shown
-  Widget getImageWidget(Uint8List? image) {
+  Image getImageWidget(Uint8List? image) {
     if (image != null) {
       return Image.memory(image);
     } else {
-      return const Icon(Icons.image);
+      return const Image(image: AssetImage("images/profile.jpg"),);
     }
+  }
+
+  void close() {
+    Navigator.pop(context);
   }
 
 }

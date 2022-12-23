@@ -90,11 +90,11 @@ class CreateGroupPageState extends State<CreateGroupPage> {
 
   /// shows image if selected
   /// if not selected an image icon is shown
-  Widget getImageWidget(Uint8List? image) {
+  Image getImageWidget(Uint8List? image) {
     if (image != null) {
       return Image.memory(image);
     } else {
-      return const Icon(Icons.image);
+      return const Image(image: AssetImage("images/profile.jpg"),);
     }
   }
 

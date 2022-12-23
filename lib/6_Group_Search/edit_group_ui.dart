@@ -1,4 +1,3 @@
-import 'package:buff_lisa/6_Group_Search/create_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/edit_group_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
@@ -14,85 +13,75 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size.width;
-    final providerListen = Provider.of<CreateGroupNotifier>(context);
-    final provider = Provider.of<CreateGroupNotifier>(context, listen: false);
+    TextEditingController t1 = Provider.of<CreateGroupNotifier>(context).getText1;
+    TextEditingController t2 = Provider.of<CreateGroupNotifier>(context).getText2;
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Edit Group'),
-        backgroundColor: global.cThird,
-      ),
-      body: SizedBox(
-          width: size,
-          height: size,
-          child: Column(
+      resizeToAvoidBottomInset: false,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(height: MediaQuery.of(context).viewPadding.top,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(onPressed: () => state.close(), icon: const Icon(Icons.arrow_back)),
+              IconButton(onPressed: () => state.editGroup(context), icon: const Icon(Icons.add_task)),
+            ],
+          ),
+          Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Type Name:", style: TextStyle(color: global.cPrime)),
-                SizedBox (
-                    height: 50,
-                    width: 200,
-                    child: TextFormField(controller: provider.getText1, style: const TextStyle(color: global.cPrime,))
-                ),
-                const Text("Type Description:", style: TextStyle(color: global.cPrime)),
-                SizedBox (
-                  height: 50,
-                  width: 200,
-                  child: TextFormField(controller: provider.getText2,),
-                ),
-                const Text("Group Admin:"),
-                DropdownButton(
-                    items: Provider.of<CreateGroupNotifier>(context).menuItems,
-                    onChanged: (String? value) => Provider.of<CreateGroupNotifier>(context, listen: false).currentItem = value,
-                    value: global.username
-                ),
-                Slider(
-                  value: providerListen.getSliderValue,
-                  max: 1,
-                  divisions: 1,
-                  label: (providerListen.getSliderValue == 0 ? "public" : "private"),
-                  onChanged: (_) => state.sliderOnChange(_, context),
-                ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox (
-                          height: size /4,
-                          width: size /4,
-                          child: IconButton(
-                            icon: const Icon(Icons.upload_file),
-                            onPressed: () => state.handleImageUpload(context),
-                          )
-                      ),
-                      SizedBox(
-                        height: size/4,
-                        width: size/4,
-                        child: state.getImageWidget(providerListen.getImage),
-                      ),
-                    ]
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TextButton(
-                        onPressed: () => state.editGroup(context),
-                        style: TextButton.styleFrom(backgroundColor: global.cThird),
-                        child: const Text("Submit", style: TextStyle(color: Colors.white))
-                    ),
-                    const SizedBox(width: 10,),
-                    TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: TextButton.styleFrom(backgroundColor: global.cFourth),
-                        child: const Text("Cancel", style: TextStyle(color: Colors.white))
-                    )
-                  ],
+                GestureDetector(
+                  onTap: () => state.handleImageUpload(context),
+                  child: CircleAvatar(backgroundImage: state.getImageWidget(Provider.of<CreateGroupNotifier>(context).getImage).image, radius: 50,),
                 )
               ]
+          ),
+          const SizedBox(height: 20,),
+          const Text("group name:"),
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: TextFormField(
+                  textAlign: TextAlign.center,
+                  controller: t1
+              ),
+          ),
+          const SizedBox(height: 20,),
+          const Text("Description:"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: TextField(
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              controller: t2,
+            ),
+          ),
+          const SizedBox(height: 20,),
+          const Text("group admin:"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: DropdownButton(
+                isExpanded: true,
+                items: Provider.of<CreateGroupNotifier>(context).menuItems,
+                onChanged: (String? value) => Provider.of<CreateGroupNotifier>(context, listen: false).currentItem = value,
+                value: global.username
+            ),
+          ),
+          const SizedBox(height: 20,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("public "),
+              Switch(
+                  value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
+                  onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
+              ),
+              const Text("private")
+            ],
           )
+        ],
       ),
     );
   }
