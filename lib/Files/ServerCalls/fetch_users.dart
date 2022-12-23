@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
@@ -65,6 +66,38 @@ class FetchUsers {
       return response.body;
     }
     return null;
+  }
+
+  /// returns the profile picture as a byte list of a username that is identified by [username]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
+  static Future<Uint8List?> fetchProfilePicture(String username) async {
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 0, null);
+    if (response.statusCode == 200) {
+      if (response.body.isNotEmpty) {
+        return response.bodyBytes;
+      } else {
+        return null;
+      }
+    } else {
+      throw Exception("failed to load mona");
+    }
+  }
+
+  /// returns the profile picture as a byte list of a username that is identified by [username]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
+  static Future<Uint8List?> fetchProfilePictureSmall(String username) async {
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture_small", {}, 0, null);
+    if (response.statusCode == 200) {
+      if (response.body.isNotEmpty) {
+        return response.bodyBytes;
+      } else {
+        return null;
+      }
+    } else {
+      throw Exception("failed to load mona");
+    }
   }
 
   /// This methods send a password recover request to the server
