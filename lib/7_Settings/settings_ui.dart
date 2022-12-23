@@ -10,13 +10,24 @@ class SettingsUI extends StatelessUI<Settings>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Settings'),
-          backgroundColor: global.cThird,
-        ),
         body: ListView(
           children: [
+            SizedBox(
+              height: 200,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)),
+                      ],
+                    ),
+                    const SizedBox(height: 18,),
+                    const Text("Settings", style: TextStyle(fontSize: 20),)
+                  ]
+              ),
+            ),
             Card(
               child: TextButton(
                 onPressed: () => widget.handlePasswordPress(context),
