@@ -48,7 +48,7 @@ String apiKey = dotenv.env["MAPS_API_KEY"]!;
 /// Style color palette
 const Color cPrime = Color(0xFF455a64);
 const Color cSecond = Color(0xFFcfdbd5);
-const Color cThird = Color(0xFF2085B8);
+const Color cThird = Color(0x992085B8);
 const Color cFourth = Color(0xFFf06449);
 const Color cFifth = Color(0xFFb5446e);
 

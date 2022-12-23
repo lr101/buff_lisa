@@ -34,23 +34,23 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
                         return FutureBuilder<Uint8List?>(
                             future: FetchUsers.fetchProfilePicture(global.username),
                             builder: ((context, snapshot) {
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [IconButton(onPressed: state.openSettings, icon: const Icon(Icons.settings))],
-                                      ),
-                                      Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [getProfile(snapshot.data)]
-                                      ),
-                                      const SizedBox(height: 20,),
-                                      Text("username: ${global.username}"),
-                                      const SizedBox(height: 50,)
-                                    ],
-                                  );
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [IconButton(onPressed: state.openSettings, icon: const Icon(Icons.settings))],
+                                  ),
+                                  Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [getProfile(snapshot.data)]
+                                  ),
+                                  const SizedBox(height: 20,),
+                                  Text("username: ${global.username}"),
+                                  const SizedBox(height: 50,)
+                                ],
+                              );
                             })
                         );
                       } else {

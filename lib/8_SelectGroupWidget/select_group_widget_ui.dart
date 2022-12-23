@@ -32,9 +32,9 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
             Container(
                 width: double.infinity,
                 height: 80,
-                decoration: BoxDecoration(
-                  color: Provider.of<ThemeProvider>(context).getCustomTheme.selectGroupColor,
-                    borderRadius: const BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
+                decoration: const BoxDecoration(
+                  color: global.cThird,
+                    borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
                 ),
                 child: ListView.builder(
                   itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,

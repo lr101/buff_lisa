@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/DTOClasses/group.dart';
+import '../Files/DTOClasses/ranking.dart';
 import '../Files/Other/global.dart' as global;
 
 
@@ -17,80 +18,29 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: global.cThird,
-          centerTitle: true,
-          actions: [
-            IconButton(onPressed: () => state.editAsAdmin(), icon: const Icon(Icons.edit))
-          ],
-          title: Row(
-            children: [
-              FutureBuilder<Uint8List>(
-                future: state.widget.group.getProfileImage(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 20,);
-                  } else {
-                    return const CircleAvatar(backgroundColor: Colors.grey, radius: 20,);
-                  }
-                },
-              ),
-              const SizedBox(width: 20,),
-              Text(state.widget.group.name),
-            ]
-          ),
+      body : FutureBuilder<List<Widget>>(
+        future: getGroupInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.requireData.length,
+              itemBuilder: (context, index) => snapshot.requireData[index],
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
       ),
-      backgroundColor: Colors.white,
-      body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _getInviteUrl(),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minWidth: double.infinity,
-                        minHeight: 35.0,
-                        maxHeight: 100.0,
-                      ),
-                      child: SingleChildScrollView(
-                       child: Container(
-                         padding: const EdgeInsets.all(3),
-                         margin: const EdgeInsets.all(15.0),
-                         decoration: BoxDecoration(
-                             border: Border.all(color: Colors.blueAccent)
-                         ),
-                         child: Column(
-                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                           crossAxisAlignment: CrossAxisAlignment.start,
-                           children: [
-                             _getDescription()
-                           ],
-                         ),
-                       )
-                      )
-                    ),
-                    const SizedBox(height: 10,),
-                    state.getMembers(),
-                  ],
-                ),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: double.infinity),
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    margin: const EdgeInsets.all(15.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.blueAccent)
-                    ),
-                    child: _getButton(context),
-                  ),
-                )
-              ]
+      floatingActionButton: Container(
+          width: MediaQuery.of(context).size.width - 50,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              color: Colors.white
           ),
+          child: _getButton(context)
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -129,30 +79,12 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     }
   }
 
-  Widget _getInviteUrl() {
-    if(state.widget.group.visibility != 0 && state.widget.myGroup) {
-      return FutureBuilder<String>(
-          future: state.widget.group.getInviteUrl(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return TextButton(
-                  onPressed: () => Clipboard.setData(ClipboardData(text: snapshot.requireData)),
-                  child: Text("Password: ${snapshot.requireData}"));
-            } else {
-              return const Text("Password: LOADING...");
-            }
-          }
-      );
-    }  else {
-      return const SizedBox(height: 0,);
-    }
-  }
 
   /// returns the description of a group
-  Widget _getDescription() {
-    Group group = state.widget.group;
-    if (group.visibility != 0 && !widget.myGroup) {
+  Widget _getDescription(String? description) {
+    if (description == null) {
       return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Text("Description: "),
             Icon(Icons.lock)
@@ -160,13 +92,74 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
       );
     } else {
       return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text("Description:"),
-          group.getDescriptionWidget()
+          Text(description, overflow: TextOverflow.ellipsis,)
         ],
       );
+    }
+  }
+
+  Future<List<Widget>> getGroupInfo() async {
+    List<Widget> widgets = [];
+    List<Ranking> ranking = [];
+    if (state.widget.group.visibility == 0 || widget.myGroup) ranking = await state.widget.group.getMembers();
+    String? inviteUrl;
+    String? description;
+    if (state.widget.group.visibility != 0 && widget.myGroup) inviteUrl = await state.widget.group.getInviteUrl();
+    if (state.widget.group.visibility == 0 || widget.myGroup) description = await state.widget.group.getDescription();
+    Uint8List image = await state.widget.group.getProfileImage();
+    widgets.add(getTopBar(image, inviteUrl, description));
+    for (int i = 0; i < ranking.length; i++) {
+      widgets.add(buildCard(ranking[i], i));
+    }
+    return widgets;
+  }
+
+  Widget buildCard(member, index) {
+    String adminString = "";
+    if (member.username == widget.group.groupAdmin!) adminString = "(admin)";
+    return Card(
+        child: ListTile(
+          leading: Text("${index + 1}. "),
+          title: Text("${member.username} $adminString"),
+          trailing: Text("${member.points} points"),
+        )
+    );
+  }
+
+  Widget getTopBar(Uint8List groupImage, String? inviteUrl, String? description) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(onPressed: () => state.close(), icon: const Icon(Icons.arrow_back)),
+            getAdminButton()
+          ],
+        ),
+        Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [CircleAvatar(backgroundImage: Image.memory(groupImage).image, radius: 50,)]
+        ),
+        const SizedBox(height: 10,),
+        Text("group name: ${state.widget.group.name}"),
+        if (inviteUrl != null) const SizedBox(height: 10,),
+        if (inviteUrl != null) TextButton(onPressed: () => Clipboard.setData(ClipboardData(text: inviteUrl)), child: Text("Password: $inviteUrl")),
+        const SizedBox(height: 10,),
+        _getDescription(description),
+        const SizedBox(height: 50,)
+      ],
+    );
+  }
+
+  Widget getAdminButton() {
+    if (state.widget.group.groupAdmin == global.username) {
+      return IconButton(onPressed: () => state.editAsAdmin(), icon: const Icon(Icons.edit));
+    } else {
+      return Container();
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:buff_lisa/6_Group_Search/edit_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/show_group_ui.dart';
 import 'package:flutter/material.dart';
@@ -28,31 +30,6 @@ class ShowGroupPageState extends State<ShowGroupPage> {
 
   @override
   Widget build(BuildContext context) => ShowGroupUI(state: this);
-
-  /// returns the members of this group in a list
-  /// if the group is private and the current user is not a member a lock icon is shown
-  /// if the group is public or the current user is a member, a list with all members sorted by contributed post is returned
-  Widget getMembers() {
-    if  (widget.group.visibility != 0 && !widget.myGroup) {
-      return Row(
-        children: const [
-          Text("Members:"),
-          Icon(Icons.lock)
-        ],
-      );
-    } else {
-      return FutureBuilder<List<Ranking>>(
-          future: widget.group.getMembers(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return _buildList();
-            } else {
-              return const CircularProgressIndicator();
-            }
-          }
-      );
-    }
-  }
 
   /// joins a public group and closes the current context
   /// Method can only be called when the group is public and user is not a member
@@ -87,6 +64,11 @@ class ShowGroupPageState extends State<ShowGroupPage> {
     });
   }
 
+  /// close context
+  Future<void> close() async {
+    Navigator.pop(context, {"joined" : false});
+  }
+
   /// opens the edit page for admin if the current user is the groups admin
   Future<void> editAsAdmin() async {
     if (widget.group.groupAdmin != null && global.username == widget.group.groupAdmin) {
@@ -98,36 +80,6 @@ class ShowGroupPageState extends State<ShowGroupPage> {
       //trigger rebuild
       setState(() {});
     }
-  }
-
-  /// builds the  list of members of the group
-  /// members are sorted by the most amount of posts
-  /// the member, index and points are being shown
-  Widget _buildList() {
-    List<Ranking> members = widget.group.members!;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("Members: "),
-        ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: widget.group.members!.length,
-            itemBuilder: (_, index) {
-              String adminString = "";
-              if (members[index].username == widget.group.groupAdmin!) adminString = "(admin)";
-              return Card(
-                  child: ListTile(
-                    leading: Text("${index + 1}. "),
-                    title: Text("${members[index].username} $adminString"),
-                    trailing: Text("${members[index].points} points"),
-                  )
-              );
-            }
-        )
-      ],
-    );
   }
 
 }
