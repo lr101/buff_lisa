@@ -16,68 +16,51 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder<List<int>>(
-            future: FetchPins.fetchUserPins(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<Widget> widgets = [];
-                int duration = 0;
-                for (int i in snapshot.requireData) {
-                  widgets.add(ProfileImagePage(id: i, duration:  duration,));
-                  duration = (duration + 200) % 3000;
-                }
-                return ListView.builder(
-                    itemCount: widgets.length ~/ 3 + 1,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return FutureBuilder<Uint8List?>(
-                            future: FetchUsers.fetchProfilePicture(global.username),
-                            builder: ((context, snapshot) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [IconButton(onPressed: state.openSettings, icon: const Icon(Icons.settings))],
-                                  ),
-                                  Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [getProfile(snapshot.data)]
-                                  ),
-                                  const SizedBox(height: 20,),
-                                  Text("username: ${global.username}"),
-                                  const SizedBox(height: 50,)
-                                ],
-                              );
-                            })
-                        );
-                      } else {
-                        index--;
-                        Widget widget1 =  (index * 3 < widgets.length) ? widgets[index * 3] : Container();
-                        Widget widget2 =  (index * 3 + 1 < widgets.length) ? widgets[index * 3 + 1] : Container();
-                        Widget widget3 =  (index * 3 + 2 < widgets.length) ? widgets[index * 3 + 2] : Container();
-                        return getRow(widget1, widget2, widget3, context);
-                      }
-                    },
-                );
-              } else {
-                return const CircularProgressIndicator();
-              }
-            },
-          )
+    return SafeArea(
+        child: Scaffold(
+          body: FutureBuilder<Uint8List?>(
+              future: FetchUsers.fetchProfilePicture(global.username),
+              builder: (context, snapshot) {
+                return getList(snapshot.data, context);
+              },
+            )
+        )
     );
   }
 
-  Widget getRow(widget1, widget2, widget3, BuildContext context) {
-    final width = MediaQuery.of(context).size.width / 3;
-    return Row(
-        children: [
-          SizedBox(height: width, width: width, child: widget1),
-          SizedBox(height: width, width: width, child: widget2),
-          SizedBox(height: width, width: width, child: widget3),
-        ],
+  Widget getList(Uint8List? image, BuildContext context) {
+    List<Widget> settings = getSettings(context);
+    return ListView.builder(
+      itemCount: settings.length + 1,
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return getTitle(image, context);
+        } else {
+          return settings[index - 1];
+        }
+      },
+    );
+  }
+
+  Widget getTitle(Uint8List? profileImage, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 40,),
+        Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () => state.handleImageUpload(context),
+                child: getProfile(profileImage)
+              )
+            ]
+        ),
+        const SizedBox(height: 20,),
+        Text("username: ${global.username}"),
+        const SizedBox(height: 50,)
+      ],
     );
   }
   
@@ -88,5 +71,34 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
       return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 50,);
     }
     
+  }
+
+  List<Widget> getSettings(BuildContext context) {
+    return [
+      Card(
+        child: TextButton(
+          onPressed: () => state.handlePasswordPress(context),
+          child: const Text("Change Password", style: TextStyle(color: global.cPrime)),
+        ),
+      ),
+      Card(
+        child: TextButton(
+          onPressed: () => state.handleEmailPress(context),
+          child: const Text("Change email", style: TextStyle(color: global.cPrime)),
+        ),
+      ),
+      Card(
+        child: TextButton(
+          onPressed: () => state.handleLogoutPress(context),
+          child: const Text("Logout", style: TextStyle(color: global.cPrime)),
+        ),
+      ),
+      Card(
+        child: TextButton(
+          onPressed: () => state.handleChangeTheme(context),
+          child: const Text("Change Theme", style: TextStyle(color: global.cPrime)),
+        ),
+      )
+    ];
   }
 }

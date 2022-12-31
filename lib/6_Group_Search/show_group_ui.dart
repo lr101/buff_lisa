@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:buff_lisa/6_Group_Search/show_group_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/DTOClasses/group.dart';
@@ -27,7 +28,10 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
               itemBuilder: (context, index) => snapshot.requireData[index],
             );
           } else {
-            return const CircularProgressIndicator();
+            return ListView.builder(
+              itemCount: 1,
+              itemBuilder: (context, index) => getTopBar(null, null, null)
+            );
           }
         },
       ),
@@ -129,7 +133,8 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     );
   }
 
-  Widget getTopBar(Uint8List groupImage, String? inviteUrl, String? description) {
+  Widget getTopBar(Uint8List? groupImage, String? inviteUrl, String? description) {
+    Image image = (groupImage != null) ? Image.memory(groupImage) : const Image(image: AssetImage("images/profile.jpg"));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -143,7 +148,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
         Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [CircleAvatar(backgroundImage: Image.memory(groupImage).image, radius: 50,)]
+            children: [CircleAvatar(backgroundImage: image.image, radius: 50,)]
         ),
         const SizedBox(height: 10,),
         Text("group name: ${state.widget.group.name}"),

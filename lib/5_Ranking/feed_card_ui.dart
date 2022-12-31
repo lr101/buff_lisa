@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/5_Ranking/feed_card_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 
@@ -35,11 +36,15 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                       CircleAvatar(
                           radius: 14,
                           backgroundColor: Colors.grey,
-                          child: FutureBuilder<Uint8List>(
-                              future: widget.pin.group.getProfileImage(),
+                          child: FutureBuilder<Uint8List?>(
+                              future: FetchUsers.fetchProfilePictureSmall(widget.pin.username),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 12,);
+                                  if (snapshot.data != null) {
+                                    return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 12,);
+                                  } else {
+                                    return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 12,);
+                                  }
                                 } else {
                                   return const CircleAvatar(backgroundColor: Colors.grey, radius: 12,);
                                 }

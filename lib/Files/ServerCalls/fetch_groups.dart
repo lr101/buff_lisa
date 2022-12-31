@@ -92,8 +92,8 @@ class FetchGroups {
     }
   }
 
-  /// returns the group that is created on the server with [name], [description], [image], [visibility]
-  /// POST request to server
+  /// returns the group that is updating on the server with [name], [description], [image], [visibility]
+  /// PUT request to server
   /// returns null if an Error occurred during server call TODO exception?
   static Future<Group?> putGroup(int groupId, String name, String description, Uint8List? image, int visibility, String groupAdmin) async {
     final String json = jsonEncode(<String, dynamic> {

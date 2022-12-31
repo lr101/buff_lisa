@@ -72,6 +72,9 @@ dependencies:
   # BSD-3 Clause License
   path:
 
+  # BSD-3 Clause License
+  shimmer:
+
   # MIT License
   flutter_login:
 

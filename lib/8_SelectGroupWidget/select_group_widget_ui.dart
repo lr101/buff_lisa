@@ -5,6 +5,7 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../Files/DTOClasses/group.dart';
 import '../Files/Other/global.dart' as global;
@@ -68,7 +69,11 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
                     if (snapshot.hasData) {
                       return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 33,);
                     } else {
-                      return const CircleAvatar(backgroundColor: Colors.grey, radius: 33,);
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey.shade700,
+                        highlightColor: Colors.grey.shade900,
+                        child: const CircleAvatar(backgroundColor: Colors.white, radius: 33,)
+                      );
                     }
                   },
                 ),

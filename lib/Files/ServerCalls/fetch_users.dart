@@ -158,4 +158,19 @@ class FetchUsers {
     }
     return false;
   }
+
+  /// changes the [profilePicture] of the user identified by [username]
+  /// returns true if change was successful
+  /// returns false if change was unsuccessful
+  /// PUT Request to Server
+  static Future<bool> changeProfilePicture(String username, Uint8List profilePicture) async {
+    final String json = jsonEncode(<String, dynamic> {
+      "image" : profilePicture
+    });
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 2, json);
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  }
 }

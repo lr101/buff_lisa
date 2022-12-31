@@ -17,10 +17,10 @@ class RestAPI {
     if (encode != null) header["Content-Type"] = "application/json";
     print("$requestType https://${global.host}$path?${queryParameters.keys.join("&")}");
     switch (requestType) {
-      case 0: return await http.get(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header);
-      case 1: return await http.post(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
-      case 2: return await http.put(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
-      case 3: return await http.delete(Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
+      case 0: return await http.get(Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters), headers: header);
+      case 1: return await http.post(Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
+      case 2: return await http.put(Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
+      case 3: return await http.delete(Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
       default: throw Exception("HTTPS Request method does not exist");
     }
   }
