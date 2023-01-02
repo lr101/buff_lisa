@@ -33,15 +33,13 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                     interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
                 ),
                 children: [
-                  TileLayerWidget(
-                      options: TileLayerOptions(
-                          urlTemplate: "${global.styleUrl}?api_key={api_key}",
-                          additionalOptions: {
-                            "api_key": global.apiKey
-                          }
-                      ),
+                  TileLayer(
+                    urlTemplate: "${global.styleUrl}?api_key={api_key}",
+                    additionalOptions: {
+                      "api_key": global.apiKey
+                    }
                   ),
-                  LocationMarkerLayerWidget(),
+                  CurrentLocationLayer(),
                   MarkerClusterLayerWidget(
                       options: MarkerClusterLayerOptions(
                         disableClusteringAtZoom: 17,

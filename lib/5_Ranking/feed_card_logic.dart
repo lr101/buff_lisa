@@ -61,14 +61,14 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
                       zoom: global.feedZoom,
                       keepAlive: true
                   ),
-                  layers: [
-                    TileLayerOptions(
+                  children: [
+                    TileLayer(
                         urlTemplate: "${global.styleUrl}?api_key={api_key}",
                         additionalOptions: {
                           "api_key": global.apiKey
                         }
                     ),
-                    MarkerLayerOptions(
+                    MarkerLayer(
                         markers: [
                             Marker(
                               point: LatLng(pin.latitude, pin.longitude),
