@@ -13,7 +13,7 @@ class FetchUsers {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<List<Ranking>> fetchGroupMembers(Group group) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/members" , {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/members" , {}, 0);
     if (response.statusCode == 200) {
       List<Ranking> members = [];
       List<dynamic> values = json.decode(response.body);
@@ -31,7 +31,7 @@ class FetchUsers {
   /// GET Request to Server
   static Future<String?> checkUser(String? name) async {
     name ??= global.username;
-    Response response = await RestAPI.createHttpsRequest("/login/$name/", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/login/$name/", {}, 0, timeout: 3);
     if (response.statusCode == 200) {
       return response.body;
     }
@@ -46,7 +46,7 @@ class FetchUsers {
     final String json = jsonEncode(<String, dynamic>{
       "password" : password,
     });
-    Response response = await RestAPI.createHttpsRequest("/token/$name/", {}, 2, json);
+    Response response = await RestAPI.createHttpsRequest("/token/$name/", {}, 2,encode:  json, timeout: 3);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return response.body;
     }
@@ -61,7 +61,7 @@ class FetchUsers {
       "password" : password,
       "username" : name,
     });
-    Response response = await RestAPI.createHttpsRequest("/login/", {}, 1, json);
+    Response response = await RestAPI.createHttpsRequest("/login/", {}, 1, encode: json, timeout: 3);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return response.body;
     }
@@ -72,7 +72,7 @@ class FetchUsers {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Uint8List?> fetchProfilePicture(String username) async {
-    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 0);
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         return response.bodyBytes;
@@ -88,7 +88,7 @@ class FetchUsers {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Uint8List?> fetchProfilePictureSmall(String username) async {
-    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture_small", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture_small", {}, 0,);
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         return response.bodyBytes;
@@ -105,7 +105,7 @@ class FetchUsers {
   /// returns false if a problem occurred at the server
   /// GET Request to Server
   static Future<bool> recover(String? name) async {
-    Response response = await RestAPI.createHttpsRequest("/recover", {"username" : name}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/recover", {"username" : name}, 0, timeout: 3);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     }
@@ -122,7 +122,7 @@ class FetchUsers {
       "password" : hash,
       "email" : email
     });
-    Response response = await RestAPI.createHttpsRequest("/signup/", {}, 1, json);
+    Response response = await RestAPI.createHttpsRequest("/signup/", {}, 1, encode: json, timeout: 3);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return response.body;
     }
@@ -137,7 +137,7 @@ class FetchUsers {
     final String json = jsonEncode(<String, dynamic> {
       "password" : password
     });
-    Response response = await RestAPI.createHttpsRequest("/api/users/$username/", {}, 2, json);
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/", {}, 2, encode: json);
     if (response.statusCode == 200) {
       return true;
     }
@@ -152,7 +152,7 @@ class FetchUsers {
     final String json = jsonEncode(<String, dynamic> {
       "email" : email
     });
-    Response response = await RestAPI.createHttpsRequest("/api/users/$username/", {}, 2, json);
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/", {}, 2, encode: json);
     if (response.statusCode == 200) {
       return true;
     }
@@ -167,7 +167,7 @@ class FetchUsers {
     final String json = jsonEncode(<String, dynamic> {
       "image" : profilePicture
     });
-    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 2, json);
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 2,encode:  json);
     if (response.statusCode == 200) {
       return true;
     }

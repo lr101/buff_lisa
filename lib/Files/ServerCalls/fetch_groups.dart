@@ -13,7 +13,7 @@ class FetchGroups {
   /// GET request to server
   /// throws an Exception when an error occurs during server call
   static Future<List<Group>> getUserGroups() async {
-    Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/groups" , {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/groups" , {}, 0, timeout: 10);
     if (response.statusCode == 200) {
       return _toGroupList(response);
     } else {
@@ -25,7 +25,7 @@ class FetchGroups {
   /// GET request to server
   /// throws an Exception when an error occurs during server call
   static Future<Group> getGroup(int groupId) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId" , {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId" , {}, 0);
     if (response.statusCode == 200) {
       return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
     } else {
@@ -41,7 +41,7 @@ class FetchGroups {
     if (groupIds.isNotEmpty) ids += groupIds[0].toString();
     for (int i = 1; i < groupIds.length; i ++) { ids+="-"; ids += groupIds[i].toString();}
     if (ids == "") return [];
-    Response response = await RestAPI.createHttpsRequest("/api/groups" , {"ids" : ids}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups" , {"ids" : ids}, 0);
     if (response.statusCode == 200) {
       return _toGroupList(response);
     } else {
@@ -58,7 +58,7 @@ class FetchGroups {
     Map<String, dynamic> params = {};
     params["withUser"] = "false";
     if (value != null) params["search"] = value;
-    Response response = await RestAPI.createHttpsRequest("/api/groupIds" , params, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groupIds" , params, 0);
     if (response.statusCode == 200) {
       String res =  ( response.body);
       if (!res.contains("[]")) {
@@ -84,7 +84,7 @@ class FetchGroups {
       "profileImage": image,
       "visibility" : visibility
     });
-    final response =  await RestAPI.createHttpsRequest("/api/groups", {}, 1, json);
+    final response =  await RestAPI.createHttpsRequest("/api/groups", {}, 1,encode:  json);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
     } else {
@@ -103,7 +103,7 @@ class FetchGroups {
       "profileImage": image,
       "visibility" : visibility
     });
-    final response =  await RestAPI.createHttpsRequest("/api/groups/$groupId", {}, 2, json);
+    final response =  await RestAPI.createHttpsRequest("/api/groups/$groupId", {}, 2, encode: json);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
     } else {
@@ -119,7 +119,7 @@ class FetchGroups {
       "username" : global.username,
       "inviteUrl" : inviteUrl
     });
-    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 1, json);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 1,  encode: json);
     if (response.statusCode == 200) {
       return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
     } else {
@@ -131,7 +131,7 @@ class FetchGroups {
   /// returns false if an error occurred
   /// DELETE request to server
   static Future<bool> leaveGroup(int groupId) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 3, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 3);
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -143,7 +143,7 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<String> getGroupDescription(int groupId) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0);
     if (response.statusCode == 200) {
       return  response.body;
     } else {
@@ -155,7 +155,7 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<String> getGroupAdmin(int groupId) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/admin", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/admin", {}, 0);
     if (response.statusCode == 200) {
       return  response.body;
     } else {
@@ -167,7 +167,7 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<String> getInviteUrl(int groupId) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/invite_url", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/invite_url", {}, 0);
     if (response.statusCode == 200) {
       return  response.body;
     } else {
@@ -179,7 +179,7 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Uint8List> getProfileImage(Group group) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/profile_image", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/profile_image", {}, 0);
     if (response.statusCode == 200) {
       return response.bodyBytes;
     } else {
@@ -191,7 +191,7 @@ class FetchGroups {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Uint8List> getPinImage(Group group) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pin_image", {}, 0, null);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pin_image", {}, 0);
     if (response.statusCode == 200) {
       return response.bodyBytes;
     } else {

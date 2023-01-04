@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../Other/global.dart' as global;
@@ -11,16 +12,18 @@ class RestAPI {
   /// [requestType] is the type of request: 0 - GET, 1 - POST, 2 - PUT, 3 - DELETE
   /// [queryParameters] are the url params added at the end of the url with '?' as a map; Format: {"NAME": value, ...}
   /// [encode] is the body formatted as json string; null: no body; String: body existing  -> Http ContentType is set to application/json
+  /// [timeout] is the time in seconds until the requests times out, if null the default timeout time is used
   /// returns a http response
-  static Future<http.Response> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, String? encode) async {
+  static Future<http.Response> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, {String? encode, int timeout = 10}) async {
     Map<String, String> header = {"Authorization" : "Bearer ${global.token}"};
     if (encode != null) header["Content-Type"] = "application/json";
-    print("$requestType https://${global.host}$path?${queryParameters.keys.join("&")}");
+    Uri uri = Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters);
+    if (kDebugMode) print(uri);
     switch (requestType) {
-      case 0: return await http.get(Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters), headers: header);
-      case 1: return await http.post(Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
-      case 2: return await http.put(Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
-      case 3: return await http.delete(Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters), headers: header, body: encode);
+      case 0: return await http.get(uri, headers: header,).timeout(Duration(seconds: timeout));
+      case 1: return await http.post(uri, headers: header, body: encode).timeout(Duration(seconds: timeout));
+      case 2: return await http.put(uri, headers: header, body: encode).timeout(Duration(seconds: timeout));
+      case 3: return await http.delete(uri, headers: header, body: encode).timeout(Duration(seconds: timeout));
       default: throw Exception("HTTPS Request method does not exist");
     }
   }

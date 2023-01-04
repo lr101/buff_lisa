@@ -30,6 +30,8 @@ class Pin {
   /// null: not loaded from server yet
   Uint8List? image;
 
+  bool isOffline;
+
   /// Constructor of pin
   Pin( {
     required this.latitude,
@@ -38,6 +40,7 @@ class Pin {
     required this.creationDate,
     required this.username,
     required this.group,
+    this.isOffline = false,
     this.image
   });
 
@@ -48,6 +51,7 @@ class Pin {
       id = json['id'],
       username = json.containsKey('username') ? json['username'] : null,
       creationDate = DateTime.parse((json['creationDate']).toString()),
+      isOffline = false,
       image = null;
 
   /// Constructor of pin from json when pin is loaded from offline storage
@@ -57,6 +61,7 @@ class Pin {
         id = json['id'],
         username = json.containsKey('username') ? json['username'] : null,
         creationDate = DateTime.parse((json['creationDate']).toString()),
+        isOffline = true,
         image = _getImageBinary(json['image']);
 
 

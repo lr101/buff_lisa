@@ -30,39 +30,64 @@ class LoginScreen extends StatelessWidget {
   /// return returns null when login was successful and an error message on errors
   Future<String?> authUser(LoginData data) {
     global.username = data.name;
-    return Secure.loginAuthentication(data.name, data.password, ).then((value) {
-      return value ? null : 'username or password are wrong';
-    });
+    try {
+      return Secure.loginAuthentication(data.name, data.password, ).then((value) {
+        return value ? null : 'username or password are wrong';
+      });
+    } catch (e) {
+      return Future<String>.value("cannot connect to server");
+    }
+
   }
 
   /// This method is called when a user completed the signup form and tries to signup
   /// return returns null when signup was successful and an error message on errors
   Future<String?> signupUser(SignupData data) {
-    return Future.delayed(loginTime).then((_) async {
-      if (data.name != null && data.password != null && emailValidator(data.additionalSignupData!["email"])) {
-        return Secure.signupAuthentication(data.name!, data.password!, data.additionalSignupData!["email"]!).then((value) {
-          return value ? null : 'Username already exists or check your internet';
-        });
-      }
-      return 'Signup not possible';
-    });
+    try {
+      return Future.delayed(loginTime).then((_) async {
+        if (data.name == null || data.password  == null) {
+          return Future<String>.value("name or password ar not valid");
+        } else if (!emailValidator(data.additionalSignupData!["email"])) {
+          return Future<String>.value("email does not have the correct format");
+        } else {
+          return Secure.signupAuthentication(data.name!, data.password!, data.additionalSignupData!["email"]!)
+              .then((value) {
+                return value
+                    ? null
+                    : 'Username already exists or check your internet';
+              });
+          }
+      });
+    } catch (e) {
+      return Future<String>.value("cannot connect to server");
+    }
 
   }
 
   /// This method starts the recovery process for a given existing username
   /// Returns null on a successful call to the server or an error message on errors
   Future<String?> recoverPassword(String name) {
-    return FetchUsers.recover(name).then((value) {
-      return value ? null : 'User does not have an email address';
-    });
+    try {
+      return FetchUsers.recover(name).then((value) {
+        return value ? null : 'User does not have an email address';
+      });
+    } catch (e) {
+      return Future<String>.value("cannot connect to server");
+    }
   }
 
   /// Validator Method for validating password
   /// returns null on success or an error message for an incorrect input
   static String? validator(String? s) {
     final alphanumeric = RegExp(r'^[a-zA-Z][a-zA-Z0-9!?#$%&+]+$');
-    if (s == null || s.length < 2 || s.length > 30 || !alphanumeric.hasMatch(s)) {
-      return "input not valid";
+    if (s == null ) {
+      return "input is not valid";
+    } else if (s.length < 2 ) {
+      return "input must be at least 3 characters";
+    } else if (s.length > 29) {
+      return "input must be shorter than 30 characters";
+    } else  if (!alphanumeric.hasMatch(s)) {
+      return "input must start with a letter and is allowed to contain 0-9 and !?#\$%&+";
     }
     return null;
   }

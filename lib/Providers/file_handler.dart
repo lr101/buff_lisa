@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../Files/DTOClasses/group.dart';
@@ -33,37 +34,53 @@ class FileHandler {
   }
 
   /// saves a list of pins to device storage by converting the pins into a json format
-  Future<void> saveList(List<Pin> list) async {
+  Future<void> savePinList(List<Pin> list) async {
+    if (kDebugMode) print("START: saving complete pins list, length: ${list.length}");
     final File fl = await getFile();
     List<Map<String, dynamic>> l = [];
     for (Pin item in list) {
       l.add(await item.toJsonOffline());
     }
-    print(l.first);
     await fl.writeAsString(const JsonEncoder().convert(l));
+
+    if (kDebugMode) print("END: saving complete pins list: ${const JsonEncoder().convert(l)}");
   }
 
-  /// saves a list of pins to device storage by converting the pins into a json format
-  Future<void> savePin(Pin pin) async {
-    List<Pin> pins = await readFile([]);
+  Future<void> removePin(int id, List<Group> groups) async{
+    List<Pin> pins = await readPins(groups);
+    pins.removeWhere((element) => element.id == id);
+    await savePinList(pins);
+  }
+
+  Future<void> addPin(Pin pin, List<Group> groups) async{
+    List<Pin> pins = await readPins(groups);
     pins.add(pin);
-    await saveList(pins);
+    await savePinList(pins);
   }
 
   /// reads a list of pins form device storage
   /// pins can only be created if a [Group] matches to the groupId saved on device
-  Future<List<Pin>> readFile(List<Group> groups) async {
+  Future<List<Pin>> readPins(List<Group> groups) async {
+    if (kDebugMode) print("START: reading complete pins list");
     final File fl = await getFile();
     final content = await fl.readAsString();
     if (content.isNotEmpty) {
-      final List<dynamic> jsonData = await jsonDecode(content);
+      List<dynamic> jsonData;
+      try {
+        jsonData  = await jsonDecode(content);
+      } catch (e) {
+        print(e);
+        jsonData = [];
+      }
       List<Pin> list = [];
       for (Map<String, dynamic> data in jsonData) {
-        Group group = groups.firstWhere((element) => element.groupId == data['groupId'], orElse: () => Group(groupId: -1, name: "default", visibility: 0, inviteUrl: null));
+        Group group = groups.firstWhere((element) => element.groupId == data['groupId'], orElse: () => Group(groupId: data['groupId'], name: "default", visibility: 0, inviteUrl: null));
         list.add(Pin.fromJsonOffline(data, group));
       }
+      if (kDebugMode) print("END: reading complete pins list, length: ${list.length}");
       return list;
     }
+    if (kDebugMode) print("END: reading complete pins list, length: 0");
     return [];
   }
 }

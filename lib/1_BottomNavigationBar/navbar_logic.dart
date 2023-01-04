@@ -1,4 +1,5 @@
 
+import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
@@ -11,6 +12,7 @@ import 'package:provider/provider.dart';
 
 import '../2_ScreenMaps/maps_logic.dart';
 import '../5_Ranking/feed_logic.dart';
+import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/Other/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
@@ -57,8 +59,10 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     if (global.pinsLoaded) {
       Provider.of<ClusterNotifier>(context, listen:false).clearAll();
     }
-    _getGroups();
     pageController = PageController(initialPage: selectedIndex);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getGroups();
+    });
   }
 
   /// disposes pageController
@@ -82,30 +86,47 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   /// update all points and user points via provider context
   Future<void> _getGroups() async {
     global.pinsLoaded = true;
-
-    FetchGroups.getUserGroups().then((groups) async {
-      Provider.of<ClusterNotifier>(context, listen:false).addGroups(groups);
-      List<Pin> pins = await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
-      await _tryOfflinePins(pins);
-      //TODO load saved selected groups
-    });
-
-  }
-
-
-  /// load offline pins and try pushing to server
-  Future<void> _tryOfflinePins(List<Pin> pins) async {
-    for (Pin mona in pins) {
-      try {
-        Pin newPin = await FetchPins.postPin(mona);
-        if (!mounted) return;
-        Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePinAndAddToOnline(newPin, mona);
-      } catch (e) {
-        Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(
-            mona);
-      }
+    try {
+      List<Group> groups = await FetchGroups.getUserGroups();
+      await groupsOnline(groups);
+    } catch (e) {
+      groupsOffline();
     }
+
   }
 
+  Future<void> groupsOnline(List<Group> groups) async {
+    // groups are saved locally for the current session as well as offline for offline sessions
+    Provider.of<ClusterNotifier>(context, listen:false).addGroups(groups);
+    // load all offline pins from files
+    List<Pin> pins = await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
+    // finish when no local offline saved pins exist
+
+    if (!mounted || pins.isEmpty) return;
+
+    // open upload page if offline saved pins exist
+    Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => UploadOfflinePage(pins: pins),
+        )
+    );
+  }
+
+  Future<void> groupsOffline() async {
+    // show error message
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Cannot connect to server, offline groups are displayed"))
+    );
+    Provider.of<ClusterNotifier>(context, listen:false).offline = true;
+    // load previous offline saved groups
+    await Provider.of<ClusterNotifier>(context, listen:false).loadOfflineGroups();
+    if (!mounted) return;
+    List<Pin> pins = await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
+    if (!mounted) return;
+    for (Pin pin in pins) {
+      await Provider.of<ClusterNotifier>(context, listen:false).addPin(pin);
+    }
+
+  }
 
 }

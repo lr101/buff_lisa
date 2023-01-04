@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../AbstractClasses/async_type.dart';
 import 'pin.dart';
 
 class Group {
@@ -36,11 +40,11 @@ class Group {
 
   /// Uint8List: image profile picture byte data
   /// null: not yet loaded from server
-  Uint8List? profileImage;
+  late final AsyncType<Uint8List> profileImage;
 
   /// Uint8List: image pin picture byte data
   /// null: not yet loaded from server
-  Uint8List? pinImage;
+  late final AsyncType<Uint8List> pinImage;
 
   /// List<Ranking>: members of a group
   /// null: not yet loaded from server or user is not a member of the private group
@@ -61,23 +65,46 @@ class Group {
     required this.name,
     required this.visibility,
     required this.inviteUrl,
+    this.members,
     this.groupAdmin,
     this.description,
-    this.profileImage,
-    this.pinImage
-  });
+    this.pins,
+    profileImage,
+    pinImage
+  }) {
+    this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: _profileImageCallback);
+    this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: _pinImageCallback);
+  }
 
   /// Constructor of group when data is in json format
-  Group.fromJson(Map<String, dynamic> json):
-    groupId = json['groupId'],
-    name = json['name'],
-    groupAdmin = json['groupAdmin'],
-    description = json['description'],
-    profileImage = _getImageBinary(json['profileImage']),
-    pinImage = _getImageBinary(json['pinImage']),
-    visibility = json['visibility'],
-    members = _getMemberList(json['members']),
-    inviteUrl = json['inviteUrl'];
+  static Group fromJson(Map<String, dynamic> json) {
+    return Group(
+        groupId: json['groupId'],
+        name:  json['name'],
+        visibility: json['visibility'],
+        inviteUrl: json['inviteUrl'],
+        description: json['description'],
+        groupAdmin:  json['groupAdmin'],
+        members: _getMemberList(json['members']),
+      pinImage: _getImageBinary(json['pinImage']),
+      profileImage: _getImageBinary(json['profileImage'])
+    );
+  }
+
+  /// Constructor of group when data is in json format
+  static Group fromJsonOffline(Map<String, dynamic> json) {
+    return Group(
+        groupId: json['groupId'],
+        name:  json['name'],
+        visibility: json['visibility'],
+        inviteUrl: json['inviteUrl'],
+        description: json['description'],
+        groupAdmin:  json['groupAdmin'],
+        pinImage: _getImageBinary(json['pinImage']),
+        profileImage: _getImageBinary(json['profileImage']),
+        pins:  {}
+    );
+  }
 
   /// Formats group data to json
   Future<Map<String, dynamic>> toJson() async {
@@ -90,6 +117,24 @@ class Group {
       "visibility" : visibility,
       "inviteUrl" : inviteUrl
     };
+  }
+
+  // Formats group data to json
+  Future<Map<String, dynamic>> toJsonOffline() async {
+    return {
+      "groupId": groupId,
+      "name" : name,
+      "groupAdmin" : groupAdmin,
+      "description" : description,
+      "visibility" : visibility,
+      "profileImage" :  base64EncodeIt(profileImage.syncValue),
+      "pinImage" :  base64EncodeIt(pinImage.syncValue),
+      "inviteUrl" : inviteUrl,
+    };
+  }
+
+  String? base64EncodeIt(Uint8List? image) {
+    return image != null ? base64Encode(image) : null;
   }
 
   /// returns the members from json
@@ -116,14 +161,40 @@ class Group {
   }
 
   /// returns the profile image byte data from local if existing or server
-  Future<Uint8List> getProfileImage() async {
-    if (profileImage != null) {
-      return profileImage!;
-    } else {
-      profileImage = await FetchGroups.getProfileImage(this);
-      return profileImage!;
+  Future<Uint8List> getProfileImage() async => await profileImage.asyncValue();
+
+  /// returns the pin image byte data from local if existing or server
+  Future<Uint8List> getPinImage() async => await pinImage.asyncValue();
+
+  Future<Uint8List> _profileImageCallback() async {
+    try {
+      return await FetchGroups.getProfileImage(this);
+    } catch (e) {
+      if (kDebugMode) print("getProfileImage() -> $e");
+      return _defaultProfileImage();
     }
   }
+
+  Future<Uint8List> _pinImageCallback() async {
+    try {
+      return await FetchGroups.getPinImage(this);
+    } catch (e) {
+      if (kDebugMode) print("getPinImage() -> $e");
+      return await _defaultPinImage();
+    }
+  }
+
+  Future<Uint8List> _defaultProfileImage () async {
+    final ByteData bytes = await rootBundle.load('images/profile.jpg');
+    return bytes.buffer.asUint8List();
+  }
+
+  Future<Uint8List> _defaultPinImage () async {
+    final ByteData bytes = await rootBundle.load('images/pin_border.png');
+    return bytes.buffer.asUint8List();
+  }
+
+
 
   /// returns the profile image as Image Widget from local if existing or server
   Widget getProfileImageWidget() {
@@ -133,15 +204,7 @@ class Group {
     );
   }
 
-  /// returns the pin image byte data from local if existing or server
-  Future<Uint8List> getPinImage() async {
-    if (pinImage != null) {
-      return pinImage!;
-    } else {
-      pinImage = await FetchGroups.getPinImage(this);
-      return pinImage!;
-    }
-  }
+
 
   /// returns the pin image as Image Widget from local if existing or server
   Widget getPinImageWidget() {
@@ -157,11 +220,17 @@ class Group {
     if (members != null) {
       return members!;
     } else {
-      List<Ranking> ranking = await FetchUsers.fetchGroupMembers(this);
-      groupAdmin = ranking.last.username;
-      ranking.removeAt(ranking.length - 1);
-      members = ranking;
-      return members!;
+      try {
+        List<Ranking> ranking = await FetchUsers.fetchGroupMembers(this);
+        groupAdmin = ranking.last.username;
+        ranking.removeAt(ranking.length - 1);
+        members = ranking;
+        return members!;
+      } catch (e) {
+        if (kDebugMode) print(e);
+        return [];
+      }
+
     }
   }
 
@@ -215,10 +284,26 @@ class Group {
   Future<Set<Pin>> getPins() async {
     if (pins != null) {
       return pins!;
-    } {
-      pins = await FetchPins.fetchGroupPins(this);
-      return pins!;
+    } else {
+      try {
+        pins = await FetchPins.fetchGroupPins(this);
+        return pins!;
+      } catch (e) {
+        if (kDebugMode) print(e);
+        return {};
+      }
+
     }
+  }
+
+  int getNewOfflinePinId() {
+    int min = -1;
+    if (pins != null) {
+      for (Pin p in pins!) {
+        if (p.id < min) min = p.id;
+      }
+    }
+    return min - 1;
   }
 
   /// adds a pin to the set of pins of a group
@@ -237,7 +322,12 @@ class Group {
         return false;
       }
     } else {
-      pins = await FetchPins.fetchGroupPins(this);
+      try {
+        pins = await FetchPins.fetchGroupPins(this);
+      } catch (e) {
+        if (kDebugMode) print(e);
+        pins = {};
+      }
       return false;
     }
   }

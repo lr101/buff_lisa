@@ -1,4 +1,5 @@
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Providers/file_handler_group.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -18,9 +19,6 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// list of groups the user is a member of
   final  List<Group> _userGroups = [];
-
-  /// list of pins loaded from device or added from creating a new pin without internet
-  final List<Pin> _offlinePins = [];
 
   /// group that was last selected by the [SelectGroupWidget] single select mode
   /// used to pre-select the same group when creating a new pin
@@ -47,6 +45,8 @@ class ClusterNotifier extends ChangeNotifier {
   /// null: does NOT filter any pins
   DateTime? __filterDateMin;
 
+  bool offline = false;
+
   /// adds a list of [Group] to [_userGroups] if they not already existing
   /// NOTIFIES CHANGES
   void addGroups(List<Group> groups) {
@@ -56,8 +56,22 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     notifyListeners();
+    Future.delayed(const Duration(seconds: 30)).then((_) => saveGroupsOffline()); // new thread, delayed execution
   }
 
+  /// adds a list of [Group] saved offline in [_offlineGroupHandler] in [_userGroups] if they not already existing
+  /// NOTIFIES CHANGES
+  Future<List<Group>> loadOfflineGroups() async {
+    final FileHandlerGroup offlineGroupHandler = FileHandlerGroup(fileName: global.groupFileName);
+    _userGroups.addAll(await offlineGroupHandler.readGroups());
+    notifyListeners();
+    return _userGroups;
+  }
+
+  Future<void> saveGroupsOffline() async {
+    final FileHandlerGroup offlineGroupHandler = FileHandlerGroup(fileName: global.groupFileName);
+    await offlineGroupHandler.saveGroupList(_userGroups);
+  }
   /// removes a specific [group] form [_userGroups]
   /// removes the markers of this group from [_shownMarkers] and [_allMarkers] if the [group] is currently active
   /// NOTIFIES CHANGES
@@ -71,8 +85,6 @@ class ClusterNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  dynamic listening(dynamic d) {return d;}
-
   void updateGroup(Group group, Group changes) async {
     group.name = changes.name;
     group.description = changes.description;
@@ -80,6 +92,7 @@ class ClusterNotifier extends ChangeNotifier {
     group.profileImage = changes.profileImage;
     group.groupAdmin = changes.groupAdmin;
     group.visibility = changes.visibility;
+    saveGroupsOffline(); //new thread
     notifyListeners();
   }
 
@@ -89,19 +102,20 @@ class ClusterNotifier extends ChangeNotifier {
     if(!_userGroups.any((element) => element.groupId == group.groupId)) {
       _userGroups.add(group);
     }
-    notifyListeners();
+    notifyListeners(); // new thread
+    saveGroupsOffline();
   }
 
   /// clears all values from lists, attributes and maps
   void clearAll() {
     //TODO remove all offline pins too?
     _userGroups.clear();
-    _offlinePins.clear();
     _shownMarkers.clear();
     _allMarkers.clear();
     __filterUsernames.clear();
     __filterDateMax = null;
     __filterDateMin = null;
+    saveGroupsOffline();  // new thread
   }
 
   /// returns a [Group] by [groupId] if it is an item in [_userGroups]
@@ -119,7 +133,7 @@ class ClusterNotifier extends ChangeNotifier {
     bool success = await group.setPin(pin);
     if (success) {
       if (group.active) {
-        _addPinToMarkers(pin, false);
+        _addPinToMarkers(pin);
       }
       if (group.members != null) {
         group.members!.firstWhere((element) => element.username == global.username).addOnePoint();
@@ -135,17 +149,14 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> activateGroup(Group group) async{
     if (!group.active) {
+      group.active = true;
+      notifyListeners();
       //get pins from server of the specific groups if not already loaded
       Set<Pin> pins = await group.getPins();
       //converts pins to markers on googel maps
       for (Pin pin in pins) {
-        await _addPinToMarkers(pin, false);
+        await _addPinToMarkers(pin);
       }
-      //converts offline pins to markers if member of group
-      for (Pin mona in _offlinePins) {
-          await _addPinToMarkers(mona, true);
-      }
-      group.active = true;
       _updateValues();
     }
   }
@@ -156,17 +167,12 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> deactivateGroup(Group group) async {
     if (group.active) {
+      group.active = false;
+      notifyListeners();
       //removes markers from maps
       for (Pin pin in group.getSyncPins()) {
          _removePinFromMarkers(pin);
       }
-      //removes offline markers from maps
-      for (Pin mona in _offlinePins) {
-        if (mona.group == group) {
-          _removePinFromMarkers(mona);
-        }
-      }
-      group.active = false;
       _updateValues();
     }
   }
@@ -185,12 +191,9 @@ class ClusterNotifier extends ChangeNotifier {
     _updateValues();
   }
 
-  /// returns [_offlinePins] attribute
-  List<Pin> getOfflinePins() {return _offlinePins;}
-
   /// loads all offline pins from device storage
   Future<List<Pin>> loadOfflinePins() async{
-    return await _offlineFileHandler.readFile(_userGroups);
+    return await _offlineFileHandler.readPins(_userGroups);
   }
 
   /// removes [oldPin] from [_offlinePins]
@@ -199,15 +202,16 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> deleteOfflinePinAndAddToOnline(Pin newPin, Pin oldPin) async{
     await deleteOfflinePin(oldPin);
-    addPin(newPin);
+    await addPin(newPin);
   }
 
   /// remove [mona] from [_offlinePins] and device storage
   /// REBUILD MAP MARKERS
   /// NOTIFIES CHANGES
   Future<void> deleteOfflinePin(Pin mona) async{
-    _removeOfflinePinFromMarkers(mona);
-    await _offlineFileHandler.saveList(_offlinePins);
+    _removePinFromMarkers(mona);
+    mona.group.removePin(mona);
+    await _offlineFileHandler.removePin(mona.id, _userGroups);
     _updateValues();
   }
 
@@ -217,10 +221,10 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> addOfflinePin(Pin mona) async{
     if (!kIsWeb) {
+      await _offlineFileHandler.addPin(mona, _userGroups);
       if (mona.group.active) {
-        await _addOfflinePinToMarkers(mona);
+        await _addPinToMarkers(mona);
       }
-      await _offlineFileHandler.saveList(_offlinePins);
       _updateValues();
     }
   }
@@ -274,42 +278,24 @@ class ClusterNotifier extends ChangeNotifier {
     _updateValues();
   }
 
-  /// adds [mona] to [_offlinePins] and to map markers
-  /// REBUILD MAP MARKERS
-  /// NOTIFIES CHANGES
-  Future<void> _addOfflinePinToMarkers(Pin mona) async{
-    await _addPinToMarkers(mona, true);
-    _offlinePins.add(mona);
-    _updateValues();
-  }
-
-  /// remove [mona] from [_offlinePins] and map markers
-  /// REBUILD MAP MARKERS
-  /// NOTIFIES CHANGES
-  void _removeOfflinePinFromMarkers(Pin mona) {
-    _offlinePins.remove(mona);
-    _removePinFromMarkers(mona);
-    _updateValues();
-  }
-
   /// remove [pin] from [_allMarkers]
   void _removePinFromMarkers(Pin pin) {
-    _allMarkers.removeWhere((key, value) => key.id == pin.id);
+    _allMarkers.removeWhere((key, value) => key.id == pin.id && key.group.groupId == pin.group.groupId);
   }
 
   /// adds a Marker with attributes from [pin] to [_allMarkers]
   /// key id of pin: '[pin.id]'
   /// key of offline pin: 'new[pin.id]'
-  _addPinToMarkers(Pin pin, bool offlinePin) {
+  _addPinToMarkers(Pin pin) {
     _allMarkers[pin] = (
       Marker(
-          key: Key((offlinePin ? "new${pin.id.toString()}" : pin.id.toString())),
+          key: Key((pin.isOffline ? "${pin.group.groupId}${pin.id.toString()}" : pin.id.toString())),
           point: LatLng(pin.latitude, pin.longitude), 
           builder: (_)  => GestureDetector(
             child: pin.group.getPinImageWidget(),
             onTap: () => Navigator.push(
               navigatorKey.currentContext!,
-              MaterialPageRoute(builder: (context) => ShowImageWidget(newPin: offlinePin, pin: pin,)),
+              MaterialPageRoute(builder: (context) => ShowImageWidget(newPin: pin.isOffline, pin: pin,)),
             ),
           )
       )

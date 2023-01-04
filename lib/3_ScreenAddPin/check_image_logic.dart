@@ -41,6 +41,7 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   Future<void> handleApprove() async {
     Pin mona = await _createMona(widget.image, widget.group);
     await Provider.of<ClusterNotifier>(widget.io.context, listen: false).addOfflinePin(mona);
+    Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(mona);
     _postPin(mona, widget.group);
     final BottomNavigationBar navigationBar = widget.io.globalKey.currentWidget! as BottomNavigationBar;
     if (!mounted) return;
@@ -62,13 +63,12 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
 
   /// creates a Pin (mona) by accessing the location of the user
   Future<Pin> _createMona(Uint8List image, Group group) async {
-    int length = Provider.of<ClusterNotifier>(context, listen: false).getOfflinePins().length;
     LocationData locationData = await LocationClass.getLocation();
     //create Pin
     Pin pin = Pin(
         latitude: locationData.latitude!,
         longitude: locationData.longitude!,
-        id: length,
+        id: group.getNewOfflinePinId(),
         username: global.username,
         creationDate: DateTime.now(),
         group: group,
@@ -80,9 +80,14 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   /// pin is send to the server
   /// on success at the server -> offline pin is deleted and replaced by the online pin
   Future<void> _postPin(Pin mona, Group group) async {
-    final pin = await FetchPins.postPin(mona);
-    Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona);
-    Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
+    try {
+      final pin = await FetchPins.postPin(mona);
+      Provider.of<ClusterNotifier>(widget.io.context, listen: false).deleteOfflinePin(mona);
+      Provider.of<ClusterNotifier>(widget.io.context, listen: false).addPin(pin);
+    } catch (e) {
+      print(e);
+    }
+
   }
 
 }
