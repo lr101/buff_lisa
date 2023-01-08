@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/DTOClasses/pin.dart';
-import '../Providers/file_handler.dart';
 
 
 class UploadOfflinePageUI extends StatefulUI<UploadOfflinePage, UploadOfflinePageState> {

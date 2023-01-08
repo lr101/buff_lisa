@@ -74,7 +74,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
                               point: LatLng(pin.latitude, pin.longitude),
                               width: 50,
                               height: 50,
-                              builder: (BuildContext context) => pin.group.getPinImageWidget()
+                              builder: (BuildContext context) => pin.group.pinImage.getWidget()
                             )
                         ]
                     )
@@ -95,7 +95,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
       width: width,
       child: GestureDetector(
           onTap: () => toggleCard(context),
-          child: widget.pin.getImageWidget()
+          child: widget.pin.image.getWidget()
       )
     );
   }

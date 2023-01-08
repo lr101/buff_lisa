@@ -89,7 +89,8 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     try {
       List<Group> groups = await FetchGroups.getUserGroups();
       await groupsOnline(groups);
-    } catch (e) {
+    } on Exception catch (_, e) {
+      print(_);
       groupsOffline();
     }
 

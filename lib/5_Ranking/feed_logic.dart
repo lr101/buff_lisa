@@ -85,7 +85,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
         groups = groups.union(activeGroups);
         for (Group group in groups) {
           if (!oldGroups.contains(group)) {
-            for (Pin pin in group.getSyncPins()) {
+            for (Pin pin in group.pins.syncValue ?? {}) {
               allWidgets[pin] = null;
             }
           }

@@ -108,12 +108,12 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   Future<List<Widget>> getGroupInfo() async {
     List<Widget> widgets = [];
     List<Ranking> ranking = [];
-    if (state.widget.group.visibility == 0 || widget.myGroup) ranking = await state.widget.group.getMembers();
+    if (state.widget.group.visibility == 0 || widget.myGroup) ranking = await state.widget.group.members.asyncValue();
     String? inviteUrl;
     String? description;
     if (state.widget.group.visibility != 0 && widget.myGroup) inviteUrl = await state.widget.group.getInviteUrl();
-    if (state.widget.group.visibility == 0 || widget.myGroup) description = await state.widget.group.getDescription();
-    Uint8List image = await state.widget.group.getProfileImage();
+    if (state.widget.group.visibility == 0 || widget.myGroup) description = await state.widget.group.description.asyncValue();
+    Uint8List image = await state.widget.group.profileImage.asyncValue();
     widgets.add(getTopBar(image, inviteUrl, description));
     for (int i = 0; i < ranking.length; i++) {
       widgets.add(buildCard(ranking[i], i));

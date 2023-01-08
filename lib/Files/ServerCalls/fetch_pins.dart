@@ -80,7 +80,7 @@ class FetchPins {
       "latitude" : mona.latitude,
       "longitude" : mona.longitude,
       "groupId" : mona.group.groupId,
-      "image": mona.image,
+      "image": mona.image.syncValue,
       "username": global.username,
     });
     final response =  await RestAPI.createHttpsRequest("/api/pins", {}, 1, encode:  json);

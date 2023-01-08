@@ -24,7 +24,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.width,
-                  child: widget.pin.getImageWidget()
+                  child: widget.pin.image.getWidget()
                 )
               ),
               Text("username: ${state.widget.pin.username}"),

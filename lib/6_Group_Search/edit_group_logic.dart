@@ -50,16 +50,16 @@ class EditGroupPageState extends State<EditGroupPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       Provider.of<CreateGroupNotifier>(context, listen: false).setSliderValue(widget.group.visibility != 0 ? 1 : 0);
       Provider.of<CreateGroupNotifier>(context, listen: false).setText1(widget.group.name);
-      Provider.of<CreateGroupNotifier>(context, listen: false).setText2(await widget.group.getDescription());
+      Provider.of<CreateGroupNotifier>(context, listen: false).setText2(await widget.group.description.asyncValue());
       if (!mounted) return;
-      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(await widget.group.getProfileImage());
+      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(await widget.group.profileImage.asyncValue());
       if (!mounted) return;
       Provider.of<CreateGroupNotifier>(context, listen: false).menuItems = await getMembers();
     });
   }
 
   Future<List<DropdownMenuItem<String>>> getMembers() async{
-    List<Ranking> members = await widget.group.getMembers();
+    List<Ranking> members = await widget.group.members.asyncValue();
     List<DropdownMenuItem<String>> items = [];
     for (Ranking ranking in members) {
       items.add(DropdownMenuItem(value: ranking.username,child: Center(child: Text(ranking.username),)));

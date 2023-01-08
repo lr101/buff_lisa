@@ -1,5 +1,7 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
@@ -12,9 +14,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'Files/DTOClasses/groupDTO.dart';
+import 'Files/DTOClasses/pinDTO.dart';
 import 'Files/Other/global.dart' as global;
-import 'Providers/file_handler.dart';
 
 /// global key for enabling different routes on startup
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -27,6 +31,9 @@ Future<void> main() async {
   if (!kIsWeb) WidgetsFlutterBinding.ensureInitialized();
   global.cameras = await availableCameras();
   await dotenv.load();
+  await Hive.initFlutter();
+  Hive.registerAdapter(GroupDTOAdapter());
+  Hive.registerAdapter(PinDTOAdapter());
   runApp(MyApp(isLoggedIn: await Secure.tryLocalLogin()));
 }
 

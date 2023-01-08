@@ -53,3 +53,5 @@ app.*.map.json
 /change_identifier.sh
 /web/
 /windows/
+/.env2
+/dotenv.env

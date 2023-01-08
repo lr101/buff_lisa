@@ -91,7 +91,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
           radius: 35,
           backgroundColor: color,
           child: FutureBuilder<Uint8List>(
-            future: group.getProfileImage(),
+            future: group.profileImage.asyncValue(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: (MediaQuery.of(context).size.height - global.barHeight) * 0.06,);

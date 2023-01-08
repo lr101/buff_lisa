@@ -1,11 +1,7 @@
 import 'package:buff_lisa/9_Profile/profile_image_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
-import 'package:buff_lisa/Providers/profile_notifier.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../Files/DTOClasses/pin.dart';
 
 class ProfileImagePageUI
@@ -23,7 +19,7 @@ class ProfileImagePageUI
                 future:FetchPins.fetchUserPin(state.widget.id),
                 builder: ((context, snapshot) {
                   if (snapshot.hasData) {
-                    return snapshot.requireData.getImageWidget();
+                    return snapshot.requireData.image.getWidget();
                   } else {
                     return const CircularProgressIndicator();
                   }

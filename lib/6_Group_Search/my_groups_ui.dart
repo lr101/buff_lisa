@@ -80,7 +80,7 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
             title: Row(
                 children: [
                   FutureBuilder<Uint8List>(
-                    future: group.getProfileImage(),
+                    future: group.profileImage.asyncValue(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 20,);

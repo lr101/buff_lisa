@@ -1,5 +1,7 @@
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Providers/file_handler_group.dart';
+import 'package:buff_lisa/Files/DTOClasses/group_repo.dart';
+import 'package:buff_lisa/Files/DTOClasses/hive_handler.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin_repo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -10,12 +12,9 @@ import '../Files/DTOClasses/pin.dart';
 import '../Files/ServerCalls/fetch_pins.dart';
 import '../Files/Other/global.dart' as global;
 import '../main.dart';
-import 'file_handler.dart';
 
 class ClusterNotifier extends ChangeNotifier {
 
-  /// FileHandler to save, delete offline pins
-  final FileHandler _offlineFileHandler = FileHandler(fileName: global.fileName);
 
   /// list of groups the user is a member of
   final  List<Group> _userGroups = [];
@@ -56,28 +55,23 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     notifyListeners();
-    Future.delayed(const Duration(seconds: 30)).then((_) => saveGroupsOffline()); // new thread, delayed execution
   }
 
   /// adds a list of [Group] saved offline in [_offlineGroupHandler] in [_userGroups] if they not already existing
   /// NOTIFIES CHANGES
   Future<List<Group>> loadOfflineGroups() async {
-    final FileHandlerGroup offlineGroupHandler = FileHandlerGroup(fileName: global.groupFileName);
-    _userGroups.addAll(await offlineGroupHandler.readGroups());
-    notifyListeners();
+    GroupRepo repo = GroupRepo();
+    await repo.init(global.groupFileName);
+    addGroups(repo.getGroups());
     return _userGroups;
   }
 
-  Future<void> saveGroupsOffline() async {
-    final FileHandlerGroup offlineGroupHandler = FileHandlerGroup(fileName: global.groupFileName);
-    await offlineGroupHandler.saveGroupList(_userGroups);
-  }
   /// removes a specific [group] form [_userGroups]
   /// removes the markers of this group from [_shownMarkers] and [_allMarkers] if the [group] is currently active
   /// NOTIFIES CHANGES
   void removeGroup(Group group) {
     if (group.active) {
-      for (Pin pin in group.getSyncPins()) {
+      for (Pin pin in group.pins.syncValue ?? {}) {
         removePin(pin);
       }
     }
@@ -92,7 +86,6 @@ class ClusterNotifier extends ChangeNotifier {
     group.profileImage = changes.profileImage;
     group.groupAdmin = changes.groupAdmin;
     group.visibility = changes.visibility;
-    saveGroupsOffline(); //new thread
     notifyListeners();
   }
 
@@ -103,7 +96,6 @@ class ClusterNotifier extends ChangeNotifier {
       _userGroups.add(group);
     }
     notifyListeners(); // new thread
-    saveGroupsOffline();
   }
 
   /// clears all values from lists, attributes and maps
@@ -115,7 +107,6 @@ class ClusterNotifier extends ChangeNotifier {
     __filterUsernames.clear();
     __filterDateMax = null;
     __filterDateMin = null;
-    saveGroupsOffline();  // new thread
   }
 
   /// returns a [Group] by [groupId] if it is an item in [_userGroups]
@@ -135,12 +126,12 @@ class ClusterNotifier extends ChangeNotifier {
       if (group.active) {
         _addPinToMarkers(pin);
       }
-      if (group.members != null) {
-        group.members!.firstWhere((element) => element.username == global.username).addOnePoint();
-        group.members!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
+      if (!group.members.isEmpty) {
+        group.members.syncValue!.firstWhere((element) => element.username == global.username).addOnePoint();
+        group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
       }
-      _updateValues();
     }
+    _updateValues();
   }
 
   /// activates the [group] : the group will show its marker on the map and the feed
@@ -152,7 +143,7 @@ class ClusterNotifier extends ChangeNotifier {
       group.active = true;
       notifyListeners();
       //get pins from server of the specific groups if not already loaded
-      Set<Pin> pins = await group.getPins();
+      Set<Pin> pins = await group.pins.asyncValue();
       //converts pins to markers on googel maps
       for (Pin pin in pins) {
         await _addPinToMarkers(pin);
@@ -170,7 +161,7 @@ class ClusterNotifier extends ChangeNotifier {
       group.active = false;
       notifyListeners();
       //removes markers from maps
-      for (Pin pin in group.getSyncPins()) {
+      for (Pin pin in group.pins.syncValue ?? {}) {
          _removePinFromMarkers(pin);
       }
       _updateValues();
@@ -192,8 +183,10 @@ class ClusterNotifier extends ChangeNotifier {
   }
 
   /// loads all offline pins from device storage
-  Future<List<Pin>> loadOfflinePins() async{
-    return await _offlineFileHandler.readPins(_userGroups);
+  Future<List<Pin>> loadOfflinePins() async {
+    PinRepo pinRepo = PinRepo();
+    await pinRepo.init(global.fileName);
+    return pinRepo.getPins(_userGroups);
   }
 
   /// removes [oldPin] from [_offlinePins]
@@ -211,7 +204,9 @@ class ClusterNotifier extends ChangeNotifier {
   Future<void> deleteOfflinePin(Pin mona) async{
     _removePinFromMarkers(mona);
     mona.group.removePin(mona);
-    await _offlineFileHandler.removePin(mona.id, _userGroups);
+    PinRepo pinRepo = PinRepo();
+    await pinRepo.init(global.fileName);
+    pinRepo.deletePin(mona.id);
     _updateValues();
   }
 
@@ -221,7 +216,9 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> addOfflinePin(Pin mona) async{
     if (!kIsWeb) {
-      await _offlineFileHandler.addPin(mona, _userGroups);
+      PinRepo pinRepo = PinRepo();
+      await pinRepo.init(global.fileName);
+      pinRepo.setPin(mona);
       if (mona.group.active) {
         await _addPinToMarkers(mona);
       }
@@ -292,7 +289,7 @@ class ClusterNotifier extends ChangeNotifier {
           key: Key((pin.isOffline ? "${pin.group.groupId}${pin.id.toString()}" : pin.id.toString())),
           point: LatLng(pin.latitude, pin.longitude), 
           builder: (_)  => GestureDetector(
-            child: pin.group.getPinImageWidget(),
+            child: pin.group.pinImage.getWidget(),
             onTap: () => Navigator.push(
               navigatorKey.currentContext!,
               MaterialPageRoute(builder: (context) => ShowImageWidget(newPin: pin.isOffline, pin: pin,)),
