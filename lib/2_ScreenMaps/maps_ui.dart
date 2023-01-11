@@ -65,7 +65,6 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                   )
                 ],
               ),
-              const SelectGroupWidget(multiSelector: true,)
             ],
           ),
         ),

@@ -2,7 +2,7 @@
           package="com.LR_Projects.buff_lisa">
    <application
         android:requestLegacyExternalStorage="true"
-        android:label="Sticker Map"
+        android:label="StickIt: GeoMap"
         android:name="${applicationName}"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher">

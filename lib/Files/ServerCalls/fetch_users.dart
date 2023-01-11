@@ -87,13 +87,13 @@ class FetchUsers {
   /// returns the profile picture as a byte list of a username that is identified by [username]
   /// throws an Exception if an error occurs
   /// GET Request to Server
-  static Future<Uint8List?> fetchProfilePictureSmall(String username) async {
+  static Future<Uint8List> fetchProfilePictureSmall(String username) async {
     Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture_small", {}, 0,);
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         return response.bodyBytes;
       } else {
-        return null;
+        throw Exception("failed to load mona");
       }
     } else {
       throw Exception("failed to load mona");
@@ -169,6 +169,19 @@ class FetchUsers {
     });
     Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 2,encode:  json);
     if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  }
+
+  static Future<bool> postReportUser(String reportedUsername, String reportMessage) async {
+    final String json = jsonEncode(<String, dynamic>{
+      "report" : reportedUsername,
+      "username" : global.username,
+      "message" : reportMessage
+    });
+    final response = await RestAPI.createHttpsRequest("/api/report", {}, 1, encode: json);
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     }
     return false;

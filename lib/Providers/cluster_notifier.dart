@@ -52,6 +52,7 @@ class ClusterNotifier extends ChangeNotifier {
     for (Group group in groups) {
       if(!_userGroups.any((element) => element.groupId == group.groupId)) {
         _userGroups.add(group);
+        group.pinImage.asyncValue(); //new thread - load pin image on startup
       }
     }
     notifyListeners();
@@ -126,7 +127,7 @@ class ClusterNotifier extends ChangeNotifier {
       if (group.active) {
         _addPinToMarkers(pin);
       }
-      if (!group.members.isEmpty) {
+      if (!group.members.isEmpty && pin.username == global.username) {
         group.members.syncValue!.firstWhere((element) => element.username == global.username).addOnePoint();
         group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
       }
@@ -142,9 +143,12 @@ class ClusterNotifier extends ChangeNotifier {
     if (!group.active) {
       group.active = true;
       notifyListeners();
+      final HiveHandler<int, dynamic> offlineActiveGroups = await HiveHandler.fromInit<int, dynamic>("activeGroups");
+      offlineActiveGroups.put(null, key: group.groupId);
+      print(await offlineActiveGroups.keys());
       //get pins from server of the specific groups if not already loaded
       Set<Pin> pins = await group.pins.asyncValue();
-      //converts pins to markers on googel maps
+      //converts pins to markers on google maps
       for (Pin pin in pins) {
         await _addPinToMarkers(pin);
       }
@@ -160,6 +164,8 @@ class ClusterNotifier extends ChangeNotifier {
     if (group.active) {
       group.active = false;
       notifyListeners();
+      final HiveHandler<int, dynamic> offlineActiveGroups = await HiveHandler.fromInit<int, dynamic>("activeGroups");
+      offlineActiveGroups.deleteByKey(group.groupId);
       //removes markers from maps
       for (Pin pin in group.pins.syncValue ?? {}) {
          _removePinFromMarkers(pin);
@@ -177,8 +183,21 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> removePin(Pin pin) async {
     await FetchPins.deleteMonaFromPinId(pin.id);
+    hidePin(pin);
+  }
+
+  Future<void> hidePin(Pin pin) async {
     pin.group.removePin(pin);
     _removePinFromMarkers(pin);
+    _updateValues();
+  }
+
+  Future<void> updateFilter() async {
+    for (Group group in _userGroups) {
+      for (var element in (await group.filter())) {
+        _removePinFromMarkers(element);
+      }
+    }
     _updateValues();
   }
 

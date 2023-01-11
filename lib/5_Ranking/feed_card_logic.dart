@@ -1,17 +1,23 @@
 import 'package:buff_lisa/5_Ranking/feed_card_ui.dart';
+import 'package:buff_lisa/Files/DTOClasses/hive_handler.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 
+import '../7_Settings/report_user.dart';
 import '../Files/Other/global.dart' as global;
 
 class FeedCard extends StatefulWidget {
-  const FeedCard({super.key, required this.pin});
+  const FeedCard({super.key, required this.pin, this.update});
 
   /// Pin shown on this Card shown in the feed
   final Pin pin;
+
+  final Future<void> Function(bool)? update;
 
   @override
   FeedCardState createState() => FeedCardState();
@@ -103,6 +109,48 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
   /// toggles the card from back to front or front to back
   void toggleCard(BuildContext context) {
     controller.toggleCard();
+  }
+
+  Future<void> handleHidePost(BuildContext context) async {
+    if (global.username != widget.pin.username) {
+      HiveHandler<int, DateTime> hiddenPosts = await HiveHandler.fromInit<int, DateTime>(global.hiddenPosts);
+      await hiddenPosts.put(DateTime.now(), key: widget.pin.id);
+      if (!mounted) return;
+      await Provider.of<ClusterNotifier>(context, listen: false).hidePin(widget.pin);
+      widget.update!(false);
+    }
+  }
+
+  Future<void> handleHideUsers(BuildContext context) async {
+    if (global.username != widget.pin.username) {
+      HiveHandler<String, DateTime> hiddenUsers = await HiveHandler.fromInit<String, DateTime>(global.hiddenUsers);
+      await hiddenUsers.put(DateTime.now(), key: widget.pin.username);
+      if (!mounted) return;
+      await Provider.of<ClusterNotifier>(context, listen: false).updateFilter();
+      widget.update!(false);
+    }
+  }
+
+  Future<void> handleReportUser(BuildContext context) async {
+    String username = widget.pin.username;
+    if (username != global.username) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ReportUser(username: username)),
+      );
+    }
+  }
+
+  Future<void> handleReportPost(BuildContext context) async {
+    String username = widget.pin.username;
+    if (username != global.username) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ReportUser(username: username, content: widget.pin.id.toString(),)),
+      );
+    }
   }
 
   /// keeps the Widget alive (keep toggle state) in the list view

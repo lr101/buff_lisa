@@ -24,8 +24,8 @@ class FetchPins {
   /// returns a set of all pins of the currently logged-in user
   /// throws an Exception if an error occurs
   /// GET Request to Server
-  static Future<List<int>> fetchUserPins() async {
-    Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/pins", {}, 0);
+  static Future<List<int>> fetchUserPins(String username) async {
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/pins", {}, 0);
     if (response.statusCode == 200) {
       return (json.decode(response.body) as List<dynamic>).map((e) => e as int).toList();
     } else {
@@ -36,10 +36,12 @@ class FetchPins {
   /// returns a set of all pins of the currently logged-in user
   /// throws an Exception if an error occurs
   /// GET Request to Server
-  static Future<Pin> fetchUserPin(int pinId) async {
+  static Future<Pin> fetchUserPin(int pinId, List<Group> userGroups) async {
     Response response = await RestAPI.createHttpsRequest("/api/pins/$pinId", {}, 0);
     if (response.statusCode == 200) {
-      return Pin.fromJson(json.decode(response.body), Group(groupId: -1,name: "default", visibility: 0, inviteUrl: null));
+      Map<String,dynamic> map = json.decode(response.body);
+      Group group = userGroups.firstWhere((element) => element.groupId == map["group"]["groupId"], orElse: () => Group.fromJson( map["group"]));
+      return Pin.fromJson(map["pin"], group);
     } else {
       throw Exception("Pins could not be loaded: ${response.statusCode} error code");
     }

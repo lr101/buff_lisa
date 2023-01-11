@@ -7,6 +7,7 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:buff_lisa/Providers/profile_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../7_Settings/show_web_widget.dart';
 import '../Files/Other/global.dart' as global;
 import '../Files/ServerCalls/fetch_pins.dart';
 
@@ -78,27 +79,57 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
       Card(
         child: TextButton(
           onPressed: () => state.handlePasswordPress(context),
-          child: const Text("Change Password", style: TextStyle(color: global.cPrime)),
+          child: const Text("Change Password", ),
         ),
       ),
       Card(
         child: TextButton(
           onPressed: () => state.handleEmailPress(context),
-          child: const Text("Change email", style: TextStyle(color: global.cPrime)),
+          child: const Text("Change email", ),
         ),
       ),
       Card(
         child: TextButton(
           onPressed: () => state.handleLogoutPress(context),
-          child: const Text("Logout", style: TextStyle(color: global.cPrime)),
+          child: const Text("Logout", ),
         ),
       ),
       Card(
         child: TextButton(
           onPressed: () => state.handleChangeTheme(context),
-          child: const Text("Change Theme", style: TextStyle(color: global.cPrime)),
+          child: const Text("Change Theme", ),
         ),
-      )
+      ),
+      Card(
+        child: TextButton(
+          onPressed: () => state.handleHiddenPins(context),
+          child: const Text("Edit hidden pins", ),
+        ),
+      ),
+      Card(
+        child: TextButton(
+          onPressed: () => state.handleHiddenUsers(context),
+          child: const Text("Edit hidden users", ),
+        ),
+      ),
+      Card(child: TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ShowWebWidget(route: "public/agb",title: "Terms of Service",)),
+          );
+        },
+        child: const Text("Open Terms of Service"),
+      ),),
+      Card(child: TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ShowWebWidget(route: "public/privacy-policy",title: "Privacy Policy",)),
+          );
+        },
+        child: const Text("Open Privacy Policy"),
+      ),),
     ];
   }
 }

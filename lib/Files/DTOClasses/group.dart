@@ -78,7 +78,6 @@ class Group {
     this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{}, retry: false);
     this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: _saveOffline);
     this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: _saveOffline, retry: false);
-    _saveOffline();
   }
 
   /// Constructor of group when data is in json format
@@ -207,19 +206,30 @@ class Group {
     repo.setGroup(this);
   }
 
-  Future<void> _filter(Set<Pin> pins) async{
+  Future<Set<Pin>> _filter(Set<Pin> pins) async{
     final HiveHandler<String, DateTime> hiddenUser = HiveHandler();
     final HiveHandler<int, DateTime> hiddenPosts = HiveHandler();
     await hiddenUser.init("hiddenUsers");
     await hiddenPosts.init("hiddenPosts");
+    Set<Pin> removesPins = {};
     List<String> usernames = await hiddenUser.keys();
     List<int> posts = await hiddenPosts.keys();
     List<Pin> iterator = List.from(pins);
     for (Pin pin in iterator) {
       if (posts.any((element) => element == pin.id) || usernames.any((element) => element == pin.username)) {
         pins.remove(pin);
+        removesPins.add(pin);
       }
     }
+    return pins;
+  }
+
+  Future<Set<Pin>> filter() async{
+    Set<Pin>? pinList = pins.syncValue;
+    if (pinList != null) {
+      pins.setValue(await _filter(pinList));
+    }
+    return pinList ?? {};
   }
 
 

@@ -14,7 +14,7 @@ class AsyncType<T>  {
     final Widget Function(T)? builder;
     final Future<void> Function()? save;
 
-    AsyncType({T? value, required this.callback, this.callbackDefault, this.builder, this.save, retry}) {
+    AsyncType({T? value, required this.callback, this.callbackDefault, this.builder, this.save, retry = true}) {
         if (value != null) {
             _value = value;
             _isLoaded = true;
@@ -86,6 +86,24 @@ class AsyncType<T>  {
         } else {
             return const CircularProgressIndicator();
         }
+    }
+
+    Future<T> refresh () async {
+        await _m.acquire();
+        try {
+            _value = await callback();
+            if (save != null) save!();
+            _isLoaded = true;
+        } catch(e) {
+            if (callbackDefault != null) {
+                _value = await callbackDefault!();
+            } else {
+                throw Exception("could not be loaded");
+            }
+        } finally {
+            _m.release();
+        }
+        return _value!;
     }
 
 }

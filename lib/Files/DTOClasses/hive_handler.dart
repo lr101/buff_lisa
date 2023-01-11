@@ -4,6 +4,12 @@ import 'package:path_provider/path_provider.dart';
 class HiveHandler<K, T> {
   late Box<T> box;
 
+  static Future<HiveHandler<K,T>> fromInit<K,T>(String boxName) async {
+    HiveHandler<K,T> box = HiveHandler<K,T>();
+    await box.init(boxName);
+    return box;
+  }
+
 
   Future<void> init(String boxName) async  {
     box = await Hive.openBox(boxName);

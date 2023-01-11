@@ -34,7 +34,8 @@ class LoginScreen extends StatelessWidget {
       return Secure.loginAuthentication(data.name, data.password, ).then((value) {
         return value ? null : 'username or password are wrong';
       });
-    } catch (e) {
+    } on Exception catch (_, e) {
+      print(_);
       return Future<String>.value("cannot connect to server");
     }
 

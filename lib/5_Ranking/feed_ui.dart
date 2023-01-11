@@ -15,13 +15,15 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState>{
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const SelectGroupWidget(multiSelector: true),
               Expanded(
-                  child: PagedListView<int, Widget> (
-                    pagingController: state.pagingController,
-                    builderDelegate: PagedChildBuilderDelegate<Widget>(
-                      itemBuilder: (context, item, index)  => item,
-                    ),
+                  child: RefreshIndicator(
+                      onRefresh: () async => state.pullRefresh(false),
+                      child:PagedListView<int, Widget> (
+                      pagingController: state.pagingController,
+                      builderDelegate: PagedChildBuilderDelegate<Widget>(
+                        itemBuilder: (context, item, index)  => item,
+                      ),
+                    )
                   )
               )
             ]

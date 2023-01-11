@@ -68,16 +68,8 @@ class Secure {
   /// signin process sends encoded password to server and obtains a JWT token on success
   /// saves after successful login username and token in secure storage and returns true
   static Future<bool> loginAuthentication(String username, String password,) async {
-    String? element = await FetchUsers.checkUser(username);
-    String? token;
-    //TODO delete first part of if, when all password are changed to new format
-    if (element != null && element.isNotEmpty &&
-        Crypt(element).match(password)) {
-      token = await FetchUsers.checkUserToken(
-          username, encryptPassword(password));
-    } else {
-      token = await FetchUsers.auth(username, encryptPassword(password));
-    }
+    //String? element = await FetchUsers.checkUser(username);
+    String? token = await FetchUsers.auth(username, encryptPassword(password));
     if (token != null) {
       saveSecure(username, "username");
       saveSecure(token, "auth");

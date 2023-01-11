@@ -36,10 +36,14 @@ String host = dotenv.env["HOST"]!;
 int port = 8082;
 
 /// filename of the file where offline pins are saved on the device
-String fileName = 'pin_new.txt';
+String fileName = 'pin_new';
 
 /// filename of the file where user groups are saved on the device
-String groupFileName = 'groups.txt';
+String groupFileName = 'groups';
+
+String hiddenUsers = "hiddenUsers";
+
+String hiddenPosts = "hiddenPosts";
 
 /// url of the stadia map service for the flutter map Widget
 String styleUrl = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";

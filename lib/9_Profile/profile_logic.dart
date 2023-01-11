@@ -1,7 +1,7 @@
 import 'dart:typed_data';
+import 'package:buff_lisa/7_Settings/hidden_user_logic.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:images_picker/images_picker.dart' as picker;
-import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropping/image_cropping.dart';
@@ -10,6 +10,7 @@ import 'dart:io';
 import '../0_ScreenSignIn/login_logic.dart';
 import '../0_ScreenSignIn/secure.dart';
 import '../7_Settings/email_logic.dart';
+import '../7_Settings/hidden_pin_logic.dart';
 import '../7_Settings/password_logic.dart';
 import '../Files/Other/global.dart' as global;
 import '../Providers/theme_provider.dart';
@@ -29,13 +30,6 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     return ProfilePageUI(state: this);
   }
 
-
-  void openSettings() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Settings()),
-    );
-  }
 
   /// opens the input picker for selecting the group logo from gallery
   /// after selecting an image it is opened in an image cropper
@@ -86,6 +80,21 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
       MaterialPageRoute(builder: (context) => const Email()),
     );
   }
+
+  void handleHiddenPins(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HiddenPin()),
+    );
+  }
+
+  void handleHiddenUsers(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const HiddenUsers()),
+    );
+  }
+
 
   /// on logout button press all existing open pages are closed and the token and username or removed
   /// the login screen widget page is opened

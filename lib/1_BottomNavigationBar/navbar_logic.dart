@@ -3,16 +3,16 @@ import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
-import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
-import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../2_ScreenMaps/maps_logic.dart';
 import '../5_Ranking/feed_logic.dart';
+import '../8_SelectGroupWidget/select_group_widget_logic.dart';
 import '../Files/DTOClasses/group.dart';
+import '../Files/DTOClasses/hive_handler.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/Other/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
@@ -39,6 +39,8 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   /// Controller to change shown page of navbar
   late PageController pageController;
 
+  final Widget multiSelect = const SelectGroupWidget(multiSelector: true,);
+
   /// List of Widgets shown and used in the navbar
   late final List<Widget> widgetOptions = <Widget>[
     const MyGroupsPage(),
@@ -64,6 +66,15 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
       _getGroups();
     });
   }
+
+  Widget getMultiSelector() {
+    if (selectedIndex == 2 || selectedIndex == 3) {
+      return multiSelect;
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
 
   /// disposes pageController
   @override
@@ -100,17 +111,26 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     // groups are saved locally for the current session as well as offline for offline sessions
     Provider.of<ClusterNotifier>(context, listen:false).addGroups(groups);
     // load all offline pins from files
-    List<Pin> pins = await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
-    // finish when no local offline saved pins exist
+    Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins().then((value)  {
+    if (mounted && value.isNotEmpty) {
+        // open upload page if offline saved pins exist
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => UploadOfflinePage(pins: value),
+          )
+        );
+      }
+    });
+    // activate previous active groups
+    final HiveHandler<int, dynamic> offlineActiveGroups = await HiveHandler.fromInit<int, dynamic>("activeGroups");
+    for (int id in await offlineActiveGroups.keys()) {
+      if (!mounted) return;
+      Group group = Provider.of<ClusterNotifier>(context, listen:false).getGroupByGroupId(id);
+      Provider.of<ClusterNotifier>(context, listen:false).activateGroup(group); //new thread
+    }
 
-    if (!mounted || pins.isEmpty) return;
 
-    // open upload page if offline saved pins exist
-    Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => UploadOfflinePage(pins: pins),
-        )
-    );
+
   }
 
   Future<void> groupsOffline() async {

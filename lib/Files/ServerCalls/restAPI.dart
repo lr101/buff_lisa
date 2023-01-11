@@ -17,7 +17,7 @@ class RestAPI {
   static Future<http.Response> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, {String? encode, int timeout = 10}) async {
     Map<String, String> header = {"Authorization" : "Bearer ${global.token}"};
     if (encode != null) header["Content-Type"] = "application/json";
-    Uri uri = Uri(scheme: "http", port: 8081, host: global.host, path: path, queryParameters: queryParameters);
+    Uri uri = Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters);
     if (kDebugMode) print(uri);
     switch (requestType) {
       case 0: return await http.get(uri, headers: header,).timeout(Duration(seconds: timeout));

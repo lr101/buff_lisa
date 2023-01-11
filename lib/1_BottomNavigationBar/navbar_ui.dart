@@ -12,10 +12,17 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: PageView(
-          controller: state.pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: state.widgetOptions,
+        body: Column(
+          children: [
+            state.getMultiSelector(),
+            Expanded(child:
+              PageView(
+                controller: state.pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: state.widgetOptions,
+              ),
+            )
+          ],
         ),
         bottomNavigationBar: SizedBox(height: 58, child:BottomNavigationBar(
           backgroundColor: Colors.white,
@@ -50,4 +57,6 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
       ),
     );
   }
+
+
 }

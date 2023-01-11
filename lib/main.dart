@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
@@ -65,6 +66,9 @@ class MyApp extends StatelessWidget {
               ),
               ChangeNotifierProvider.value(
                 value: ThemeProvider(),
+              ),
+              ChangeNotifierProvider.value(
+                value: UserNotifier(),
               ),
             ],
             builder: (context, child) => MaterialApp (
