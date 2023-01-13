@@ -4,9 +4,9 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import '../Files/Other/global.dart' as global;
 
-class ProfileSettingsUI extends StatelessUI<ProfileSettings> {
+class ProfileSettingsUI extends StatefulUI<ProfileSettings, ProfileSettingsState> {
 
-  const ProfileSettingsUI({super.key, required widget}) : super(widget: widget);
+  const ProfileSettingsUI({super.key, required state}) : super(state: state);
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +32,19 @@ class ProfileSettingsUI extends StatelessUI<ProfileSettings> {
             ),
             Card(
               child: TextButton(
-                onPressed: () => widget.handlePasswordPress(context),
+                onPressed: () => state.handlePasswordPress(context),
                 child: const Text("Change Password", ),
               ),
             ),
             Card(
               child: TextButton(
-                onPressed: () => widget.handleEmailPress(context),
+                onPressed: () => state.handleEmailPress(context),
                 child: const Text("Change email", ),
               ),
             ),
             Card(
               child: TextButton(
-                onPressed: () => widget.handleLogoutPress(context),
+                onPressed: () => state.handleLogoutPress(context),
                 child: const Text("Logout", ),
               ),
             ),

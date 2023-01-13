@@ -72,7 +72,7 @@ class Group {
     profileImage,
     pinImage
   }) {
-    this.groupAdmin = AsyncType(callback: () => FetchGroups.getGroupAdmin(groupId), callbackDefault: () async => "---", builder: (_) => Text(_));
+    this.groupAdmin = AsyncType(value: groupAdmin, callback: () => FetchGroups.getGroupAdmin(groupId), callbackDefault: () async => "---", builder: (_) => Text(_));
     this.members = AsyncType(value: members, callback: _getMembers, callbackDefault: () async => []);
     this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), callbackDefault: () async => "cannot be loaded", builder: (_) => Text(_));
     this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{});

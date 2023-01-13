@@ -48,24 +48,11 @@ class EditGroupPageState extends State<EditGroupPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Provider.of<CreateGroupNotifier>(context, listen: false).setSliderValue(widget.group.visibility != 0 ? 1 : 0);
-      Provider.of<CreateGroupNotifier>(context, listen: false).setText1(widget.group.name);
-      Provider.of<CreateGroupNotifier>(context, listen: false).setText2(await widget.group.description.asyncValue());
-      if (!mounted) return;
-      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(await widget.group.profileImage.asyncValue());
-      if (!mounted) return;
-      Provider.of<CreateGroupNotifier>(context, listen: false).menuItems = await getMembers();
+      Provider.of<CreateGroupNotifier>(context, listen: false).init(widget.group);
     });
   }
 
-  Future<List<DropdownMenuItem<String>>> getMembers() async{
-    List<Ranking> members = await widget.group.members.asyncValue();
-    List<DropdownMenuItem<String>> items = [];
-    for (Ranking ranking in members) {
-      items.add(DropdownMenuItem(value: ranking.username,child: Center(child: Text(ranking.username),)));
-    }
-    return items;
-  }
+
 
   /// when the slider is moved the value is registered in the Provider to trigger a rebuild of the slider widget
   void sliderOnChange(double value, BuildContext context) {
@@ -75,14 +62,13 @@ class EditGroupPageState extends State<EditGroupPage> {
   /// Tries to create the Group with the context given in the input fields
   /// TODO input values checked for constrains. What are the Constraines?
   void editGroup(BuildContext context) {
-    final controller1 = Provider.of<CreateGroupNotifier>(context, listen: false).getText1;
-    final controller2 = Provider.of<CreateGroupNotifier>(context, listen: false).getText2;
-    Uint8List? image = Provider.of<CreateGroupNotifier>(context, listen: false).getImage;
-    final sliderValue = Provider.of<CreateGroupNotifier>(context, listen: false).getSliderValue;
-    final groupAdmin = Provider.of<CreateGroupNotifier>(context, listen: false).currentItem;
-    if (!Provider.of<CreateGroupNotifier>(context, listen: false).flagImageChange) image = null;
-    if (controller1.text.isNotEmpty && controller2.text.isNotEmpty && groupAdmin != null) {
-      FetchGroups.putGroup(widget.group.groupId, controller1.text, controller2.text, image, sliderValue.toInt(), groupAdmin).then((group) {
+    final controller1 = Provider.of<CreateGroupNotifier>(context, listen: false).getText1IfChanged;
+    final controller2 = Provider.of<CreateGroupNotifier>(context, listen: false).getText2IfChanged;
+    Uint8List? image = Provider.of<CreateGroupNotifier>(context, listen: false).getImageIfChanged;
+    final sliderValue = Provider.of<CreateGroupNotifier>(context, listen: false).getSliderValueIfChanged;
+    final groupAdmin = Provider.of<CreateGroupNotifier>(context, listen: false).getAdminIfChanged;
+    if (( controller1 == null || controller1.text.isNotEmpty) && (controller2 == null || controller2.text.isNotEmpty)) {
+      FetchGroups.putGroup(widget.group.groupId, controller1?.text, controller2?.text, image, sliderValue, groupAdmin).then((group) {
         if (group != null) {
           Provider.of<ClusterNotifier>(context, listen:false).updateGroup(widget.group, group);
           Navigator.pop(context);
@@ -121,7 +107,6 @@ class EditGroupPageState extends State<EditGroupPage> {
       if ((dimensions.width < 100 && dimensions.height < 100) || dimensions.width != dimensions.height) return; //TODO error message -> picture to small
       if(!mounted) return;
       Provider.of<CreateGroupNotifier>(context, listen: false).setImage(croppedBytes);
-      Provider.of<CreateGroupNotifier>(context, listen: false).flagImageChange = true;
     }
   }
 

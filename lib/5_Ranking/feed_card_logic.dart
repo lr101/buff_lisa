@@ -138,7 +138,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ReportUser(username: username)),
+            builder: (context) => ReportUser(content: username, title: "Report User", hintText: "Why do you want to report $username?", userText:  'Report user: $username')),
       );
     }
   }
@@ -149,7 +149,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ReportUser(username: username, content: widget.pin.id.toString(),)),
+            builder: (context) => ReportUser(content: widget.pin.id.toString(), title: "Report Content", hintText: "Why do you want to report this content?",userText: "Report content of user: $username",)),
       );
     }
   }

@@ -26,6 +26,10 @@ class GroupRepo {
     return null;
   }
 
+  Future<void> clear() async{
+    await box.clear();
+  }
+
   List<Group> getGroups() {
     List<GroupDTO> list = box.values.toList();
     return list.map((e) => e.toGroup()).toList();

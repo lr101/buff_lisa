@@ -24,16 +24,14 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
-            Container(
+            SizedBox(
                 height: MediaQuery.of(context).viewPadding.top,
                 width: double.infinity,
-                color: global.cThird
             ),
             Container(
                 width: double.infinity,
                 height: 80,
                 decoration: const BoxDecoration(
-                  color: global.cThird,
                     borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
                 ),
                 child: ListView.builder(
@@ -71,7 +69,7 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
                       return Shimmer.fromColors(
                         baseColor: Colors.grey.shade700,
                         highlightColor: Colors.grey.shade900,
-                        child: const CircleAvatar(backgroundColor: Colors.white, radius: 33,)
+                        child: const CircleAvatar(radius: 33,)
                       );
                     }
                   },

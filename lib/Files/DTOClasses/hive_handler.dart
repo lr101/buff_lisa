@@ -35,7 +35,7 @@ class HiveHandler<K, T> {
     }
   }
 
-  clear() async {
+  Future<void> clear() async {
     await box.clear();
   }
 

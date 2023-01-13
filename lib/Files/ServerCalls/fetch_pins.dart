@@ -107,7 +107,7 @@ class FetchPins {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<bool> deleteMonaFromPinId(int id) async {
-    Response response = await RestAPI.createHttpsRequest("/api/pins", {}, 3);
+    Response response = await RestAPI.createHttpsRequest("/api/pins/$id", {}, 3);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     }

@@ -108,6 +108,10 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
         },
         child: const Text("Open Privacy Policy"),
       ),),
+      Card(child: TextButton(
+        onPressed: () => state.handleReportPost(context),
+        child: const Text("Contact developer"),
+      ),),
     ];
   }
 }

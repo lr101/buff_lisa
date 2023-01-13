@@ -82,11 +82,12 @@ class ClusterNotifier extends ChangeNotifier {
 
   void updateGroup(Group group, Group changes) async {
     group.name = changes.name;
-    group.description = changes.description;
-    group.pinImage = changes.pinImage;
-    group.profileImage = changes.profileImage;
-    group.groupAdmin = changes.groupAdmin;
+    group.description.setValue(changes.description.syncValue!);
+    group.pinImage.setValue(changes.pinImage.syncValue!);
+    group.profileImage.setValue(changes.profileImage.syncValue!);
+    group.groupAdmin.setValue(changes.groupAdmin.syncValue!);
     group.visibility = changes.visibility;
+    group.inviteUrl = changes.inviteUrl;
     notifyListeners();
   }
 

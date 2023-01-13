@@ -123,7 +123,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
 
   Widget buildCard(member, index) {
     String adminString = "";
-    if (member.username == widget.group.groupAdmin!) adminString = "(admin)";
+    if (member.username == widget.group.groupAdmin.syncValue!) adminString = "(admin)";
     return Card(
         child: ListTile(
           leading: Text("${index + 1}. "),
@@ -162,7 +162,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   }
 
   Widget getAdminButton() {
-    if (state.widget.group.groupAdmin == global.username) {
+    if (state.widget.group.groupAdmin.syncValue == global.username) {
       return IconButton(onPressed: () => state.editAsAdmin(), icon: const Icon(Icons.edit));
     } else {
       return Container();

@@ -12,6 +12,7 @@ import '../0_ScreenSignIn/secure.dart';
 import '../7_Settings/email_logic.dart';
 import '../7_Settings/hidden_pin_logic.dart';
 import '../7_Settings/password_logic.dart';
+import '../7_Settings/report_user.dart';
 import '../Files/Other/global.dart' as global;
 import '../Providers/theme_provider.dart';
 
@@ -71,6 +72,15 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
      MaterialPageRoute(builder: (context) => widget),
    );
  }
+
+  Future<void> handleReportPost(BuildContext context) async {
+    String username = global.username;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ReportUser(content: "Contacted by: $username", title: "Contact Developer", hintText: "Describe the problem...",userText: "Reported by: $username",)),
+    );
+  }
 
 
 

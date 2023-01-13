@@ -64,9 +64,9 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: DropdownButton(
                 isExpanded: true,
-                items: Provider.of<CreateGroupNotifier>(context).menuItems,
-                onChanged: (String? value) => Provider.of<CreateGroupNotifier>(context, listen: false).currentItem = value,
-                value: global.username
+                items: Provider.of<CreateGroupNotifier>(context, listen: false).menuItems,
+                onChanged: (String? value) => Provider.of<CreateGroupNotifier>(context, listen: false).setCurrentItem(value!),
+                value:  Provider.of<CreateGroupNotifier>(context).currentItem
             ),
           ),
           const SizedBox(height: 20,),

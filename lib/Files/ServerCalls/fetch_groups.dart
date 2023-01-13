@@ -95,14 +95,14 @@ class FetchGroups {
   /// returns the group that is updating on the server with [name], [description], [image], [visibility]
   /// PUT request to server
   /// returns null if an Error occurred during server call TODO exception?
-  static Future<Group?> putGroup(int groupId, String name, String description, Uint8List? image, int visibility, String groupAdmin) async {
-    final String json = jsonEncode(<String, dynamic> {
-      "name" : name,
-      "groupAdmin": groupAdmin,
-      "description" : description,
-      "profileImage": image,
-      "visibility" : visibility
-    });
+  static Future<Group?> putGroup(int groupId, String? name, String? description, Uint8List? image, double? visibility, String? groupAdmin) async {
+    Map<String, dynamic> map =  {};
+    if (name != null) map["name"] = name;
+    if (description != null) map["description"] = description;
+    if (image != null) map["profileImage"] = image;
+    if (visibility != null) map["visibility"] = visibility.toInt();
+    if (groupAdmin != null) map["groupAdmin"] = groupAdmin;
+    final String json = jsonEncode(map);
     final response =  await RestAPI.createHttpsRequest("/api/groups/$groupId", {}, 2, encode: json);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
