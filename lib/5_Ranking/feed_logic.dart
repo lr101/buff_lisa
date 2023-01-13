@@ -115,8 +115,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
       } else if (pins.length < groups[group]!) {
         // remove a pin
         refresh = true;
-        allWidgets.removeWhere((key, value) => !pins.any((element) => element.id == key.id));
-
+        allWidgets.removeWhere((key, value) => !pins.any((element) => element.id == key.id || group != key.group));
       }
       groups[group] = pins.length;
     }

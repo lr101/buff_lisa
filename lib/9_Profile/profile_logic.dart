@@ -65,56 +65,19 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     }
   }
 
-  /// on password button press the password widget page is opened
-  void handlePasswordPress(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Password()),
-    );
-  }
-
-  /// on email button press the email widget page is opened
-  void handleEmailPress(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Email()),
-    );
-  }
-
-  void handleHiddenPins(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const HiddenPin()),
-    );
-  }
-
-  void handleHiddenUsers(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const HiddenUsers()),
-    );
-  }
+ void handlePushPage(Widget widget) {
+   Navigator.push(
+     context,
+     MaterialPageRoute(builder: (context) => widget),
+   );
+ }
 
 
-  /// on logout button press all existing open pages are closed and the token and username or removed
-  /// the login screen widget page is opened
-  void handleLogoutPress(BuildContext context) {
-    global.token = "";
-    Secure.removeSecure("auth");
-    global.username = "";
-    Secure.removeSecure("username");
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const LoginScreen()
-        ),
-        ModalRoute.withName("/login")
-    );
-  }
 
-  void handleChangeTheme(BuildContext context) {
-    Provider.of<ThemeProvider>(context, listen: false).toggleThemeMode();
-  }
+
+
+
+
 
   @override
   bool get wantKeepAlive => true;

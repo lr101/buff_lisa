@@ -54,9 +54,10 @@ class HiddenUsersState extends State<HiddenUsers>{
     List<Group> groups = Provider.of<ClusterNotifier>(context, listen: false).getGroups;
     await Provider.of<HiddenUserPageNotifier>(context, listen: false).unHideUser(user);
     if (!mounted) return;
-    for (int id in await FetchPins.fetchUserPins(user.username)) {
+    for (Group group in groups) {
+      Set<Pin> pins = await FetchPins.fetchUserPinsOfGroup(user.username, group);
       if (!mounted) return;
-      Provider.of<ClusterNotifier>(context, listen: false).addPin(await FetchPins.fetchUserPin(id, groups));
+      Provider.of<ClusterNotifier>(context, listen: false).addPins(pins);
     }
   }
 

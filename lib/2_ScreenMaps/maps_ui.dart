@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/Other/global.dart' as global;
 import '../Providers/cluster_notifier.dart';
+import '../Providers/theme_provider.dart';
 import 'maps_logic.dart';
 
 class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
@@ -34,7 +35,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: "${global.styleUrl}?api_key={api_key}",
+                    urlTemplate: "${Provider.of<ThemeProvider>(context).getCustomTheme.mapUrl}?api_key={api_key}",
                     additionalOptions: {
                       "api_key": global.apiKey
                     }

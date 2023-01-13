@@ -45,8 +45,6 @@ String hiddenUsers = "hiddenUsers";
 
 String hiddenPosts = "hiddenPosts";
 
-/// url of the stadia map service for the flutter map Widget
-String styleUrl = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
 
 /// api key for the stadia map service
 /// loaded from .env file

@@ -12,8 +12,10 @@ class DarkTheme {
 
   static const Color selectGroupColor = Color(0xFF455a64);
 
+  static const String url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
+
   static CustomTheme darkThemeFactory() {
-    return CustomTheme(theme: darkTheme, selectGroupColor: selectGroupColor);
+    return CustomTheme(theme: darkTheme, selectGroupColor: selectGroupColor, mapUrl: url);
   }
 
 

@@ -135,6 +135,16 @@ class ClusterNotifier extends ChangeNotifier {
     _updateValues();
   }
 
+  Future<void> addPins(Set<Pin> pins) async {
+    for (Pin pin in pins) {
+      bool success = await pin.group.setPin(pin);
+      if (success && pin.group.active) {
+        _addPinToMarkers(pin);
+      }
+    }
+    _updateValues();
+  }
+
   /// activates the [group] : the group will show its marker on the map and the feed
   /// also includes offline pins of this group
   /// REBUILD MAP MARKERS
@@ -145,7 +155,6 @@ class ClusterNotifier extends ChangeNotifier {
       notifyListeners();
       final HiveHandler<int, dynamic> offlineActiveGroups = await HiveHandler.fromInit<int, dynamic>("activeGroups");
       offlineActiveGroups.put(null, key: group.groupId);
-      print(await offlineActiveGroups.keys());
       //get pins from server of the specific groups if not already loaded
       Set<Pin> pins = await group.pins.asyncValue();
       //converts pins to markers on google maps

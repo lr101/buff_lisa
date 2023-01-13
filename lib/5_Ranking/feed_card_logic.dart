@@ -2,6 +2,7 @@ import 'package:buff_lisa/5_Ranking/feed_card_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/hive_handler.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -69,7 +70,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
                   ),
                   children: [
                     TileLayer(
-                        urlTemplate: "${global.styleUrl}?api_key={api_key}",
+                        urlTemplate: "${Provider.of<ThemeProvider>(context).getCustomTheme.mapUrl}?api_key={api_key}",
                         additionalOptions: {
                           "api_key": global.apiKey
                         }

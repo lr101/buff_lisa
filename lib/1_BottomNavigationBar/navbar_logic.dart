@@ -126,7 +126,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     for (int id in await offlineActiveGroups.keys()) {
       if (!mounted) return;
       Group group = Provider.of<ClusterNotifier>(context, listen:false).getGroupByGroupId(id);
-      Provider.of<ClusterNotifier>(context, listen:false).activateGroup(group); //new thread
+      await Provider.of<ClusterNotifier>(context, listen:false).activateGroup(group); //new thread
     }
 
 

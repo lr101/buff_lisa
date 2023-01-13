@@ -75,7 +75,7 @@ class Group {
     this.groupAdmin = AsyncType(callback: () => FetchGroups.getGroupAdmin(groupId), callbackDefault: () async => "---", builder: (_) => Text(_));
     this.members = AsyncType(value: members, callback: _getMembers, callbackDefault: () async => []);
     this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), callbackDefault: () async => "cannot be loaded", builder: (_) => Text(_));
-    this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{}, retry: false);
+    this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{});
     this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: _saveOffline);
     this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: _saveOffline, retry: false);
   }
@@ -181,14 +181,13 @@ class Group {
   /// TODO can also not load the pins if not fetched from server yet
   Future<bool> setPin(Pin pin) async {
     if (!pins.isEmpty) {
-      if (!pins.syncValue!.any((element) => element.id == pin.id)) {
+      if (!pins.syncValue!.any((element) => element.id == pin.id) && (await _filter({pin})).isNotEmpty) {
         pins.syncValue!.add(pin);
         return true;
       } else {
         return false;
       }
     } else {
-      await pins.asyncValue();
       return false;
     }
   }
@@ -226,10 +225,12 @@ class Group {
 
   Future<Set<Pin>> filter() async{
     Set<Pin>? pinList = pins.syncValue;
+    Set<Pin> filtered = {};
     if (pinList != null) {
-      pins.setValue(await _filter(pinList));
+      filtered = await _filter(pinList);
+      pins.setValue(filtered);
     }
-    return pinList ?? {};
+    return filtered;
   }
 
 

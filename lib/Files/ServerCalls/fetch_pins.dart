@@ -13,7 +13,7 @@ class FetchPins {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Set<Pin>> fetchGroupPins(Group group) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pins", {}, 0);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pins", {}, 0,timeout: 15);
     if (response.statusCode == 200) {
       return toPinSet(response, group);
     } else {
@@ -47,6 +47,15 @@ class FetchPins {
     }
   }
 
+
+  static Future<Set<Pin>> fetchUserPinsOfGroup(String username, Group group) async {
+    Response response = await RestAPI.createHttpsRequest("/api/users/$username/pins/${group.groupId}", {}, 0);
+    if (response.statusCode == 200) {
+      return toPinSet(response, group);
+    } else {
+      throw Exception("Pins could not be loaded: ${response.statusCode} error code");
+    }
+  }
   /// returns the image of a pin as a byte list that is identified by [pin]
   /// throws an Exception if an error occurs
   /// GET Request to Server

@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:buff_lisa/7_Settings/app_settings_logic.dart';
+import 'package:buff_lisa/7_Settings/profile_settings_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_image_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
@@ -78,38 +80,14 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
     return [
       Card(
         child: TextButton(
-          onPressed: () => state.handlePasswordPress(context),
-          child: const Text("Change Password", ),
+          onPressed: () => state.handlePushPage(const ProfileSettings()),
+          child: const Text("Profile Settings", ),
         ),
       ),
       Card(
         child: TextButton(
-          onPressed: () => state.handleEmailPress(context),
-          child: const Text("Change email", ),
-        ),
-      ),
-      Card(
-        child: TextButton(
-          onPressed: () => state.handleLogoutPress(context),
-          child: const Text("Logout", ),
-        ),
-      ),
-      Card(
-        child: TextButton(
-          onPressed: () => state.handleChangeTheme(context),
-          child: const Text("Change Theme", ),
-        ),
-      ),
-      Card(
-        child: TextButton(
-          onPressed: () => state.handleHiddenPins(context),
-          child: const Text("Edit hidden pins", ),
-        ),
-      ),
-      Card(
-        child: TextButton(
-          onPressed: () => state.handleHiddenUsers(context),
-          child: const Text("Edit hidden users", ),
+          onPressed: () => state.handlePushPage(const AppSettings()),
+          child: const Text("App Settings", ),
         ),
       ),
       Card(child: TextButton(
