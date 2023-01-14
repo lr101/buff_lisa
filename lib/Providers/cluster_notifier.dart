@@ -77,6 +77,7 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _userGroups.remove(group);
+    HiveHandler.fromInit<int, dynamic>("activeGroups").then((value) => value.deleteByKey(group.groupId));
     notifyListeners();
   }
 

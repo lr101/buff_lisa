@@ -127,8 +127,8 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
   }
 
   String formatTime() {
-    DateTime now = DateTime.now();
-    DateTime time = widget.pin.creationDate;
+    DateTime now = DateTime.now().toUtc();
+    DateTime time = widget.pin.creationDate.toUtc();
     final difference = now.difference(time);
     if (difference.inDays >= 365) {
       return "${difference.inDays ~/ 365} years ago";

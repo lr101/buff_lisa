@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:buff_lisa/Providers/user_notifier.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
@@ -30,6 +31,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 /// checks if user is logged in on this device by checking device storage
 Future<void> main() async {
   if (!kIsWeb) WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   global.cameras = await availableCameras();
   await dotenv.load();
   await Hive.initFlutter();

@@ -22,6 +22,8 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -33,6 +35,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+       <meta-data
+               android:name="com.google.android.gms.ads.APPLICATION_ID"
+               android:value="ca-app-pub-6127949856398876~7714682378"/>
     </application>
     <queries>
         <intent>
@@ -47,4 +52,5 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 </manifest>

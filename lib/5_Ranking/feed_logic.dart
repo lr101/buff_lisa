@@ -3,9 +3,11 @@ import 'dart:collection';
 import 'package:buff_lisa/5_Ranking/feed_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
+import '../Ads/NativeAdFactoryFeed.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Providers/cluster_notifier.dart';
 import 'feed_card_logic.dart';
@@ -30,6 +32,11 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
 
   /// Saves all Pins that could be seen in the feed with the Widget that is shown if already created
   late Map<Pin, Widget?> allWidgets = {};
+
+  final _addEvery = 4;
+
+  final List<BannerAd?> _ads = [];
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +69,13 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           if (allWidgets.length == pageKey + 1) {
             pagingController.appendLastPage([allWidgets[key]!]);
           } else {
-            pagingController.appendPage([allWidgets[key]!], pageKey + 1);
+            if (pageKey % _addEvery == 0) {
+              pagingController.appendPage([allWidgets[key]!, const CustomAdWidget()], pageKey + 1);
+            } else {
+              pagingController.appendPage([allWidgets[key]!], pageKey + 1);
           }
         }
+      }
     } catch (error) {
       pagingController.appendLastPage([]);
     }

@@ -26,6 +26,19 @@ def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -80,4 +93,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.android.gms:play-services-ads:21.4.0'
 }

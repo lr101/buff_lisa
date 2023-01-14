@@ -7,7 +7,7 @@ import 'package:latlong2/latlong.dart';
 double initialZoom = 17;
 
 /// zoom of the map widget of the front of the feed item
-double feedZoom = 12;
+double feedZoom = 13;
 
 /// position of flutter map on start
 /// Is set to the center of Karlsruhe, Germany
