@@ -39,8 +39,11 @@ class CustomAdWidgetState extends State<CustomAdWidget>  with AutomaticKeepAlive
     super.build(context);
     return SizedBox(
       width: double.infinity,
-      height: 100,
-      child:getFiller()
+      height: 120,
+      child: Padding(
+      padding: const EdgeInsets.all(10),
+        child:getFiller()
+      )
     );
   }
 
@@ -53,10 +56,12 @@ class CustomAdWidgetState extends State<CustomAdWidget>  with AutomaticKeepAlive
         child: AdWidget(ad: ad!),
       );
     } else {
-      return const SizedBox(
-        width: 100,
-        height: 100,
-        child: CircularProgressIndicator(),
+      return const Center(
+        child: SizedBox(
+          width: 100.0,
+          height: 100.0,
+          child: CircularProgressIndicator(),
+        )
       );
     }
   }

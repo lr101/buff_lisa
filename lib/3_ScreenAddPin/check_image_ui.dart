@@ -22,7 +22,6 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(
-                        height: 200,
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [

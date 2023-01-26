@@ -24,14 +24,14 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
 
   /// Controller for the Paged List-view
   /// always shows first item first and loads 3 items that are out of view
-  final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 3);
+  final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 5);
 
   /// Set of Groups that are currently shown
   /// Used to reduce the amounts of Widgets that need to be created everytime the Provider updates its values
   late Map<Group, int> groups = {};
 
   /// Saves all Pins that could be seen in the feed with the Widget that is shown if already created
-  late Map<Pin, Widget?> allWidgets = {};
+  late List<Pin> allWidgets = [];
 
   final _addEvery = 4;
 
@@ -58,24 +58,20 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   /// If not a new one is created
   Future<void> _fetchPage(int pageKey) async {
     try {
-        Pin key = allWidgets.keys.elementAt(pageKey);
-        Widget? value = allWidgets.values.elementAt(pageKey);
-        if (value != null && key.group.active) {
-          allWidgets[key] = value;
-        } else if (key.group.active) {
-          allWidgets[key] = FeedCard(pin: key, update: pullRefresh,);
-        }
-        if (allWidgets[key] != null) {
+        Pin key = allWidgets.elementAt(pageKey);
+        Widget widget =  FeedCard(pin: key, update: pullRefresh,);
+        if (key.group.active) {
           if (allWidgets.length == pageKey + 1) {
-            pagingController.appendLastPage([allWidgets[key]!]);
+            pagingController.appendLastPage([widget]);
           } else {
             if (pageKey % _addEvery == 0) {
-              pagingController.appendPage([allWidgets[key]!, const CustomAdWidget()], pageKey + 1);
+              pagingController.appendPage(
+                  [widget, const CustomAdWidget()], pageKey + 1);
             } else {
-              pagingController.appendPage([allWidgets[key]!], pageKey + 1);
+              pagingController.appendPage([widget], pageKey + 1);
+            }
           }
         }
-      }
     } catch (error) {
       pagingController.appendLastPage([]);
     }
@@ -91,7 +87,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     if (activeGroups.length != groups.length) {
       if (activeGroups.length < groups.length) {
         refresh = true;
-        allWidgets.removeWhere((key, value) => !activeGroups.any((group) => group == key.group));
+        allWidgets.removeWhere((key) => !activeGroups.any((group) => group == key.group));
         groups.removeWhere((key, value) => !activeGroups.any((element) => element == key));
       } else if (activeGroups.length > groups.length) {
         refresh = true;
@@ -101,7 +97,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
             Set<Pin> pins = await group.pins.asyncValue();
             groups[group] = pins.length;
             for (Pin pin in pins) {
-              allWidgets[pin] = null;
+              allWidgets.add(pin);
             }
           }
         }
@@ -118,20 +114,20 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
       if (pins.length > groups[group]!) {
         // add a new pin
         for (Pin pin in pins) {
-          if (!allWidgets.containsKey(pin)) {
-            allWidgets[pin] = null;
+          if (!allWidgets.contains(pin)) {
+            allWidgets.add(pin);
             refresh = true;
           }
         }
       } else if (pins.length < groups[group]!) {
         // remove a pin
         refresh = true;
-        allWidgets.removeWhere((key, value) => !pins.any((element) => element.id == key.id || group != key.group));
+        allWidgets.removeWhere((key) => !pins.any((element) => element.id == key.id || group != key.group));
       }
       groups[group] = pins.length;
     }
     if (refresh) {
-      allWidgets = SplayTreeMap<Pin, Widget?>.from(allWidgets, (k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
+      allWidgets.sort((k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
       pagingController.refresh();
     }
   }

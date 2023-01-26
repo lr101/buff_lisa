@@ -30,7 +30,7 @@ final navigatorKey = GlobalKey<NavigatorState>();
 /// initializes access to env variables
 /// checks if user is logged in on this device by checking device storage
 Future<void> main() async {
-  if (!kIsWeb) WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
   global.cameras = await availableCameras();
   await dotenv.load();

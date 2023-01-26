@@ -90,8 +90,8 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     if (filterUser) {
       Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterUsername([global.username]);
     } else {
-
-    }Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterUsername([]);
+      Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterUsername([]);
+    }
   }
 
   /// updates the marker list via provider to filter for the pins created int the last [days]
