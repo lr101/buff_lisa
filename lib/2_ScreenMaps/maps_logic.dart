@@ -29,6 +29,8 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
   /// 4: 1 year
   int filterState = 0;
 
+  bool filterUser = false;
+
   /// controller of the flutter_map
   MapController controller = MapController();
 
@@ -78,6 +80,18 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
       case 3: _setFilterDate(30);break;
       case 4: _setFilterDate(365);break;
     }
+  }
+
+  /// rotates filter options [0 - 4]
+  void setUserFilter()  {
+    setState(() {
+      filterUser = !filterUser;
+    });
+    if (filterUser) {
+      Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterUsername([global.username]);
+    } else {
+
+    }Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterUsername([]);
   }
 
   /// updates the marker list via provider to filter for the pins created int the last [days]

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -8,7 +7,7 @@ class AdHelper {
 
   static String get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-6127949856398876/8680349496';
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/2934735716';
     }
@@ -17,7 +16,7 @@ class AdHelper {
 
   static String get nativeAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/2247696110';
+      return 'ca-app-pub-6127949856398876/8680349496';
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/3986624511';
     }
@@ -32,11 +31,12 @@ class CustomAdWidget extends StatefulWidget {
   State<StatefulWidget> createState() => CustomAdWidgetState();
 }
 
-class CustomAdWidgetState extends State<CustomAdWidget> {
+class CustomAdWidgetState extends State<CustomAdWidget>  with AutomaticKeepAliveClientMixin<CustomAdWidget>{
   BannerAd? ad;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SizedBox(
       width: double.infinity,
       height: 100,
@@ -86,5 +86,8 @@ class CustomAdWidgetState extends State<CustomAdWidget> {
       ),
     ).load();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
 }

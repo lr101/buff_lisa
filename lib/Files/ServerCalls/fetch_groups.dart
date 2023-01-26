@@ -13,7 +13,7 @@ class FetchGroups {
   /// GET request to server
   /// throws an Exception when an error occurs during server call
   static Future<List<Group>> getUserGroups() async {
-    Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/groups" , {}, 0, timeout: 10);
+    Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/groups" , {}, 0, timeout: 20);
     if (response.statusCode == 200) {
       return _toGroupList(response);
     } else {

@@ -11,53 +11,46 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureProvider<Widget>(
-        create: (_) => state.handleFutureImage(),
-        initialData: const Center(child: CircularProgressIndicator()),
-        builder: ((context, child) => Scaffold(
-          body: Column(
-              children: [
-                Center(
+    return SafeArea(
+        child: Scaffold(
+          body: FutureProvider<Widget>(
+              create: (_) => state.handleFutureImage(),
+              initialData: const Center(child: CircularProgressIndicator()),
+              builder: ((context, child) => Scaffold(
+                body: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.width,
-                        child:Consumer<Widget>(builder: (context, widget, child) => widget), //insert future image
+                        height: 200,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  IconButton(onPressed: state.handleBack, icon: const Icon(Icons.arrow_back)),
+                                  IconButton(onPressed: state.handleApprove, icon: const Icon(Icons.add_task)),
+                                ],
+                              ),
+                              const SizedBox(height: 18,),
+                              const Text("Approve Image", style: TextStyle(fontSize: 20),)
+                            ]
+                        ),
                       ),
-                      OutlinedButton(
-                          onPressed: state.handleApprove,
-                          style: OutlinedButton.styleFrom(
-                            primary: global.cThird,
-                            padding: const EdgeInsets.all(10),
-                            textStyle: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 40,
-                            ),
-                          ),
-                          child: const Text("Approve")
-
+                      Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child:Consumer<Widget>(builder: (context, widget, child) => widget), //insert future image
+                          )
                       ),
-                      OutlinedButton(
-                          onPressed: state.handleBack,
-                          style: OutlinedButton.styleFrom(
-                            primary: global.cFourth,
-                            padding: const EdgeInsets.all(10),
-                            textStyle: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 40,
-                            ),
-                          ),
-                          child: const Text("Back")
-                      )
                     ],
                   ),
                 ),
-            ]
+              )
+              )
           )
-        )
-      )
+      ),
     );
   }
 

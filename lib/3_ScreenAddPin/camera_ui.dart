@@ -2,11 +2,14 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Providers/camera_group_notifier.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../Files/DTOClasses/group.dart';
 import '../Files/Other/global.dart' as global;
+import '../Providers/camera_icon_notifier.dart';
 
 class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
 
@@ -14,40 +17,58 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        height: MediaQuery.of(context).size.height - global.barHeight,
-        child: Scaffold(
+    return Scaffold(
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
                   height: MediaQuery.of(context).viewPadding.top
               ),
-              SizedBox(
-                height: (MediaQuery.of(context).size.height - global.barHeight) * 0.8,
-                child: FutureBuilder<void>(
-                  future: state.initializeControllerFuture(context),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return GestureDetector(
-                          onDoubleTap: () => state.handleCameraChange(context),
-                          onScaleStart: (_) => state.basScaleFactor = state.scaleFactor,
-                          onScaleUpdate: (details) => state.handleZoom(details),
-                          child: SizedBox(
-                            height: state.getHeight(),
-                            width:  state.getWidth(),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: CameraPreview(state.controller),
-                            ),
-                          )
-                      );
-                    } else {
-                      //TODO show better camera preview
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
+              Stack(
+                children: [
+                  SizedBox(
+                    height: (MediaQuery.of(context).size.height - global.barHeight) * 0.8,
+                    child: FutureBuilder<void>(
+                      future: state.initializeControllerFuture(context),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return GestureDetector(
+                              onDoubleTap: () => state.handleCameraChange(context),
+                              onScaleStart: (_) => state.basScaleFactor = state.scaleFactor,
+                              onScaleUpdate: (details) => state.handleZoom(details),
+                              child: SizedBox(
+                                height: state.getHeight(context),
+                                width:  state.getWidth(context),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: CameraPreview(state.controller),
+                                ),
+                              )
+                          );
+                        } else {
+                          //TODO show better camera preview
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                      },
+                    ),
+                  ),
+                  Align(
+                   alignment: Alignment.topRight,
+                   child: Consumer<CameraIconNotifier>(
+                          builder: (context, value, child) {
+                            return FloatingActionButton(
+                                heroTag: "cameraBtnFlash",
+                                backgroundColor: global.cThird,
+                                onPressed: state.switchFlash,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: value.getFlashIcon(),
+                                )
+                            );
+                           },
+                    )
+                  )
+                ],
               ),
               SizedBox(
                 height: (MediaQuery.of(context).size.height - global.barHeight) * 0.15,
@@ -76,7 +97,6 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
               )
             ],
           ),
-        )
       );
     }
 

@@ -334,22 +334,36 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void>  _updateValues() async {
     Map<Pin, Marker> mark = Map.from(_allMarkers);
-    _filterMaxDate(mark);
-    _filterMinDate(mark);
+    mark = _filterMaxDate(mark);
+    mark = _filterMinDate(mark);
+    mark = _filterUsers(mark);
+    print(mark.length);
     _shownMarkers = List.from(mark.values);
     notifyListeners();
   }
 
   /// filter to filter all pins in [mark] with [__filterDateMin]
-  void _filterMinDate(Map<Pin, Marker> mark) {
-    if (__filterDateMin == null) return;
+  Map<Pin, Marker> _filterMinDate(Map<Pin, Marker> mark) {
+    if (__filterDateMin == null) return mark;
     mark.removeWhere((k,v) => k.creationDate.isBefore(__filterDateMin!));
+    return mark;
   }
 
   /// filter to filter all pins in [mark] with [__filterDateMax]
-  void _filterMaxDate(Map<Pin, Marker> mark) {
-    if (__filterDateMax == null) return;
+  Map<Pin, Marker> _filterMaxDate(Map<Pin, Marker> mark) {
+    if (__filterDateMax == null) return mark;
     mark.removeWhere((k,v) => k.creationDate.isAfter(__filterDateMax!));
+    return mark;
   }
 
+  Map<Pin, Marker> _filterUsers(Map<Pin, Marker> mark) {
+    if (__filterUsernames.isEmpty) return mark;
+    if (__filterUsernames.length == 1)  {
+      mark.removeWhere((key, value) => key.username != __filterUsernames.first);
+    } else {
+      mark.removeWhere((key, value) => !__filterUsernames.any((element) => element == key.username));
+    }
+    return mark;
+
+  }
 }

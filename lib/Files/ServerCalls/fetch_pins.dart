@@ -13,7 +13,7 @@ class FetchPins {
   /// throws an Exception if an error occurs
   /// GET Request to Server
   static Future<Set<Pin>> fetchGroupPins(Group group) async {
-    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pins", {}, 0,timeout: 15);
+    Response response = await RestAPI.createHttpsRequest("/api/groups/${group.groupId}/pins", {}, 0,timeout: 20);
     if (response.statusCode == 200) {
       return toPinSet(response, group);
     } else {

@@ -75,6 +75,15 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FloatingActionButton(
+              heroTag: "filterYourOwnPins",
+              onPressed: state.setUserFilter,
+              backgroundColor: state.filterUser ?  global.cThird : Colors.grey,
+              child: const Icon(Icons.person),
+            ),
+            const SizedBox(
+              height: 3,
+            ),
+            FloatingActionButton(
               heroTag: "setFilterBtn",
               onPressed: state.setFilter,
               backgroundColor: state.filterState % 5 != 0 ?  global.cThird : Colors.grey,

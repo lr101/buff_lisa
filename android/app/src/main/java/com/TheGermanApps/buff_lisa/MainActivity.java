@@ -1,4 +1,4 @@
-package com.LR_Projects.buff_lisa;
+package com.TheGermanApps.buff_lisa;
 
 import io.flutter.embedding.android.FlutterActivity;
 

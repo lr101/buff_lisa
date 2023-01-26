@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../Files/Other/global.dart' as global;
@@ -10,6 +11,9 @@ class CameraNotifier with ChangeNotifier {
 
   /// get method of [currentCameraIndex]
   int get getCameraIndex => currentCameraIndex;
+
+  /// nativ ratio of the selected camera
+  late double ratio;
 
   /// set method of [currentCameraIndex]
   /// cycles through all available cameras

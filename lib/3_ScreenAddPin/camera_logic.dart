@@ -1,6 +1,7 @@
 
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:buff_lisa/Providers/camera_icon_notifier.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,9 @@ class CameraControllerWidget extends State<CameraWidget> {
   late CameraController controller;
 
   @override
+  late BuildContext context;
+
+  @override
   Widget build(BuildContext context) {
     final state = this;
     return MultiProvider(
@@ -68,8 +72,15 @@ class CameraControllerWidget extends State<CameraWidget> {
           ChangeNotifierProvider.value(
             value: CameraGroupNotifier(),
           ),
+          ChangeNotifierProvider.value(
+            value: CameraIconNotifier(),
+          ),
         ],
-        builder: ((context, child) => CameraUI(state: state))
+        builder: ((context, child) {
+          this.context = context;
+          return CameraUI(state: this);
+          }
+        )
     );
   }
 
@@ -83,6 +94,7 @@ class CameraControllerWidget extends State<CameraWidget> {
       ratio = controller.value.aspectRatio;
       _minZoom = await controller.getMinZoomLevel();
       _maxZoom = await controller.getMaxZoomLevel();
+      controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).getFlashMode());
     } catch(_) {
       _minZoom = basScaleFactor;
       _maxZoom = basScaleFactor;
@@ -118,8 +130,12 @@ class CameraControllerWidget extends State<CameraWidget> {
     }
   }
 
+  void switchFlash() {
+    controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).nextFlashMode());
+  }
+
   /// returns the width of the camera to fit a 16:9 camera preview perfectly
-  double getWidth() {
+  double getWidth(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height - global.barHeight;
     if (width * ratio > height) {
@@ -129,7 +145,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   }
 
   /// returns the height of the camera to fit a 16:9 camera preview perfectly
-  double getHeight() {
+  double getHeight(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height - global.barHeight;
     if (width * ratio <= height) {

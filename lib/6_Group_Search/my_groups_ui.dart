@@ -77,25 +77,16 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
         child: GestureDetector(
           onTap: () => state.handlePressGroupCard(group),
           child: ListTile(
-            title: Row(
-                children: [
-                  FutureBuilder<Uint8List>(
-                    future: group.profileImage.asyncValue(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 20,);
-                      } else {
-                        return const CircleAvatar(backgroundColor: Colors.grey, radius: 20,);
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 20,),
-                  Text(group.name)
-                ]
-            ),
-            leading: Text(
-              "${index + 1}.",
-              style: const TextStyle(color: global.cPrime),
+            title: Text(group.name),
+            leading:FutureBuilder<Uint8List>(
+              future: group.profileImage.asyncValue(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 20,);
+                } else {
+                  return const CircleAvatar(backgroundColor: Colors.grey, radius: 20,);
+                }
+              },
             ),
           ),
         )
