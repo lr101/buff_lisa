@@ -8,7 +8,11 @@ class ThemeProvider with ChangeNotifier {
 
   final  CustomTheme darkTheme = DarkTheme.darkThemeFactory();
   final CustomTheme lightTheme = LightTheme.lightThemeFactory();
-  bool _first = true;
+  late bool _first;
+
+  ThemeProvider(bool brightness) {
+    _first = brightness;
+  }
 
   void toggleThemeMode() {
     _first = !_first;

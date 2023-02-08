@@ -84,11 +84,11 @@ class LoginScreen extends StatelessWidget {
     if (s == null ) {
       return "input is not valid";
     } else if (s.length < 2 ) {
-      return "input must be at least 3 characters";
+      return "at least 2 characters";
     } else if (s.length > 29) {
-      return "input must be shorter than 30 characters";
+      return "shorter than 30 characters";
     } else  if (!alphanumeric.hasMatch(s)) {
-      return "input must start with a letter and is allowed to contain 0-9 and !?#\$%&+";
+      return "start with a letter - allowed: 0-9!?#\$%&+";
     }
     return null;
   }

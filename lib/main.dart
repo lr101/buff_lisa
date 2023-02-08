@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
@@ -37,7 +36,7 @@ Future<void> main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(GroupDTOAdapter());
   Hive.registerAdapter(PinDTOAdapter());
-  runApp(MyApp(isLoggedIn: await Secure.tryLocalLogin()));
+  runApp(MyApp(isLoggedIn: await Secure.tryLocalLogin(), systemTheme: WidgetsBinding.instance.window.platformBrightness,));
 }
 
 class MyApp extends StatelessWidget {
@@ -46,9 +45,10 @@ class MyApp extends StatelessWidget {
   /// false: user is not logged in on this device: redirect to [LoginScreen]
   final bool isLoggedIn;
 
-  ///Constructor
-  const MyApp({super.key, required this.isLoggedIn});
+  final Brightness systemTheme;
 
+  ///Constructor
+  const MyApp({super.key, required this.isLoggedIn, required this.systemTheme});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
                 value: ClusterNotifier(),
               ),
               ChangeNotifierProvider.value(
-                value: ThemeProvider(),
+                value: ThemeProvider(systemTheme == Brightness.dark),
               ),
               ChangeNotifierProvider.value(
                 value: UserNotifier(),

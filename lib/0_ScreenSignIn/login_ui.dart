@@ -12,10 +12,10 @@ class LoginUI extends StatelessUI<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      title: 'Sticker Map',
+      title: 'Login',
       termsOfService: [
-        TermOfService(id: "0", text: "Terms of Service (https:sticker-map.hopto.org/public/agb)", mandatory: true),
-        TermOfService(id: "0", text: "Privacy Policy (https:sticker-map.hopto.org/public/privacy-policy)", mandatory: true)
+        TermOfService(id: "0", text: "Terms of Service", mandatory: true),
+        TermOfService(id: "0", text: "Privacy Policy", mandatory: true)
       ],
       onLogin: widget.authUser,
       onSignup: widget.signupUser,

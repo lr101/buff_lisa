@@ -28,18 +28,26 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                 )
               ),
               Text("username: ${state.widget.pin.username}"),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: OutlinedButton(
-                    onPressed: state.handleButtonPress,
-                    child: Text(
-                      "Delete",
-                      style: TextStyle(color: (state.activeDelete ? global.cPrime : Colors.grey)),
-                    )
-                  )
-                )
+              getDelete()
             ]
         )
     );
+  }
+
+  Widget getDelete() {
+    if (state.activeDelete) {
+      return Align(
+          alignment: Alignment.topCenter,
+          child: OutlinedButton(
+              onPressed: state.handleButtonPress,
+              child: Text(
+                "Delete",
+                style: TextStyle(color: (state.activeDelete ? global.cPrime : Colors.grey)),
+              )
+          )
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 }

@@ -48,8 +48,18 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
                 ),
               )
               )
-          )
-      ),
+          ),
+            floatingActionButton: Container(
+              width: MediaQuery.of(context).size.width - 50,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  color: const Color(0x99ffffff)
+              ),
+              child: TextButton(onPressed: state.handleApprove, child: const Text("Approve")),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        ),
     );
   }
 

@@ -59,7 +59,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
       );
       if(croppedBytes == null) return;
       final dimensions = await decodeImageFromList(croppedBytes);
-      if ((dimensions.width < 100 && dimensions.height < 100) || dimensions.width != dimensions.height) return; //TODO error message -> picture to small
+      if ((dimensions.width < 500 && dimensions.height < 500)) return; //TODO error message -> picture to small
       if (await FetchUsers.changeProfilePicture(global.username, croppedBytes)) {
         setState(() {});
       }
