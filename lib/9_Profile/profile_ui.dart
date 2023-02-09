@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:buff_lisa/7_Settings/app_settings_logic.dart';
-import 'package:buff_lisa/7_Settings/profile_settings_logic.dart';
+import 'package:buff_lisa/7_Settings/AppSettings/app_settings_logic.dart';
+import 'package:buff_lisa/7_Settings/ProfileSettings/profile_settings_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_image_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
@@ -9,9 +9,9 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:buff_lisa/Providers/profile_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../7_Settings/show_web_widget.dart';
-import '../Files/Other/global.dart' as global;
-import '../Files/ServerCalls/fetch_pins.dart';
+import '../7_Settings/WebView/show_web_widget.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 
 class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
 

@@ -7,9 +7,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../Files/DTOClasses/group.dart';
-import '../Files/Other/global.dart' as global;
-import '../Providers/camera_icon_notifier.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Providers/camera_icon_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 
 class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
 
@@ -82,7 +83,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                       onTap: () => state.takePicture(context),
                       child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white,width: 2.0),
+                            border: Border.all(color: Provider.of<ThemeProvider>(context).getCustomTheme.c1,width: 2.0),
                             shape: BoxShape.circle
                         ),
                         height: (MediaQuery.of(context).size.height - global.barHeight) * 0.15,

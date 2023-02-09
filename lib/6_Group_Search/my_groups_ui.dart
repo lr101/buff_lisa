@@ -5,10 +5,10 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../Files/DTOClasses/group.dart';
-import '../Files/Other/global.dart' as global;
-import '../Files/Widgets/CustomTitle.dart';
-import '../Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
 
 class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
@@ -17,21 +17,23 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: ListView.builder(
-          itemCount: Provider.of<ClusterNotifier>(context).getGroups.length + 2,
-          padding: const EdgeInsets.all(8.0),
-          itemBuilder: (BuildContext context, int index) {
-            if (index == 0) {
-              return getTitle();
-            } else if (index == 1) {
-              return getCardExploreExistingGroups();
-            } else {
-              index -= 2;
-              return getCardOfGroup(index, context);
-            }
-          },
-        )
+    return SafeArea(
+        child: Scaffold(
+          body: ListView.builder(
+            itemCount: Provider.of<ClusterNotifier>(context).getGroups.length + 2,
+            padding: const EdgeInsets.all(8.0),
+            itemBuilder: (BuildContext context, int index) {
+              if (index == 0) {
+                return getTitle();
+              } else if (index == 1) {
+                return getCardExploreExistingGroups();
+              } else {
+                index -= 2;
+                return getCardOfGroup(index, context);
+              }
+            },
+          )
+      )
     );
   }
 
@@ -51,10 +53,7 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
       ),
       child: ListTile(
         onTap: state.handlePressSearchGroup,
-        title: const Text(
-            "Explore existing groups",
-            style: TextStyle(color: global.cPrime)
-        ),
+        title: const Text("Explore existing groups",),
         leading: const Icon(Icons.add),
       ),
     );

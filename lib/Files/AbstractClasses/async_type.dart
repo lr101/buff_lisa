@@ -88,6 +88,19 @@ class AsyncType<T>  {
         }
     }
 
+    Widget customWidget({required Widget Function(T?,bool) callback, T? defaultValue}) {
+        return FutureBuilder<T>(
+            future: asyncValue(),
+            builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                    return callback(snapshot.requireData,true);
+                } else {
+                    return callback(defaultValue,false);
+                }
+            },
+        );
+    }
+
     Future<T> refresh () async {
         await _m.acquire();
         try {

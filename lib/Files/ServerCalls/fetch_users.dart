@@ -5,8 +5,8 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
 import 'package:http/http.dart';
 
-import '../DTOClasses/ranking.dart';
-import '../Other/global.dart' as global;
+import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 class FetchUsers {
 
   /// returns a list of members and the amount of points they have of a specific [group]

@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:buff_lisa/7_Settings/hidden_user_logic.dart';
+import 'package:buff_lisa/7_Settings/AppSettings/hidden_user_logic.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:images_picker/images_picker.dart' as picker;
 import 'package:buff_lisa/9_Profile/profile_ui.dart';
@@ -9,12 +9,12 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 import '../0_ScreenSignIn/login_logic.dart';
 import '../0_ScreenSignIn/secure.dart';
-import '../7_Settings/email_logic.dart';
-import '../7_Settings/hidden_pin_logic.dart';
-import '../7_Settings/password_logic.dart';
-import '../7_Settings/report_user.dart';
-import '../Files/Other/global.dart' as global;
-import '../Providers/theme_provider.dart';
+import '../7_Settings/ProfileSettings/email_logic.dart';
+import '../7_Settings/AppSettings/hidden_pin_logic.dart';
+import '../7_Settings/ProfileSettings/password_logic.dart';
+import '../7_Settings/Report/report_user.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Providers/theme_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -37,6 +37,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// check if 100 < width, height and image is square
   /// saves image in Provider to trigger reload of image preview
   Future<void> handleImageUpload(BuildContext context) async {
+    Color themeColor = Provider.of<ThemeProvider>(context).getCustomTheme.c1;
     List<picker.Media>? res = await picker.ImagesPicker.pick(
       count: 1,
       pickType: picker.PickType.image,
@@ -51,7 +52,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
           ratioX: 1,
           ratioY: 1,
         ),
-        squareCircleColor: Colors.red,
+        squareCircleColor: themeColor,
         defaultTextColor: Colors.black,
         colorForWhiteSpace: Colors.black,
         outputImageFormat: OutputImageFormat.jpg,

@@ -5,10 +5,10 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:provider/provider.dart';
 
-import '../Files/AbstractClasses/abstract_widget_ui.dart';
-import '../Files/Other/global.dart' as global;
-import '../Providers/cluster_notifier.dart';
-import '../Providers/theme_provider.dart';
+import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'maps_logic.dart';
 
 class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
@@ -77,7 +77,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
             FloatingActionButton(
               heroTag: "filterYourOwnPins",
               onPressed: state.setUserFilter,
-              backgroundColor: state.filterUser ?  global.cThird : Colors.grey,
+              backgroundColor: state.filterUser ?  Provider.of<ThemeProvider>(context).getCustomTheme.c1 : Colors.grey,
               child: const Icon(Icons.person),
             ),
             const SizedBox(
@@ -86,7 +86,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
             FloatingActionButton(
               heroTag: "setFilterBtn",
               onPressed: state.setFilter,
-              backgroundColor: state.filterState % 5 != 0 ?  global.cThird : Colors.grey,
+              backgroundColor: state.filterState % 5 != 0 ?  Provider.of<ThemeProvider>(context).getCustomTheme.c1 : Colors.grey,
               child: (state.filterState % 5 == 0 ? const Icon(Icons.timeline_rounded) : Text(state.buttonText())),
             ),
             const SizedBox(
@@ -95,7 +95,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
             FloatingActionButton(
               heroTag: "setLocationBtn",
               onPressed: state.setLocation,
-              backgroundColor: global.cThird,
+              backgroundColor: Provider.of<ThemeProvider>(context).getCustomTheme.c1,
               child: const Icon(Icons.location_on),
             ),
           ],

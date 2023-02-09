@@ -65,9 +65,9 @@ class CustomTitleState extends State<CustomTitle> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        (widget.back) ? IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)) : const SizedBox(width: 48,),
+        (widget.back) ? IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)) : const SizedBox.square(dimension: 48,),
         Text( widget.title, style: const TextStyle(fontSize: 20),),
-        (widget.action != null) ? IconButton(onPressed: widget.action?.action, icon: widget.action!.icon) : const SizedBox(width: 48,),
+        (widget.action != null) ? IconButton(onPressed: widget.action?.action, icon: widget.action!.icon) : const SizedBox.square(dimension: 48,),
       ],
     );
   }

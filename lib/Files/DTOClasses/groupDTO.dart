@@ -6,7 +6,7 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../AbstractClasses/async_type.dart';
+import 'package:buff_lisa/Files/AbstractClasses/async_type.dart';
 import 'group.dart';
 import 'pin.dart';
 import 'package:hive/hive.dart';

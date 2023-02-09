@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 /// ChangeNotifier saving changes and information of the [CameraPage] Widget
 class CameraNotifier with ChangeNotifier {

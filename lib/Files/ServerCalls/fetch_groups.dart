@@ -5,7 +5,7 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
 import 'package:http/http.dart';
 
-import '../Other/global.dart' as global;
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 class FetchGroups {
 

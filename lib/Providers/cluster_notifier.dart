@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../2_ScreenMaps/image_widget_logic.dart';
-import '../Files/DTOClasses/pin.dart';
-import '../Files/ServerCalls/fetch_pins.dart';
-import '../Files/Other/global.dart' as global;
+import '../2_ScreenMaps/ClickOnPin/image_widget_logic.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import '../main.dart';
 
 class ClusterNotifier extends ChangeNotifier {

@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:flutter/material.dart';
 
-import '../AbstractClasses/async_type.dart';
+import 'package:buff_lisa/Files/AbstractClasses/async_type.dart';
 import 'group.dart';
 
 class Pin {

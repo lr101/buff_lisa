@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import '../Other/global.dart' as global;
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 class RestAPI {
 

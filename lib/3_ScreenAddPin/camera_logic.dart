@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../2_ScreenMaps/maps_logic.dart';
-import '../Files/DTOClasses/group.dart';
-import '../Files/Other/global.dart' as global;
-import '../Providers/camera_group_notifier.dart';
-import '../Providers/camera_notifier.dart';
-import '../Providers/cluster_notifier.dart';
-import 'check_image_logic.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Providers/camera_group_notifier.dart';
+import 'package:buff_lisa/Providers/camera_notifier.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'TakeImage/check_image_logic.dart';
 
 class CameraWidget extends StatefulWidget {
 

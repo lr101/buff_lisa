@@ -6,8 +6,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
-import '../Files/Other/global.dart' as global;
-import '../Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
 class MapsWidget extends StatefulWidget {
   //TODO is it actually needed?

@@ -1,7 +1,9 @@
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'navbar_logic.dart';
 
 
@@ -26,7 +28,7 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
         ),
         bottomNavigationBar: SizedBox(height: 58, child:BottomNavigationBar(
           backgroundColor: Colors.white,
-          unselectedIconTheme: const IconThemeData(color: global.cPrime),
+          unselectedIconTheme: IconThemeData(color: Provider.of<ThemeProvider>(context).getCustomTheme.c2),
           key: state.globalKey,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -51,7 +53,7 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
             ),
           ],
           currentIndex: state.selectedIndex,
-          selectedItemColor: global.cFifth,
+          selectedItemColor: Provider.of<ThemeProvider>(context).getCustomTheme.c1,
           onTap: state.onItemTapped,
         )
       ),

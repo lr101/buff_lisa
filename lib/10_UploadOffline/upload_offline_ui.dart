@@ -1,9 +1,9 @@
 import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
-import 'package:buff_lisa/5_Ranking/feed_card_logic.dart';
+import 'package:buff_lisa/5_Feed/FeedCard/feed_card_logic.dart';
 import 'package:flutter/material.dart';
 
-import '../Files/AbstractClasses/abstract_widget_ui.dart';
-import '../Files/DTOClasses/pin.dart';
+import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 
 
 class UploadOfflinePageUI extends StatefulUI<UploadOfflinePage, UploadOfflinePageState> {

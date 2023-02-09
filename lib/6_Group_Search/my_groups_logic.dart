@@ -1,9 +1,9 @@
 import 'package:buff_lisa/6_Group_Search/my_groups_ui.dart';
-import 'package:buff_lisa/6_Group_Search/search_logic.dart';
-import 'package:buff_lisa/6_Group_Search/show_group_logic.dart';
+import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_logic.dart';
+import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:flutter/material.dart';
 
-import '../Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
 
 
 class MyGroupsPage extends StatefulWidget {

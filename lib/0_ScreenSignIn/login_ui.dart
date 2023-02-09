@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 
-import '../7_Settings/show_web_widget.dart';
+import '../7_Settings/WebView/show_web_widget.dart';
 
 class LoginUI extends StatelessUI<LoginScreen> {
   const LoginUI({super.key, required widget}) : super(widget: widget);
@@ -42,12 +42,12 @@ class LoginUI extends StatelessUI<LoginScreen> {
     return Text.rich(
         TextSpan(
             text: 'By continuing, you agree to our ', style: const TextStyle(
-            fontSize: 16, color: Colors.white
+            fontSize: 16,
         ),
             children: <TextSpan>[
               TextSpan(
                   text: 'Terms of Service', style: const TextStyle(
-                fontSize: 16, color: Colors.white,
+                fontSize: 16,
                 decoration: TextDecoration.underline,
               ),
                   recognizer: TapGestureRecognizer()
@@ -60,12 +60,12 @@ class LoginUI extends StatelessUI<LoginScreen> {
               ),
               TextSpan(
                   text: ' and ', style: const TextStyle(
-                  fontSize: 18, color: Colors.white
+                  fontSize: 18,
               ),
                   children: <TextSpan>[
                     TextSpan(
                         text: 'Privacy Policy', style: const TextStyle(
-                        fontSize: 18, color: Colors.white,
+                        fontSize: 18,
                         decoration: TextDecoration.underline
                     ),
                         recognizer: TapGestureRecognizer()

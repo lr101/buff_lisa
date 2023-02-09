@@ -1,8 +1,8 @@
 import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Files/DTOClasses/group.dart';
-import '../Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
 
 class SelectGroupWidget extends StatefulWidget {

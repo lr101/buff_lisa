@@ -9,13 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../2_ScreenMaps/maps_logic.dart';
-import '../5_Ranking/feed_logic.dart';
+import '../5_Feed/feed_logic.dart';
 import '../8_SelectGroupWidget/select_group_widget_logic.dart';
-import '../Files/DTOClasses/group.dart';
-import '../Files/DTOClasses/hive_handler.dart';
-import '../Files/DTOClasses/pin.dart';
-import '../Files/Other/global.dart' as global;
-import '../Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/DTOClasses/hive_handler.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
 
 class BottomNavigationWidget extends StatefulWidget {

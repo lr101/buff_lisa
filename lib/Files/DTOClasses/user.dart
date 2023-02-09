@@ -4,7 +4,7 @@ import 'package:buff_lisa/Files/AbstractClasses/async_type.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../ServerCalls/fetch_users.dart';
+import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 
 class User {
 

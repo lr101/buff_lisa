@@ -31,7 +31,7 @@ class CameraIconNotifier with ChangeNotifier {
       case 2: icon = Icons.flash_on;break;
       default: icon = Icons.flash_auto;
     }
-    return Icon(icon, color: Colors.white,);
+    return Icon(icon);
   }
 
 }
