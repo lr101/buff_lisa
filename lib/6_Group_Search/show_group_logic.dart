@@ -28,6 +28,8 @@ class ShowGroupPage extends StatefulWidget {
 
 class ShowGroupPageState extends State<ShowGroupPage> {
 
+  bool loaded = false;
+
   @override
   Widget build(BuildContext context) => ShowGroupUI(state: this);
 

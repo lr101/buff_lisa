@@ -9,31 +9,41 @@ import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/ranking.dart';
 import '../Files/Other/global.dart' as global;
+import '../Files/Widgets/CustomTitle.dart';
 
 
 class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
 
   const ShowGroupUI({super.key, required state}) : super(state: state);
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body : FutureBuilder<List<Widget>>(
-        future: getGroupInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.requireData.length,
-              itemBuilder: (context, index) => snapshot.requireData[index],
+      body: FutureBuilder<List<Ranking>>(
+        future: widget.group.members.asyncValue(),
+        builder: (context, snapshot) => ListView.builder(
+          itemCount: 1 + (snapshot.hasData ? snapshot.requireData.length : 0),
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return CustomTitle(
+                title: widget.group.name,
+                back: true,
+                action: (state.widget.group.groupAdmin.syncValue == global.username) ? CustomAction(icon: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null,
+                imageCallback: widget.group.profileImage.asyncValue,
+                child: Column(
+                  children: [
+                    _getDescription(),
+                    _getInviteLink(),
+                    const SizedBox(height: 10,),
+                    snapshot.hasData ? const SizedBox.shrink() : const CircularProgressIndicator()
+                  ],
+                )
             );
           } else {
-            return ListView.builder(
-              itemCount: 1,
-              itemBuilder: (context, index) => getTopBar(null, null, null)
-            );
+            return buildCard(snapshot.requireData[index-1], index-1);
           }
-        },
+        }
+      ),
       ),
       floatingActionButton: Container(
           width: MediaQuery.of(context).size.width - 50,
@@ -86,86 +96,67 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
 
 
   /// returns the description of a group
-  Widget _getDescription(String? description) {
-    if (description == null) {
+  Widget _getDescription() {
+    if (state.widget.group.visibility == 0 || widget.myGroup) {
+      return FutureBuilder<String>(
+          future: state.widget.group.description.asyncValue(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Description:"),
+                  Container(
+                      decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                      child: Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: Text(snapshot.requireData, overflow: TextOverflow.ellipsis,))
+                  )
+                ],
+              );
+            } else {
+              return const Text("Description: LOADING...");
+            }
+          }
+      );
+    } else {
       return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             Text("Description: "),
             Icon(Icons.lock)
           ]
       );
-    } else {
-      return Column(
-        children: [
-          const Text("Description:"),
-          Text(description, overflow: TextOverflow.ellipsis,)
-        ],
-      );
     }
   }
 
-  Future<List<Widget>> getGroupInfo() async {
-    List<Widget> widgets = [];
-    List<Ranking> ranking = [];
-    if (state.widget.group.visibility == 0 || widget.myGroup) ranking = await state.widget.group.members.asyncValue();
-    String? inviteUrl;
-    String? description;
-    if (state.widget.group.visibility != 0 && widget.myGroup) inviteUrl = await state.widget.group.getInviteUrl();
-    if (state.widget.group.visibility == 0 || widget.myGroup) description = await state.widget.group.description.asyncValue();
-    Uint8List image = await state.widget.group.profileImage.asyncValue();
-    widgets.add(getTopBar(image, inviteUrl, description));
-    for (int i = 0; i < ranking.length; i++) {
-      widgets.add(buildCard(ranking[i], i));
+  Widget _getInviteLink() {
+    if (state.widget.group.visibility != 0 && widget.myGroup) {
+      return FutureBuilder<String>(
+        future: state.widget.group.getInviteUrl(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return TextButton(onPressed: () => Clipboard.setData(ClipboardData(text: snapshot.requireData)), child: Text("Password: ${snapshot.requireData}"));
+          } else {
+            return const Text("LOADING");
+          }
+        },
+      );
+    } else {
+      return const SizedBox.shrink();
     }
-    return widgets;
   }
 
   Widget buildCard(member, index) {
     String adminString = "";
     if (member.username == widget.group.groupAdmin.syncValue!) adminString = "(admin)";
     return Card(
+      color: (member.username == global.username) ? Colors.green : null,
         child: ListTile(
           leading: Text("${index + 1}. "),
           title: Text("${member.username} $adminString"),
           trailing: Text("${member.points} points"),
         )
     );
-  }
-
-  Widget getTopBar(Uint8List? groupImage, String? inviteUrl, String? description) {
-    Image image = (groupImage != null) ? Image.memory(groupImage) : const Image(image: AssetImage("images/profile.jpg"));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(onPressed: () => state.close(), icon: const Icon(Icons.arrow_back)),
-            getAdminButton()
-          ],
-        ),
-        Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [CircleAvatar(backgroundImage: image.image, radius: 50,)]
-        ),
-        const SizedBox(height: 10,),
-        Text("group name: ${state.widget.group.name}"),
-        if (inviteUrl != null) const SizedBox(height: 10,),
-        if (inviteUrl != null) TextButton(onPressed: () => Clipboard.setData(ClipboardData(text: inviteUrl)), child: Text("Password: $inviteUrl")),
-        const SizedBox(height: 10,),
-        _getDescription(description),
-        const SizedBox(height: 50,)
-      ],
-    );
-  }
-
-  Widget getAdminButton() {
-    if (state.widget.group.groupAdmin.syncValue == global.username) {
-      return IconButton(onPressed: () => state.editAsAdmin(), icon: const Icon(Icons.edit));
-    } else {
-      return Container();
-    }
   }
 }

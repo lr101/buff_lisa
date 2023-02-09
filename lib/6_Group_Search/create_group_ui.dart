@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../Files/Other/global.dart' as global;
+import '../Files/Widgets/CustomTitle.dart';
 
 
 class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
@@ -15,63 +16,63 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
   Widget build(BuildContext context) {
     TextEditingController t1 = Provider.of<CreateGroupNotifier>(context).getText1;
     TextEditingController t2 = Provider.of<CreateGroupNotifier>(context).getText2;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: MediaQuery.of(context).viewPadding.top,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SafeArea(child:
+        Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)),
-              IconButton(onPressed: () => state.createGroup(context), icon: const Icon(Icons.add_task)),
-            ],
-          ),
-          Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () => state.handleImageUpload(context),
-                  child: CircleAvatar(backgroundImage: state.getImageWidget(Provider.of<CreateGroupNotifier>(context).getImage).image, radius: 50,),
-                )
-              ]
-          ),
-          const SizedBox(height: 20,),
-          const Text("group name:"),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: TextFormField(
-                textAlign: TextAlign.center,
-                controller: t1
-            ),
-          ),
-          const SizedBox(height: 20,),
-          const Text("Description:"),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: TextField(
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              controller: t2,
-            ),
-          ),
-          const SizedBox(height: 20,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("public "),
-              Switch(
-                value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
-                onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
+              // -- title --
+              CustomTitle(
+                title: "Create Group",
+                back: true,
+                action: CustomAction(icon: const Icon(Icons.add_task), action: () => state.createGroup(context)),
               ),
-              const Text("private")
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => state.handleImageUpload(context),
+                      child: CircleAvatar(backgroundImage: state.getImageWidget(Provider.of<CreateGroupNotifier>(context).getImage).image, radius: 50,),
+                    )
+                  ]
+              ),
+              const SizedBox(height: 20,),
+              const Text("group name:"),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextFormField(
+                    textAlign: TextAlign.center,
+                    controller: t1
+                ),
+              ),
+              const SizedBox(height: 20,),
+              const Text("Description:"),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  controller: t2,
+                ),
+              ),
+              const SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("public "),
+                  Switch(
+                    value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
+                    onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
+                  ),
+                  const Text("private")
+                ],
+              )
             ],
-          )
-        ],
-      ),
+          ),
+        )
     );
   }
 

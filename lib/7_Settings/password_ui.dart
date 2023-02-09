@@ -3,6 +3,7 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import '../Files/Other/global.dart' as global;
 import '../0_ScreenSignIn/login_logic.dart';
+import '../Files/Widgets/CustomTitle.dart';
 
 class PasswordUI extends StatelessUI<Password> {
 
@@ -19,24 +20,12 @@ class PasswordUI extends StatelessUI<Password> {
           height: size,
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 200,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(onPressed: () => widget.handleCancelPress(context), icon: const Icon(Icons.arrow_back)),
-                            IconButton(onPressed: () =>  widget.handleSubmitPress(controller1, controller2, context), icon: const Icon(Icons.add_task)),
-                          ],
-                        ),
-                        const SizedBox(height: 18,),
-                        const Text("Change Password", style: TextStyle(fontSize: 20),)
-                      ]
-                  ),
+                CustomTitle(
+                  title: "Edit Password",
+                  back: true,
+                  action: CustomAction(icon: const Icon(Icons.add_task), action: () => widget.handleSubmitPress(controller1, controller2, context)),
                 ),
                 const Text("Type Password:", style: TextStyle(color: global.cPrime)),
                 Padding (

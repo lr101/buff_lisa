@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/DTOClasses/user.dart';
+import '../Files/Widgets/CustomTitle.dart';
 import '../Providers/cluster_notifier.dart';
 import '../Providers/hidden_pin_page.dart';
 import '../Providers/hidden_user_page.dart';
@@ -21,7 +22,12 @@ class HiddenUsersUI extends StatefulUI<HiddenUsers, HiddenUsersState> {
         body: ListView.builder(
           itemCount: users.length + 1,
           itemBuilder: (context, index) {
-            if (index == 0) return getTitle();
+            if (index == 0) {
+              return const CustomTitle(
+                title: "Hidden Users",
+                back: true,
+              );
+            }
             index--;
             return Card(
               child: ListTile(
@@ -42,26 +48,6 @@ class HiddenUsersUI extends StatefulUI<HiddenUsers, HiddenUsersState> {
               ),
             );
           },
-        )
-    );
-  }
-
-  Widget getTitle() {
-    return SizedBox(
-        height: 200,
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(onPressed: () => Navigator.pop(state.context),
-                      icon: const Icon(Icons.arrow_back)),
-                ],
-              ),
-              const SizedBox(height: 18,),
-              const Text("Hidden users", style: TextStyle(fontSize: 20),)
-            ]
         )
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../Files/Other/global.dart' as global;
+import '../Files/Widgets/CustomTitle.dart';
 
 class ShowWebWidget extends StatefulWidget {
   const ShowWebWidget({super.key, required this.route, required this.title});
@@ -35,11 +36,15 @@ class ShowWebWidgetState extends State<ShowWebWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        automaticallyImplyLeading: true,
+      body: Column(
+        children: [
+          CustomTitle(
+            title: widget.title,
+            back: true,
+          ),
+          Expanded(child: WebViewWidget(controller: ini())),
+        ],
       ),
-      body: WebViewWidget(controller: ini()),
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(10),
         child: FloatingActionButton(onPressed: copyToClip, child: const Icon(Icons.copy)),

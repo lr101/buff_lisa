@@ -1,8 +1,8 @@
 
+import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
 import 'package:flutter/material.dart';
-
-import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../Files/Other/global.dart' as global;
+import '../Files/AbstractClasses/abstract_widget_ui.dart';
 import 'image_widget_logic.dart';
 
 class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
@@ -12,42 +12,33 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: global.cThird,
-          title: const Text("Image"),
-          centerTitle: true,
-        ),
         body:  Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width,
-                  child: widget.pin.image.getWidget()
-                )
+              // -- title --
+              CustomTitle(
+                title: "Image",
+                back: true,
+                action: (widget.pin.username == global.username) ? CustomAction(icon: const Icon(Icons.delete), action: () => state.handleButtonPress()) : null,
+                child: Text("username: ${state.widget.pin.username}"),
               ),
-              Text("username: ${state.widget.pin.username}"),
-              getDelete()
+              // -- image --
+              Expanded(
+                  child:Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    // enable zoom into image:
+                    child: InteractiveViewer(
+                        panEnabled: false,
+                        boundaryMargin: const EdgeInsets.all(100),
+                        minScale: 1,
+                        maxScale: 4,
+                        child:  widget.pin.image.getWidget()
+                    )
+                  )
+              ),
             ]
         )
     );
-  }
-
-  Widget getDelete() {
-    if (state.activeDelete) {
-      return Align(
-          alignment: Alignment.topCenter,
-          child: OutlinedButton(
-              onPressed: state.handleButtonPress,
-              child: Text(
-                "Delete",
-                style: TextStyle(color: (state.activeDelete ? global.cPrime : Colors.grey)),
-              )
-          )
-      );
-    } else {
-      return const SizedBox.shrink();
-    }
   }
 }

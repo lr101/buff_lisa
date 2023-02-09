@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../Files/Other/global.dart' as global;
+import '../Files/Widgets/CustomTitle.dart';
 import 'check_image_logic.dart';
 
 class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
@@ -13,41 +14,32 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          body: FutureProvider<Widget>(
-              create: (_) => state.handleFutureImage(),
-              initialData: const Center(child: CircularProgressIndicator()),
-              builder: ((context, child) => Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  IconButton(onPressed: state.handleBack, icon: const Icon(Icons.arrow_back)),
-                                  IconButton(onPressed: state.handleApprove, icon: const Icon(Icons.add_task)),
-                                ],
-                              ),
-                              const SizedBox(height: 18,),
-                              const Text("Approve Image", style: TextStyle(fontSize: 20),)
-                            ]
-                        ),
-                      ),
-                      Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child:Consumer<Widget>(builder: (context, widget, child) => widget), //insert future image
-                          )
-                      ),
-                    ],
-                  ),
-                ),
-              )
-              )
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // -- title --
+              CustomTitle(
+                title: "Approve",
+                back: true,
+                action: CustomAction(icon: const Icon(Icons.add_task), action: state.handleApprove),
+              ),
+              FutureProvider<Widget>(
+                create: (_) => state.handleFutureImage(),
+                initialData: const Center(child: CircularProgressIndicator()),
+                builder: ((context, child) => Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: InteractiveViewer(
+                      panEnabled: false,
+                      boundaryMargin: const EdgeInsets.all(100),
+                      minScale: 1,
+                      maxScale: 4,
+                      child:  Consumer<Widget>(builder: (context, widget, child) => widget), //insert future image
+                    )
+                  )
+                ))
+              ),
+            ],
           ),
             floatingActionButton: Container(
               width: MediaQuery.of(context).size.width - 50,

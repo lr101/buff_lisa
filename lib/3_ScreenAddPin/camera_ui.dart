@@ -17,18 +17,15 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SizedBox(
-                  height: MediaQuery.of(context).viewPadding.top
-              ),
               Stack(
                 children: [
-                  SizedBox(
-                    height: (MediaQuery.of(context).size.height - global.barHeight) * 0.8,
-                    child: FutureBuilder<void>(
+                  FutureBuilder<void>(
                       future: state.initializeControllerFuture(context),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
@@ -51,7 +48,6 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                         }
                       },
                     ),
-                  ),
                   Align(
                    alignment: Alignment.topRight,
                    child: Consumer<CameraIconNotifier>(
@@ -97,6 +93,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
               )
             ],
           ),
+        )
       );
     }
 

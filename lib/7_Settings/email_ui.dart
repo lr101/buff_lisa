@@ -2,6 +2,7 @@ import 'package:buff_lisa/7_Settings/email_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import '../Files/Other/global.dart' as global;
+import '../Files/Widgets/CustomTitle.dart';
 
 class MailUI extends StatelessUI<Email> {
 
@@ -19,24 +20,12 @@ class MailUI extends StatelessUI<Email> {
           height: size,
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 200,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)),
-                            IconButton(onPressed: () =>  widget.changeMail(controller1, controller2, context), icon: const Icon(Icons.add_task)),
-                          ],
-                        ),
-                        const SizedBox(height: 18,),
-                        const Text("Change Email", style: TextStyle(fontSize: 20),)
-                      ]
-                  ),
+                CustomTitle(
+                  title: "Edit Email",
+                  back: true,
+                  action: CustomAction(icon: const Icon(Icons.add_task), action: () =>  widget.changeMail(controller1, controller2, context)),
                 ),
                 const Text("Type Email:", style: TextStyle(color: global.cPrime)),
                 Padding(

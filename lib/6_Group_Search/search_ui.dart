@@ -7,6 +7,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../Files/DTOClasses/group.dart';
 import '../Files/Other/global.dart' as global;
+import '../Files/Widgets/CustomTitle.dart';
 
 
 class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
@@ -37,6 +38,10 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
   }
 
   Widget getTitle(BuildContext context) {
+    return const CustomTitle(
+        title: "Search Groups",
+        back: true,
+      );
     return SizedBox(
       height: 200,
       child: Column(

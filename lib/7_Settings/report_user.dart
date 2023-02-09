@@ -4,6 +4,7 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
 import '../Files/Other/global.dart' as global;
 import '../Files/ServerCalls/restAPI.dart';
+import '../Files/Widgets/CustomTitle.dart';
 
 class ReportUser extends StatefulWidget {
   const ReportUser({super.key,required this.content, required this.title, required this.hintText, required this.userText});
@@ -22,19 +23,14 @@ class ReportUserState extends State<ReportUser>{
 
   @override
   Widget build(BuildContext context) {
-    //String title = widget.content == null ? 'Report User' : 'Report Content';
-    //String user = widget.content == null ? 'Report user: ${widget.username}' : 'Report content of user: ${widget.username}';
-    //String contentString = widget.content == null ? 'Why do you want to report ${widget.username}?' : 'Why do you want to report this content?';
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title),
-        backgroundColor: global.cThird,
-        automaticallyImplyLeading: true,
-      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          CustomTitle(
+            title: widget.title,
+            back: true,
+          ),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Text(widget.userText, textAlign: TextAlign.center),

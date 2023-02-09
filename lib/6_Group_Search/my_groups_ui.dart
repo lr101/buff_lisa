@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../Files/DTOClasses/group.dart';
 import '../Files/Other/global.dart' as global;
+import '../Files/Widgets/CustomTitle.dart';
 import '../Providers/cluster_notifier.dart';
 
 
@@ -35,16 +36,10 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
   }
 
   Widget getTitle() {
-    return const SizedBox(
-      height: 200,
-      child: Center(
-        child: Text(
-          "My Groups",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-    );
+    return const CustomTitle(
+        title: "My Groups",
+        back: false,
+      );
   }
 
   /// Builds the Card for showing the button that on press navigates to the SearchGroupPage Widget
