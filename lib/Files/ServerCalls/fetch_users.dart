@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
@@ -71,13 +73,13 @@ class FetchUsers {
   /// returns the profile picture as a byte list of a username that is identified by [username]
   /// throws an Exception if an error occurs
   /// GET Request to Server
-  static Future<Uint8List?> fetchProfilePicture(String username) async {
+  static Future<Uint8List> fetchProfilePicture(String username) async {
     Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 0);
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
         return response.bodyBytes;
       } else {
-        return null;
+        return (await rootBundle.load("images/profile.jpg")).buffer.asUint8List();
       }
     } else {
       throw Exception("failed to load mona");
@@ -163,15 +165,15 @@ class FetchUsers {
   /// returns true if change was successful
   /// returns false if change was unsuccessful
   /// PUT Request to Server
-  static Future<bool> changeProfilePicture(String username, Uint8List profilePicture) async {
+  static Future<Uint8List?> changeProfilePicture(String username, Uint8List profilePicture) async {
     final String json = jsonEncode(<String, dynamic> {
       "image" : profilePicture
     });
     Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 2,encode:  json);
     if (response.statusCode == 200) {
-      return true;
+      return profilePicture;
     }
-    return false;
+    return null;
   }
 
   static Future<bool> postReportUser(String reportedUsername, String reportMessage) async {

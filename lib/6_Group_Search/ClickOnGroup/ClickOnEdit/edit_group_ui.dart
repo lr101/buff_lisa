@@ -1,5 +1,6 @@
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/ClickOnEdit/edit_group_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/Widgets/CustomShowAndPick.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -27,15 +28,12 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
                 action: CustomAction(icon: const Icon(Icons.add_task), action: () => state.editGroup(context)),
               )
             ),
-            Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => state.handleImageUpload(context),
-                    child: CircleAvatar(backgroundImage: state.getImageWidget(Provider.of<CreateGroupNotifier>(context).getImage).image, radius: 50,),
-                  )
-                ]
+            CustomShowAndPick(
+                updateCallback: (p0, context) {
+                    Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
+                    return Future(() => p0);
+                  },
+                provide: state.widget.group.profileImage.asyncValue,
             ),
             const SizedBox(height: 20,),
             const Text("group name:"),
@@ -84,5 +82,6 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
         ),
     );
   }
+
 
 }

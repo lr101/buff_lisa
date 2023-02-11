@@ -55,30 +55,5 @@ class CreateGroupPageState extends State<CreateGroupPage> {
     }
   }
 
-  /// opens the input picker for selecting the group logo from gallery
-  /// after selecting an image it is opened in an image cropper
-  /// check if 100 < width, height and image is square
-  /// saves image in Provider to trigger reload of image preview
-  Future<void> handleImageUpload(BuildContext context) async {
-    Color theme = Provider.of<ThemeProvider>(context, listen: false).getCustomTheme.c1;
-    Uint8List? image = await CustomImagePicker.pick(minHeight: 100, minWidth: 100, color: theme, context: context);
-    if(!mounted) return;
-    if (image != null) {
-      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(image);
-    } else {
-      //TODO error message
-    }
-  }
-
-  /// shows image if selected
-  /// if not selected an image icon is shown
-  Image getImageWidget(Uint8List? image) {
-    if (image != null) {
-      return Image.memory(image);
-    } else {
-      return const Image(image: AssetImage("images/profile.jpg"),);
-    }
-  }
-
 }
 

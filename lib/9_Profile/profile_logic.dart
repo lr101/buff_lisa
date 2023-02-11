@@ -27,35 +27,12 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     return ProfilePageUI(state: this);
   }
 
-
-  /// opens the input picker for selecting the group logo from gallery
-  /// after selecting an image it is opened in an image cropper
-  /// check if 100 < width, height and image is square
-  /// saves image in Provider to trigger reload of image preview
-  Future<void> handleImageUpload(BuildContext context) async {
-    Color theme = Provider.of<ThemeProvider>(context, listen: false).getCustomTheme.c1;
-    Uint8List? image = await CustomImagePicker.pick(minHeight: 100, minWidth: 100, color: theme, context: context);
-    if(!mounted || image == null) return;
-    if (await FetchUsers.changeProfilePicture(global.username, image)) {
-      setState(() {});
-    }
-  }
-
  void handlePushPage(Widget widget) {
    Navigator.push(
      context,
      MaterialPageRoute(builder: (context) => widget),
    );
  }
-
-  Future<void> handleReportPost(BuildContext context) async {
-    String username = global.username;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ReportUser(content: "Contacted by: $username", title: "Contact Developer", hintText: "Describe the problem...",userText: "Reported by: $username",)),
-    );
-  }
 
 
   @override

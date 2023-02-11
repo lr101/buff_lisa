@@ -15,4 +15,8 @@ class UserNotifier with ChangeNotifier {
     _users.add(user);
     return user;
   }
+
+  void removeUser(String username) {
+    _users.removeWhere((element) => element.username == username);
+  }
 }

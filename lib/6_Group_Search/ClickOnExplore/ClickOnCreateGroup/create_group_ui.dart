@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
 
+import '../../../Files/Widgets/CustomShowAndPick.dart';
+
 
 class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
 
@@ -27,15 +29,11 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                   action: CustomAction(icon: const Icon(Icons.add_task), action: () => state.createGroup(context)),
                 )
               ),
-              Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => state.handleImageUpload(context),
-                      child: CircleAvatar(backgroundImage: state.getImageWidget(Provider.of<CreateGroupNotifier>(context).getImage).image, radius: 50,),
-                    )
-                  ]
+              CustomShowAndPick(
+                updateCallback: (p0, context) {
+                  Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
+                  return Future(() => p0);
+                },
               ),
               const SizedBox(height: 20,),
               const Text("group name:"),

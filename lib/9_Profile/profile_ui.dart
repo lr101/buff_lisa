@@ -1,17 +1,14 @@
 import 'dart:typed_data';
-
-import 'package:buff_lisa/7_Settings/AppSettings/app_settings_logic.dart';
-import 'package:buff_lisa/7_Settings/ProfileSettings/profile_settings_logic.dart';
-import 'package:buff_lisa/9_Profile/profile_image_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
-import 'package:buff_lisa/Providers/profile_notifier.dart';
+import 'package:buff_lisa/Files/Widgets/CustomShowAndPick.dart';
+import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
+import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../7_Settings/WebView/show_web_widget.dart';
+import '../7_Settings/AppSettings/settings_logic.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 
 class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
 
@@ -21,97 +18,23 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          body: FutureBuilder<Uint8List?>(
-              future: FetchUsers.fetchProfilePicture(global.username),
-              builder: (context, snapshot) {
-                return getList(snapshot.data, context);
-              },
-            )
+          body: CustomTitle(
+              titleBar: CustomTitleBar(
+                  title: "Your Profile",
+                  back: false,
+                  action: CustomAction(icon: const Icon(Icons.settings), action: () => state.handlePushPage(const Settings()),)
+              ),
+              child: CustomShowAndPick(
+                provide: () => FetchUsers.fetchProfilePicture(global.username),
+                updateCallback: provideImage,
+              )
+          )
         )
     );
   }
 
-  Widget getList(Uint8List? image, BuildContext context) {
-    List<Widget> settings = getSettings(context);
-    return ListView.builder(
-      itemCount: settings.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return getTitle(image, context);
-        } else {
-          return settings[index - 1];
-        }
-      },
-    );
-  }
-
-  Widget getTitle(Uint8List? profileImage, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(height: 40,),
-        Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () => state.handleImageUpload(context),
-                child: getProfile(profileImage)
-              )
-            ]
-        ),
-        const SizedBox(height: 20,),
-        Text("username: ${global.username}"),
-        const SizedBox(height: 50,)
-      ],
-    );
-  }
-  
-  Widget getProfile(Uint8List? image) {
-    if (image != null) {
-      return CircleAvatar(backgroundImage: Image.memory(image).image, radius: 50,);
-    } else {
-      return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 50,);
-    }
-    
-  }
-
-  List<Widget> getSettings(BuildContext context) {
-    return [
-      Card(
-        child: TextButton(
-          onPressed: () => state.handlePushPage(const ProfileSettings()),
-          child: const Text("Profile Settings", ),
-        ),
-      ),
-      Card(
-        child: TextButton(
-          onPressed: () => state.handlePushPage(const AppSettings()),
-          child: const Text("App Settings", ),
-        ),
-      ),
-      Card(child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ShowWebWidget(route: "public/agb",title: "Terms of Service",)),
-          );
-        },
-        child: const Text("Open Terms of Service"),
-      ),),
-      Card(child: TextButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ShowWebWidget(route: "public/privacy-policy",title: "Privacy Policy",)),
-          );
-        },
-        child: const Text("Open Privacy Policy"),
-      ),),
-      Card(child: TextButton(
-        onPressed: () => state.handleReportPost(context),
-        child: const Text("Contact developer"),
-      ),),
-    ];
+  Future<Uint8List?> provideImage(Uint8List image, BuildContext context) async {
+    Provider.of<UserNotifier>(context, listen: false).removeUser(global.username);
+    return FetchUsers.changeProfilePicture(global.username, image);
   }
 }
