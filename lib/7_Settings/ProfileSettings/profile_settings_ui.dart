@@ -16,8 +16,10 @@ class ProfileSettingsUI extends StatefulUI<ProfileSettings, ProfileSettingsState
       body: ListView(
         children: [
             const CustomTitle(
-            title: "Profile Settings",
-              back: true,
+              titleBar: CustomTitleBar(
+                title: "Profile Settings",
+                back: true,
+              ),
             ),
             Card(
               child: TextButton(

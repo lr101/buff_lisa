@@ -14,17 +14,18 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
   Widget build(BuildContext context) {
     TextEditingController t1 = Provider.of<CreateGroupNotifier>(context).getText1;
     TextEditingController t2 = Provider.of<CreateGroupNotifier>(context).getText2;
-    return SafeArea(child:
-        Scaffold(
+    return Scaffold(
         resizeToAvoidBottomInset: false,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // -- title --
             CustomTitle(
-              title: "Edit Group",
-              back: true,
-              action: CustomAction(icon: const Icon(Icons.add_task), action: () => state.editGroup(context)),
+              titleBar: CustomTitleBar(
+                title: "Edit Group",
+                back: true,
+                action: CustomAction(icon: const Icon(Icons.add_task), action: () => state.editGroup(context)),
+              )
             ),
             Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,7 +82,6 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
             )
           ],
         ),
-      )
     );
   }
 

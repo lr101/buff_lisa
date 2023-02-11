@@ -1,4 +1,5 @@
 import 'package:buff_lisa/6_Group_Search/ClickOnExplore/ClickOnCreateGroup/create_group_logic.dart';
+import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_notifier.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_ui.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:provider/provider.dart';
 
 
 class SearchGroupPage extends StatefulWidget {
@@ -15,10 +17,7 @@ class SearchGroupPage extends StatefulWidget {
   SearchGroupPageState createState() => SearchGroupPageState();
 }
 
-class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliveClientMixin<SearchGroupPage>{
-
-  /// List of all group ids that could be shown in page list
-  late List<int> groups = [];
+class SearchGroupPageState extends State<SearchGroupPage> {
 
   /// number of items loaded into every page of page list
   final int _numPages = 15;
@@ -26,18 +25,12 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
   /// controller of page list
   final PagingController<int, Group> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 1);
 
-  /// icon shown in top right of app bar
-  /// shows search icon if search is not active
-  /// shows exit icon if search is active
-  Icon icon = const Icon(Icons.search);
 
-  /// Widget shown in center of app bar
-  /// shows title if search is not active
-  /// shows text input of search if search is active
-  Widget customSearchBar = Container();
+  /// List of all group ids that could be shown in page list
+  late List<int> groups = [];
 
-  /// textController of search input field
-  TextEditingController textController = TextEditingController();
+  Map<int, Group> loadedGroups = {};
+
 
   /// Boolean to track if groups in list are currently filtered in list view
   /// Used to know if reset is needed when deactivating search
@@ -46,9 +39,22 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
   bool filtered = false;
 
   @override
+  late BuildContext context;
+
+  @override
   Widget build(BuildContext context) {
-    super.build(context);
-    return SearchUI(state: this);
+    final state = this;
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: SearchNotifier(pullRefresh: pullRefresh),
+          ),
+        ],
+        builder: (context, child) {
+          this.context = context;
+          return SearchUI(state: state);
+        },
+    );
   }
 
   /// add page list scroll listener and its callback function
@@ -61,47 +67,6 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
     super.initState();
   }
 
-  /// called when search button is clicked
-  /// open or removes search textfield in app bar
-  Future<void> handleSearch() async {
-    setState(() {
-      if (icon.icon == Icons.search) {
-        icon = const Icon(Icons.cancel);
-        customSearchBar = ListTile(
-          leading: IconButton(
-            onPressed: () => pullRefresh(textController.text),
-            icon: const Icon(
-              Icons.search,
-              color: Colors.white,
-              size: 28,
-            )
-          ),
-          title: TextField(
-            controller: textController,
-            onSubmitted: (value) => pullRefresh(value),
-            decoration: const InputDecoration(
-              hintText: 'type a group name...',
-              hintStyle: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontStyle: FontStyle.italic,
-              ),
-              border: InputBorder.none,
-            ),
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        );
-      } else {
-        icon = const Icon(Icons.search);
-        customSearchBar = Container();
-        if (filtered) pullRefresh(null);
-        textController.clear();
-      }
-    });
-  }
-
   /// Gets group information of ids from index range [pageKey, pageKey + _numPages -1]
   /// Adds the Groups to [pagingController] to be build in page List
   Future<void> _fetchPage(int pageKey) async {
@@ -109,7 +74,22 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
       List<Group> g = [];
       if (pageKey > 1) {
         int rangeEnd = (pageKey + _numPages - 2 < groups.length ? pageKey + _numPages - 2 : groups.length);
-        g = await FetchGroups.getGroups(groups.sublist(pageKey - 2, rangeEnd));
+        List<int> sublistOfIds = [];
+        for(int groupId in groups.sublist(pageKey - 2, rangeEnd)) {
+          Group? group = loadedGroups[groupId];
+          if (group != null) {
+            g.add(group);
+          } else {
+            sublistOfIds.add(groupId);
+          }
+        }
+        if (sublistOfIds.isNotEmpty) {
+          List<Group> loaded = await FetchGroups.getGroups(sublistOfIds);
+          g.addAll(loaded);
+          for (Group group in loaded) {
+            loadedGroups[group.groupId] = group;
+          }
+        }
       } else {
         g.add(Group(groupId: 0, name: "", groupAdmin: "", inviteUrl: null, visibility: 0));
       }
@@ -134,6 +114,7 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
     pagingController.refresh();
   }
 
+
   /// opens the CreateGroupPage Widget when the create group page button is pressed
   void handlePressNewGroup() {
     Navigator.of(context).push(
@@ -156,8 +137,4 @@ class SearchGroupPageState extends State<SearchGroupPage> with AutomaticKeepAliv
     }
   }
 
-
-
-  @override
-  bool get wantKeepAlive => true;
 }

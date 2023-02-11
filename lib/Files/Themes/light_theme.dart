@@ -17,6 +17,9 @@ class LightTheme {
           shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0), side: const BorderSide(color: c1)),),
         )
     ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: c1
+    ),
     hintColor: c2
   );
 

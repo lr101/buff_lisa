@@ -18,9 +18,11 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
             children: [
               // -- title --
               CustomTitle(
-                title: "Image",
-                back: true,
-                action: (widget.pin.username == global.username) ? CustomAction(icon: const Icon(Icons.delete), action: () => state.handleButtonPress()) : null,
+                titleBar: CustomTitleBar(
+                  title: "Image",
+                  back: true,
+                  action: (widget.pin.username == global.username) ? CustomAction(icon: const Icon(Icons.delete), action: () => state.handleButtonPress()) : null,
+                ),
                 child: Text("username: ${state.widget.pin.username}"),
               ),
               // -- image --

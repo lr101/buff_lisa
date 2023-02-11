@@ -39,9 +39,11 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
 
   Widget getTitle() {
     return const CustomTitle(
+      titleBar: CustomTitleBar(
         title: "My Groups",
         back: false,
-      );
+      )
+    );
   }
 
   /// Builds the Card for showing the button that on press navigates to the SearchGroupPage Widget

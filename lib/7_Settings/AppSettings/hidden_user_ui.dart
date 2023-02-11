@@ -24,8 +24,10 @@ class HiddenUsersUI extends StatefulUI<HiddenUsers, HiddenUsersState> {
           itemBuilder: (context, index) {
             if (index == 0) {
               return const CustomTitle(
-                title: "Hidden Users",
-                back: true,
+                titleBar: CustomTitleBar(
+                  title: "Hidden Users",
+                  back: true,
+                ),
               );
             }
             index--;

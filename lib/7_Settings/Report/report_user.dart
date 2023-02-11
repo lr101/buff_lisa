@@ -30,8 +30,10 @@ class ReportUserState extends State<ReportUser>{
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CustomTitle(
-            title: widget.title,
-            back: true,
+            titleBar: CustomTitleBar(
+              title: widget.title,
+              back: true,
+            )
           ),
           Padding(
             padding: const EdgeInsets.all(10),

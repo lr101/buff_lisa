@@ -21,8 +21,10 @@ class HiddenPinUI extends StatefulUI<HiddenPin, HiddenPinState> {
           itemBuilder: (context, index) {
             if (index == 0) {
               return const CustomTitle(
-                title: "Hidden Posts",
-                back: true,
+                titleBar: CustomTitleBar(
+                  title: "Hidden Posts",
+                  back: true,
+                ),
               );
             }
             index--;

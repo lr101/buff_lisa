@@ -19,9 +19,11 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
             children: [
               // -- title --
               CustomTitle(
-                title: "Approve",
-                back: true,
-                action: CustomAction(icon: const Icon(Icons.add_task), action: state.handleApprove),
+                titleBar: CustomTitleBar(
+                  title: "Approve",
+                  back: true,
+                  action: CustomAction(icon: const Icon(Icons.add_task), action: state.handleApprove),
+                )
               ),
               FutureProvider<Widget>(
                 create: (_) => state.handleFutureImage(),

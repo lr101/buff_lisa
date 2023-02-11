@@ -2,10 +2,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
+import 'package:buff_lisa/Files/Widgets/CustomImagePicker.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropping/image_cropping.dart';
-import 'package:images_picker/images_picker.dart' as picker;
 import 'package:provider/provider.dart';
 
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
@@ -61,32 +60,13 @@ class CreateGroupPageState extends State<CreateGroupPage> {
   /// check if 100 < width, height and image is square
   /// saves image in Provider to trigger reload of image preview
   Future<void> handleImageUpload(BuildContext context) async {
-    Color themeColor = Provider.of<ThemeProvider>(context).getCustomTheme.c1;
-    List<picker.Media>? res = await picker.ImagesPicker.pick(
-      count: 1,
-      pickType: picker.PickType.image,
-    );
-    if (res != null && res.length == 1) {
-      Uint8List? croppedBytes = await ImageCropping.cropImage(
-        context: context,
-        imageBytes: File(res[0].path).readAsBytesSync(),
-        isConstrain: true,
-        visibleOtherAspectRatios: false,
-        selectedImageRatio: const CropAspectRatio(
-          ratioX: 1,
-          ratioY: 1,
-        ),
-        squareCircleColor: themeColor,
-        defaultTextColor: Colors.black,
-        colorForWhiteSpace: Colors.black,
-        outputImageFormat: OutputImageFormat.jpg,
-        onImageDoneListener: (_) {},
-      );
-      if(croppedBytes == null) return;
-      final dimensions = await decodeImageFromList(croppedBytes);
-      if ((dimensions.width < 100 && dimensions.height < 100) || dimensions.width != dimensions.height) return; //TODO error message -> picture to small
-      if(!mounted) return;
-      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(croppedBytes);
+    Color theme = Provider.of<ThemeProvider>(context, listen: false).getCustomTheme.c1;
+    Uint8List? image = await CustomImagePicker.pick(minHeight: 100, minWidth: 100, color: theme, context: context);
+    if(!mounted) return;
+    if (image != null) {
+      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(image);
+    } else {
+      //TODO error message
     }
   }
 

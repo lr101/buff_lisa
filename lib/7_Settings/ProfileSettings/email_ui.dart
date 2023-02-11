@@ -23,9 +23,11 @@ class MailUI extends StatelessUI<Email> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 CustomTitle(
-                  title: "Edit Email",
-                  back: true,
-                  action: CustomAction(icon: const Icon(Icons.add_task), action: () =>  widget.changeMail(controller1, controller2, context)),
+                  titleBar: CustomTitleBar(
+                    title: "Edit Email",
+                    back: true,
+                    action: CustomAction(icon: const Icon(Icons.add_task), action: () =>  widget.changeMail(controller1, controller2, context)),
+                  ),
                 ),
                 const Text("Type Email:", style: TextStyle(color: global.cPrime)),
                 Padding(

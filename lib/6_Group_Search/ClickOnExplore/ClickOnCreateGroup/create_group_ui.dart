@@ -21,9 +21,11 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
             children: [
               // -- title --
               CustomTitle(
-                title: "Create Group",
-                back: true,
-                action: CustomAction(icon: const Icon(Icons.add_task), action: () => state.createGroup(context)),
+                titleBar: CustomTitleBar(
+                  title: "Create Group",
+                  back: true,
+                  action: CustomAction(icon: const Icon(Icons.add_task), action: () => state.createGroup(context)),
+                )
               ),
               Row(
                   crossAxisAlignment: CrossAxisAlignment.center,

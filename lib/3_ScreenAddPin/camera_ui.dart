@@ -55,7 +55,6 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                           builder: (context, value, child) {
                             return FloatingActionButton(
                                 heroTag: "cameraBtnFlash",
-                                backgroundColor: global.cThird,
                                 onPressed: state.switchFlash,
                                 child: Padding(
                                   padding: const EdgeInsets.all(5),

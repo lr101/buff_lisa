@@ -5,17 +5,13 @@ import 'package:flutter/material.dart';
 class CustomTitle extends StatefulWidget {
   const CustomTitle({
     super.key,
-    required this.title,
     this.imageCallback,
-    this.back = true,
-    this.action,
-    this.child = const SizedBox.shrink()
+    this.child = const SizedBox.shrink(),
+    required this.titleBar
   });
 
-  final String title;
   final Future<Uint8List> Function()? imageCallback;
-  final bool back;
-  final CustomAction? action;
+  final CustomTitleBar titleBar;
   final Widget child;
 
   @override
@@ -29,7 +25,7 @@ class CustomTitleState extends State<CustomTitle> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            actions(),
+            widget.titleBar,
             const SizedBox(height: 10,),
             image(),
             widget.child
@@ -61,16 +57,7 @@ class CustomTitleState extends State<CustomTitle> {
     }
   }
 
-  Widget actions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        (widget.back) ? IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)) : const SizedBox.square(dimension: 48,),
-        Text( widget.title, style: const TextStyle(fontSize: 20),),
-        (widget.action != null) ? IconButton(onPressed: widget.action?.action, icon: widget.action!.icon) : const SizedBox.square(dimension: 48,),
-      ],
-    );
-  }
+
 
 
 }
@@ -81,4 +68,42 @@ class CustomAction {
 
   final Icon icon;
   final VoidCallback action;
+}
+
+class CustomTitleBar extends StatelessWidget {
+
+  final bool? back;
+  final Widget? actionBar;
+  final String? title;
+  final CustomAction? action;
+
+  const CustomTitleBar(
+      {super.key, this.back = true, this.actionBar, this.title, this.action});
+
+
+  @override
+  Widget build(BuildContext context) {
+    if (actionBar == null) {
+      return actions(context);
+    } else {
+      return SizedBox(height: 48, child: actionBar);
+    }
+  }
+
+  Widget actions(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        (back!) ?
+          IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)) :
+          const SizedBox.square(dimension: 48,),
+
+        Text(title!, style: const TextStyle(fontSize: 20),),
+
+        (action != null)
+            ? IconButton(onPressed: action?.action, icon: action!.icon)
+            : const SizedBox.square(dimension: 48,),
+      ],
+    );
+  }
 }

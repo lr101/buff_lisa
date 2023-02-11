@@ -17,8 +17,10 @@ class AppSettingsUI extends StatelessUI<AppSettings> {
       body: ListView(
         children: [
             const CustomTitle(
-              title: "App Settings",
-              back: true,
+              titleBar: CustomTitleBar(
+                title: "App Settings",
+                back: true,
+              ),
             ),
             Card(
               child: TextButton(

@@ -29,9 +29,11 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
           itemBuilder: (context, index) {
             if (index == 0) {
               return CustomTitle(
-                title: widget.group.name,
-                back: true,
-                action: (state.widget.group.groupAdmin.syncValue == global.username) ? CustomAction(icon: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null,
+                titleBar: CustomTitleBar(
+                  title: widget.group.name,
+                  back: true,
+                  action: (state.widget.group.groupAdmin.syncValue == global.username) ? CustomAction(icon: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null,
+                ),
                 imageCallback: widget.group.profileImage.asyncValue,
                 child: Column(
                   children: [

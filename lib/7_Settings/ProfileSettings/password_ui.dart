@@ -23,9 +23,11 @@ class PasswordUI extends StatelessUI<Password> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 CustomTitle(
-                  title: "Edit Password",
-                  back: true,
-                  action: CustomAction(icon: const Icon(Icons.add_task), action: () => widget.handleSubmitPress(controller1, controller2, context)),
+                  titleBar: CustomTitleBar(
+                    title: "Edit Password",
+                    back: true,
+                    action: CustomAction(icon: const Icon(Icons.add_task), action: () => widget.handleSubmitPress(controller1, controller2, context)),
+                    ),
                 ),
                 const Text("Type Password:", style: TextStyle(color: global.cPrime)),
                 Padding (

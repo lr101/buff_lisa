@@ -39,8 +39,10 @@ class ShowWebWidgetState extends State<ShowWebWidget> {
       body: Column(
         children: [
           CustomTitle(
-            title: widget.title,
-            back: true,
+            titleBar: CustomTitleBar(
+              title: widget.title,
+              back: true,
+            )
           ),
           Expanded(child: WebViewWidget(controller: ini())),
         ],
