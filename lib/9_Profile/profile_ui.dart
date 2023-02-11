@@ -7,7 +7,7 @@ import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../7_Settings/AppSettings/settings_logic.dart';
+import '../7_Settings/settings_logic.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {

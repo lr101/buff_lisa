@@ -1,17 +1,18 @@
-import 'package:buff_lisa/7_Settings/AppSettings/settings_ui.dart';
+import 'package:buff_lisa/7_Settings/settings_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
-import '../../0_ScreenSignIn/login_logic.dart';
-import '../../0_ScreenSignIn/secure.dart';
-import '../../Files/DTOClasses/group_repo.dart';
-import '../../Files/DTOClasses/hive_handler.dart';
-import '../../Files/DTOClasses/pin_repo.dart';
-import '../ProfileSettings/email_logic.dart';
-import '../ProfileSettings/password_logic.dart';
-import '../Report/report_user.dart';
-import 'hidden_pin_logic.dart';
-import 'hidden_user_logic.dart';
+import '../0_ScreenSignIn/login_logic.dart';
+import '../0_ScreenSignIn/secure.dart';
+import '../Files/DTOClasses/group_repo.dart';
+import '../Files/DTOClasses/hive_handler.dart';
+import '../Files/DTOClasses/pin_repo.dart';
+import '../Files/Widgets/CustomAlertDialog.dart';
+import 'EditEmail/email_logic.dart';
+import 'EditPassword/password_logic.dart';
+import 'Report/report_user.dart';
+import 'HiddenPins/hidden_pin_logic.dart';
+import 'package:buff_lisa/7_Settings/HiddenUsers/hidden_user_logic.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 class Settings extends StatelessWidget {
@@ -58,6 +59,7 @@ class Settings extends StatelessWidget {
   /// on logout button press all existing open pages are closed and the token and username or removed
   /// the login screen widget page is opened
   Future<void> handleLogoutPress(BuildContext context) async {
+
     global.token = "";
     Secure.removeSecure("auth");
     global.username = "";

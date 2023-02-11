@@ -1,4 +1,4 @@
-import 'package:buff_lisa/7_Settings/ProfileSettings/password_ui.dart';
+import 'package:buff_lisa/7_Settings/EditPassword/password_ui.dart';
 import 'package:flutter/material.dart';
 
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';

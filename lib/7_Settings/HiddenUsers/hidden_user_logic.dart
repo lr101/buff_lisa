@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:buff_lisa/7_Settings/AppSettings/hidden_pin_ui.dart';
+import 'package:buff_lisa/7_Settings/HiddenPins/hidden_pin_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/hidden_pin_page.dart';

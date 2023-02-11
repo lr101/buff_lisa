@@ -14,6 +14,8 @@ import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 
+import '../../Files/Widgets/CustomAlertDialog.dart';
+
 
 class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
 
@@ -66,12 +68,12 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     }
   }
 
-  CustomPrompt getPopup() {
+  CustomAlertDialog getPopup() {
     TextEditingController controller = TextEditingController();
     if (state.widget.myGroup) {
-      return CustomPrompt(text1: "Cancel", text2: "Yes", title: "Leave ${widget.group.name}?", onPressed: state.leaveGroup);
+      return CustomAlertDialog(text1: "Cancel", text2: "Yes", title: "Leave ${widget.group.name}?", onPressed: state.leaveGroup);
     } else {
-      return CustomPrompt(text1: "Cancel", text2: "Yes", title: "Join ${widget.group.name}?", onPressed: getCallback(controller), child: getChild(controller),);
+      return CustomAlertDialog(text1: "Cancel", text2: "Yes", title: "Join ${widget.group.name}?", onPressed: getCallback(controller), child: getChild(controller),);
     }
   }
 

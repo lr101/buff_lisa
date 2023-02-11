@@ -1,4 +1,4 @@
-import 'package:buff_lisa/7_Settings/ProfileSettings/email_ui.dart';
+import 'package:buff_lisa/7_Settings/EditEmail/email_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
 

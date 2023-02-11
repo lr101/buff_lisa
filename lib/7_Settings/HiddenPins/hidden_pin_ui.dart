@@ -1,4 +1,4 @@
-import 'package:buff_lisa/7_Settings/AppSettings/hidden_pin_logic.dart';
+import 'package:buff_lisa/7_Settings/HiddenPins/hidden_pin_logic.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
