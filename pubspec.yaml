@@ -119,6 +119,8 @@ dependencies:
 
   fluttertoast:
 
+  configurable_expansion_tile_null_safety :
+
   # Apache-2.0
   settings_ui:
 

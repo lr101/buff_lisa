@@ -1,8 +1,10 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:buff_lisa/5_Feed/FeedCard/feed_card_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
+import 'package:configurable_expansion_tile_null_safety/configurable_expansion_tile_null_safety.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,93 +27,127 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: SizedBox(
-            height: width + 40,
+            height: width + 80,
             width: width,
-            child: Column(
+            child: Stack(
               children: [
-                SizedBox(
-                  height: 40,
-                  width: width,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                              radius: 14,
-                              backgroundColor: Colors.grey,
-                              child: FutureBuilder<Uint8List?>(
-                                  future: Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImage.asyncValue(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      if (snapshot.data != null) {
-                                        return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 12,);
-                                      } else {
-                                        return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 12,);
-                                      }
-                                    } else {
-                                      return Shimmer.fromColors(
-                                          baseColor: Colors.grey.shade700,
-                                          highlightColor: Colors.grey.shade900,
-                                          child: const CircleAvatar(backgroundColor: Colors.white, radius: 12,)
-                                      );
-                                    }
-                                  },
-                              ),
-                          ),
-                          Text(" ${widget.pin.username} in '${widget.pin.group.name}'")
-                        ]
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(formatTime()),
-                          menuButton(
-                              menu: PopupMenuButton(
-                                  itemBuilder: (context){
-                                    return [
-                                      const PopupMenuItem<int>(
-                                        value: 0,
-                                        child: Text("Hide this user"),
-                                      ),
-                                      const PopupMenuItem<int>(
-                                        value: 1,
-                                        child: Text("Hide this post"),
-                                      ),
-                                      const PopupMenuItem<int>(
-                                        value: 2,
-                                        child: Text("Report this user"),
-                                      ),
-                                      const PopupMenuItem<int>(
-                                        value: 3,
-                                        child: Text("Report this post"),
-                                      ),
-                                    ];
-                                  },
-                                  onSelected:(value){
-                                    switch (value) {
-                                      case 0: state.handleHideUsers(context);break;
-                                      case 1: state.handleHidePost(context);break;
-                                      case 2: state.handleReportUser(context);break;
-                                      case 3: state.handleReportPost(context);break;
-                                    }
+                Positioned(
+                  top: 0,
+                  child: SizedBox(
+                    height: 40,
+                    width: width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImage.customWidget(
+                                callback: (Uint8List? image, bool defaultValue) {
+                                  if (image != null) {
+                                    return CircleAvatar(backgroundImage: Image.memory(image).image, radius: 18,);
+                                  } else {
+                                    return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 18,);
                                   }
-                              ),
-                          )
-                        ],
-                      )
-                    ],
-                  )
+                                }
+                            ),
+                            const SizedBox(width: 10,),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(widget.pin.username),
+                                Text(widget.pin.group.name, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),)
+                              ],
+                            )
+                          ]
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(formatTime()),
+                            menuButton(
+                                menu: PopupMenuButton(
+                                    itemBuilder: (context){
+                                      return [
+                                        const PopupMenuItem<int>(
+                                          value: 0,
+                                          child: Text("Hide this user"),
+                                        ),
+                                        const PopupMenuItem<int>(
+                                          value: 1,
+                                          child: Text("Hide this post"),
+                                        ),
+                                        const PopupMenuItem<int>(
+                                          value: 2,
+                                          child: Text("Report this user"),
+                                        ),
+                                        const PopupMenuItem<int>(
+                                          value: 3,
+                                          child: Text("Report this post"),
+                                        ),
+                                      ];
+                                    },
+                                    onSelected:(value){
+                                      switch (value) {
+                                        case 0: state.handleHideUsers(context);break;
+                                        case 1: state.handleHidePost(context);break;
+                                        case 2: state.handleReportUser(context);break;
+                                        case 3: state.handleReportPost(context);break;
+                                      }
+                                    }
+                                ),
+                            )
+                          ],
+                        )
+                      ],
+                    )
+                  ),
                 ),
-                FlipCard(
-                  controller: state.controller,
-                  fill: Fill.fillBack,
-                  direction: FlipDirection.HORIZONTAL, // default
-                  front: state.front,
-                  back: state.back,
-                  flipOnTouch: false,
-                )
+                Positioned(
+                  top: 80,
+                  child: SizedBox(
+                    width: width,
+                    height: width,
+                    child: FutureBuilder<Uint8List>(
+                      future: state.widget.pin.image.asyncValue(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return InteractiveViewer(
+                            panEnabled: false,
+                            boundaryMargin: const EdgeInsets.all(100),
+                            minScale: 1,
+                            maxScale: 4,
+                            child: Image.memory(snapshot.requireData)
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                      )
+                    )
+                ),
+                Positioned(
+                  top: 40,
+                    child: ConfigurableExpansionTile(
+                        header: SizedBox(
+                            height: 39,
+                            width: width,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text("Show Map")
+                              ],
+                            )
+                        ),
+                        childrenBody: SizedBox(
+                            width: width,
+                            height: width,
+                            child: state.front,
+                        )
+                      )
+                ),
               ],
             )
         )
@@ -122,7 +158,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
     if (global.username != state.widget.pin.username) {
       return menu;
     } else {
-      return const SizedBox.shrink();
+      return const SizedBox(width: 48,);
     }
   }
 

@@ -16,20 +16,26 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-          body: CustomTitle(
-              titleBar: CustomTitleBar(
-                  title: "Your Profile",
-                  back: false,
-                  action: CustomAction(icon: const Icon(Icons.settings), action: () => state.handlePushPage(const Settings()),)
+    return Scaffold(
+          body: ListView(
+            children: [
+              CustomTitle(
+                titleBar: CustomTitleBar(
+                    title: "Your Profile",
+                    back: false,
+                    action: CustomAction(icon: const Icon(Icons.settings), action: () => state.handlePushPage(const Settings()),)
+                ),
+                child: CustomShowAndPick(
+                  provide: () => FetchUsers.fetchProfilePicture(global.username),
+                  updateCallback: provideImage,
+                )
               ),
-              child: CustomShowAndPick(
-                provide: () => FetchUsers.fetchProfilePicture(global.username),
-                updateCallback: provideImage,
+              const SizedBox(height: 100,),
+              const Center(
+                  child: Text("Coming Soon...") //TODO
               )
+            ]
           )
-        )
     );
   }
 

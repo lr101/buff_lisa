@@ -58,9 +58,7 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
     return SizedBox(
         height: width,
         width: width,
-        child: GestureDetector(
-            onTap: () => toggleCard(context),
-            child: AbsorbPointer(
+        child: AbsorbPointer(
                 absorbing: true,
                 child: FlutterMap(
                   options: MapOptions(
@@ -88,7 +86,6 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
                   ],
                 )
             ),
-          )
     );
   }
 
