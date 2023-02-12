@@ -58,6 +58,8 @@ class CameraControllerWidget extends State<CameraWidget> {
   /// used for showing the preview, zoom and taking images
   late CameraController controller;
 
+  final PageController pageController = PageController(viewportFraction: 0.3);
+
   @override
   late BuildContext context;
 
@@ -110,7 +112,11 @@ class CameraControllerWidget extends State<CameraWidget> {
 
   /// takes an image via the controller
   /// selected group and image byte list used for showing [CheckImageWidget] page
-  Future<void> takePicture(context) async {
+  Future<void> takePicture(context, index) async {
+    if (index != Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex) {
+      pageController.animateToPage(index, duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
+      return;
+    }
     if (!init) await initializeControllerFuture(context);
     final image = await controller.takePicture();
     try {

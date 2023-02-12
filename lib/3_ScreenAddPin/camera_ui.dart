@@ -24,71 +24,86 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Stack(
-                children: [
-                  FutureBuilder<void>(
-                      future: state.initializeControllerFuture(context),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return GestureDetector(
-                              onDoubleTap: () => state.handleCameraChange(context),
-                              onScaleStart: (_) => state.basScaleFactor = state.scaleFactor,
-                              onScaleUpdate: (details) => state.handleZoom(details),
-                              child: SizedBox(
-                                height: state.getHeight(context),
-                                width:  state.getWidth(context),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: CameraPreview(state.controller),
-                                ),
-                              )
-                          );
-                        } else {
-                          //TODO show better camera preview
-                          return const Center(child: CircularProgressIndicator());
-                        }
-                      },
-                    ),
-                  Align(
-                   alignment: Alignment.topRight,
-                   child: Consumer<CameraIconNotifier>(
-                          builder: (context, value, child) {
-                            return FloatingActionButton(
-                                backgroundColor:  Provider.of<ThemeProvider>(context).getCustomTheme.c1,
-                                heroTag: "cameraBtnFlash",
-                                onPressed: state.switchFlash,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: value.getFlashIcon(),
-                                )
-                            );
-                           },
-                    )
-                  )
-                ],
+             Expanded(
+                child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: FutureBuilder<void>(
+                          future: state.initializeControllerFuture(context),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.done) {
+                              return GestureDetector(
+                                  onDoubleTap: () => state.handleCameraChange(context),
+                                  onScaleStart: (_) => state.basScaleFactor = state.scaleFactor,
+                                  onScaleUpdate: (details) => state.handleZoom(details),
+                                  child: SizedBox(
+                                    height: state.getHeight(context),
+                                    width:  state.getWidth(context),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: CameraPreview(state.controller),
+                                    ),
+                                  )
+                              );
+                            } else {
+                              //TODO show better camera preview
+                              return const Center(child: CircularProgressIndicator());
+                            }
+                          },
+                        ),
+                      ),
+                      Align(
+                          alignment: Alignment.topRight,
+                          child: Consumer<CameraIconNotifier>(
+                            builder: (context, value, child) {
+                              return Padding(
+                                  padding:const EdgeInsets.all(10),
+                                  child: Column(
+                                    children: [
+                                         FloatingActionButton(
+                                          backgroundColor:  Provider.of<ThemeProvider>(context).getCustomTheme.c1,
+                                          heroTag: "cameraBtnFlash",
+                                          onPressed: state.switchFlash,
+                                          child: value.getFlashIcon(),
+                                        ),
+                                        const SizedBox(height: 5,),
+                                        FloatingActionButton(
+                                          backgroundColor:  Provider.of<ThemeProvider>(context).getCustomTheme.c1,
+                                          heroTag: "cameraSwitch",
+                                          onPressed: () => state.handleCameraChange(context),
+                                          child: const Icon(Icons.switch_camera),
+                                        )
+                                      ],
+                                    )
+                                  );
+                            },
+                          )
+                      )
+                    ],
+                  ),
               ),
               SizedBox(
-                height: (MediaQuery.of(context).size.height - global.barHeight) * 0.15,
+                height: (MediaQuery.of(context).size.height) * 0.15,
                 child: Stack(
                   children: [
                     Center(
                       child: PageView.builder(
                           itemCount: state.groups.length,
-                          controller: PageController(viewportFraction: 0.3),
+                          controller: state.pageController,
                           onPageChanged: (index) => state.onPageChange(index, context),
                           itemBuilder: (context, i) => groupCard(context, i)
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () => state.takePicture(context),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 2.0),
-                            shape: BoxShape.circle
+                      IgnorePointer(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 2.0),
+                              shape: BoxShape.circle
+                          ),
+                          height: (MediaQuery.of(context).size.height) * 0.15,
                         ),
-                        height: (MediaQuery.of(context).size.height - global.barHeight) * 0.15,
-                      ),
-                    )
+                      )
                   ],
                 ),
               )
@@ -105,19 +120,22 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
     Color color = Colors.grey;
     return Padding(
         padding: const EdgeInsets.all(5),
-        child: CircleAvatar(
-          radius: 35,
-          backgroundColor: color,
-          child: FutureBuilder<Uint8List>(
-            future: group.profileImage.asyncValue(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: (MediaQuery.of(context).size.height - global.barHeight) * 0.06,);
-              } else {
-                return CircleAvatar(backgroundColor: Colors.grey, radius: (MediaQuery.of(context).size.height - global.barHeight) * 0.06,);
-              }
-            },
-          ),
+        child: GestureDetector(
+          onTap: () => state.takePicture(context, index),
+          child: CircleAvatar(
+            radius: 35,
+            backgroundColor: color,
+            child: FutureBuilder<Uint8List>(
+              future: group.profileImage.asyncValue(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: (MediaQuery.of(context).size.height - global.barHeight) * 0.06,);
+                } else {
+                  return CircleAvatar(backgroundColor: Colors.grey, radius: (MediaQuery.of(context).size.height - global.barHeight) * 0.06,);
+                }
+              },
+            ),
+          )
         )
     );
   }
