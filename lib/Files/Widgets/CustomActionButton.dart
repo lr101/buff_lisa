@@ -35,7 +35,7 @@ class CustomActionButtonState extends State<CustomActionButton> {
                 widget.onPressed!();
               }
             },
-            child: Text(widget.text, style: TextStyle(color: Provider.of<ThemeProvider>(context).getCustomTheme.c1),)
+            child: Text(widget.text,)
         )
     );
   }

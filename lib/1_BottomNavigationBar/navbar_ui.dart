@@ -27,8 +27,7 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
           ],
         ),
         bottomNavigationBar: SizedBox(height: 58, child:BottomNavigationBar(
-          backgroundColor: Colors.white,
-          unselectedIconTheme: IconThemeData(color: Provider.of<ThemeProvider>(context).getCustomTheme.c2),
+          unselectedIconTheme: IconThemeData(color:  Provider.of<ThemeProvider>(context).getCustomTheme.c1,),
           key: state.globalKey,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(

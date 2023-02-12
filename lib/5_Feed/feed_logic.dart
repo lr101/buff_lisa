@@ -28,14 +28,12 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
 
   /// Set of Groups that are currently shown
   /// Used to reduce the amounts of Widgets that need to be created everytime the Provider updates its values
-  late Map<Group, int> groups = {};
+  late Set<Group> groups = {};
 
   /// Saves all Pins that could be seen in the feed with the Widget that is shown if already created
   late List<Pin> allWidgets = [];
 
   final _addEvery = 4;
-
-  final List<BannerAd?> _ads = [];
 
 
   @override
@@ -77,59 +75,25 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     }
   }
 
-  /// Loads and reloads the pins of active groups shown on the Feed
-  /// If the Provider updates the method checks if an active Group was removed or added
-  /// If an active Group was removed all the pins of this group are removed from the feed
-  /// If an active Group was added the pins of this group are added to the Sorted Tree [allWidgets] and sorted again by creationDate
-  Future<void> initSortedPins() async {
-    final activeGroups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
-    bool refresh = false;
-    if (activeGroups.length != groups.length) {
-      if (activeGroups.length < groups.length) {
-        refresh = true;
-        allWidgets.removeWhere((key) => !activeGroups.any((group) => group == key.group));
-        groups.removeWhere((key, value) => !activeGroups.any((element) => element == key));
-      } else if (activeGroups.length > groups.length) {
-        refresh = true;
-        Set<Group> oldGroups = Set.from(groups.keys);
-        for (Group group in activeGroups) {
-          if (!oldGroups.contains(group)) {
-            Set<Pin> pins = await group.pins.asyncValue();
-            groups[group] = pins.length;
-            for (Pin pin in pins) {
-              allWidgets.add(pin);
-            }
-          }
-        }
-      }
-    }
-    await pullRefresh(refresh);
+  void init() {
+    groups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
+    pullRefresh();
+  }
+
+  void refresh() {
+    groups = Provider.of<ClusterNotifier>(context, listen: false).getActiveGroups.toSet();
+    pullRefresh();
   }
 
 
-  Future<void> pullRefresh(bool refresh) async {
-    final activeGroups = Provider.of<ClusterNotifier>(context, listen: false).getActiveGroups.toSet();
-    for (Group group in activeGroups) {
+  Future<void> pullRefresh() async {
+    allWidgets.clear();
+    for (Group group in groups) {
       Set<Pin> pins = await group.pins.asyncValue();
-      if (pins.length > groups[group]!) {
-        // add a new pin
-        for (Pin pin in pins) {
-          if (!allWidgets.contains(pin)) {
-            allWidgets.add(pin);
-            refresh = true;
-          }
-        }
-      } else if (pins.length < groups[group]!) {
-        // remove a pin
-        refresh = true;
-        allWidgets.removeWhere((key) => !pins.any((element) => element.id == key.id || group != key.group));
-      }
-      groups[group] = pins.length;
+      allWidgets.addAll(pins);
     }
-    if (refresh) {
-      allWidgets.sort((k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
-      pagingController.refresh();
-    }
+    allWidgets.sort((k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
+    pagingController.refresh();
   }
 
   /// disposed the controller when the page is closed

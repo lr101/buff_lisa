@@ -10,14 +10,14 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState>{
 
   @override
   Widget build(BuildContext context) {
-    state.initSortedPins();
+    state.init();
     return Scaffold(
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
                   child: RefreshIndicator(
-                      onRefresh: () async => state.pullRefresh(false),
+                      onRefresh: () async => state.refresh(),
                       child:PagedListView<int, Widget> (
                       pagingController: state.pagingController,
                       builderDelegate: PagedChildBuilderDelegate<Widget>(

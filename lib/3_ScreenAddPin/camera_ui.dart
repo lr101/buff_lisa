@@ -54,6 +54,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                    child: Consumer<CameraIconNotifier>(
                           builder: (context, value, child) {
                             return FloatingActionButton(
+                                backgroundColor:  Provider.of<ThemeProvider>(context).getCustomTheme.c1,
                                 heroTag: "cameraBtnFlash",
                                 onPressed: state.switchFlash,
                                 child: Padding(
@@ -82,7 +83,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                       onTap: () => state.takePicture(context),
                       child: Container(
                         decoration: BoxDecoration(
-                            border: Border.all(color: Provider.of<ThemeProvider>(context).getCustomTheme.c1,width: 2.0),
+                            border: Border.all(width: 2.0),
                             shape: BoxShape.circle
                         ),
                         height: (MediaQuery.of(context).size.height - global.barHeight) * 0.15,

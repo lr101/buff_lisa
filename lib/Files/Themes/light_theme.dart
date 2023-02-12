@@ -10,17 +10,13 @@ class LightTheme {
   /// TODO [Balti] light theme color palate
   static final lightTheme = ThemeData(
     brightness: Brightness.light,
-    primaryColor: c1,
+    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFDAD3E), brightness: Brightness.light, secondary: const Color(0xFF88aaa2)),
     outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
           overlayColor: MaterialStateColor.resolveWith((states) =>  c2.withOpacity(0.2)),
           shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0), side: const BorderSide(color: c1)),),
         )
     ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: c1
-    ),
-    hintColor: c2
   );
 
   static const String url = "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png";
