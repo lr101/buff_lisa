@@ -57,3 +57,5 @@ app.*.map.json
 /dotenv.env
 
 pubspec.lock
+/ios/.symlinks/plugins/
+/ios/Pods/

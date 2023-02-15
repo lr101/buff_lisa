@@ -94,9 +94,6 @@ dependencies:
 
   url_launcher:
 
-  # BSD-3 Clause License
-  status_view:
-
   # MIT License
   infinite_scroll_pagination:
 
