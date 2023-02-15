@@ -1,0 +1,6 @@
+framework module flutter_compass {
+  umbrella header "flutter_compass-umbrella.h"
+
+  export *
+  module * { export * }
+}
