@@ -1,4 +1,6 @@
 import 'package:buff_lisa/5_Feed/FeedCard/feed_card_ui.dart';
+import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
+import 'package:buff_lisa/9_Profile/profile_logic.dart';
 import 'package:buff_lisa/Files/DTOClasses/hive_handler.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
@@ -24,7 +26,7 @@ class FeedCard extends StatefulWidget {
   FeedCardState createState() => FeedCardState();
 }
 
-class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin<FeedCard>{
+class FeedCardState extends State<FeedCard> {
 
   late final LatLng center;
 
@@ -41,7 +43,6 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return FeedCardUI(state: this);
   }
 
@@ -97,8 +98,21 @@ class FeedCardState extends State<FeedCard>   with AutomaticKeepAliveClientMixin
     controller.move(center, currentZoom);
   }
 
-  /// keeps the Widget alive (keep toggle state) in the list view
-  @override
-  bool get wantKeepAlive => true;
+  void handleOpenGroup() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) =>  ShowGroupPage(group: widget.pin.group, myGroup: true)
+      ),
+    );
+  }
+
+  void handleOpenUserProfile() {
+    if (widget.pin.username == global.username) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) =>  ProfilePage(username: widget.pin.username,)
+      ),
+    );
+  }
 
 }

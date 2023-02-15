@@ -19,16 +19,25 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
     return Scaffold(
           body: ListView(
             children: [
-              CustomTitle(
-                titleBar: CustomTitleBar(
-                    title: "Your Profile",
-                    back: false,
-                    action: CustomAction(icon: const Icon(Icons.settings), action: () => state.handlePushPage(const Settings()),)
+              getTitle(
+                thisUserTitle: CustomTitle(
+                    titleBar: CustomTitleBar(
+                        title: state.widget.username,
+                        back: false,
+                        action: CustomAction(icon: const Icon(Icons.settings), action: () => state.handlePushPage(const Settings()),)
+                    ),
+                    child: CustomShowAndPick(
+                      provide: () => FetchUsers.fetchProfilePicture(state.widget.username),
+                      updateCallback: provideImage,
+                    )
                 ),
-                child: CustomShowAndPick(
-                  provide: () => FetchUsers.fetchProfilePicture(global.username),
-                  updateCallback: provideImage,
-                )
+                otherUserTitle: CustomTitle(
+                  titleBar: CustomTitleBar(
+                    title: state.widget.username,
+                    back: true
+                  ),
+                  imageCallback: () => FetchUsers.fetchProfilePicture(state.widget.username),
+                ),
               ),
               const SizedBox(height: 100,),
               const Center(
@@ -37,6 +46,14 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
             ]
           )
     );
+  }
+
+  Widget getTitle({required Widget thisUserTitle, required Widget otherUserTitle}) {
+    if (state.widget.username == global.username) {
+      return thisUserTitle;
+    } else {
+      return otherUserTitle;
+    }
   }
 
   Future<Uint8List?> provideImage(Uint8List image, BuildContext context) async {

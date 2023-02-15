@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({super.key, required this.username});
+
+  final String username;
 
   @override
   ProfilePageState createState() => ProfilePageState();

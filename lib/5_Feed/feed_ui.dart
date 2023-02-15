@@ -21,7 +21,7 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState>{
                       child:PagedListView<int, Widget> (
                       pagingController: state.pagingController,
                       builderDelegate: PagedChildBuilderDelegate<Widget>(
-                        animateTransitions: true,
+                        animateTransitions: false,
                         itemBuilder: (context, item, index)  => item,
                       ),
                     )

@@ -98,8 +98,8 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                       IgnorePointer(
                         child: Container(
                           decoration: BoxDecoration(
-                              border: Border.all(width: 2.0),
-                              shape: BoxShape.circle
+                              border: Border.all(width: 3.0, color: Provider.of<ThemeProvider>(context).getCustomTheme.c1),
+                              shape: BoxShape.circle,
                           ),
                           height: (MediaQuery.of(context).size.height) * 0.15,
                         ),
@@ -123,15 +123,15 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
         child: GestureDetector(
           onTap: () => state.takePicture(context, index),
           child: CircleAvatar(
-            radius: 35,
+            radius: (MediaQuery.of(context).size.height) * 0.07,
             backgroundColor: color,
             child: FutureBuilder<Uint8List>(
               future: group.profileImage.asyncValue(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: (MediaQuery.of(context).size.height - global.barHeight) * 0.06,);
+                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: (MediaQuery.of(context).size.height) * 0.06,);
                 } else {
-                  return CircleAvatar(backgroundColor: Colors.grey, radius: (MediaQuery.of(context).size.height - global.barHeight) * 0.06,);
+                  return CircleAvatar(backgroundColor: Colors.grey, radius: (MediaQuery.of(context).size.height) * 0.06,);
                 }
               },
             ),

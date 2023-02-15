@@ -6,6 +6,7 @@ class LightTheme {
 
   static const Color c1 = Color(0xFFFF9400);
   static const Color c2 = Color(0xFFFDAD3E);
+  static const Color blackOrWhite = Colors.white;
 
   /// TODO [Balti] light theme color palate
   static final lightTheme = ThemeData(
@@ -22,6 +23,6 @@ class LightTheme {
   static const String url = "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png";
 
   static CustomTheme lightThemeFactory() {
-    return CustomTheme(theme: lightTheme, mapUrl: url, c1: c1, c2: c2);
+    return CustomTheme(theme: lightTheme, mapUrl: url, c1: c1, c2: c2,blackOrWhite: blackOrWhite);
   }
 }

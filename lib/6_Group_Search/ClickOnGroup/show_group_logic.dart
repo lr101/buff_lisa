@@ -11,6 +11,8 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
+import '../../9_Profile/profile_logic.dart';
+
 class ShowGroupPage extends StatefulWidget {
   const ShowGroupPage({super.key, required this.group, required this.myGroup});
 
@@ -82,6 +84,15 @@ class ShowGroupPageState extends State<ShowGroupPage> {
       //trigger rebuild
       setState(() {});
     }
+  }
+
+  void handleOpenUserProfile(String username) {
+    if (username == global.username) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) => ProfilePage(username: username,)
+      ),
+    );
   }
 
 }

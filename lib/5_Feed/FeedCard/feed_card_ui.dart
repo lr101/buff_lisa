@@ -22,141 +22,155 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     return Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
-        child: SizedBox(
-            height: width + 80,
-            width: width,
-            child: Stack(
-              children: [
-                Positioned(
-                  top: 0,
-                  child: SizedBox(
-                    height: 40,
-                    width: width,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                child:Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImage.customWidget(
-                                    callback: (Uint8List? image, bool defaultValue) {
-                                      if (image != null) {
-                                        return CircleAvatar(backgroundImage: Image.memory(image).image, radius: 18,);
-                                      } else {
-                                        return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 18,);
-                                      }
-                                    }
+        child: LayoutBuilder(
+            builder: (p0, p1) => SizedBox(
+            width: MediaQuery.of(p0).size.width,
+            height: MediaQuery.of(p0).size.width + 80,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    child: SizedBox(
+                      height: 40,
+                      width: MediaQuery.of(p0).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                    onTap: state.handleOpenUserProfile,
+                                    child:Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                      child:Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImage.customWidget(
+                                          callback: (Uint8List? image, bool defaultValue) {
+                                            if (image != null) {
+                                              return CircleAvatar(backgroundImage: Image.memory(image).image, radius: 18,);
+                                            } else {
+                                              return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 18,);
+                                            }
+                                          }
+                                      ),
+                                    ),
                                 ),
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(widget.pin.username),
-                                  Text(widget.pin.group.name, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),)
-                                ],
-                              )
-                            ]
-                          ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(formatTime()),
-                            menuButton(
-                                menu: PopupMenuButton(
-                                    itemBuilder: (context){
-                                      return [
-                                        const PopupMenuItem<int>(
-                                          value: 0,
-                                          child: Text("Hide this user"),
-                                        ),
-                                        const PopupMenuItem<int>(
-                                          value: 1,
-                                          child: Text("Hide this post"),
-                                        ),
-                                        const PopupMenuItem<int>(
-                                          value: 2,
-                                          child: Text("Report this user"),
-                                        ),
-                                        const PopupMenuItem<int>(
-                                          value: 3,
-                                          child: Text("Report this post"),
-                                        ),
-                                      ];
-                                    },
-                                    onSelected:(value){
-                                      switch (value) {
-                                        case 0: state.handleHideUsers(context);break;
-                                        case 1: state.handleHidePost(context);break;
-                                        case 2: state.handleReportUser(context);break;
-                                        case 3: state.handleReportPost(context);break;
-                                      }
-                                    }
-                                ),
-                            )
-                          ],
-                        )
-                      ],
-                    )
-                  ),
-                ),
-                Positioned(
-                  top: 80,
-                  child: SizedBox(
-                    width: width,
-                    height: width,
-                    child: FutureBuilder<Uint8List>(
-                      future: state.widget.pin.image.asyncValue(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    alignment: const Alignment(-.2, 0),
-                                    image: Image.memory(snapshot.requireData).image,
-                                    fit: BoxFit.cover
-                                ),
-                              ),
-                              child: ClipRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                  child: SizedBox(
-                                    height: width,
-                                    width: width,
-                                    child: Center(
-                                        child: InteractiveViewer(
-                                            panEnabled: false,
-                                            boundaryMargin: const EdgeInsets.all(100),
-                                            minScale: 1.1,
-                                            maxScale: 4,
-                                            child: Image.memory(snapshot.requireData)
-                                        )
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: state.handleOpenUserProfile,
+                                      child: Text(widget.pin.username),
+                                    ),
+                                    GestureDetector(
+                                      onTap: state.handleOpenGroup,
+                                      child: Text(widget.pin.group.name, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),),
                                     )
-                                ),
-                              ),
-                             )
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      },
+                                  ],
+                                )
+                              ]
+                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(formatTime()),
+                              menuButton(
+                                  menu: PopupMenuButton(
+                                      itemBuilder: (context){
+                                        return [
+                                          const PopupMenuItem<int>(
+                                            value: 0,
+                                            child: Text("Hide this user"),
+                                          ),
+                                          const PopupMenuItem<int>(
+                                            value: 1,
+                                            child: Text("Hide this post"),
+                                          ),
+                                          const PopupMenuItem<int>(
+                                            value: 2,
+                                            child: Text("Report this user"),
+                                          ),
+                                          const PopupMenuItem<int>(
+                                            value: 3,
+                                            child: Text("Report this post"),
+                                          ),
+                                        ];
+                                      },
+                                      onSelected:(value){
+                                        switch (value) {
+                                          case 0: state.handleHideUsers(context);break;
+                                          case 1: state.handleHidePost(context);break;
+                                          case 2: state.handleReportUser(context);break;
+                                          case 3: state.handleReportPost(context);break;
+                                        }
+                                      }
+                                  ),
+                              )
+                            ],
+                          )
+                        ],
                       )
                     )
-                ),
+                  ),
+                Positioned(
+                  top: 80,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                      child: LayoutBuilder(
+                          builder: (c0, _) => SizedBox(
+                              height: MediaQuery.of(c0).size.width - 10,
+                              width: MediaQuery.of(c0).size.width - 20 ,
+                              child: FutureBuilder<Uint8List>(
+                                future: state.widget.pin.image.asyncValue(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Container(
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              alignment: const Alignment(-.2, 0),
+                                              image: Image.memory(snapshot.requireData).image,
+                                              fit: BoxFit.cover
+                                          ),
+                                        ),
+                                        child: ClipRect(
+                                          child: BackdropFilter(
+                                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                            child: SizedBox(
+                                              height: MediaQuery.of(c0).size.width - 10,
+                                              width: MediaQuery.of(c0).size.width - 10,
+                                              child: Center(
+                                                  child: InteractiveViewer(
+                                                      panEnabled: false,
+                                                      boundaryMargin: const EdgeInsets.all(0),
+                                                      minScale: 1.1,
+                                                      maxScale: 4,
+                                                      child: Image.memory(snapshot.requireData)
+                                                  )
+                                              )
+                                          ),
+                                        ),
+                                       )
+                                    );
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                },
+                                )
+                            )
+                        )
+                    )
+                  ),
                 Positioned(
                   top: 40,
                     child: ConfigurableExpansionTile(
                         header: SizedBox(
-                            height: 39,
-                            width: width,
+                            height: 38,
+                            width: MediaQuery.of(p0).size.width,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -186,63 +200,70 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                               ],
                             )
                         ),
-                        childrenBody: SizedBox(
-                            width: width,
-                            height: width,
-                            child: Stack(
-                              children: [
-                                AbsorbPointer(
-                                  absorbing: true,
-                                  child: FlutterMap(
-                                    mapController: state.controller,
-                                    options: MapOptions(
-                                        minZoom: 2,
-                                        maxZoom: 18,
-                                        center: state.center,
-                                        zoom: global.feedZoom,
-                                        keepAlive: false
-                                    ),
+                        childrenBody: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                    height: MediaQuery.of(p0).size.width,
+                                    width: MediaQuery.of(p0).size.width - 10,
+                                    child:  Stack(
                                     children: [
-                                      TileLayer(
-                                          urlTemplate: "${Provider.of<ThemeProvider>(context).getCustomTheme.mapUrl}?api_key={api_key}",
-                                          additionalOptions: {
-                                            "api_key": global.apiKey
-                                          }
-                                      ),
-                                      MarkerLayer(
-                                          markers: [
-                                            Marker(
-                                                point: LatLng(state.widget.pin.latitude, state.widget.pin.longitude),
-                                                width: 50,
-                                                height: 50,
-                                                builder: (BuildContext context) => state.widget.pin.group.pinImage.getWidget()
+                                     AbsorbPointer(
+                                        absorbing: true,
+                                        child: FlutterMap(
+                                          mapController: state.controller,
+                                          options: MapOptions(
+                                              minZoom: 2,
+                                              maxZoom: 18,
+                                              center: state.center,
+                                              zoom: global.feedZoom,
+                                              keepAlive: false
+                                          ),
+                                          children: [
+                                            TileLayer(
+                                                urlTemplate: "${Provider.of<ThemeProvider>(context).getCustomTheme.mapUrl}?api_key={api_key}",
+                                                additionalOptions: {
+                                                  "api_key": global.apiKey
+                                                }
+                                            ),
+                                            MarkerLayer(
+                                                markers: [
+                                                  Marker(
+                                                      point: LatLng(state.widget.pin.latitude, state.widget.pin.longitude),
+                                                      width: 50,
+                                                      height: 50,
+                                                      builder: (BuildContext context) => state.widget.pin.group.pinImage.getWidget()
+                                                  )
+                                                ]
                                             )
-                                          ]
+                                          ],
+                                          ),
+                                        ),
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              FloatingActionButton(onPressed: state.zoomIn, backgroundColor: Colors.black.withOpacity(0.1), child: const Icon(Icons.zoom_in)),
+                                              FloatingActionButton(onPressed: state.zoomOut, backgroundColor: Colors.black.withOpacity(0.1), child: const Icon(Icons.zoom_out),)
+                                            ],
+                                          ),
+                                        )
                                       )
                                     ],
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        FloatingActionButton(onPressed: state.zoomIn, backgroundColor: Colors.black.withOpacity(0.05), child: const Icon(Icons.zoom_in)),
-                                        FloatingActionButton(onPressed: state.zoomOut, backgroundColor: Colors.black.withOpacity(0.05), child: const Icon(Icons.zoom_out),)
-                                      ],
-                                    ),
-                                  )
                                 )
-                              ],
-                            )
-                        )
+                          )
+                          ]
                       )
+                    )
                 ),
               ],
             )
+          )
         )
     );
   }

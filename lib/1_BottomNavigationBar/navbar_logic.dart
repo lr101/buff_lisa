@@ -48,7 +48,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     CameraWidget(io : io),
     MapsWidget(io : io),
     const FeedPage(),
-    const ProfilePage()
+    ProfilePage( username: global.username,)
   ];
 
   @override

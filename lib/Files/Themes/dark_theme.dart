@@ -6,6 +6,8 @@ class DarkTheme {
 
   static const Color c1 = Color(0xFFFF9400);
   static const Color c2 = Color(0xFFFDAD3E);
+  static const Color blackOrWhite = Colors.black;
+
 
   /// TODO [Balti] dark theme color palate
   static final darkTheme = ThemeData(
@@ -23,7 +25,7 @@ class DarkTheme {
   static const String url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
 
   static CustomTheme darkThemeFactory() {
-    return CustomTheme(theme: darkTheme, mapUrl: url, c2: c2, c1: c1);
+    return CustomTheme(theme: darkTheme, mapUrl: url, c2: c2, c1: c1, blackOrWhite: blackOrWhite);
   }
 
 

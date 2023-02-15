@@ -154,13 +154,16 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   Widget buildCard(member, index) {
     String adminString = "";
     if (member.username == widget.group.groupAdmin.syncValue!) adminString = "(admin)";
-    return Card(
-      color: (member.username == global.username) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : null,
-        child: ListTile(
-          leading: Text("${index + 1}. "),
-          title: Text("${member.username} $adminString"),
-          trailing: Text("${member.points} points"),
-        )
+    return GestureDetector(
+      onTap: () => state.handleOpenUserProfile(member.username),
+      child: Card(
+          color: (member.username == global.username) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : null,
+          child: ListTile(
+            leading: Text("${index + 1}. "),
+            title: Text("${member.username} $adminString"),
+            trailing: Text("${member.points} points"),
+          )
+      ),
     );
   }
 }

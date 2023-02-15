@@ -1,6 +1,7 @@
 import 'package:buff_lisa/6_Group_Search/ClickOnExplore/ClickOnCreateGroup/create_group_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
@@ -63,6 +64,7 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                   Switch(
                     value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
                     onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
+                    focusColor: Provider.of<ThemeProvider>(context).getCustomTheme.c1,
                   ),
                   const Text("private")
                 ],
