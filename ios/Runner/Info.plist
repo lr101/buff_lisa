@@ -7,7 +7,9 @@
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>This App need access to gallery to pick images</string>
 		<key>NSCameraUsageDescription</key>
-		<string>This App needs access to the camera</string>
+        <string>Can I use the camera please?</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>Can I use the mic please?</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>This app needs access to location in the background.</string>
 		<key>CFBundleDevelopmentRegion</key>
