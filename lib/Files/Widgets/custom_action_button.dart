@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'CustomAlertDialog.dart';
+import 'cusotm_alert_dialog.dart';
 
 class CustomActionButton extends StatefulWidget {
   const CustomActionButton({super.key, required this.text, this.popup, this.onPressed});

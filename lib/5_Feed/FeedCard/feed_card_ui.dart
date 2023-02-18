@@ -12,6 +12,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 
+import '../../Files/Widgets/custom_popup_menu_button.dart';
 import '../../Providers/theme_provider.dart';
 
 class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
@@ -80,36 +81,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                             children: [
                               Text(formatTime()),
                               menuButton(
-                                  menu: PopupMenuButton(
-                                      itemBuilder: (context){
-                                        return [
-                                          const PopupMenuItem<int>(
-                                            value: 0,
-                                            child: Text("Hide this user"),
-                                          ),
-                                          const PopupMenuItem<int>(
-                                            value: 1,
-                                            child: Text("Hide this post"),
-                                          ),
-                                          const PopupMenuItem<int>(
-                                            value: 2,
-                                            child: Text("Report this user"),
-                                          ),
-                                          const PopupMenuItem<int>(
-                                            value: 3,
-                                            child: Text("Report this post"),
-                                          ),
-                                        ];
-                                      },
-                                      onSelected:(value){
-                                        switch (value) {
-                                          case 0: state.handleHideUsers(context);break;
-                                          case 1: state.handleHidePost(context);break;
-                                          case 2: state.handleReportUser(context);break;
-                                          case 3: state.handleReportPost(context);break;
-                                        }
-                                      }
-                                  ),
+                                  menu: CustomPopupMenuButton(pin: state.widget.pin, update: state.widget.update,)
                               )
                             ],
                           )

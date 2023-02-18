@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
-import '../../../Files/Widgets/CustomImagePicker.dart';
+import '../../../Files/Widgets/custom_image_picker.dart';
 
 //TODO Gruppen werden dobbelt ge-POST-tet
 class EditGroupPage extends StatefulWidget {

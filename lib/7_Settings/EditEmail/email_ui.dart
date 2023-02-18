@@ -2,7 +2,7 @@ import 'package:buff_lisa/7_Settings/EditEmail/email_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
+import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 
 class MailUI extends StatelessUI<Email> {
 

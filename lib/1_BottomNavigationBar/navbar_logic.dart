@@ -5,7 +5,7 @@ import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
-import 'package:buff_lisa/Files/Widgets/CustomErrorMessage.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

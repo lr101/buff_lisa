@@ -4,9 +4,9 @@ import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
+import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 
-import '../../../Files/Widgets/CustomShowAndPick.dart';
+import '../../../Files/Widgets/custon_show_and_pick.dart';
 
 
 class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{

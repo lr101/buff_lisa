@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
-import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
+import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/hidden_pin_page.dart';
 

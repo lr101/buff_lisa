@@ -49,7 +49,7 @@ app.*.map.json
 /build_apk.sh
 /images/cert.pem
 /.env
-/RELEASES/
+/RELEASES/ad
 /change_identifier.sh
 /web/
 /windows/

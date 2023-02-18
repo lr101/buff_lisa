@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
-import 'package:buff_lisa/Files/Widgets/CustomActionButton.dart';
+import 'package:buff_lisa/Files/Widgets/custom_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -11,10 +11,10 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/Widgets/CustomTitle.dart';
+import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 
-import '../../Files/Widgets/CustomAlertDialog.dart';
+import '../../Files/Widgets/cusotm_alert_dialog.dart';
 
 
 class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../Providers/theme_provider.dart';
-import 'CustomImagePicker.dart';
+import 'custom_image_picker.dart';
 
 class CustomShowAndPick extends StatefulWidget {
   const CustomShowAndPick({super.key, required this.updateCallback, this.defaultImage = const Image(image: AssetImage("images/profile.jpg")), this.provide});

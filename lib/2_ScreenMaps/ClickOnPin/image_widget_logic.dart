@@ -1,4 +1,5 @@
 import 'package:buff_lisa/2_ScreenMaps/ClickOnPin/image_widget_ui.dart';
+import 'package:buff_lisa/Files/Widgets/cusotm_alert_dialog.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,13 +50,19 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   /// Works only if [activeDelete] is true
   Future<void> handleButtonPress() async{
       if (activeDelete) {
-        if (widget.newPin) {
-          await Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePin(widget.pin);
-        } else {
-          await Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.pin);
-        }
-        if (!mounted) return;
-        Navigator.pop(context);
+        CustomAlertDialog(
+          title: "Delete this post?",
+          text2: "Delete",
+          onPressed: () async {
+            if (widget.newPin) {
+              await Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePin(widget.pin);
+            } else {
+              await Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.pin);
+            }
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
+        );
       }
   }
 

@@ -7,7 +7,7 @@ import '../0_ScreenSignIn/secure.dart';
 import '../Files/DTOClasses/group_repo.dart';
 import '../Files/DTOClasses/hive_handler.dart';
 import '../Files/DTOClasses/pin_repo.dart';
-import '../Files/Widgets/CustomAlertDialog.dart';
+import '../Files/Widgets/cusotm_alert_dialog.dart';
 import 'EditEmail/email_logic.dart';
 import 'EditPassword/password_logic.dart';
 import 'Report/report_user.dart';
