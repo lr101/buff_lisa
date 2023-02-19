@@ -37,13 +37,9 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                                   onDoubleTap: () => state.handleCameraChange(context),
                                   onScaleStart: (_) => state.basScaleFactor = state.scaleFactor,
                                   onScaleUpdate: (details) => state.handleZoom(details),
-                                  child: SizedBox(
-                                    height: state.getHeight(context),
-                                    width:  state.getWidth(context),
-                                    child: Padding(
+                                  child: Padding(
                                       padding: const EdgeInsets.all(5.0),
                                       child: CameraPreview(state.controller),
-                                    ),
                                   )
                               );
                             } else {

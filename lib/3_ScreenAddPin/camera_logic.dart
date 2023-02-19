@@ -93,9 +93,6 @@ class CameraControllerWidget extends State<CameraWidget> {
       controller = CameraController(global.cameras[Provider.of<CameraNotifier>(context).getCameraIndex] ,resolution,enableAudio: false );
       await controller.initialize();
       init = true;
-      ratio = controller.value.aspectRatio;
-      _minZoom = await controller.getMinZoomLevel();
-      _maxZoom = await controller.getMaxZoomLevel();
       controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).getFlashMode());
     } catch(_) {
       _minZoom = basScaleFactor;
@@ -140,25 +137,6 @@ class CameraControllerWidget extends State<CameraWidget> {
     controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).nextFlashMode());
   }
 
-  /// returns the width of the camera to fit a 16:9 camera preview perfectly
-  double getWidth(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height - global.barHeight;
-    if (width * ratio > height) {
-      width = height * ratio;
-    }
-    return width;
-  }
-
-  /// returns the height of the camera to fit a 16:9 camera preview perfectly
-  double getHeight(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height - global.barHeight;
-    if (width * ratio <= height) {
-      height = width * ratio;
-    }
-    return height;
-  }
 
   /// uses the camera zoom if zoom is inside [_minZoom] and [_maxZoom]
   Future<void> handleZoom(ScaleUpdateDetails scale) async{
