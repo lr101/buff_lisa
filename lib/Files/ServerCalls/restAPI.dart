@@ -15,7 +15,7 @@ class RestAPI {
   /// [timeout] is the time in seconds until the requests times out, if null the default timeout time is used
   /// returns a http response
   static Future<http.Response> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, {String? encode, int timeout = 30}) async {
-    Map<String, String> header = {"Authorization" : "Bearer ${global.token}"};
+    Map<String, String> header = {"Authorization" : "Bearer ${global.localData.token}"};
     if (encode != null) header["Content-Type"] = "application/json";
     Uri uri = Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters);
     if (kDebugMode) print(uri);

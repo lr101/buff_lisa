@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import '../../Files/Other/global.dart' as global;
 
 import '../../7_Settings/Report/report_user.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
@@ -48,9 +49,8 @@ class FeedCardState extends State<FeedCard> {
   }
 
   Future<void> handleHidePost(BuildContext context) async {
-    if (global.username != widget.pin.username) {
-      HiveHandler<int, DateTime> hiddenPosts = await HiveHandler.fromInit<int, DateTime>(global.hiddenPosts);
-      await hiddenPosts.put(DateTime.now(), key: widget.pin.id);
+    if (global.localData.username != widget.pin.username) {
+      await global.localData.hiddenPosts.put(DateTime.now(), key: widget.pin.id);
       if (!mounted) return;
       await Provider.of<ClusterNotifier>(context, listen: false).hidePin(widget.pin);
       widget.update!();
@@ -58,9 +58,8 @@ class FeedCardState extends State<FeedCard> {
   }
 
   Future<void> handleHideUsers(BuildContext context) async {
-    if (global.username != widget.pin.username) {
-      HiveHandler<String, DateTime> hiddenUsers = await HiveHandler.fromInit<String, DateTime>(global.hiddenUsers);
-      await hiddenUsers.put(DateTime.now(), key: widget.pin.username);
+    if (global.localData.username != widget.pin.username) {
+      await global.localData.hiddenUsers.put(DateTime.now(), key: widget.pin.username);
       if (!mounted) return;
       await Provider.of<ClusterNotifier>(context, listen: false).updateFilter();
       widget.update!();
@@ -69,7 +68,7 @@ class FeedCardState extends State<FeedCard> {
 
   Future<void> handleReportUser(BuildContext context) async {
     String username = widget.pin.username;
-    if (username != global.username) {
+    if (username != global.localData.username) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -80,7 +79,7 @@ class FeedCardState extends State<FeedCard> {
 
   Future<void> handleReportPost(BuildContext context) async {
     String username = widget.pin.username;
-    if (username != global.username) {
+    if (username != global.localData.username) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -108,7 +107,7 @@ class FeedCardState extends State<FeedCard> {
   }
 
   void handleOpenUserProfile() {
-    if (widget.pin.username == global.username) return;
+    if (widget.pin.username == global.localData.username) return;
     Navigator.of(context).push(
       MaterialPageRoute(
           builder: (context) =>  ProfilePage(username: widget.pin.username,)

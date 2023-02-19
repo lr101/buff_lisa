@@ -238,7 +238,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
   }
 
   Widget menuButton({required Widget menu}) {
-    if (global.username != state.widget.pin.username) {
+    if (global.localData.username != state.widget.pin.username) {
       return menu;
     } else {
       return const SizedBox(width: 48,);

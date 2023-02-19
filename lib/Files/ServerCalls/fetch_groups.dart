@@ -13,7 +13,7 @@ class FetchGroups {
   /// GET request to server
   /// throws an Exception when an error occurs during server call
   static Future<List<Group>> getUserGroups() async {
-    Response response = await RestAPI.createHttpsRequest("/api/users/${global.username}/groups" , {}, 0, timeout: 20);
+    Response response = await RestAPI.createHttpsRequest("/api/users/${global.localData.username}/groups" , {}, 0, timeout: 20);
     if (response.statusCode == 200) {
       return _toGroupList(response);
     } else {
@@ -79,7 +79,7 @@ class FetchGroups {
   static Future<Group?> postGroup(String name, String description, Uint8List image, int visibility) async {
     final String json = jsonEncode(<String, dynamic> {
       "name" : name,
-      "groupAdmin": global.username,
+      "groupAdmin": global.localData.username,
       "description" : description,
       "profileImage": image,
       "visibility" : visibility
@@ -116,7 +116,7 @@ class FetchGroups {
   /// throws an Exception when an error occurs during server call
   static Future<Group> joinGroup(int groupId, String? inviteUrl) async {
     final String json = jsonEncode(<String, dynamic> {
-      "username" : global.username,
+      "username" : global.localData.username,
       "inviteUrl" : inviteUrl
     });
     Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/members", {}, 1,  encode: json);

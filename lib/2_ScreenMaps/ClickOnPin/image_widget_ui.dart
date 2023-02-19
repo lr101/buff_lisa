@@ -68,7 +68,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
 
   /// delete button only shown when current user is owner of pin
   CustomAction? getActionBar() {
-    if(widget.pin.username == global.username) {
+    if(widget.pin.username == global.localData.username) {
       return CustomAction(icon: const Icon(Icons.delete), action: () => state.handleButtonPress());
     } else {
       return null;
@@ -77,7 +77,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
 
   /// popup menu for hiding post when current user is NOT owner of pin
   Widget? getOtherActionBar() {
-    if(widget.pin.username != global.username) {
+    if(widget.pin.username != global.localData.username) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
        children: [

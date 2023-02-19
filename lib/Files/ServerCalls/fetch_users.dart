@@ -32,7 +32,7 @@ class FetchUsers {
   /// returns null if user does not exist
   /// GET Request to Server
   static Future<String?> checkUser(String? name) async {
-    name ??= global.username;
+    name ??= global.localData.username;
     Response response = await RestAPI.createHttpsRequest("/login/$name/", {}, 0, timeout: 3);
     if (response.statusCode == 200) {
       return response.body;
@@ -179,7 +179,7 @@ class FetchUsers {
   static Future<bool> postReportUser(String reportedUsername, String reportMessage) async {
     final String json = jsonEncode(<String, dynamic>{
       "report" : reportedUsername,
-      "username" : global.username,
+      "username" : global.localData.username,
       "message" : reportMessage
     });
     final response = await RestAPI.createHttpsRequest("/api/report", {}, 1, encode: json);

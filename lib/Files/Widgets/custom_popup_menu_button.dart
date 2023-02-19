@@ -54,9 +54,8 @@ class CustomPopupMenuButtonState extends State<CustomPopupMenuButton> {
   }
 
   Future<void> handleHidePost(BuildContext context) async {
-    if (global.username != widget.pin.username) {
-      HiveHandler<int, DateTime> hiddenPosts = await HiveHandler.fromInit<int, DateTime>(global.hiddenPosts);
-      await hiddenPosts.put(DateTime.now(), key: widget.pin.id);
+    if (global.localData.username != widget.pin.username) {
+      await global.localData.hiddenPosts.put(DateTime.now(), key: widget.pin.id);
       if (!mounted) return;
       await Provider.of<ClusterNotifier>(context, listen: false).hidePin(widget.pin);
       widget.update!();
@@ -64,9 +63,8 @@ class CustomPopupMenuButtonState extends State<CustomPopupMenuButton> {
   }
 
   Future<void> handleHideUsers(BuildContext context) async {
-    if (global.username != widget.pin.username) {
-      HiveHandler<String, DateTime> hiddenUsers = await HiveHandler.fromInit<String, DateTime>(global.hiddenUsers);
-      await hiddenUsers.put(DateTime.now(), key: widget.pin.username);
+    if (global.localData.username != widget.pin.username) {
+      await global.localData.hiddenUsers.put(DateTime.now(), key: widget.pin.username);
       if (!mounted) return;
       await Provider.of<ClusterNotifier>(context, listen: false).updateFilter();
       widget.update!();
@@ -75,7 +73,7 @@ class CustomPopupMenuButtonState extends State<CustomPopupMenuButton> {
 
   Future<void> handleReportUser(BuildContext context) async {
     String username = widget.pin.username;
-    if (username != global.username) {
+    if (username != global.localData.username) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -86,7 +84,7 @@ class CustomPopupMenuButtonState extends State<CustomPopupMenuButton> {
 
   Future<void> handleReportPost(BuildContext context) async {
     String username = widget.pin.username;
-    if (username != global.username) {
+    if (username != global.localData.username) {
       Navigator.push(
         context,
         MaterialPageRoute(

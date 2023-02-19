@@ -29,13 +29,13 @@ class PasswordUI extends StatelessUI<Password> {
                     action: CustomAction(icon: const Icon(Icons.add_task), action: () => widget.handleSubmitPress(controller1, controller2, context)),
                     ),
                 ),
-                const Text("Type Password:", style: TextStyle(color: global.cPrime)),
+                const Text("Type Password:"),
                 Padding (
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TextFormField(obscureText: true, enableSuggestions: false, autocorrect: false, validator: LoginScreen.validator, controller: controller1,),
                 ),
                 const SizedBox(height: 20,),
-                const Text("Repeat Password:", style: TextStyle(color: global.cPrime)),
+                const Text("Repeat Password:"),
                 Padding (
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TextFormField(obscureText: true, enableSuggestions: false, autocorrect: false, validator: LoginScreen.validator, controller: controller2,),

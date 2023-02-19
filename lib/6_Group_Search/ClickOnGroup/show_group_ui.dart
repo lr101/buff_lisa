@@ -34,7 +34,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                 titleBar: CustomTitleBar(
                   title: widget.group.name,
                   back: true,
-                  action: (state.widget.group.groupAdmin.syncValue == global.username) ? CustomAction(icon: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null,
+                  action: (state.widget.group.groupAdmin.syncValue == global.localData.username) ? CustomAction(icon: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null,
                 ),
                 imageCallback: widget.group.profileImage.asyncValue,
                 child: Column(
@@ -157,7 +157,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     return GestureDetector(
       onTap: () => state.handleOpenUserProfile(member.username),
       child: Card(
-          color: (member.username == global.username) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : null,
+          color: (member.username == global.localData.username) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : null,
           child: ListTile(
             leading: Text("${index + 1}. "),
             title: Text("${member.username} $adminString"),

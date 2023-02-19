@@ -13,6 +13,12 @@ class GroupRepo {
     box = await Hive.openBox<GroupDTO>(boxName);
   }
 
+  static Future<GroupRepo> fromInit(String boxName) async {
+    GroupRepo groupRepo = GroupRepo();
+    await groupRepo.init(boxName);
+    return groupRepo;
+  }
+
   void setGroup(Group group) {
     GroupDTO groupDTO = GroupDTO.fromGroup(group);
     box.put(groupDTO.groupId, groupDTO);

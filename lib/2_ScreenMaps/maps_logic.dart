@@ -90,7 +90,7 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
       filterUser = !filterUser;
     });
     if (filterUser) {
-      Provider.of<ClusterNotifier>(context, listen:false).setFilterUsername([global.username]);
+      Provider.of<ClusterNotifier>(context, listen:false).setFilterUsername([global.localData.username]);
     } else {
       Provider.of<ClusterNotifier>(context, listen:false).setFilterUsername([]);
     }

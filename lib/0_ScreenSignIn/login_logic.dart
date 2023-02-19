@@ -26,7 +26,7 @@ class LoginScreen extends StatelessWidget {
   /// This method is called when the user tries to login with a username and password to an existing account
   /// return returns null when login was successful and an error message on errors
   Future<String?> authUser(LoginData data) {
-    global.username = data.name;
+    global.localData.username = data.name;
     try {
       return Secure.loginAuthentication(data.name, data.password, ).then((value) {
         return value ? null : 'username or password are wrong';

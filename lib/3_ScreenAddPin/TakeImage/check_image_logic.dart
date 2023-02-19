@@ -74,7 +74,7 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
         latitude: locationData.latitude,
         longitude: locationData.longitude,
         id: group.getNewOfflinePinId(),
-        username: global.username,
+        username: global.localData.username,
         creationDate: DateTime.now(),
         group: group,
         image: image

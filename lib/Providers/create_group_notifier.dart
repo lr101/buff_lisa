@@ -27,8 +27,8 @@ class CreateGroupNotifier with ChangeNotifier {
 
   List<DropdownMenuItem<String>> menuItems = [];
 
-  String? currentItem = global.username;
-  late String initAdmin = global.username;
+  String? currentItem = global.localData.username;
+  late String initAdmin = global.localData.username;
 
   Future<void> init(Group group) async {
     _sliderValue = group.visibility != 0 ? 1 : 0;

@@ -22,13 +22,7 @@ class UploadOfflinePageState extends State<UploadOfflinePage> {
   @override
   Widget build(BuildContext context) => UploadOfflinePageUI(state: this);
 
-  PinRepo pinRepo = PinRepo();
-
-  @override
-  void initState() {
-    super.initState();
-    pinRepo.init(global.fileName);
-  }
+  PinRepo pinRepo = global.localData.pinRepo;
 
 
   Future<void> handleUploadAll() async {
@@ -53,7 +47,7 @@ class UploadOfflinePageState extends State<UploadOfflinePage> {
   }
 
   Future<void> handleDeleteAll() async {
-    await pinRepo.deleteAll();
+    await pinRepo.clear();
     if (!mounted) return;
     Navigator.of(context).pop();
   }

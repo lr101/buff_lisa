@@ -29,13 +29,13 @@ class MailUI extends StatelessUI<Email> {
                     action: CustomAction(icon: const Icon(Icons.add_task), action: () =>  widget.changeMail(controller1, controller2, context)),
                   ),
                 ),
-                const Text("Type Email:", style: TextStyle(color: global.cPrime)),
+                const Text("Type Email:"),
                 Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: TextFormField(controller: controller1, style: const TextStyle(color: global.cPrime,)) ,
+                    child: TextFormField(controller: controller1) ,
                 ),
                 const SizedBox(height: 20,),
-                const Text("Repeat Email:", style: TextStyle(color: global.cPrime)),
+                const Text("Repeat Email:"),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TextFormField(controller: controller2,),

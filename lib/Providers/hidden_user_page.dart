@@ -22,8 +22,7 @@ class HiddenUserPageNotifier with ChangeNotifier {
 
   Future<void> unHideUser(User user) async{
     _users.remove(user);
-    HiveHandler<String, DateTime> hiddenPosts = await HiveHandler.fromInit<String, DateTime>(global.hiddenUsers);
-    await hiddenPosts.deleteByKey(user.username);
+    await global.localData.hiddenUsers.deleteByKey(user.username);
     notifyListeners();
   }
 

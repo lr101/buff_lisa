@@ -44,7 +44,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   /// user has to select delete in dialog
   /// Works only if [activeDelete] is true
   Future<void> handleButtonPress() async{
-      if (widget.pin.username == global.username) {
+      if (widget.pin.username == global.localData.username) {
         showDialog(context: context, builder: (context) => CustomAlertDialog(
             title: "Delete this post?",
             text2: "Delete",
@@ -63,7 +63,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   }
 
   void handleOpenUserProfile() {
-    if (widget.pin.username == global.username) return;
+    if (widget.pin.username == global.localData.username) return;
     Navigator.of(context).push(
       MaterialPageRoute(
           builder: (context) =>  ProfilePage(username: widget.pin.username,)

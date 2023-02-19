@@ -75,7 +75,7 @@ class ShowGroupPageState extends State<ShowGroupPage> {
 
   /// opens the edit page for admin if the current user is the groups admin
   Future<void> editAsAdmin() async {
-    if (widget.group.groupAdmin.syncValue != null && global.username == widget.group.groupAdmin.syncValue) {
+    if (widget.group.groupAdmin.syncValue != null && global.localData.username == widget.group.groupAdmin.syncValue) {
       await Navigator.of(context).push(
         MaterialPageRoute(
             builder: (context) => EditGroupPage(group: widget.group)
@@ -87,7 +87,7 @@ class ShowGroupPageState extends State<ShowGroupPage> {
   }
 
   void handleOpenUserProfile(String username) {
-    if (username == global.username) return;
+    if (username == global.localData.username) return;
     Navigator.of(context).push(
       MaterialPageRoute(
           builder: (context) => ProfilePage(username: username,)

@@ -49,7 +49,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
   }
 
   Widget getTitle({required Widget thisUserTitle, required Widget otherUserTitle}) {
-    if (state.widget.username == global.username) {
+    if (state.widget.username == global.localData.username) {
       return thisUserTitle;
     } else {
       return otherUserTitle;
@@ -57,7 +57,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
   }
 
   Future<Uint8List?> provideImage(Uint8List image, BuildContext context) async {
-    Provider.of<UserNotifier>(context, listen: false).removeUser(global.username);
-    return FetchUsers.changeProfilePicture(global.username, image);
+    Provider.of<UserNotifier>(context, listen: false).removeUser(global.localData.username);
+    return FetchUsers.changeProfilePicture(global.localData.username, image);
   }
 }

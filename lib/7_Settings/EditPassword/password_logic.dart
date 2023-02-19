@@ -16,7 +16,7 @@ class Password extends StatelessWidget {
   /// on success the page is closed
   void handleSubmitPress(controller1, controller2, BuildContext context) {
     if (controller1.text == controller2.text && LoginScreen.validator(controller1.text) == null) {
-      FetchUsers.changePassword(global.username, Secure.encryptPassword(controller1.text)).then((value) {
+      FetchUsers.changePassword(global.localData.username, Secure.encryptPassword(controller1.text)).then((value) {
         if (value) {
           Navigator.pop(context);
         }

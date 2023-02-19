@@ -61,8 +61,7 @@ class ClusterNotifier extends ChangeNotifier {
   /// adds a list of [Group] saved offline in [_offlineGroupHandler] in [_userGroups] if they not already existing
   /// NOTIFIES CHANGES
   Future<List<Group>> loadOfflineGroups() async {
-    GroupRepo repo = GroupRepo();
-    await repo.init(global.groupFileName);
+    GroupRepo repo = global.localData.repo;
     addGroups(repo.getGroups());
     return _userGroups;
   }
@@ -129,8 +128,8 @@ class ClusterNotifier extends ChangeNotifier {
       if (group.active) {
         _addPinToMarkers(pin);
       }
-      if (!group.members.isEmpty && pin.username == global.username) {
-        group.members.syncValue!.firstWhere((element) => element.username == global.username).addOnePoint();
+      if (!group.members.isEmpty && pin.username == global.localData.username) {
+        group.members.syncValue!.firstWhere((element) => element.username == global.localData.username).addOnePoint();
         group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
       }
     }
@@ -214,8 +213,7 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// loads all offline pins from device storage
   Future<List<Pin>> loadOfflinePins() async {
-    PinRepo pinRepo = PinRepo();
-    await pinRepo.init(global.fileName);
+    PinRepo pinRepo = global.localData.pinRepo;
     return pinRepo.getPins(_userGroups);
   }
 
@@ -234,8 +232,7 @@ class ClusterNotifier extends ChangeNotifier {
   Future<void> deleteOfflinePin(Pin mona) async{
     _removePinFromMarkers(mona);
     mona.group.removePin(mona);
-    PinRepo pinRepo = PinRepo();
-    await pinRepo.init(global.fileName);
+    PinRepo pinRepo = global.localData.pinRepo;
     pinRepo.deletePin(mona.id);
     _updateValues();
   }
@@ -246,8 +243,7 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> addOfflinePin(Pin mona) async{
     if (!kIsWeb) {
-      PinRepo pinRepo = PinRepo();
-      await pinRepo.init(global.fileName);
+      PinRepo pinRepo = global.localData.pinRepo;
       pinRepo.setPin(mona);
       if (mona.group.active) {
         await _addPinToMarkers(mona);

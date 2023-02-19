@@ -63,8 +63,8 @@ class HiddenUsersState extends State<HiddenUsers>{
 
   Future<void> loadOffline() async{
     Set<User> users = {};
-    HiveHandler<String, DateTime> hiddenPosts = await HiveHandler.fromInit<String, DateTime>(global.hiddenUsers);
-    for (String username in await hiddenPosts.keys()) {
+    HiveHandler<String, DateTime> hiddenUsers = global.localData.hiddenUsers;
+    for (String username in await hiddenUsers.keys()) {
       if (!mounted) return;
       users.add(Provider.of<UserNotifier>(context, listen: false).getUser(username));
     }

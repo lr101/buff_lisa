@@ -12,6 +12,12 @@ class PinRepo {
     box = await Hive.openBox<PinDTO>(boxName);
   }
 
+  static Future<PinRepo> fromInit(String boxName) async {
+    PinRepo pinRepo = PinRepo();
+    await pinRepo.init(boxName);
+    return pinRepo;
+  }
+
   void setPin(Pin pin) {
     PinDTO pinDTO = PinDTO.fromPin(pin);
     box.put(pin.id.toString(),pinDTO);
@@ -39,5 +45,5 @@ class PinRepo {
 
   void deletePin (int id) => box.delete(id.toString());
 
-  Future<void> deleteAll() async => await box.clear();
+  Future<void> clear() async => await box.clear();
 }

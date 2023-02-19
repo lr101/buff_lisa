@@ -200,9 +200,7 @@ class Group {
   }
 
   Future<void> _saveOffline() async {
-    GroupRepo repo = GroupRepo();
-    await repo.init(global.groupFileName);
-    repo.setGroup(this);
+    global.localData.repo.setGroup(this);
   }
 
   Future<Set<Pin>> _filter(Set<Pin> pins) async{
