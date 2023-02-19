@@ -92,7 +92,7 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _userGroups.remove(group);
-    HiveHandler.fromInit<int, dynamic>("activeGroups").then((value) => value.deleteByKey(group.groupId));
+    global.localData.deleteOfflineGroup(group.groupId);
     notifyListeners();
   }
 
@@ -112,6 +112,9 @@ class ClusterNotifier extends ChangeNotifier {
   void addGroup(Group group) {
     if(!_userGroups.any((element) => element.groupId == group.groupId)) {
       _userGroups.add(group);
+      List<int> order = global.localData.groupOrder;
+      order.add(group.groupId);
+      global.localData.updateGroupOrder(order);
     }
     notifyListeners(); // new thread
   }

@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:buff_lisa/Files/AbstractClasses/async_type.dart';
-import 'hive_handler.dart';
 import 'pin.dart';
 
 class Group {
@@ -204,13 +203,9 @@ class Group {
   }
 
   Future<Set<Pin>> _filter(Set<Pin> pins) async{
-    final HiveHandler<String, DateTime> hiddenUser = HiveHandler();
-    final HiveHandler<int, DateTime> hiddenPosts = HiveHandler();
-    await hiddenUser.init("hiddenUsers");
-    await hiddenPosts.init("hiddenPosts");
     Set<Pin> removesPins = {};
-    List<String> usernames = await hiddenUser.keys();
-    List<int> posts = await hiddenPosts.keys();
+    List<String> usernames = await global.localData.hiddenUsers.keys();
+    List<int> posts = await global.localData.hiddenPosts.keys();
     List<Pin> iterator = List.from(pins);
     for (Pin pin in iterator) {
       if (posts.any((element) => element == pin.id) || usernames.any((element) => element == pin.username)) {

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/ClickOnEdit/edit_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_ui.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -60,12 +61,18 @@ class ShowGroupPageState extends State<ShowGroupPage> {
   /// leaves the group and closes the current context
   /// Method can only be called if the current user is a member of this group
   Future<void> leaveGroup() async {
-    FetchGroups.leaveGroup(widget.group.groupId).then((value) {
-      if (value) {
-        Provider.of<ClusterNotifier>(context, listen: false).removeGroup(widget.group);
-        Navigator.pop(context);
-      }
-    });
+    if (widget.group.groupAdmin.syncValue == global.localData.username && (await widget.group.members.asyncValue()).length > 1) {
+      if (!mounted) return;
+      CustomErrorMessage.message(context: context, message: "You can't leave a group as admin");
+    } else {
+      FetchGroups.leaveGroup(widget.group.groupId).then((value) {
+        if (value) {
+          Provider.of<ClusterNotifier>(context, listen: false).removeGroup(
+              widget.group);
+          Navigator.pop(context);
+        }
+      });
+    }
   }
 
   /// close context
