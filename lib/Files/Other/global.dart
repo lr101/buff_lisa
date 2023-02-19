@@ -37,4 +37,6 @@ String apiKey = dotenv.env["MAPS_API_KEY"]!;
 /// list of available cameras
 late List<CameraDescription> cameras;
 
+/// holds information of data that is stored locally on device
+/// is initialized on startup of app
 late LocalData localData;

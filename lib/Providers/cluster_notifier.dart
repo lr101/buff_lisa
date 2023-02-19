@@ -46,15 +46,31 @@ class ClusterNotifier extends ChangeNotifier {
 
   bool offline = false;
 
-  /// adds a list of [Group] to [_userGroups] if they not already existing
+  /// clears [_userGroups] and ads a list of groups
+  /// ads groups in order that is saved offline
   /// NOTIFIES CHANGES
   void addGroups(List<Group> groups) {
-    for (Group group in groups) {
-      if(!_userGroups.any((element) => element.groupId == group.groupId)) {
-        _userGroups.add(group);
-        group.pinImage.asyncValue(); //new thread - load pin image on startup
+    _userGroups.clear();
+    List<int> updatedList = List.from(global.localData.groupOrder);
+
+    for (int groupId  in global.localData.groupOrder) {
+      int where = groups.indexWhere((element) => element.groupId == groupId);
+      if (where != -1) {
+        if (kDebugMode) print("add $groupId at ${_userGroups.length}");
+        _userGroups.add(groups[where]);
+        groups[where].pinImage.asyncValue(); //new thread - load pin image on startup
+        groups.removeAt(where);
+      } else {
+        updatedList.removeWhere((element) => element == groupId);
       }
     }
+    for (Group group in groups) {
+      if (kDebugMode) print("add ${group.groupId} at ${_userGroups.length}");
+      _userGroups.add(group);
+      group.pinImage.asyncValue(); //new thread - load pin image on startup
+      updatedList.add(group.groupId);
+    }
+    global.localData.updateGroupOrder(updatedList);
     notifyListeners();
   }
 

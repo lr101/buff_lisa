@@ -105,6 +105,9 @@ class LocalData {
     offlineDataStorage.put(key: themeKey, theme == Brightness.dark ? 1 : 0);
   }
 
+  void updateGroupOrder(List<int> order) {
+    offlineDataStorage.put(key: orderKey, order);
+  }
 
 
 }
