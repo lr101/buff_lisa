@@ -20,6 +20,7 @@ class LocalData {
   static const String offlineKeyValue = "offlineKeyValue";
   static const String themeKey = "themeKey";
   static const String orderKey = "orderKey";
+  static const String langKey = "langKey";
 
 
   late Secure secure = Secure();

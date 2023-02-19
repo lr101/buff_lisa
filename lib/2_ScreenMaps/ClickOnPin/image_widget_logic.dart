@@ -45,17 +45,19 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   /// Works only if [activeDelete] is true
   Future<void> handleButtonPress() async{
       if (widget.pin.username == global.localData.username) {
+        BuildContext c = context;
         showDialog(context: context, builder: (context) => CustomAlertDialog(
             title: "Delete this post?",
+            text1: "Cancel",
             text2: "Delete",
             onPressed: () async {
-              if (widget.newPin) {
-                await Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePin(widget.pin);
+              if (widget.pin.id < 0) {
+                await Provider.of<ClusterNotifier>(c, listen: false).deleteOfflinePin(widget.pin);
               } else {
-                await Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.pin);
+                await Provider.of<ClusterNotifier>(c, listen: false).removePin(widget.pin);
               }
               if (!mounted) return;
-              Navigator.pop(context);
+              Navigator.pop(c);
             },
           )
         );
