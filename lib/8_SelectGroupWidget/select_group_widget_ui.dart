@@ -20,29 +20,92 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        height: MediaQuery.of(context).viewPadding.top + 80,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
+    return SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-                height: MediaQuery.of(context).viewPadding.top,
-                width: double.infinity,
-            ),
-            Container(
-                width: double.infinity,
-                height: 80,
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
-                ),
-                child: ListView.builder(
-                  itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,
-                  itemBuilder: groupCard,
-                  scrollDirection: Axis.horizontal,
-                )
-            )
+            state.expanded ? expanded(context) : collapsed(context),
+            editColumn()
           ],
         )
+    );
+  }
+
+  Widget editColumn() {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+              onTap: state.handleOrderGroup,
+              child: state.expanded ? const Icon(Icons.edit,size: 20,) : const SizedBox.shrink(),
+          ),
+          (state.expanded ? const SizedBox(height: 20,) : const SizedBox.shrink()),
+          GestureDetector(
+              onTap: state.toggleExpanded,
+              child: state.expanded ? const Icon(Icons.arrow_drop_up) : const Icon(Icons.arrow_drop_down)
+          )
+        ]
+    );
+  }
+
+  Widget collapsed(BuildContext context) {
+    return Container(
+          width: MediaQuery.of(context).size.width - 30,
+          height: 30,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
+          ),
+          child: ListView.builder(
+            itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,
+            itemBuilder: (context, index) => collapsedGroupCard(index),
+            scrollDirection: Axis.horizontal,
+          )
+      );
+  }
+
+  Widget expanded(BuildContext context) {
+    return Container(
+          width: MediaQuery.of(context).size.width - 30,
+          height: 80,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
+          ),
+          child: ListView.builder(
+            itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,
+            itemBuilder: groupCard,
+            scrollDirection: Axis.horizontal,
+          )
+      );
+  }
+
+  Widget collapsedGroupCard(int index) {
+    Group group = Provider.of<ClusterNotifier>(state.context, listen: false).getGroups[index];
+    Color color = (group.active && state.widget.multiSelector) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : Colors.grey;
+    return Padding(
+        padding: const EdgeInsets.all(5),
+        child: GestureDetector(
+          onTap: () => state.onGroupTab(group),
+          child: SizedBox(
+              height: 20,
+              width: 35*2,
+              child: Column(
+                children: [
+                  Container(
+                    color: color,
+                    height: 5,
+                  ),
+                  Text(
+                    group.name,
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.clip,
+                    maxLines: 1,
+                    softWrap: false,
+                  )
+                ],
+              )
+          )
+      )
     );
   }
 

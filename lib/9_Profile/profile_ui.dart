@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
-import 'package:buff_lisa/Files/Widgets/custon_show_and_pick.dart';
+import 'package:buff_lisa/Files/Widgets/custom_show_and_pick.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:flutter/material.dart';

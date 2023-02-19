@@ -45,7 +45,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
   /// selector widget for groups
   /// shown on top of screen in map and feed page
-  final Widget multiSelect = const SelectGroupWidget(multiSelector: true,);
+  final Widget multiSelect = const SelectGroupWidget(multiSelector: true, expanded: true,);
 
   /// List of Widgets shown and used in the navbar
   late final List<Widget> widgetOptions = <Widget>[
@@ -130,8 +130,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
       }
     });
     // activate previous active groups
-    final HiveHandler<int, dynamic> offlineActiveGroups = await HiveHandler.fromInit<int, dynamic>("activeGroups");
-    for (int id in await offlineActiveGroups.keys()) {
+    for (int id in await global.localData.offlineActiveGroups.keys()) {
       if (!mounted) return;
       Group group = Provider.of<ClusterNotifier>(context, listen:false).getGroupByGroupId(id);
       await Provider.of<ClusterNotifier>(context, listen:false).activateGroup(group); //new thread

@@ -107,8 +107,8 @@ class LocalData {
     offlineDataStorage.put(key: themeKey, theme == Brightness.dark ? 1 : 0);
   }
 
-  void updateGroupOrder(List<int> order) {
-    offlineDataStorage.put(key: orderKey, order);
+  Future<void> updateGroupOrder(List<int> order) async {
+    await offlineDataStorage.put(key: orderKey, order);
     groupOrder = order;
   }
 

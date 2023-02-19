@@ -278,7 +278,7 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// get method of [_userGroups] attribute
   List<Group> get getGroups {
-    return _userGroups;
+    return List.from(_userGroups);
   }
 
   /// get method of [_lastSelected] attribute

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 
-import '../../../Files/Widgets/custon_show_and_pick.dart';
+import '../../../Files/Widgets/custom_show_and_pick.dart';
 
 
 class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
