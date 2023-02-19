@@ -19,7 +19,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
+        child: Scaffold(appBar: null,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
@@ -119,7 +119,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
         child: GestureDetector(
           onTap: () => state.takePicture(context, index),
           child: CircleAvatar(
-            radius: (MediaQuery.of(context).size.height) * 0.07,
+            radius: (MediaQuery.of(context).size.height) * 0.065,
             backgroundColor: color,
             child: FutureBuilder<Uint8List>(
               future: group.profileImage.asyncValue(),

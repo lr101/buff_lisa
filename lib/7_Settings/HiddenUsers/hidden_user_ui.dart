@@ -18,7 +18,7 @@ class HiddenUsersUI extends StatefulUI<HiddenUsers, HiddenUsersState> {
   @override
   Widget build(BuildContext context) {
     Set<User> users = Provider.of<HiddenUserPageNotifier>(context).users;
-    return Scaffold(
+    return Scaffold(appBar: null,
         body: ListView.builder(
           itemCount: users.length + 1,
           itemBuilder: (context, index) {

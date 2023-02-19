@@ -53,23 +53,19 @@ class Secure {
   /// saves on successful account creation the username and token in secure storage and returns true
   static Future<bool> signupAuthentication(String username, String password, String email) async {
     String psw = Secure.encryptPassword(password);
-    String? response = await FetchUsers.signupNewUser(username, psw, email);
-    if (response != null) {
-      Secure.saveSecure(response, "auth");
-      Secure.saveSecure(username, "username");
-      global.token = response;
-      global.username = username;
-      return true;
-    } else {
-      return false;
-    }
+    return saveToken(tokenFunction: () =>  FetchUsers.signupNewUser(username, psw, email), username: username);
   }
 
   /// signin process sends encoded password to server and obtains a JWT token on success
   /// saves after successful login username and token in secure storage and returns true
   static Future<bool> loginAuthentication(String username, String password,) async {
-    //String? element = await FetchUsers.checkUser(username);
-    String? token = await FetchUsers.auth(username, encryptPassword(password));
+    return saveToken(tokenFunction: () => FetchUsers.auth(username, encryptPassword(password)), username: username);
+  }
+
+  /// saves for a given function, that returns the token and a username
+  /// in a secure storage and in the global file for use in current session
+  static Future<bool> saveToken({required Future<String?> Function() tokenFunction, required String username}) async {
+    String? token = await tokenFunction();
     if (token != null) {
       saveSecure(username, "username");
       saveSecure(token, "auth");

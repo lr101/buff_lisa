@@ -12,7 +12,7 @@ class UploadOfflinePageUI extends StatefulUI<UploadOfflinePage, UploadOfflinePag
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
       body: ListView.builder(
         itemCount: state.widget.pins.length + 1,
         itemBuilder: (context, index) {

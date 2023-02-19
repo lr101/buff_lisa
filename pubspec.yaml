@@ -43,7 +43,7 @@ dependencies:
   latlong2:
 
   # MIT License
-  location: ^4.2.0
+  geolocator:
 
   # BSD-3 Clause License
   http: ^0.13.4

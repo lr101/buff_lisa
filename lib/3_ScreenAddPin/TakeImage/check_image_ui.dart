@@ -13,7 +13,7 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
+        child: Scaffold(appBar: null,
           body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

@@ -1,6 +1,7 @@
 
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Providers/camera_icon_notifier.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
@@ -13,14 +14,15 @@ import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Providers/camera_group_notifier.dart';
 import 'package:buff_lisa/Providers/camera_notifier.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import '../Files/Other/navbar_context.dart';
 import 'TakeImage/check_image_logic.dart';
 
 class CameraWidget extends StatefulWidget {
 
-  /// TODO is it needed?
-  final ProviderContext io;
+  /// used to redirect to map after image successfully approved
+  final NavBarContext navbarContext;
 
-  const CameraWidget({super.key, required this.io});
+  const CameraWidget({super.key, required this.navbarContext});
 
   @override
   State<CameraWidget> createState() => CameraControllerWidget();
@@ -58,6 +60,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   /// used for showing the preview, zoom and taking images
   late CameraController controller;
 
+  /// controller of group selector list
   final PageController pageController = PageController(viewportFraction: 0.3);
 
   @override
@@ -93,10 +96,18 @@ class CameraControllerWidget extends State<CameraWidget> {
       controller = CameraController(global.cameras[Provider.of<CameraNotifier>(context).getCameraIndex] ,resolution,enableAudio: false );
       await controller.initialize();
       init = true;
+      ratio = controller.value.aspectRatio;
+      _minZoom = await controller.getMinZoomLevel();
+      _maxZoom = await controller.getMaxZoomLevel();
       controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).getFlashMode());
     } catch(_) {
       _minZoom = basScaleFactor;
       _maxZoom = basScaleFactor;
+      if (!init) {
+        CustomErrorMessage.message(context: context, message: "Something went wrong while initializing the camera");
+      } else {
+        CustomErrorMessage.message(context: context, message: "No zoom available");
+      }
     }
   }
 
@@ -124,19 +135,19 @@ class CameraControllerWidget extends State<CameraWidget> {
         bytes = await image.readAsBytes();
       }
       Group group = groups[Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex];
-      Navigator.of(widget.io.context).push(
+      Navigator.of(context).push(
         MaterialPageRoute(
-            builder: (context) => CheckImageWidget(image: bytes, io: widget.io, group: group,)),
+            builder: (context) => CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group,)),
       );
     } catch (e) {
       print(e);
     }
   }
 
+  /// switch the flash mode to the next
   void switchFlash() {
     controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).nextFlashMode());
   }
-
 
   /// uses the camera zoom if zoom is inside [_minZoom] and [_maxZoom]
   Future<void> handleZoom(ScaleUpdateDetails scale) async{

@@ -11,7 +11,7 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState>{
   @override
   Widget build(BuildContext context) {
     state.init();
-    return Scaffold(
+    return Scaffold(appBar: null,
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

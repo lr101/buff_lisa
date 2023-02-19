@@ -11,7 +11,7 @@ class ProfileSettingsUI extends StatefulUI<ProfileSettings, ProfileSettingsState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
 
       body: ListView(
         children: [

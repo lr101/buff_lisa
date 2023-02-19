@@ -35,7 +35,7 @@ class ShowWebWidgetState extends State<ShowWebWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
       body: Column(
         children: [
           CustomTitle(

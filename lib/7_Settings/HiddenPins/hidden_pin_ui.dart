@@ -15,7 +15,7 @@ class HiddenPinUI extends StatefulUI<HiddenPin, HiddenPinState> {
   @override
   Widget build(BuildContext context) {
     Set<Pin> pins = Provider.of<HiddenPinPageNotifier>(context).pins;
-    return Scaffold(
+    return Scaffold(appBar: null,
         body: ListView.builder(
           itemCount: pins.length + 1,
           itemBuilder: (context, index) {

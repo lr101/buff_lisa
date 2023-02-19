@@ -1,3 +1,4 @@
+import 'package:buff_lisa/2_ScreenMaps/ClickOnPin/image_widget_logic.dart';
 import 'package:buff_lisa/5_Feed/FeedCard/feed_card_ui.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
@@ -112,6 +113,13 @@ class FeedCardState extends State<FeedCard> {
       MaterialPageRoute(
           builder: (context) =>  ProfilePage(username: widget.pin.username,)
       ),
+    );
+  }
+
+  void handleTabOnImage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ShowImageWidget(pin: widget.pin, newPin: false))
     );
   }
 

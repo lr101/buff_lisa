@@ -20,7 +20,7 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
         body: PagedListView<int, Group>(
           pagingController: state.pagingController,
           builderDelegate: PagedChildBuilderDelegate<Group>(

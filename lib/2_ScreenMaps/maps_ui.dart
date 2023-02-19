@@ -17,7 +17,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
         body: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,

@@ -18,7 +18,7 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
+        child: Scaffold(appBar: null,
           body: ListView.builder(
             itemCount: Provider.of<ClusterNotifier>(context).getGroups.length + 2,
             padding: const EdgeInsets.all(8.0),

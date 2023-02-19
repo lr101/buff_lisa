@@ -116,12 +116,9 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                               height: MediaQuery.of(c0).size.width - 10,
                                               width: MediaQuery.of(c0).size.width - 10,
                                               child: Center(
-                                                  child: InteractiveViewer(
-                                                      panEnabled: false,
-                                                      boundaryMargin: const EdgeInsets.all(0),
-                                                      minScale: 1.1,
-                                                      maxScale: 4,
-                                                      child: Image.memory(snapshot.requireData)
+                                                  child: GestureDetector(
+                                                     onTap: state.handleTabOnImage,
+                                                     child: Image.memory(snapshot.requireData)
                                                   )
                                               )
                                           ),

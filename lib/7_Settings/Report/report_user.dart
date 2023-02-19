@@ -25,7 +25,7 @@ class ReportUserState extends State<ReportUser>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

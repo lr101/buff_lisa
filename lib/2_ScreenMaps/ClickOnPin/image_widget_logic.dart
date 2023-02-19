@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 
+import '../../6_Group_Search/ClickOnGroup/show_group_logic.dart';
+import '../../9_Profile/profile_logic.dart';
+
 class ShowImageWidget extends StatefulWidget {
   const ShowImageWidget({Key? key, required this.pin, required this.newPin}) : super(key: key);
 
@@ -25,45 +28,55 @@ class ShowImageWidget extends StatefulWidget {
 
 class ShowImageWidgetState extends State<ShowImageWidget> {
 
+  final TransformationController controller = TransformationController();
+
   /// Boolean for keeping track if the delete Button is usable (Clickable)
   /// Delete Button will be activated if the current user is also the user that created this pin
   /// true: Delete Button is clickable
   /// false: Delete Button is deactivated
   bool activeDelete = false;
-  String username = "---";
 
   @override
   Widget build(BuildContext context) => ImageWidgetUI(state: this);
 
-  /// Fetches the username of the creator during initialization
-  @override
-  void initState() {
-    super.initState();
-    username = widget.pin.username;
-    if (username == global.username) {
-      activeDelete = true;
-    }
-  }
-
 
   /// This method tries deleting the selected pin and goes back to the previous page if successful
+  /// user has to select delete in dialog
   /// Works only if [activeDelete] is true
   Future<void> handleButtonPress() async{
-      if (activeDelete) {
-        CustomAlertDialog(
-          title: "Delete this post?",
-          text2: "Delete",
-          onPressed: () async {
-            if (widget.newPin) {
-              await Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePin(widget.pin);
-            } else {
-              await Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.pin);
-            }
-            if (!mounted) return;
-            Navigator.pop(context);
-          },
+      if (widget.pin.username == global.username) {
+        showDialog(context: context, builder: (context) => CustomAlertDialog(
+            title: "Delete this post?",
+            text2: "Delete",
+            onPressed: () async {
+              if (widget.newPin) {
+                await Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePin(widget.pin);
+              } else {
+                await Provider.of<ClusterNotifier>(context, listen: false).removePin(widget.pin);
+              }
+              if (!mounted) return;
+              Navigator.pop(context);
+            },
+          )
         );
       }
+  }
+
+  void handleOpenUserProfile() {
+    if (widget.pin.username == global.username) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) =>  ProfilePage(username: widget.pin.username,)
+      ),
+    );
+  }
+
+  void handleOpenGroup() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) =>  ShowGroupPage(group: widget.pin.group, myGroup: true)
+      ),
+    );
   }
 
 }

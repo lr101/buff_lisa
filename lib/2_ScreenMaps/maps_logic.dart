@@ -2,18 +2,16 @@ import 'package:buff_lisa/2_ScreenMaps/maps_ui.dart';
 import 'package:buff_lisa/Files/Other/location_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
 class MapsWidget extends StatefulWidget {
-  //TODO is it actually needed?
-  final ProviderContext io;
 
-  const MapsWidget({super.key, required this.io});
+  const MapsWidget({super.key});
 
   @override
   State<MapsWidget> createState() => MapsWidgetState();
@@ -29,9 +27,13 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
   /// 4: 1 year
   int filterState = 0;
 
+  /// flag for showing only pins of user or all
+  /// false: all pins are shown
+  /// true: only user pins are shown
   bool filterUser = false;
 
   /// controller of the flutter_map
+  /// used to recenter to user location from button press
   MapController controller = MapController();
 
   @override
@@ -51,8 +53,8 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
 
   /// sets google maps location to the current user position via the maps [controller]
   void setLocation() async {
-    LocationData loc = await LocationClass.getLocation();
-    LatLng latLong = LatLng(loc.latitude!, loc.longitude!);
+    Position loc = await LocationClass.getLocation();
+    LatLng latLong = LatLng(loc.latitude, loc.longitude);
     controller.move(latLong, global.initialZoom);
   }
 
@@ -88,33 +90,23 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
       filterUser = !filterUser;
     });
     if (filterUser) {
-      Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterUsername([global.username]);
+      Provider.of<ClusterNotifier>(context, listen:false).setFilterUsername([global.username]);
     } else {
-      Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterUsername([]);
+      Provider.of<ClusterNotifier>(context, listen:false).setFilterUsername([]);
     }
   }
 
   /// updates the marker list via provider to filter for the pins created int the last [days]
   void _setFilterDate(int? days) {
     if (days == null) {
-      Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterDate(null, null);
+      Provider.of<ClusterNotifier>(context, listen:false).setFilterDate(null, null);
     } else {
-      Provider.of<ClusterNotifier>(widget.io.context, listen:false).setFilterDate(DateTime.now().subtract(Duration(days: days)), null);
+      Provider.of<ClusterNotifier>(context, listen:false).setFilterDate(DateTime.now().subtract(Duration(days: days)), null);
     }
   }
 
 
   @override
   bool get wantKeepAlive => true;
-
-}
-
-/// class to save information of the current context and bind it to a globally unique key
-class ProviderContext {
-
-  late GlobalKey globalKey;
-  late BuildContext context;
-
-  ProviderContext(this.globalKey, this.context);
 
 }

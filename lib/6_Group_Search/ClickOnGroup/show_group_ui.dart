@@ -23,7 +23,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
       body: FutureBuilder<List<Ranking>>(
         future: (state.widget.group.visibility != 0 && !widget.myGroup) ? Future(() => []) : widget.group.members.asyncValue(),
         builder: (context, snapshot) => ListView.builder(

@@ -14,9 +14,9 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body:  Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Scaffold(appBar: null,
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // -- title --
@@ -25,27 +25,35 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                   title: "Image",
                   back: true,
                   action: getActionBar(),
+                  actionBar: getOtherActionBar(),
                 ),
-                child: getOtherActionBar(),
               ),
-              Text("username: ${state.widget.pin.username}"),
+              GestureDetector(
+                onTap: state.handleOpenUserProfile,
+                child: Text("username: ${state.widget.pin.username}"),
+              ),
+              const SizedBox(height: 18,),
+              GestureDetector(
+                onTap: state.handleOpenGroup,
+                child: Text("group: ${widget.pin.group.name}", style: const TextStyle(fontStyle: FontStyle.italic),),
+              ),
               // -- image --
               FutureBuilder<Uint8List>(
                 future: widget.pin.image.asyncValue(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Expanded(
-                        child:Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            // enable zoom into image:
-                            child: InteractiveViewer(
-                                panEnabled: false,
-                                boundaryMargin: const EdgeInsets.all(100),
-                                minScale: 1,
-                                maxScale: 4,
-                                child:  Image.memory(snapshot.requireData)
-                            )
-                        )
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: InteractiveViewer(
+                            transformationController: state.controller,
+                            boundaryMargin: const EdgeInsets.all(0),
+                            onInteractionEnd: (ScaleEndDetails endDetails) {
+                              state.controller.value = Matrix4.identity();
+                            },
+                            child: Image.memory(snapshot.requireData),
+                          )
+                      ),
                     );
                   } else {
                     return const Center(child: CircularProgressIndicator() );
@@ -58,6 +66,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
     );
   }
 
+  /// delete button only shown when current user is owner of pin
   CustomAction? getActionBar() {
     if(widget.pin.username == global.username) {
       return CustomAction(icon: const Icon(Icons.delete), action: () => state.handleButtonPress());
@@ -66,11 +75,19 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
     }
   }
 
-  Widget getOtherActionBar() {
+  /// popup menu for hiding post when current user is NOT owner of pin
+  Widget? getOtherActionBar() {
     if(widget.pin.username != global.username) {
-      return CustomPopupMenuButton(pin: state.widget.pin, update: () async => Navigator.of(state.context).pop(),);
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+       children: [
+         IconButton(onPressed: () => Navigator.pop(state.context), icon: const Icon(Icons.arrow_back)),
+         const Text("Image"),
+         CustomPopupMenuButton(pin: state.widget.pin, update: () async => Navigator.of(state.context).pop(),),
+       ],
+      );
     } else {
-      return const SizedBox.shrink();
+      return null;
     }
   }
 

@@ -15,7 +15,7 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
   Widget build(BuildContext context) {
     TextEditingController t1 = Provider.of<CreateGroupNotifier>(context).getText1;
     TextEditingController t2 = Provider.of<CreateGroupNotifier>(context).getText2;
-    return Scaffold(
+    return Scaffold(appBar: null,
         resizeToAvoidBottomInset: false,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -15,7 +15,7 @@ class SettingsUI extends StatelessUI<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
       body: SettingsList(
             sections: [
               const CustomSettingsSection(

@@ -16,7 +16,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: null,
           body: ListView(
             children: [
               getTitle(

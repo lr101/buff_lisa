@@ -10,9 +10,6 @@ import 'package:buff_lisa/Files/Other/global.dart' as global;
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
-  /// Login time sleeper used to wait shortly before login
-  Duration get loginTime => const Duration(milliseconds: 200);
-
   @override
   Widget build(BuildContext context) => LoginUI(widget: this);
 
@@ -45,7 +42,7 @@ class LoginScreen extends StatelessWidget {
   /// return returns null when signup was successful and an error message on errors
   Future<String?> signupUser(SignupData data) {
     try {
-      return Future.delayed(loginTime).then((_) async {
+      return Future.delayed(Duration.zero).then((_) async {
         if (data.name == null || data.password  == null) {
           return Future<String>.value("name or password ar not valid");
         } else if (!emailValidator(data.additionalSignupData!["email"])) {

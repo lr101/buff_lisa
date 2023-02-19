@@ -13,7 +13,7 @@ class MailUI extends StatelessUI<Email> {
     var size = MediaQuery.of(context).size.width;
     final controller1 = TextEditingController();
     final controller2 = TextEditingController();
-    return Scaffold(
+    return Scaffold(appBar: null,
 
       body: SizedBox(
           width: size,
