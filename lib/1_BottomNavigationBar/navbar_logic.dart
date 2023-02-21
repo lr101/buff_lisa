@@ -113,9 +113,10 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   /// load and activate previous active groups
   Future<void> groupsOnline(List<Group> groups) async {
     // add groups to global notifier
-    Provider.of<ClusterNotifier>(context, listen:false).addGroups(groups);
+    Provider.of<ClusterNotifier>(context, listen:false).addGroups(List.from(groups));
     // load all offline pins from files
     Set<Pin> value = global.localData.pinRepo.getPins(groups);
+    print(value);
     if (value.isNotEmpty) {
       // open upload page if offline saved pins exist
       Navigator.of(context).push(
