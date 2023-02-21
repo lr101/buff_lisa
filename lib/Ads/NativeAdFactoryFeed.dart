@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart' as d;
 
 class AdHelper {
 
@@ -9,7 +9,7 @@ class AdHelper {
   /// My id: ca-app-pub-6127949856398876/8680349496
   static String get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/6300978111';
+      return 'ca-app-pub-6127949856398876/8680349496';
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/2934735716';
     }
@@ -18,7 +18,7 @@ class AdHelper {
 
   static String get nativeAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-3940256099942544/2247696110';
+      return 'ca-app-pub-6127949856398876/6756823923';
     } else if (Platform.isIOS) {
       return 'ca-app-pub-3940256099942544/3986624511';
     }

@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:buff_lisa/5_Feed/feed_ui.dart';
+import 'package:buff_lisa/Ads/custom_native_ad.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -64,7 +65,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           } else {
             if (pageKey % _addEvery == 0) {
               pagingController.appendPage(
-                  [widget, const CustomAdWidget()], pageKey + 1);
+                  [widget, const CustomNativeAd()], pageKey + 1);
             } else {
               pagingController.appendPage([widget], pageKey + 1);
             }
