@@ -35,6 +35,7 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                   Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
                   return Future(() => p0);
                 },
+                provide: () => Future(() => null),
               ),
               const SizedBox(height: 20,),
               const Text("group name:"),

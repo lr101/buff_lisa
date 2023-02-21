@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:buff_lisa/9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,9 +8,9 @@ import '../../Providers/theme_provider.dart';
 import 'custom_image_picker.dart';
 
 class CustomShowAndPick extends StatefulWidget {
-  const CustomShowAndPick({super.key, required this.updateCallback, this.defaultImage = const Image(image: AssetImage("images/profile.jpg")), this.provide});
+  const CustomShowAndPick({super.key, required this.updateCallback, this.defaultImage = const Image(image: AssetImage("images/profile.jpg")), required this.provide});
 
-  final Future<Uint8List?> Function()? provide;
+  final Future<Uint8List?> Function() provide;
   final Future<Uint8List?> Function(Uint8List, BuildContext context) updateCallback;
   final Image defaultImage;
 
@@ -29,32 +30,36 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
         children: [
           FutureBuilder<Uint8List?>(
               future:  getImage(),
-              builder: (context, snapshot) => CircleAvatar(
-                backgroundImage: getProfile(snapshot.data),
-                radius: 50,
-                child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.bottomRight,
-                          child: GestureDetector(
-                            onTap: () => handleImageUpload(context),
-                            child: const CircleAvatar(
-                                radius: 18,
-                                child: Icon(Icons.edit),
-                            )
-                          ),
-                        ),
-                      ]
-                  ),
+              builder: (context, snapshot) =>
+                  GestureDetector(
+                    onTap: handleOpenImage,
+                    child:CircleAvatar(
+                      backgroundImage: getProfile(snapshot.data),
+                      radius: 50,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.bottomRight,
+                              child: GestureDetector(
+                                onTap: () => handleImageUpload(context),
+                                child: const CircleAvatar(
+                                    radius: 18,
+                                    child: Icon(Icons.edit),
+                                )
+                              ),
+                            ),
+                          ]
+                      ),
+                )
               )
-            )
+          )
         ]
     );
   }
 
   Future<Uint8List?> getImage() {
-    if (image == null && widget.provide != null) {
-      return widget.provide!();
+    if (image == null) {
+      return widget.provide();
     } else {
       return Future(() => image);
     }
@@ -85,5 +90,13 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
     setState(() {});
   }
 
+
+  void handleOpenImage() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) => ShowProfileImage(provide: widget.provide, defaultImage: widget.defaultImage,)
+      ),
+    );
+  }
 
 }

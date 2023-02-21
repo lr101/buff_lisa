@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import '../../9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
+
 class CustomTitle extends StatefulWidget {
   const CustomTitle({
     super.key,
@@ -41,21 +43,33 @@ class CustomTitleState extends State<CustomTitle> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          FutureBuilder<Uint8List>(
-            future: widget.imageCallback!(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
+          GestureDetector(
+            onTap: handleOpenImage,
+            child:  FutureBuilder<Uint8List>(
+              future: widget.imageCallback!(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
                   return CircleAvatar(backgroundImage: Image.memory(snapshot.requireData).image, radius: 50,);
-              } else {
-                return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: 50,);
-              }
-            },
+                } else {
+                  return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: 50,);
+                }
+              },
+            ),
           ),
           const SizedBox(height: 10,)
         ],
       );
     }
   }
+
+  void handleOpenImage() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) => ShowProfileImage(provide: widget.imageCallback!, defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
+      ),
+    );
+  }
+
 
 
 
