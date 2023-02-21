@@ -1,3 +1,4 @@
+import 'package:buff_lisa/7_Settings/OrderGroups/order_groups_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,13 @@ class Settings extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const HiddenUsers()),
+    );
+  }
+
+  void handleOrderGroups(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const OrderGroups()),
     );
   }
 

@@ -75,10 +75,8 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
           onTap: () => state.handleJoinGroupPress(group),
           child: ListTile(
             leading: group.profileImage.customWidget(
-                callback: (p0, p1) {
-                  if (p1) return CircleAvatar(backgroundImage: Image.memory(p0!).image, radius: 20);
-                  return const CircleAvatar(backgroundColor: Colors.grey, radius: 20,);
-                }
+                callback: (p0) => CircleAvatar(backgroundImage: Image.memory(p0).image, radius: 20),
+                elseFunc: () => const CircleAvatar(backgroundColor: Colors.grey, radius: 20,)
             ),
             title: Text(group.name),
             trailing: (group.visibility != 0 ? const Icon(Icons.lock_outline) : const Icon(Icons.lock_open)),

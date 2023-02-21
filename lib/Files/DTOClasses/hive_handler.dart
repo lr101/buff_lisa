@@ -15,7 +15,7 @@ class HiveHandler<K, T> {
     box = await Hive.openBox(boxName);
   }
 
-  put(T value, {K? key}) async {
+  Future<void> put(T value, {K? key}) async {
     if (key != null) {
       await box.put(key, value);
     } else {
@@ -23,11 +23,11 @@ class HiveHandler<K, T> {
     }
   }
 
-  deleteByKey(K key) async {
+  Future<void> deleteByKey(K key) async {
     await box.delete(key);
   }
 
-  deleteByValue(T value) async {
+  Future<void> deleteByValue(T value) async {
     for (int i = 0; i < box.values.length; i++) {
       if (box.values.elementAt(i) == value) {
         await box.deleteAt(i);
@@ -39,7 +39,7 @@ class HiveHandler<K, T> {
     await box.clear();
   }
 
-  Future<T?> get(String key) async => box.get(key);
+  T? get(String key) => box.get(key);
   List<T> values() => box.values.toList();
   Future<List<K>> keys() async => box.keys.map((e) => e as K).toList();
 

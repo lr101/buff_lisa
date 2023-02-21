@@ -47,15 +47,9 @@ class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
         ),
         child: ListTile(
             title: Text(group.name),
-            leading:FutureBuilder<Uint8List>(
-              future: group.profileImage.asyncValue(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 20,);
-                } else {
-                  return const CircleAvatar(backgroundColor: Colors.grey, radius: 20,);
-                }
-              },
+            leading:  group.profileImage.customWidget(
+                callback: (p0) => CircleAvatar(backgroundImage: Image.memory(p0).image, radius: 20,),
+                elseFunc: () => const CircleAvatar(backgroundColor: Colors.grey, radius: 20,),
           ),
           trailing: const Icon(Icons.menu),
         )

@@ -50,13 +50,8 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                     child:Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                       child:Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImage.customWidget(
-                                          callback: (Uint8List? image, bool defaultValue) {
-                                            if (image != null) {
-                                              return CircleAvatar(backgroundImage: Image.memory(image).image, radius: 18,);
-                                            } else {
-                                              return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 18,);
-                                            }
-                                          }
+                                          callback: (image) =>  CircleAvatar(backgroundImage: Image.memory(image).image, radius: 18,),
+                                          elseFunc: () => CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 18,)
                                       ),
                                     ),
                                 ),

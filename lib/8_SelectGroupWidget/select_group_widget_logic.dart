@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 
 class SelectGroupWidget extends StatefulWidget {
@@ -39,6 +40,7 @@ class SelectGroupWidgetState extends State<SelectGroupWidget> {
     setState(() {
       expanded = !expanded;
     });
+    global.localData.setExpanded(expanded);
   }
 
   /// handles group press

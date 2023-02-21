@@ -45,7 +45,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
   /// selector widget for groups
   /// shown on top of screen in map and feed page
-  final Widget multiSelect = const SelectGroupWidget(multiSelector: true, expanded: true,);
+  final Widget multiSelect = SelectGroupWidget(multiSelector: true, expanded: global.localData.getExpanded());
 
   /// List of Widgets shown and used in the navbar
   late final List<Widget> widgetOptions = <Widget>[

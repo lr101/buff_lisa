@@ -88,14 +88,14 @@ class AsyncType<T>  {
         }
     }
 
-    Widget customWidget({required Widget Function(T?,bool) callback, T? defaultValue}) {
+    Widget customWidget({required Widget Function(T) callback, required Widget Function() elseFunc}) {
         return FutureBuilder<T>(
             future: asyncValue(),
             builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                    return callback(snapshot.requireData,true);
+                    return callback(snapshot.requireData);
                 } else {
-                    return callback(defaultValue,false);
+                    return elseFunc();
                 }
             },
         );

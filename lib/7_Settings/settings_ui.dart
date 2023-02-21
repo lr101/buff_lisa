@@ -63,6 +63,11 @@ class SettingsUI extends StatelessUI<Settings> {
                     title: const Text('Edit hidden users'),
                     onPressed: (context) => widget.handleHiddenUsers(context),
                   ),
+                  SettingsTile.navigation(
+                    leading: const Icon(Icons.reorder),
+                    title: const Text('Order Groups'),
+                    onPressed: (context) => widget.handleOrderGroups(context),
+                  ),
                 ],
               ),
               SettingsSection(

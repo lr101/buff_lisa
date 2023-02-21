@@ -21,6 +21,7 @@ class LocalData {
   static const String themeKey = "themeKey";
   static const String orderKey = "orderKey";
   static const String langKey = "langKey";
+  static const String expandKey = "expandKey";
 
 
   late Secure secure = Secure();
@@ -115,6 +116,14 @@ class LocalData {
   void deleteOfflineGroup(int groupId) {
     offlineActiveGroups.deleteByKey(groupId);
     repo.deleteGroup(groupId);
+  }
+
+  bool getExpanded() {
+    return offlineDataStorage.get(expandKey) as bool? ?? true;
+  }
+
+  void setExpanded(bool expand) {
+    offlineDataStorage.put(expand, key: expandKey);
   }
 
 }

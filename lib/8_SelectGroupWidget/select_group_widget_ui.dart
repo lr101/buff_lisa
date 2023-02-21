@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/Widgets/custom_if_else.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,11 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            state.expanded ? expanded(context) : collapsed(context),
+            CustomIfElse(
+                ifWidget: expanded(context),
+                elseWidget: collapsed(context),
+                ifTest: () => state.expanded
+            ),
             editColumn()
           ],
         )
@@ -38,24 +43,37 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
         children: [
           GestureDetector(
               onTap: state.handleOrderGroup,
-              child: state.expanded ? const Icon(Icons.edit,size: 20,) : const SizedBox.shrink(),
+              child: CustomIfElse(
+                ifTest: () => state.expanded,
+                ifWidget: const SizedBox(
+                  height: 50,
+                  width: 30,
+                  child: Icon(Icons.edit,size: 20,),
+                ),
+                elseWidget: const SizedBox.shrink(),
+              )
           ),
-          (state.expanded ? const SizedBox(height: 20,) : const SizedBox.shrink()),
           GestureDetector(
               onTap: state.toggleExpanded,
-              child: state.expanded ? const Icon(Icons.arrow_drop_up) : const Icon(Icons.arrow_drop_down)
+              behavior: HitTestBehavior.translucent,
+              child: SizedBox(
+                height: 30,
+                width: 30,
+                child: CustomIfElse(
+                  ifTest: () => state.expanded,
+                  ifWidget: const Icon(Icons.arrow_drop_up),
+                  elseWidget: const Icon(Icons.arrow_drop_down),
+                ),
+            )
           )
         ]
     );
   }
 
   Widget collapsed(BuildContext context) {
-    return Container(
+    return SizedBox(
           width: MediaQuery.of(context).size.width - 30,
           height: 30,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
-          ),
           child: ListView.builder(
             itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,
             itemBuilder: (context, index) => collapsedGroupCard(index),
@@ -65,12 +83,9 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
   }
 
   Widget expanded(BuildContext context) {
-    return Container(
+    return SizedBox(
           width: MediaQuery.of(context).size.width - 30,
           height: 80,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10), bottomRight: Radius.circular(10))
-          ),
           child: ListView.builder(
             itemCount: Provider.of<ClusterNotifier>(context).getGroups.length,
             itemBuilder: groupCard,
