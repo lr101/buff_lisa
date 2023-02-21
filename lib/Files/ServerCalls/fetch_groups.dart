@@ -43,7 +43,7 @@ class FetchGroups {
     if (ids == "") return [];
     Response response = await RestAPI.createHttpsRequest("/api/groups" , {"ids" : ids}, 0);
     if (response.statusCode == 200) {
-      return _toGroupList(response);
+      return _toGroupList(response, false);
     } else {
       throw Exception("Groups could not be loaded: ${response.statusCode} error code");
     }
@@ -206,12 +206,12 @@ class FetchGroups {
 
 
   /// returns a list of groups by converting the body of a http response to Group objects
-  static Future<List<Group>> _toGroupList(Response response) async {
+  static Future<List<Group>> _toGroupList(Response response, [saveOffline = true]) async {
     List<dynamic> values = json.decode( response.body);
 
     List<Group> groups = [];
     for (var element in values) {
-      groups.add(Group.fromJson(element));
+      groups.add(Group.fromJson(element, saveOffline));
     }
     return groups;
   }

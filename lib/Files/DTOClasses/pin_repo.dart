@@ -31,9 +31,9 @@ class PinRepo {
     return null;
   }
 
-  List<Pin> getPins(List<Group> groups) {
+  Set<Pin> getPins(List<Group> groups) {
     List<PinDTO> list = box.values.toList();
-    List<Pin> pins = [];
+    Set<Pin> pins = {};
     for (PinDTO pinDTO in list) {
       Iterable<Group> group = groups.where((element) => element.groupId == pinDTO.groupId);
       if (group.isNotEmpty) {

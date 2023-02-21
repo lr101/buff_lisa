@@ -63,9 +63,6 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   @override
   void initState() {
     super.initState();
-    if (global.pinsLoaded) {
-      Provider.of<ClusterNotifier>(context, listen:false).clearAll();
-    }
     pageController = PageController(initialPage: selectedIndex);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _getGroups();
@@ -101,7 +98,6 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   /// on success: call groupsOnline()
   /// on error: must be an internet error: load saved offline pins by calling groupsOffline()
   Future<void> _getGroups() async {
-    global.pinsLoaded = true;
     try {
       List<Group> groups = await FetchGroups.getUserGroups();
       await groupsOnline(groups);
@@ -119,21 +115,14 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     // add groups to global notifier
     Provider.of<ClusterNotifier>(context, listen:false).addGroups(groups);
     // load all offline pins from files
-    Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins().then((value)  {
-    if (mounted && value.isNotEmpty) {
-        // open upload page if offline saved pins exist
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => UploadOfflinePage(pins: value),
-          )
-        );
-      }
-    });
-    // activate previous active groups
-    for (int id in await global.localData.offlineActiveGroups.keys()) {
-      if (!mounted) return;
-      Group group = Provider.of<ClusterNotifier>(context, listen:false).getGroupByGroupId(id);
-      await Provider.of<ClusterNotifier>(context, listen:false).activateGroup(group); //new thread
+    Set<Pin> value = global.localData.pinRepo.getPins(groups);
+    if (value.isNotEmpty) {
+      // open upload page if offline saved pins exist
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => UploadOfflinePage(pins: value),
+        )
+      );
     }
   }
 
@@ -144,14 +133,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     CustomErrorMessage.message(context: context, message: "Cannot connect to server, offline groups are displayed");
     Provider.of<ClusterNotifier>(context, listen:false).offline = true;
     // load previous offline saved groups
-    await Provider.of<ClusterNotifier>(context, listen:false).loadOfflineGroups();
-    if (!mounted) return;
-    List<Pin> pins = await Provider.of<ClusterNotifier>(context, listen:false).loadOfflinePins();
-    if (!mounted) return;
-    for (Pin pin in pins) {
-      await Provider.of<ClusterNotifier>(context, listen:false).addPin(pin);
-    }
-
+    Provider.of<ClusterNotifier>(context, listen:false).loadOfflineGroups();
   }
 
 }

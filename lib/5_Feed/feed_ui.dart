@@ -17,7 +17,7 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState>{
             children: [
               Expanded(
                   child: RefreshIndicator(
-                      onRefresh: () async => state.refresh(),
+                      onRefresh: () async => state.pullRefresh(refresh: true),
                       child:PagedListView<int, Widget> (
                       pagingController: state.pagingController,
                       builderDelegate: PagedChildBuilderDelegate<Widget>(

@@ -80,16 +80,11 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     pullRefresh();
   }
 
-  void refresh() {
-    groups = Provider.of<ClusterNotifier>(context, listen: false).getActiveGroups.toSet();
-    pullRefresh();
-  }
 
-
-  Future<void> pullRefresh() async {
+  Future<void> pullRefresh({refresh = false}) async {
     allWidgets.clear();
     for (Group group in groups) {
-      Set<Pin> pins = await group.pins.asyncValue();
+      Set<Pin> pins = refresh ? await group.pins.refresh() : await group.pins.asyncValue();
       allWidgets.addAll(pins);
     }
     allWidgets.sort((k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);

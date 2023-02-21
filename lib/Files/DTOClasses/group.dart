@@ -69,18 +69,19 @@ class Group {
     description,
     pins,
     profileImage,
-    pinImage
+    pinImage,
+    saveOffline = true
   }) {
     this.groupAdmin = AsyncType(value: groupAdmin, callback: () => FetchGroups.getGroupAdmin(groupId), callbackDefault: () async => "---", builder: (_) => Text(_));
     this.members = AsyncType(value: members, callback: _getMembers, callbackDefault: () async => []);
     this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), callbackDefault: () async => "cannot be loaded", builder: (_) => Text(_));
     this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{});
-    this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: _saveOffline);
-    this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: _saveOffline, retry: false);
+    this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: (saveOffline) ? _saveOffline : null);
+    this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: (saveOffline) ? _saveOffline : null, retry: false);
   }
 
   /// Constructor of group when data is in json format
-  static Group fromJson(Map<String, dynamic> json) {
+  static Group fromJson(Map<String, dynamic> json, [bool saveOffline = true]) {
     return Group(
         groupId: json['groupId'],
         name:  json['name'],
@@ -89,8 +90,9 @@ class Group {
         description: json['description'],
         groupAdmin:  json['groupAdmin'],
         members: _getMemberList(json['members']),
-      pinImage: _getImageBinary(json['pinImage']),
-      profileImage: _getImageBinary(json['profileImage'])
+        pinImage: _getImageBinary(json['pinImage']),
+        profileImage: _getImageBinary(json['profileImage']),
+        saveOffline: saveOffline
     );
   }
 

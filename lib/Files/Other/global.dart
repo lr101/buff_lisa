@@ -15,12 +15,6 @@ double feedZoom = 13;
 /// Is set to the center of Karlsruhe, Germany
 LatLng initCamera =  LatLng(49.006889, 8.403653);
 
-
-/// flag for an already existing login
-/// is set to true when user opens app
-/// resets provider information of pins of the old user when user logs out via logout button
-bool pinsLoaded = false;
-
 /// server ip address loaded from .env file
 /// useful ip addresses:
 /// server: 54.234.245.153

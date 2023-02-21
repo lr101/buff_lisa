@@ -42,8 +42,6 @@ class LocalData {
 
   late HiveHandler<int, DateTime> hiddenPosts;
 
-  late HiveHandler<int, dynamic> offlineActiveGroups;
-
   late HiveHandler<String, dynamic> offlineDataStorage;
 
   late GroupRepo repo;
@@ -63,7 +61,6 @@ class LocalData {
     // init hive boxes
     hiddenUsers = await HiveHandler.fromInit<String, DateTime>(hiddenUsersKey);
     hiddenPosts = await HiveHandler.fromInit<int, DateTime>(hiddenPostsKey);
-    offlineActiveGroups = await HiveHandler.fromInit<int, dynamic>(activeGroupKey);
     repo = await GroupRepo.fromInit(groupFileNameKey);
     pinRepo = await PinRepo.fromInit(pinFileNameKey);
     offlineDataStorage = await HiveHandler.fromInit<String, dynamic>(offlineKeyValue);
@@ -91,7 +88,6 @@ class LocalData {
     // clear content of hive boxes
     await hiddenUsers.clear();
     await hiddenPosts.clear();
-    await offlineActiveGroups.clear();
     await repo.clear();
     await pinRepo.clear();
     await offlineDataStorage.clear();
@@ -114,7 +110,7 @@ class LocalData {
   }
 
   void deleteOfflineGroup(int groupId) {
-    offlineActiveGroups.deleteByKey(groupId);
+    deactivateGroup(groupId);
     repo.deleteGroup(groupId);
   }
 
@@ -124,6 +120,24 @@ class LocalData {
 
   void setExpanded(bool expand) {
     offlineDataStorage.put(expand, key: expandKey);
+  }
+
+  void activateGroup(int groupId) {
+    List<int> activeGroups = getActiveGroups();
+    if (!activeGroups.any((element) => element == groupId)) {
+      activeGroups.add(groupId);
+      offlineDataStorage.put(activeGroups, key: activeGroupKey);
+    }
+  }
+
+  void deactivateGroup(int groupId) {
+    List<int> activeGroups = getActiveGroups();
+    activeGroups.removeWhere((element) => element == groupId);
+    offlineDataStorage.put(getActiveGroups(), key: activeGroupKey);
+  }
+
+  List<int> getActiveGroups() {
+    return offlineDataStorage.get(activeGroupKey) ?? [];
   }
 
 }

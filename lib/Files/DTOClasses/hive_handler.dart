@@ -41,6 +41,6 @@ class HiveHandler<K, T> {
 
   T? get(String key) => box.get(key);
   List<T> values() => box.values.toList();
-  Future<List<K>> keys() async => box.keys.map((e) => e as K).toList();
+  List<K> keys() => box.keys.map((e) => e as K).toList();
 
 }

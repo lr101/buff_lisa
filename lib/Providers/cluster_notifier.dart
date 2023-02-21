@@ -51,14 +51,13 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   void addGroups(List<Group> groups) {
     _userGroups.clear();
+    List<int> activeGroups = global.localData.getActiveGroups();
     List<int> updatedList = List.from(global.localData.groupOrder);
-
     for (int groupId  in global.localData.groupOrder) {
       int where = groups.indexWhere((element) => element.groupId == groupId);
       if (where != -1) {
         if (kDebugMode) print("add $groupId at ${_userGroups.length}");
-        _userGroups.add(groups[where]);
-        groups[where].pinImage.asyncValue(); //new thread - load pin image on startup
+        _add(groups[where], activeGroups);
         groups.removeAt(where);
       } else {
         updatedList.removeWhere((element) => element == groupId);
@@ -66,20 +65,24 @@ class ClusterNotifier extends ChangeNotifier {
     }
     for (Group group in groups) {
       if (kDebugMode) print("add ${group.groupId} at ${_userGroups.length}");
-      _userGroups.add(group);
-      group.pinImage.asyncValue(); //new thread - load pin image on startup
+      _add(group, activeGroups);
       updatedList.add(group.groupId);
     }
     global.localData.updateGroupOrder(updatedList);
     notifyListeners();
   }
 
+  void _add(Group group, List<int> activeGroups) {
+    _userGroups.add(group);
+    group.pinImage.asyncValue(); //new thread - load pin image on startup
+    if (activeGroups.any((element) => element == group.groupId)) activateGroup(group); // new thread - load pins of image
+  }
+
   /// adds a list of [Group] saved offline in [_offlineGroupHandler] in [_userGroups] if they not already existing
   /// NOTIFIES CHANGES
-  Future<List<Group>> loadOfflineGroups() async {
+  void loadOfflineGroups() {
     GroupRepo repo = global.localData.repo;
     addGroups(repo.getGroups());
-    return _userGroups;
   }
 
   /// removes a specific [group] form [_userGroups]
@@ -173,9 +176,9 @@ class ClusterNotifier extends ChangeNotifier {
     if (!group.active) {
       group.active = true;
       notifyListeners();
-      final HiveHandler<int, dynamic> offlineActiveGroups = await HiveHandler.fromInit<int, dynamic>("activeGroups");
-      offlineActiveGroups.put(null, key: group.groupId);
-      //get pins from server of the specific groups if not already loaded
+      global.localData.activateGroup(group.groupId);
+      //get pins from server or load from offline
+      if (offline && group.pins.syncValue == null) group.pins.setValue(global.localData.pinRepo.getPins(_userGroups));
       Set<Pin> pins = await group.pins.asyncValue();
       //converts pins to markers on google maps
       for (Pin pin in pins) {
@@ -193,8 +196,7 @@ class ClusterNotifier extends ChangeNotifier {
     if (group.active) {
       group.active = false;
       notifyListeners();
-      final HiveHandler<int, dynamic> offlineActiveGroups = await HiveHandler.fromInit<int, dynamic>("activeGroups");
-      offlineActiveGroups.deleteByKey(group.groupId);
+      global.localData.deactivateGroup(group.groupId);
       //removes markers from maps
       for (Pin pin in group.pins.syncValue ?? {}) {
          _removePinFromMarkers(pin);
@@ -228,12 +230,6 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _updateValues();
-  }
-
-  /// loads all offline pins from device storage
-  Future<List<Pin>> loadOfflinePins() async {
-    PinRepo pinRepo = global.localData.pinRepo;
-    return pinRepo.getPins(_userGroups);
   }
 
   /// removes [oldPin] from [_offlinePins]

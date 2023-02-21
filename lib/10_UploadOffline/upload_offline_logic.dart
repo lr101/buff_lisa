@@ -12,7 +12,7 @@ import 'package:buff_lisa/Providers/cluster_notifier.dart';
 class UploadOfflinePage extends StatefulWidget {
   const UploadOfflinePage({super.key, required this.pins});
 
-  final List<Pin> pins;
+  final Set<Pin> pins;
 
   @override
   UploadOfflinePageState createState() => UploadOfflinePageState();

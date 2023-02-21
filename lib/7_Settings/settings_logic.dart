@@ -1,5 +1,6 @@
 import 'package:buff_lisa/7_Settings/OrderGroups/order_groups_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_ui.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
@@ -62,6 +63,7 @@ class Settings extends StatelessWidget {
   /// on logout button press all existing open pages are closed and the token and username or removed
   /// the login screen widget page is opened
   Future<void> handleLogoutPress(BuildContext context) async {
+    Provider.of<ClusterNotifier>(context, listen: false).clearAll();
     await global.localData.logout().then((value) {
       Navigator.pushAndRemoveUntil(
           context,

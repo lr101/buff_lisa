@@ -19,7 +19,7 @@ class UploadOfflinePageUI extends StatefulUI<UploadOfflinePage, UploadOfflinePag
           if (index == 0) {
             return getTitle();
           } else {
-            return FeedCard(pin: state.widget.pins[index-1]);
+            return FeedCard(pin: state.widget.pins.elementAt(index-1));
           }
         },
       ),
