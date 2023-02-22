@@ -65,7 +65,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           } else {
             if (pageKey % _addEvery == 0) {
               pagingController.appendPage(
-                  [widget, const CustomNativeAd()], pageKey + 1);
+                  [widget, const Card(child: CustomNativeAd())], pageKey + 1);
             } else {
               pagingController.appendPage([widget], pageKey + 1);
             }
