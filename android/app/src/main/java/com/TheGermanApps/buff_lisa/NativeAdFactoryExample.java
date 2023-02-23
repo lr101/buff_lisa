@@ -1,5 +1,6 @@
 package com.TheGermanApps.buff_lisa;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -90,6 +91,19 @@ class NativeAdFactoryExample implements NativeAdFactory {
             adView.getAdvertiserView().setVisibility(View.VISIBLE);
             ((TextView) adView.getAdvertiserView()).setText(nativeAd.getAdvertiser());
         }
+
+        // set brightness text color
+        Boolean darkMode = (Boolean) customOptions.get("brightness");
+        if (darkMode == null) { darkMode = false; }
+        int color = Color.parseColor(darkMode ? "#FFFFFF" : "#000000");
+        ((TextView) adView.getHeadlineView()).setTextColor(color);
+        ((TextView) adView.getPriceView()).setTextColor(color);
+        ((TextView) adView.getStoreView()).setTextColor(color);
+        ((TextView) adView.getAdvertiserView()).setTextColor(color);
+        ((Button) adView.getCallToActionView()).setTextColor(color);
+        ((TextView) adView.getBodyView()).setTextColor(color);
+        ((TextView) adView.findViewById(R.id.ad_advertisement_text)).setTextColor(color);
+
 
         // This method tells the Google Mobile Ads SDK that you have finished populating your
         // native ad view with this native ad.

@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:buff_lisa/Ads/NativeAdFactoryFeed.dart';
 import 'package:buff_lisa/Files/Widgets/custom_if_else.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 
 class CustomNativeAd extends StatefulWidget {
   const CustomNativeAd({super.key});
@@ -44,7 +46,9 @@ class CustomNativeAdState extends State<CustomNativeAd>  with AutomaticKeepAlive
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {addAd();});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      addAd();
+    });
   }
 
   Future<void> addAd() async {
@@ -52,6 +56,7 @@ class CustomNativeAdState extends State<CustomNativeAd>  with AutomaticKeepAlive
       adUnitId: AdHelper.nativeAdUnitId,
       factoryId: 'adFactoryExample',
       request: const AdRequest(),
+      customOptions: {'brightness': Provider.of<ThemeProvider>(context, listen: false).currentBrightness},
       listener: NativeAdListener(
         onAdLoaded: (ad) {
           setState(() {

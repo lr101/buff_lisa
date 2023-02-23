@@ -1,10 +1,8 @@
 import 'dart:typed_data';
-import 'dart:io';
-import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropping/image_cropping.dart';
-import 'package:images_picker/images_picker.dart' as picker;
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class CustomImagePicker {
@@ -14,32 +12,36 @@ class CustomImagePicker {
   /// check if 100 < width, height and image is square
   static Future<Uint8List?> pick({required int minHeight, required int minWidth, required Color color, required BuildContext context}) async {
     try {
-      List<picker.Media>? res = await picker.ImagesPicker.pick(
-        count: 1,
-        pickType: picker.PickType.image,
-      );
-      if (res != null && res.length == 1) {
-        Uint8List? croppedBytes = await ImageCropping.cropImage(
-          context: context,
-          imageBytes: File(res[0].path).readAsBytesSync(),
-          isConstrain: true,
-          visibleOtherAspectRatios: false,
-          selectedImageRatio: const CropAspectRatio(
-            ratioX: 1,
-            ratioY: 1,
-          ),
-          squareCircleColor: color,
-          defaultTextColor: Colors.black,
-          colorForWhiteSpace: Colors.black,
-          outputImageFormat: OutputImageFormat.jpg,
-          onImageDoneListener: (_) {},
+      final XFile? res =  await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (res != null && context.mounted) {
+        CroppedFile? croppedFile = await ImageCropper().cropImage(
+          sourcePath: res.path,
+          aspectRatioPresets: [
+            CropAspectRatioPreset.square,
+          ],
+          uiSettings: [
+            AndroidUiSettings(
+                toolbarTitle: 'Cropper',
+                toolbarColor: Provider.of<ThemeProvider>(context, listen: false).getCustomTheme.c1,
+                toolbarWidgetColor: Colors.white,
+                initAspectRatio: CropAspectRatioPreset.square,
+                lockAspectRatio: true
+            ),
+            IOSUiSettings(
+              title: 'Cropper',
+            ),
+            WebUiSettings(
+              context: context,
+            ),
+          ],
         );
-        if (croppedBytes == null) return null;
-        final dimensions = await decodeImageFromList(croppedBytes);
+        if (croppedFile == null) return null;
+        Uint8List image = await croppedFile.readAsBytes();
+        final dimensions = await decodeImageFromList(image);
         if ((dimensions.width < minHeight && dimensions.height < minHeight)) {
           return null;
         }
-        return croppedBytes;
+        return image;
       }
     } catch (e) {
       //TODO show error message

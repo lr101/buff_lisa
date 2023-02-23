@@ -32,5 +32,7 @@ class ThemeProvider with ChangeNotifier {
     return (_first ? darkTheme : lightTheme);
   }
 
+  bool get currentBrightness => _first;
+
 
 }

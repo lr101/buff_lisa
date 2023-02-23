@@ -6,8 +6,6 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropping/image_cropping.dart';
-import 'package:images_picker/images_picker.dart' as picker;
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
