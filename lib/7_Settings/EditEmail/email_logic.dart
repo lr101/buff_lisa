@@ -1,9 +1,8 @@
+import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/7_Settings/EditEmail/email_ui.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
-
-import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 class Email extends StatelessWidget {
   const Email({Key? key}) : super(key: key);

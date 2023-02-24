@@ -1,14 +1,11 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart';
-
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart';
 class FetchUsers {
 
   /// returns a list of members and the amount of points they have of a specific [group]

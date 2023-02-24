@@ -2,17 +2,15 @@ import 'package:buff_lisa/2_ScreenMaps/ClickOnPin/image_widget_logic.dart';
 import 'package:buff_lisa/5_Feed/FeedCard/feed_card_ui.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
-import 'package:buff_lisa/Files/DTOClasses/hive_handler.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../../Files/Other/global.dart' as global;
 
 import '../../7_Settings/Report/report_user.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
+import '../../Files/Other/global.dart' as global;
 
 class FeedCard extends StatefulWidget {
   const FeedCard({super.key, required this.pin, this.update});

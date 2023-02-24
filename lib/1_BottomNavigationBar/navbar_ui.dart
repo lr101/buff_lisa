@@ -3,7 +3,6 @@ import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'navbar_logic.dart';
 
 

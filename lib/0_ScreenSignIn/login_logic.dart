@@ -1,11 +1,10 @@
 import 'package:buff_lisa/0_ScreenSignIn/login_ui.dart';
 import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-
-import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);

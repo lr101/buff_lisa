@@ -1,9 +1,9 @@
 import 'package:buff_lisa/Files/Themes/custom_theme.dart';
+import 'package:buff_lisa/Files/Themes/dark_theme.dart';
 import 'package:buff_lisa/Files/Themes/light_theme.dart';
 import 'package:flutter/material.dart';
-import '../Files/Other/global.dart' as global;
 
-import 'package:buff_lisa/Files/Themes/dark_theme.dart';
+import '../Files/Other/global.dart' as global;
 
 class ThemeProvider with ChangeNotifier {
 

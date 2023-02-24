@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
-
 /// ChangeNotifier saving changes and information of the [CameraPage] Widget
 class ProfileNotifier with ChangeNotifier {
 

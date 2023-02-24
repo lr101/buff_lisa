@@ -1,21 +1,20 @@
-
 import 'dart:convert';
 
-import 'package:crypt/crypt.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
-
 class Secure {
-
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   /// save a given value via a given key with the secure flutter storage package
-  void saveSecure(String key, String value,) {
-    if (!kIsWeb)  storage.write(key: key, value: value);
+  void saveSecure(
+    String key,
+    String value,
+  ) {
+    if (!kIsWeb) storage.write(key: key, value: value);
   }
 
   /// read a value via a given key from secure storage
@@ -53,20 +52,31 @@ class Secure {
 
   /// signup with a given username, password and email
   /// saves on successful account creation the username and token in secure storage and returns true
-  static Future<bool> signupAuthentication(String username, String password, String email) async {
+  static Future<bool> signupAuthentication(
+      String username, String password, String email) async {
     String psw = Secure.encryptPassword(password);
-    return saveToken(tokenFunction: () =>  FetchUsers.signupNewUser(username, psw, email), username: username);
+    return saveToken(
+        tokenFunction: () => FetchUsers.signupNewUser(username, psw, email),
+        username: username);
   }
 
   /// signin process sends encoded password to server and obtains a JWT token on success
   /// saves after successful login username and token in secure storage and returns true
-  static Future<bool> loginAuthentication(String username, String password,) async {
-    return saveToken(tokenFunction: () => FetchUsers.auth(username, encryptPassword(password)), username: username);
+  static Future<bool> loginAuthentication(
+    String username,
+    String password,
+  ) async {
+    return saveToken(
+        tokenFunction: () =>
+            FetchUsers.auth(username, encryptPassword(password)),
+        username: username);
   }
 
   /// saves for a given function, that returns the token and a username
   /// in a secure storage and in the global file for use in current session
-  static Future<bool> saveToken({required Future<String?> Function() tokenFunction, required String username}) async {
+  static Future<bool> saveToken(
+      {required Future<String?> Function() tokenFunction,
+      required String username}) async {
     String? token = await tokenFunction();
     if (token != null) {
       global.localData.login(username, token);

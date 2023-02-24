@@ -1,5 +1,4 @@
 import 'package:buff_lisa/5_Feed/feed_logic.dart';
-import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';

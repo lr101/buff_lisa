@@ -1,22 +1,18 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:buff_lisa/Providers/user_notifier.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:hive_flutter/adapters.dart';
+
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
-import 'package:buff_lisa/0_ScreenSignIn/secure.dart';
-import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
+import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+
 import 'Files/DTOClasses/groupDTO.dart';
 import 'Files/DTOClasses/pinDTO.dart';
 import 'Files/Other/global.dart' as global;

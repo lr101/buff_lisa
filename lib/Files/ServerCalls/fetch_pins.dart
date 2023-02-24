@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:http/http.dart' as http;
+
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
-import 'package:http/http.dart';
-
 import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 class FetchPins {
 
   /// returns a set of all pins contained in a [group]

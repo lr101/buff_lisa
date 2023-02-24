@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../Providers/theme_provider.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   const CustomAlertDialog({super.key, this.text1,required this.text2,required this.onPressed, this.child, required this.title,});

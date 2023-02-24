@@ -1,10 +1,11 @@
 
 import 'dart:typed_data';
 
+import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+
 import '../../Files/Widgets/custom_popup_menu_button.dart';
 import 'image_widget_logic.dart';
 

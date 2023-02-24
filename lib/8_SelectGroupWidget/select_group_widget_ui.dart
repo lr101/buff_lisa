@@ -2,15 +2,13 @@ import 'dart:typed_data';
 
 import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Widgets/custom_if_else.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
 
 class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidgetState>{

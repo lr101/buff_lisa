@@ -1,19 +1,18 @@
 
 import 'dart:typed_data';
 
-import 'package:buff_lisa/2_ScreenMaps/maps_logic.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/Other/location_class.dart';
+import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:buff_lisa/Files/Other/location_class.dart';
-import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import '../../Files/Other/navbar_context.dart';
 import 'check_image_ui.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 class CheckImageWidget extends StatefulWidget {
   const CheckImageWidget({Key? key, required this.image, required this.navbarContext, required this.group}) : super(key: key);

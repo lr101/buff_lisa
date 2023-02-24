@@ -1,19 +1,18 @@
 
 import 'package:buff_lisa/3_ScreenAddPin/camera_ui.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
+import 'package:buff_lisa/Providers/camera_group_notifier.dart';
 import 'package:buff_lisa/Providers/camera_icon_notifier.dart';
+import 'package:buff_lisa/Providers/camera_notifier.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../2_ScreenMaps/maps_logic.dart';
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Providers/camera_group_notifier.dart';
-import 'package:buff_lisa/Providers/camera_notifier.dart';
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import '../Files/Other/navbar_context.dart';
 import 'TakeImage/check_image_logic.dart';
 

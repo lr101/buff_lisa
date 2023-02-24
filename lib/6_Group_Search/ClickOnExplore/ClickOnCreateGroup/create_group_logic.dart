@@ -1,14 +1,9 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
-import 'package:buff_lisa/Files/Widgets/custom_image_picker.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
-import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'create_group_ui.dart';
 
 //TODO Gruppen werden dobbelt ge-POST-tet

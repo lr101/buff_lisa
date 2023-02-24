@@ -1,13 +1,10 @@
-import 'dart:typed_data';
-
 import 'package:buff_lisa/7_Settings/HiddenPins/hidden_pin_ui.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/hidden_pin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 
 class HiddenPin extends StatefulWidget {

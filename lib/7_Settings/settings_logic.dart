@@ -1,16 +1,17 @@
+import 'package:buff_lisa/7_Settings/HiddenUsers/hidden_user_logic.dart';
 import 'package:buff_lisa/7_Settings/OrderGroups/order_groups_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_ui.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:buff_lisa/Providers/theme_provider.dart';
+
 import '../0_ScreenSignIn/login_logic.dart';
 import 'EditEmail/email_logic.dart';
 import 'EditPassword/password_logic.dart';
-import 'Report/report_user.dart';
 import 'HiddenPins/hidden_pin_logic.dart';
-import 'package:buff_lisa/7_Settings/HiddenUsers/hidden_user_logic.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'Report/report_user.dart';
 
 class Settings extends StatelessWidget {
   const Settings({Key? key}) : super(key: key);

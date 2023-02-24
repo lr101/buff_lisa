@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:buff_lisa/9_Profile/ClickOnProfileImage/show_profile_image_ui.dart';
-import 'package:buff_lisa/9_Profile/profile_image_ui.dart';
 import 'package:flutter/cupertino.dart';
 
 class ShowProfileImage extends StatefulWidget {

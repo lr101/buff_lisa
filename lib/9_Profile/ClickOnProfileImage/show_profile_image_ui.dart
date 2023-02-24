@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:buff_lisa/9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/material.dart';
+
 import '../../Files/Widgets/custom_title.dart';
 
 class ShowProfileImageUI extends StatefulUI<ShowProfileImage, ShowProfileImageState> {

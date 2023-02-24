@@ -1,16 +1,12 @@
-import 'dart:collection';
-
 import 'package:buff_lisa/5_Feed/feed_ui.dart';
 import 'package:buff_lisa/Ads/custom_native_ad.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
-import '../Ads/NativeAdFactoryFeed.dart';
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'FeedCard/feed_card_logic.dart';
 
 

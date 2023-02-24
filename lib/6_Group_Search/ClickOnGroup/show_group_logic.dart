@@ -1,16 +1,12 @@
-import 'dart:typed_data';
-
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/ClickOnEdit/edit_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_ui.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
-import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
 
 import '../../9_Profile/profile_logic.dart';
 

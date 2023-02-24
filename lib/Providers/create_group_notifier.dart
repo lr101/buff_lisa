@@ -1,9 +1,9 @@
 import 'dart:typed_data';
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
 
+import 'package:buff_lisa/6_Group_Search/ClickOnExplore/ClickOnCreateGroup/create_group_logic.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/6_Group_Search/ClickOnExplore/ClickOnCreateGroup/create_group_logic.dart';
 import 'package:flutter/material.dart';
 
 /// ChangeNotifier saving changes and information of the [CreateGroupPage] Widget

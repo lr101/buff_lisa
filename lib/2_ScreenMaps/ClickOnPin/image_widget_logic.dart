@@ -1,11 +1,10 @@
 import 'package:buff_lisa/2_ScreenMaps/ClickOnPin/image_widget_ui.dart';
+import 'package:buff_lisa/Files/DTOClasses/pin.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Widgets/cusotm_alert_dialog.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 import '../../6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import '../../9_Profile/profile_logic.dart';

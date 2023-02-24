@@ -1,7 +1,7 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart' as d;
 
 class AdHelper {
 
@@ -22,7 +22,7 @@ class AdHelper {
     if (Platform.isAndroid) {
       return 'ca-app-pub-6127949856398876/6756823923';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-3940256099942544/3986624511';
+      return 'ca-app-pub-6127949856398876/6756823923';
     }
     throw UnsupportedError("Unsupported platform");
   }

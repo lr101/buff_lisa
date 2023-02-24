@@ -1,9 +1,9 @@
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 
 class ShowWebWidget extends StatefulWidget {
   const ShowWebWidget({super.key, required this.route, required this.title});

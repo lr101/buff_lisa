@@ -1,15 +1,10 @@
-import 'package:buff_lisa/7_Settings/HiddenPins/hidden_pin_logic.dart';
 import 'package:buff_lisa/7_Settings/HiddenUsers/hidden_user_logic.dart';
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/user.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
-import 'package:buff_lisa/Providers/hidden_pin_page.dart';
 import 'package:buff_lisa/Providers/hidden_user_page.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HiddenUsersUI extends StatefulUI<HiddenUsers, HiddenUsersState> {
 
