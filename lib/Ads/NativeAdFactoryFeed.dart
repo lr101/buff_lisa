@@ -16,13 +16,15 @@ class AdHelper {
     throw UnsupportedError("Unsupported platform");
   }
 
-  /// Test-id: ca-app-pub-3940256099942544/2247696110
-  /// My id: ca-app-pub-6127949856398876/6756823923
+  /// Test-id android: ca-app-pub-3940256099942544/2247696110
+  /// Test-id ios: ca-app-pub-3940256099942544/3986624511
+  /// My id android: ca-app-pub-6127949856398876/6756823923
+  /// My id ios: ca-app-pub-6127949856398876/9475880203
   static String get nativeAdUnitId {
     if (Platform.isAndroid) {
       return 'ca-app-pub-6127949856398876/6756823923';
     } else if (Platform.isIOS) {
-      return 'ca-app-pub-6127949856398876/6756823923';
+      return 'ca-app-pub-3940256099942544/3986624511';
     }
     throw UnsupportedError("Unsupported platform");
   }

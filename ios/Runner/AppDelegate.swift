@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import google_mobile_ads
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,6 +9,12 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+      //GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ GADSimulatorID ]
+      // register ad factory
+      let listTileFactory = ListTileNativeAdFactory()
+          FLTGoogleMobileAdsPlugin.registerNativeAdFactory(
+              self, factoryId: "adFactoryExample", nativeAdFactory: listTileFactory)
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
