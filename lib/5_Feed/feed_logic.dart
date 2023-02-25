@@ -3,6 +3,7 @@ import 'package:buff_lisa/Ads/custom_native_ad.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/date_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
@@ -46,9 +47,9 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    lastSeen = global.localData.getLastSeen();
-    global.localData.setLastSeenNow();
-    print(lastSeen);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DateNotifier>(context, listen: false).setDateNow();
+    });
     super.initState();
   }
 
@@ -89,6 +90,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
 
   void init() {
     groups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
+    lastSeen = Provider.of<DateNotifier>(context, listen:false).getDate();
     pullRefresh();
   }
 
@@ -113,8 +115,8 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
 
   Future<void> pullRefresh({refresh = false}) async {
     if (refresh) {
-      lastSeen = global.localData.getLastSeen();
-      global.localData.setLastSeenNow();
+      lastSeen = Provider.of<DateNotifier>(context, listen:false).getDate();
+      Provider.of<DateNotifier>(context, listen: false).setDateNow();
     }
     allWidgets.clear();
     for (Group group in groups) {

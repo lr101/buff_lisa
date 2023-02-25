@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/date_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:camera/camera.dart';
@@ -68,6 +69,9 @@ class MyApp extends StatelessWidget {
               ChangeNotifierProvider.value(
                 value: UserNotifier(),
               ),
+              ChangeNotifierProvider.value(
+                value: DateNotifier(),
+              )
             ],
             builder: (context, child) => MaterialApp (
                   theme: Provider.of<ThemeProvider>(context).getTheme,

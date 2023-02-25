@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../../6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import '../../9_Profile/profile_logic.dart';
+import '../../Providers/date_notifier.dart';
 
 class ShowImageWidget extends StatefulWidget {
   const ShowImageWidget({Key? key, required this.pin, required this.newPin}) : super(key: key);
@@ -56,6 +57,7 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
                 await Provider.of<ClusterNotifier>(c, listen: false).removePin(widget.pin);
               }
               if (!mounted) return;
+              Provider.of<DateNotifier>(context, listen: false).notifyReload();
               Navigator.pop(c);
             },
           )

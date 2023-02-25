@@ -8,12 +8,7 @@ import 'package:provider/provider.dart';
 
 
 class SelectGroupWidget extends StatefulWidget {
-  const SelectGroupWidget({super.key, required this.multiSelector, required this.expanded});
-
-  /// parameter for selecting just one or multiple shown groups
-  /// true: multiple selection possible
-  /// false: single selection
-  final bool multiSelector;
+  const SelectGroupWidget({super.key,required this.expanded});
 
   /// flag for initializing expanded or not
   final bool expanded;
@@ -47,16 +42,11 @@ class SelectGroupWidgetState extends State<SelectGroupWidget> {
   /// [multiSelector] true: activates or deactivates group and saves it in ClusterNotifier
   /// [multiSelector] false: set last selected group
   void onGroupTab(Group group) {
-    if (widget.multiSelector) {
-      if (group.active) {
-        Provider.of<ClusterNotifier>(context, listen:false).deactivateGroup(group);
-      } else {
-        Provider.of<ClusterNotifier>(context, listen:false).activateGroup(group);
-      }
+    if (group.active) {
+      Provider.of<ClusterNotifier>(context, listen:false).deactivateGroup(group);
     } else {
-      Provider.of<ClusterNotifier>(context, listen:false).setLastSelected(group);
+      Provider.of<ClusterNotifier>(context, listen:false).activateGroup(group);
     }
-
   }
 
   /// Opens the SearchGroupPage Widget as a new page

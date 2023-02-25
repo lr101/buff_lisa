@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../Files/DTOClasses/pin.dart';
+import '../Providers/date_notifier.dart';
+
 
 class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidgetState>{
 
@@ -94,7 +97,7 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
 
   Widget collapsedGroupCard(int index) {
     Group group = Provider.of<ClusterNotifier>(state.context, listen: false).getGroups[index];
-    Color color = (group.active && state.widget.multiSelector) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : Colors.grey;
+    Color color = (group.active) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : Colors.grey;
     return Padding(
         padding: const EdgeInsets.all(5),
         child: GestureDetector(
@@ -125,10 +128,11 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
   /// returns the circle avatar of the group and dynamically loads the image from the server
   Widget groupCard(BuildContext context,int index) {
     Group group = Provider.of<ClusterNotifier>(context, listen: false).getGroups[index];
-    Group? lastSelected = Provider.of<ClusterNotifier>(context, listen: false).getLastSelected;
     Color color = Colors.grey;
-    if ((group.active && state.widget.multiSelector) || (!state.widget.multiSelector && lastSelected != null && group == lastSelected)) {
+    Widget num = const SizedBox.shrink();
+    if ((group.active)) {
       color = Provider.of<ThemeProvider>(context).getCustomTheme.c1;
+      num = getNumNewPosts(group, context);
     }
     return Padding(
         padding: const EdgeInsets.all(5),
@@ -141,7 +145,18 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
                   future: group.profileImage.asyncValue(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 33,);
+                      return CircleAvatar(
+                        backgroundImage: Image.memory(snapshot.data!).image,
+                        radius: 33,
+                        child: Stack(
+                        children: [
+                            Align(
+                              alignment: Alignment.topRight,
+                                child: num
+                            ),
+                          ],
+                        )
+                      );
                     } else {
                       return Shimmer.fromColors(
                         baseColor: Colors.grey.shade700,
@@ -154,5 +169,37 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
             )
         )
     );
+  }
+}
+
+Widget getNumNewPosts(Group group, BuildContext context) {
+  return FutureBuilder<int>(
+    future: getNum(group, context),
+    builder: (context, snapshot) {
+      if (snapshot.hasData && snapshot.requireData > 0) {
+        return CircleAvatar(
+            radius: 13,
+            backgroundColor: Colors.grey,
+            child: Text(snapshot.requireData.toString())
+        );
+      } else {
+        return const SizedBox.shrink();
+      }
+    },
+  );
+
+}
+
+Future<int> getNum(Group group, BuildContext context) async {
+  DateTime? date = Provider.of<DateNotifier>(context).getDate();
+  Set<Pin> pins = await group.pins.asyncValue();
+  if (date == null) {
+    return pins.length;
+  } else {
+    int num = 0;
+    for (Pin pin in pins) {
+      if (pin.creationDate.isAfter(date)) num++;
+    }
+    return num;
   }
 }

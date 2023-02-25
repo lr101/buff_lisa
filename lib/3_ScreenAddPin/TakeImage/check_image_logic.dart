@@ -7,6 +7,7 @@ import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Other/location_class.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/date_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +50,7 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
     _postPin(mona, widget.group);
     final BottomNavigationBar navigationBar = widget.navbarContext.globalKey.currentWidget! as BottomNavigationBar;
     if (!mounted) return;
+    Provider.of<DateNotifier>(context, listen: false).notifyReload();
     Navigator.pop(context);
     navigationBar.onTap!(2);
 
