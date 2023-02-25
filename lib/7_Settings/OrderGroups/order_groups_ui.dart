@@ -21,7 +21,8 @@ class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
                     action: state.saveOrder,
                     icon: const Icon(Icons.add_task)
                 ),
-              )
+              ),
+            child: const Text("Order groups by long pressing to drag and drop", style: TextStyle(fontStyle: FontStyle.italic),),
           ),
           Expanded(child:
             ReorderableListView(

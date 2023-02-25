@@ -92,6 +92,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   Future<void> initializeControllerFuture(context) async {
     try {
       groups = Provider.of<ClusterNotifier>(context).getGroups;
+      init = false;
       controller = CameraController(global.cameras[Provider.of<CameraNotifier>(context).getCameraIndex] ,resolution,enableAudio: false );
       await controller.initialize();
       init = true;
@@ -113,7 +114,7 @@ class CameraControllerWidget extends State<CameraWidget> {
   /// disposes the camera and its controller
   @override
   void dispose() {
-    controller.dispose();
+    if (init) controller.dispose();
     super.dispose();
   }
 
@@ -124,22 +125,24 @@ class CameraControllerWidget extends State<CameraWidget> {
       pageController.animateToPage(index, duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
       return;
     }
-    if (!init) await initializeControllerFuture(context);
-    final image = await controller.takePicture();
-    try {
-      Uint8List bytes;
-      if (kIsWeb) {
-        bytes = await FetchPins.fetchImageFromBrowserCash(image.path);
-      } else {
-        bytes = await image.readAsBytes();
+    if (init) {
+      final image = await controller.takePicture();
+      try {
+        Uint8List bytes;
+        if (kIsWeb) {
+          bytes = await FetchPins.fetchImageFromBrowserCash(image.path);
+        } else {
+          bytes = await image.readAsBytes();
+        }
+        Group group = groups[Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex];
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) =>
+                  CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group,)
+          ),
+        );
+      } catch (e) {
+        CustomErrorMessage.message(context: context, message: "Something went wrong while taking the picture");
       }
-      Group group = groups[Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex];
-      Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group,)),
-      );
-    } catch (e) {
-      print(e);
     }
   }
 

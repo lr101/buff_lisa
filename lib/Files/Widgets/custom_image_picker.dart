@@ -6,6 +6,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import 'custom_error_message.dart';
+
 class CustomImagePicker {
 
   /// opens the input picker for selecting an image from the gallery
@@ -20,6 +22,7 @@ class CustomImagePicker {
           aspectRatioPresets: [
             CropAspectRatioPreset.square,
           ],
+          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
           uiSettings: [
             AndroidUiSettings(
                 toolbarTitle: 'Cropper',
@@ -29,7 +32,11 @@ class CustomImagePicker {
                 lockAspectRatio: true
             ),
             IOSUiSettings(
-              title: 'Cropper',
+               title: 'Cropper',
+               aspectRatioLockEnabled: true,
+               aspectRatioLockDimensionSwapEnabled: false,
+               aspectRatioPickerButtonHidden: true,
+              resetAspectRatioEnabled: false,
             ),
             WebUiSettings(
               context: context,
@@ -45,7 +52,7 @@ class CustomImagePicker {
         return image;
       }
     } catch (e) {
-      //TODO show error message
+      CustomErrorMessage.message(context: context, message: "Something went wrong while trying to pick an image");
     }
     return null;
   }

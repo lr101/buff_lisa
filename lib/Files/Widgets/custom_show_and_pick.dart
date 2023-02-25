@@ -21,6 +21,7 @@ class CustomShowAndPick extends StatefulWidget {
 class CustomShowAndPickState extends State<CustomShowAndPick> {
 
   Uint8List? image;
+  bool updating = false;
 
   @override
   Widget build(BuildContext context) {
@@ -30,35 +31,37 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
         children: [
           FutureBuilder<Uint8List?>(
               future:  getImage(),
-              builder: (context, snapshot) =>
-                  GestureDetector(
-                    onTap: handleOpenImage,
-                    child:CircleAvatar(
-                      backgroundImage: getProfile(snapshot.data),
-                      radius: 50,
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.bottomRight,
-                              child: GestureDetector(
-                                onTap: () => handleImageUpload(context),
-                                child: const CircleAvatar(
-                                    radius: 18,
-                                    child: Icon(Icons.edit),
-                                )
+              builder: (context, snapshot) {
+                  return GestureDetector(
+                      onTap: handleOpenImage,
+                      child: CircleAvatar(
+                        backgroundImage: getProfile(snapshot.data),
+                        radius: 50,
+                        child: Stack(
+                            children: [
+                              Center(child: snapshot.connectionState == ConnectionState.done && !updating ? const SizedBox.shrink() : const CircularProgressIndicator()),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: GestureDetector(
+                                    onTap: () => handleImageUpload(context),
+                                    child: const CircleAvatar(
+                                      radius: 18,
+                                      child: Icon(Icons.edit),
+                                    )
+                                ),
                               ),
-                            ),
-                          ]
-                      ),
-                )
-              )
+                            ]
+                        ),
+                      )
+                  );
+              }
           )
         ]
     );
   }
 
   Future<Uint8List?> getImage() {
-    if (image == null) {
+    if (image == null && !updating) {
       return widget.provide();
     } else {
       return Future(() => image);
@@ -86,8 +89,13 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
     Color theme = Provider.of<ThemeProvider>(context, listen: false).getCustomTheme.c1;
     Uint8List? pickedImage = await CustomImagePicker.pick(minHeight: 100, minWidth: 100, color: theme, context: context);
     if(!mounted || pickedImage == null) return;
+    setState(() {
+      updating = true;
+    });
     image = await widget.updateCallback(pickedImage, context);
-    setState(() {});
+    setState(() {
+      updating = false;
+    });
   }
 
 

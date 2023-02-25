@@ -29,7 +29,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                         child: FutureBuilder<void>(
                           future: state.initializeControllerFuture(context),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.done) {
+                            if (snapshot.connectionState == ConnectionState.done && state.init) {
                               return GestureDetector(
                                   onDoubleTap: () => state.handleCameraChange(context),
                                   onScaleStart: (_) => state.basScaleFactor = state.scaleFactor,
