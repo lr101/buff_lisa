@@ -26,7 +26,7 @@ class ShowWebWidgetState extends State<ShowWebWidget> {
             onPageStarted: (String url) {},
             onPageFinished: (String url) {},
             onWebResourceError: (WebResourceError error) {},
-            onNavigationRequest: (NavigationRequest request) => NavigationDecision.prevent
+            onNavigationRequest: (NavigationRequest request) => NavigationDecision.navigate
         ),
       )
       ..loadRequest(Uri.parse('https://${global.host}/${widget.route}'));
@@ -44,7 +44,11 @@ class ShowWebWidgetState extends State<ShowWebWidget> {
               back: true,
             )
           ),
-          Expanded(child: WebViewWidget(controller: ini())),
+          Expanded(
+              child: WebViewWidget(
+                  controller: ini()
+              )
+          ),
         ],
       ),
       floatingActionButton: Padding(

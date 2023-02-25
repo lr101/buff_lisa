@@ -148,7 +148,7 @@ class CameraControllerWidget extends State<CameraWidget> {
 
   /// switch the flash mode to the next
   void switchFlash() {
-    controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).nextFlashMode());
+    if(init) controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).nextFlashMode());
   }
 
   /// uses the camera zoom if zoom is inside [_minZoom] and [_maxZoom]
@@ -161,7 +161,7 @@ class CameraControllerWidget extends State<CameraWidget> {
 
   /// changes the camera on double tab via provider and its listeners
   Future<void> handleCameraChange(context) async {
-    Provider.of<CameraNotifier>(context, listen: false).changeCameraIndex();
+    if (init) Provider.of<CameraNotifier>(context, listen: false).changeCameraIndex();
   }
 
   /// changes the selected group index via provider
