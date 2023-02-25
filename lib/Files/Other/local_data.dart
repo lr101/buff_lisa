@@ -19,6 +19,7 @@ class LocalData {
   static const String orderKey = "orderKey";
   static const String langKey = "langKey";
   static const String expandKey = "expandKey";
+  static const String lastSeenKey = "lastSeenKey";
 
 
   late Secure secure = Secure();
@@ -135,6 +136,14 @@ class LocalData {
 
   List<int> getActiveGroups() {
     return offlineDataStorage.get(activeGroupKey) ?? [];
+  }
+
+  DateTime? getLastSeen() {
+    return offlineDataStorage.get(lastSeenKey);
+  }
+
+  void setLastSeenNow() {
+    offlineDataStorage.put(DateTime.now(), key: lastSeenKey);
   }
 
 }

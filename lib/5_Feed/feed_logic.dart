@@ -6,7 +6,7 @@ import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
-
+import '../Files/Other/global.dart' as global;
 import 'FeedCard/feed_card_logic.dart';
 
 
@@ -31,7 +31,8 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   late List<Pin> allWidgets = [];
 
   final _addEvery = 4;
-
+  
+  DateTime? lastSeen;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,9 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    lastSeen = global.localData.getLastSeen();
+    global.localData.setLastSeenNow();
+    print(lastSeen);
     super.initState();
   }
 
@@ -59,12 +63,23 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           if (allWidgets.length == pageKey + 1) {
             pagingController.appendLastPage([widget]);
           } else {
-            if (pageKey % _addEvery == 0) {
-              pagingController.appendPage(
-                  [widget, const Card(child: CustomNativeAd())], pageKey + 1);
-            } else {
-              pagingController.appendPage([widget], pageKey + 1);
-            }
+            List<Widget> pages = [];
+            // no new posts in the middle
+            if (lastSeen != null && 
+                pageKey > 0 && 
+                allWidgets.elementAt(pageKey - 1).creationDate.isAfter(lastSeen!) &&
+                key.creationDate.isBefore(lastSeen!)
+            ) pages.add(alreadySeenEverything("You have seen all new posts\nTry adding something yourself"));
+            // no new posts at the start
+            if (lastSeen != null &&
+                pageKey == 0 &&
+                key.creationDate.isBefore(lastSeen!)
+            ) pages.add(alreadySeenEverything("There are no new posts\nTry adding something yourself"));
+            // add current feed page
+            pages.add(widget);
+            // add an ad
+            if (pageKey % _addEvery == 0) pages.add(const Card(child: CustomNativeAd()));
+            pagingController.appendPage(pages, pageKey + 1);
           }
         }
     } catch (error) {
@@ -77,8 +92,30 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     pullRefresh();
   }
 
+  Widget alreadySeenEverything(String text) {
+    return SizedBox(
+      height: 100,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            backgroundImage: Image.asset("images/pinGui.png").image,
+            radius: 20,
+          ),
+          const SizedBox(width: 10,),
+          Text(text,textAlign: TextAlign.center,)
+        ],
+      )
+    );
+  }
+
 
   Future<void> pullRefresh({refresh = false}) async {
+    if (refresh) {
+      lastSeen = global.localData.getLastSeen();
+      global.localData.setLastSeenNow();
+    }
     allWidgets.clear();
     for (Group group in groups) {
       Set<Pin> pins = refresh ? await group.pins.refresh() : await group.pins.asyncValue();
