@@ -52,7 +52,7 @@ class Pin {
         latitude : json['latitude'],
         longitude : json['longitude'],
         id : json['id'],
-        username : json.containsKey('username') ? json['username'] : null,
+        username : json.containsKey('username') ? json['username'] : "",
         creationDate : DateTime.parse((json['creationDate']).toString()),
         group: group,
         isOffline : false

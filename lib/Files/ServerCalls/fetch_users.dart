@@ -4,6 +4,7 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 class FetchUsers {
@@ -60,9 +61,14 @@ class FetchUsers {
       "password" : password,
       "username" : name,
     });
-    Response response = await RestAPI.createHttpsRequest("/login/", {}, 1, encode: json, timeout: 3);
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return response.body;
+    try {
+      Response response = await RestAPI.createHttpsRequest("/login/", {}, 1, encode: json, timeout: 3);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.body;
+      }
+      return null;
+    } catch(_,e) {
+      if (kDebugMode) print(_);
     }
     return null;
   }

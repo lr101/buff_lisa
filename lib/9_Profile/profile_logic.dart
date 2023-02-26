@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:buff_lisa/9_Profile/profile_ui.dart';
+import 'package:buff_lisa/Files/AbstractClasses/async_type.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// always shows first item first and loads 3 items that are out of view
   final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 2);
 
-  List<Pin> pins = [];
+  late final AsyncType<List<Pin>> pins = AsyncType(callback: _getPins);
 
   late double width;
 
@@ -52,27 +53,39 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     });
   }
 
+  Future<List<Pin>> _getPins() => FetchPins.fetchUserPins(widget.username, Provider.of<ClusterNotifier>(context, listen: false).getGroups);
+
   Future<void> init() async {
-    width = (MediaQuery.of(context).size.width / 3);
-    pins = await FetchPins.fetchUserPins(widget.username, Provider.of<ClusterNotifier>(context).getGroups);
-    setState(() {});
+    width = ((MediaQuery.of(context).size.width - 10) / 3);
   }
 
-  void _fetchPage(int pageKey) {
-      late Widget widget;
+  void _fetchPage(int pageKey) async {
+    List<Pin> pinList = await pins.asyncValue();
       if (pageKey == 0) {
         pagingController.appendPage([getTitle()], pageKey + 1);
       } else {
-        if (pageKey >= pins.length) {
+        if (pageKey >= pinList.length) {
           pagingController.appendLastPage([const Text("That's all")]);
         } else {
           pagingController.appendPage([
-            Column(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                pageKey-1 < pins.length ? buildImage(pageKey - 1) : const SizedBox.shrink(),
-                pageKey < pins.length ? buildImage(pageKey) : const SizedBox.shrink(),
-                pageKey+1 < pins.length ? buildImage(pageKey + 1) : const SizedBox.shrink(),
+                SizedBox(
+                  height: width,
+                  width:  width,
+                  child: pageKey-1 < pinList.length ? buildImage(pinList[pageKey - 1]) : const SizedBox.shrink(),
+                ),
+                SizedBox(
+                  height: width,
+                  width:  width,
+                  child: pageKey < pinList.length ? buildImage(pinList[pageKey]) : const SizedBox.shrink(),
+                ),
+                SizedBox(
+                  height: width,
+                  width:  width,
+                  child: pageKey+1 < pinList.length ? buildImage(pinList[pageKey + 1]) : const SizedBox.shrink(),
+                )
               ],
             )
           ], pageKey + 3);
@@ -81,16 +94,16 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
   }
 
-  Widget buildImage(int index) {
+  Widget buildImage(Pin pin) {
     return FutureBuilder<Uint8List?>(
-        builder: (context, snapshot) => SizedBox(
+        future: pin.image.asyncValue(),
+        builder: (context, snapshot) => Container(
           height: width,
           width:  width,
-          child: Expanded(
-              child:(!snapshot.hasData || snapshot.requireData == null) ?
-                Container(color: Colors.grey,) :
-                Image.memory(snapshot.requireData!)
-          )
+          color: Colors.grey,
+          child:(!snapshot.hasData || snapshot.requireData == null) ?
+            const SizedBox.shrink() :
+            Image.memory(snapshot.requireData!, fit: BoxFit.cover,)
         )
     );
   }
