@@ -56,7 +56,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   /// Adds a new Feed Widget to the Listview by appending it to the pagingController
   /// Checks if the Pin at the position [pageKey] already has an existing Widget
   /// If not a new one is created
-  Future<void> _fetchPage(int pageKey) async {
+  void _fetchPage(int pageKey) {
     try {
         Pin key = allWidgets.elementAt(pageKey);
         Widget widget =  FeedCard(pin: key, update: pullRefresh,);
