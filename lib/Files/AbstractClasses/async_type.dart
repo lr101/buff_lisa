@@ -21,6 +21,7 @@ class AsyncType<T>  {
     }
 
     bool get isEmpty => _value == null;
+    bool get isLoaded => _isLoaded;
 
     Future<void> setValue(T value) async {
         if (kDebugMode) print("ACQUIRE LOCK of a ${T.toString()}");
@@ -29,6 +30,16 @@ class AsyncType<T>  {
             _value = value;
             _isLoaded = true;
             if (save != null) save!();
+        } finally {
+            _m.release();
+        }
+    }
+
+    Future<void> setValueButNotLoaded(T value) async {
+        if (kDebugMode) print("ACQUIRE LOCK of a ${T.toString()}");
+        await _m.acquire();
+        try {
+            _value = value;
         } finally {
             _m.release();
         }
@@ -56,6 +67,11 @@ class AsyncType<T>  {
                 _m.release();
             }
         }
+        return _value!;
+    }
+
+    Future<T> asyncValueMerge(T Function(bool isLoaded, T? current, T asyncVal) func) async {
+        _value = func(_isLoaded, syncValue, await asyncValue(), );
         return _value!;
     }
 

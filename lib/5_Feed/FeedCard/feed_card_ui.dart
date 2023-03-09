@@ -49,7 +49,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                     onTap: state.handleOpenUserProfile,
                                     child:Padding(
                                       padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                      child:Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImage.customWidget(
+                                      child:Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImageSmall.customWidget(
                                           callback: (image) =>  CircleAvatar(backgroundImage: Image.memory(image).image, radius: 18,),
                                           elseFunc: () => CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 18,)
                                       ),

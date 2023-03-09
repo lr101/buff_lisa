@@ -4,6 +4,7 @@ import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin_repo.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -18,9 +19,6 @@ class ClusterNotifier extends ChangeNotifier {
   /// list of groups the user is a member of
   final  List<Group> _userGroups = [];
 
-  /// group that was last selected by the [SelectGroupWidget] single select mode
-  /// used to pre-select the same group when creating a new pin
-  Group? _lastSelected;
 
   /// map of pins and their corresponding markers that are currently selected by active groups
   /// includes all pins by active groups even when some are not shown by applying filters
@@ -45,6 +43,21 @@ class ClusterNotifier extends ChangeNotifier {
 
   bool offline = false;
 
+  List<Group> otherGroups = [];
+
+  late final UserNotifier notifier;
+
+  void init(UserNotifier notifier) {
+    this.notifier = notifier;
+  }
+
+  void addOtherGroup(Group group) {
+    if (!_userGroups.any((element) => element.groupId == group.groupId)) {
+      otherGroups.add(group);
+      notifyListeners();
+    }
+  }
+
   /// clears [_userGroups] and ads a list of groups
   /// ads groups in order that is saved offline
   /// NOTIFIES CHANGES
@@ -64,6 +77,9 @@ class ClusterNotifier extends ChangeNotifier {
     }
     for (Group group in groups) {
       if (kDebugMode) print("add ${group.groupId} at ${_userGroups.length}");
+      if (otherGroups.any((element) => element.groupId == group.groupId)) {
+        otherGroups.retainWhere((element) => element.groupId == group.groupId);
+      }
       _add(group, activeGroups);
       updatedList.add(group.groupId);
     }
@@ -96,6 +112,7 @@ class ClusterNotifier extends ChangeNotifier {
     _userGroups.remove(group);
     global.localData.deleteOfflineGroup(group.groupId);
     notifyListeners();
+    notifier.clearPinsNotUser(global.localData.username);
   }
 
   void updateGroup(Group group, Group changes) async {
@@ -119,6 +136,7 @@ class ClusterNotifier extends ChangeNotifier {
       global.localData.updateGroupOrder(order);
     }
     notifyListeners(); // new thread
+    notifier.clearPinsNotUser(global.localData.username);
   }
 
   /// clears all values from lists, attributes and maps
@@ -155,6 +173,7 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _updateValues();
+    notifier.addPin(global.localData.username, pin);
   }
 
   Future<void> addPins(Set<Pin> pins) async {
@@ -178,7 +197,15 @@ class ClusterNotifier extends ChangeNotifier {
       global.localData.activateGroup(group.groupId);
       //get pins from server or load from offline
       if (offline && group.pins.syncValue == null) group.pins.setValue(global.localData.pinRepo.getPins(_userGroups));
-      Set<Pin> pins = await group.pins.asyncValue();
+      Set<Pin> pins = await group.pins.asyncValueMerge((isLoaded, current, asyncVal) {
+        if (!isLoaded && current != null) {
+          for (Pin pin in current) {
+            asyncVal.removeWhere((element) => element.id == pin.id);
+            asyncVal.add(pin);
+          }
+        }
+        return asyncVal;
+      });
       //converts pins to markers on google maps
       for (Pin pin in pins) {
         await _addPinToMarkers(pin);
@@ -211,9 +238,15 @@ class ClusterNotifier extends ChangeNotifier {
   /// 4. rebuild [_shownMarkers] list
   /// REBUILD MAP MARKERS
   /// NOTIFIES CHANGES
-  Future<void> removePin(Pin pin) async {
-    await FetchPins.deleteMonaFromPinId(pin.id);
-    hidePin(pin);
+  Future<bool> removePin(Pin pin) async {
+    try {
+      await FetchPins.deleteMonaFromPinId(pin.id);
+      notifier.removePin(global.localData.username, pin.id);
+      hidePin(pin);
+      return true;
+    } catch(e) {
+      return false;
+    }
   }
 
   Future<void> hidePin(Pin pin) async {
@@ -276,11 +309,6 @@ class ClusterNotifier extends ChangeNotifier {
     return List.from(_userGroups);
   }
 
-  /// get method of [_lastSelected] attribute
-  Group? get getLastSelected {
-    return _lastSelected;
-  }
-
   /// get method of all currently active groups inside [_userGroups]
   Set<Group> get getActiveGroups {
     Set<Group> activeGroups = {};
@@ -288,13 +316,6 @@ class ClusterNotifier extends ChangeNotifier {
       if (group.active) activeGroups.add(group);
     }
     return activeGroups;
-  }
-
-  /// set [_lastSelected] to [group]
-  /// NOTIFIES CHANGES
-  void setLastSelected(Group group) {
-    _lastSelected = group;
-    notifyListeners();
   }
 
   /// set [__filterDateMin] to [filterDateMin]

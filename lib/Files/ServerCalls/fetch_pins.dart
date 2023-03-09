@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -24,10 +25,10 @@ class FetchPins {
   /// returns a set of pins the currently logged in user has access to (in the same group) from the requested user
   /// throws an Exception if an error occurs
   /// GET Request to Server
-  static Future<List<Pin>> fetchUserPins(String username, List<Group> groups) async {
+  static Future<List<Pin>> fetchUserPins(String username, List<Group> groups, Future<Group> Function(int id, List<Group>) getGroup) async {
     Response response = await RestAPI.createHttpsRequest("/api/users/$username/pins", {}, 0);
     if (response.statusCode == 200) {
-      return toPinList(response, groups);
+      return toPinList(response, groups, getGroup);
     } else {
       throw Exception("Pins could not be loaded: ${response.statusCode} error code");
     }
@@ -63,6 +64,29 @@ class FetchPins {
     Response response = await RestAPI.createHttpsRequest("/api/pins/${pin.id}/image", {}, 0,);
     if (response.statusCode == 200) {
       return response.bodyBytes;
+    } else {
+      throw Exception("failed to load mona");
+    }
+  }
+
+  static Future<void> fetchImageOfPins(List<Pin> pins) async {
+    String ids = "";
+    for (Pin pin in pins) {
+      if (pin.image.isEmpty) {
+        ids += pin.id.toString();
+        ids+="-";
+      }
+    }
+    if (ids == "") return;
+    ids = ids.substring(0, ids.length - 1);
+    Response response = await RestAPI.createHttpsRequest("/api/images", {"ids" : ids}, 0,timeout: 60);
+    if (response.statusCode == 200) {
+      List<dynamic> list = json.decode(response.body);
+      for(int i = 0; i < pins.length; i++) {
+        try {
+          pins[i].image.setValue(base64Decode(list[i]));
+        } catch(_) {}
+      }
     } else {
       throw Exception("failed to load mona");
     }
@@ -129,12 +153,11 @@ class FetchPins {
   }
 
   /// converts a client response to a pin list
-  static Future<List<Pin>> toPinList(Response response, List<Group> groups) async {
+  static Future<List<Pin>> toPinList(Response response, List<Group> groups, Future<Group> Function(int id, List<Group>) getGroup) async {
     List<dynamic> values = json.decode(response.body);
-
     List<Pin> pins = [];
     for (var element in values) {
-      pins.add(Pin.fromJson(element, groups.firstWhere((g) => g.groupId == element["groupId"] as int)));
+      pins.add(Pin.fromJson(element, await getGroup(element["groupId"] as int, groups)));
     }
     return pins;
   }

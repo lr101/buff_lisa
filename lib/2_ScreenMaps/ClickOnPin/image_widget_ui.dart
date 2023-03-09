@@ -15,6 +15,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = state.widget.pin.creationDate;
     return Scaffold(appBar: null,
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -29,10 +30,9 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                   actionBar: getOtherActionBar(),
                 ),
               ),
-              GestureDetector(
-                onTap: state.handleOpenUserProfile,
-                child: Text("username: ${state.widget.pin.username}"),
-              ),
+              Text("username: ${state.widget.pin.username}"),
+              const SizedBox(height: 18,),
+              Text("created on: ${now.year.toString()}-${now.month.toString().padLeft(2,'0')}-${now.day.toString().padLeft(2,'0')}"),
               const SizedBox(height: 18,),
               GestureDetector(
                 onTap: state.handleOpenGroup,

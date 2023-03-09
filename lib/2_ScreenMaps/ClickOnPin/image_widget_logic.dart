@@ -2,6 +2,7 @@ import 'package:buff_lisa/2_ScreenMaps/ClickOnPin/image_widget_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Widgets/cusotm_alert_dialog.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,22 +47,32 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   Future<void> handleButtonPress() async{
       if (widget.pin.username == global.localData.username) {
         BuildContext c = context;
-        showDialog(context: context, builder: (context) => CustomAlertDialog(
-            title: "Delete this post?",
-            text1: "Cancel",
-            text2: "Delete",
-            onPressed: () async {
-              if (widget.pin.id < 0) {
-                await Provider.of<ClusterNotifier>(c, listen: false).deleteOfflinePin(widget.pin);
-              } else {
-                await Provider.of<ClusterNotifier>(c, listen: false).removePin(widget.pin);
-              }
-              if (!mounted) return;
-              Provider.of<DateNotifier>(context, listen: false).notifyReload();
-              Navigator.pop(c);
-            },
-          )
+        bool deleted = true;
+        await showDialog<bool>(context: context, builder: (context) =>
+            CustomAlertDialog(
+              title: "Delete this post?",
+              text1: "Cancel",
+              text2: "Delete",
+              onPressed: () async {
+                if (widget.pin.id < 0) {
+                  await Provider.of<ClusterNotifier>(c, listen: false)
+                      .deleteOfflinePin(widget.pin);
+                } else {
+                  deleted = await Provider.of<ClusterNotifier>(c, listen: false)
+                      .removePin(widget.pin);
+                }
+                if (!mounted) return;
+                Navigator.pop(context);
+              },
+            )
         );
+        if (deleted && mounted) {
+          Provider.of<DateNotifier>(c, listen: false).notifyReload();
+          Navigator.pop(context);
+        } else {
+          CustomErrorMessage.message(
+              context: context, message: "Image could not be deleted");
+        }
       }
   }
 

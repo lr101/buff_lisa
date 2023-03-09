@@ -73,16 +73,19 @@ class MyApp extends StatelessWidget {
                 value: DateNotifier(),
               )
             ],
-            builder: (context, child) => MaterialApp (
-                  theme: Provider.of<ThemeProvider>(context).getTheme,
-                  title: 'Mona App',
-                  initialRoute: isLoggedIn ? '/home' : '/login',
-                  routes: {
-                    '/login': (context) => const LoginScreen(),
-                    '/home': (context) => const BottomNavigationWidget()
-                  },
+            builder: (context, child) {
+              Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>());
+              return MaterialApp(
+                theme: Provider.of<ThemeProvider>(context).getTheme,
+                title: 'Mona App',
+                initialRoute: isLoggedIn ? '/home' : '/login',
+                routes: {
+                  '/login': (context) => const LoginScreen(),
+                  '/home': (context) => const BottomNavigationWidget()
+                },
                 navigatorKey: navigatorKey, // Setting a global key for navigator
-            )
+              );
+            }
     );
   }
 }
