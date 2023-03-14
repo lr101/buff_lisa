@@ -4,6 +4,7 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +32,10 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   /// Saves all Pins that could be seen in the feed with the Widget that is shown if already created
   late List<Pin> allWidgets = [];
 
+  /// const value for adding an add for every x posts
   final _addEvery = 4;
-  
+
+  /// current last seen date
   DateTime? lastSeen;
 
   @override
@@ -88,6 +91,9 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     }
   }
 
+  /// Triggers when new ClusterNotifier notifies changes.
+  /// Updates groups and last seen.
+  /// Rebuilds FeedCards.
   void init() {
     groups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
     lastSeen = Provider.of<DateNotifier>(context, listen:false).getDate();
@@ -95,7 +101,8 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   }
 
   Widget alreadySeenEverything(String text) {
-    return SizedBox(
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: Provider.of<ThemeNotifier>(context).getCustomTheme.c1)),
       height: 100,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -112,7 +119,8 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     );
   }
 
-
+  /// Rebuilds all FeedCards by using all active pins of groups or reloading them from server.
+  /// Sorts all pins by creation date desc.
   Future<void> pullRefresh({refresh = false}) async {
     if (refresh) {
       lastSeen = Provider.of<DateNotifier>(context, listen:false).getDate();

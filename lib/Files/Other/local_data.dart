@@ -32,26 +32,40 @@ class LocalData {
   /// set on login/signup or loaded from secure storage
   late String token;
 
+  /// dark or light mode
   late Brightness theme;
 
+  /// Order of groups displayed. Contains group ids as int.
   late List<int> groupOrder;
 
+  /// Storage to save usernames of hidden users.
   late HiveHandler<String, DateTime> hiddenUsers;
 
+  /// Storage to save ids of hidden posts.
   late HiveHandler<int, DateTime> hiddenPosts;
 
+  /// Storage for multiple offline data:
+  /// 1. theme
+  /// 2. order
+  /// 3. language
+  /// 4. top-bar expansion flag
+  /// 5. last seen date
   late HiveHandler<String, dynamic> offlineDataStorage;
 
+  /// Storage to save groups offline.
   late GroupRepo repo;
 
+  /// Storage to save pins offline.
   late PinRepo pinRepo;
 
+  /// static function to create an LocalData instance asynchrony
   static Future<LocalData> fromInit() async {
     LocalData localData = LocalData();
     await localData.init();
     return localData;
   }
 
+  /// Initializes all storages and gets the relevant information.
   Future<void> init() async {
     // init secure boxes
     username = await secure.readSecure(usernameKey) ?? "";
@@ -76,6 +90,7 @@ class LocalData {
 
   }
 
+  /// clears all relevant storages of the data of the previous user
   Future<void> logout() async {
     // remove username
     secure.removeSecure(username);
@@ -91,6 +106,7 @@ class LocalData {
     await offlineDataStorage.clear();
   }
 
+  /// save username and login token in secure storage.
   void login(String username, String token) async {
     secure.saveSecure(usernameKey, username);
     this.username = username;
@@ -98,28 +114,35 @@ class LocalData {
     this.token = token;
   }
 
+  /// update theme and save offline.
   void setTheme(Brightness theme) {
     offlineDataStorage.put(key: themeKey, theme == Brightness.dark ? 1 : 0);
   }
 
+  /// update group order and save offline
   Future<void> updateGroupOrder(List<int> order) async {
     await offlineDataStorage.put(key: orderKey, order);
     groupOrder = order;
   }
 
+  /// delete an offline pin by id
   void deleteOfflineGroup(int groupId) {
     deactivateGroup(groupId);
     repo.deleteGroup(groupId);
   }
 
+  /// true: top-bar is expanded
+  /// false: top-bar is collapsed
   bool getExpanded() {
     return offlineDataStorage.get(expandKey) as bool? ?? true;
   }
 
+  /// update expanded and save offline
   void setExpanded(bool expand) {
     offlineDataStorage.put(expand, key: expandKey);
   }
 
+  /// activate a group and save offline
   void activateGroup(int groupId) {
     List<int> activeGroups = getActiveGroups();
     if (!activeGroups.any((element) => element == groupId)) {
@@ -128,20 +151,24 @@ class LocalData {
     }
   }
 
+  /// deactivate a group and save offline
   void deactivateGroup(int groupId) {
     List<int> activeGroups = getActiveGroups();
     activeGroups.removeWhere((element) => element == groupId);
     offlineDataStorage.put(getActiveGroups(), key: activeGroupKey);
   }
 
+  /// returns the list of active groups.
   List<int> getActiveGroups() {
     return offlineDataStorage.get(activeGroupKey) ?? [];
   }
 
+  /// returns the last seen date
   DateTime? getLastSeen() {
     return offlineDataStorage.get(lastSeenKey);
   }
 
+  /// updates last seen to the current time
   void setLastSeenNow() {
     offlineDataStorage.put(DateTime.now(), key: lastSeenKey);
   }

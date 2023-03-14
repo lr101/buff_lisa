@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 class UploadOfflinePage extends StatefulWidget {
   const UploadOfflinePage({super.key, required this.pins});
 
+  /// Offline that are shown and supposed to be uploaded.
   final Set<Pin> pins;
 
   @override
@@ -21,9 +22,8 @@ class UploadOfflinePageState extends State<UploadOfflinePage> {
   @override
   Widget build(BuildContext context) => UploadOfflinePageUI(state: this);
 
-  PinRepo pinRepo = global.localData.pinRepo;
-
-
+  /// Uploads all images to server if possible.
+  /// Closes the page after finishing.
   Future<void> handleUploadAll() async {
       List<Pin> remainingPins = List.from(widget.pins);
       for (Pin pin in widget.pins) {
@@ -33,20 +33,24 @@ class UploadOfflinePageState extends State<UploadOfflinePage> {
       Navigator.of(context).pop();
   }
 
+  /// Upload pin and remove pin from remainingPins list.
+  /// On success is the pin deleted from local storage and
+  /// pin returned from upload added to pins of group.
   Future<void> tryUpload(Pin pin, List<Pin> remainingPins) async {
     try {
       Pin newPin = await FetchPins.postPin(pin);
       if (!mounted) return;
       Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePinAndAddToOnline(newPin, pin);
-      pinRepo.deletePin(pin.id);
+      global.localData.pinRepo.deletePin(pin.id);
     } on Exception catch (_, e) {
       print(_);
       await Provider.of<ClusterNotifier>(context, listen: false).addPin(pin);
     }
   }
 
+  /// Clears the local storage und closes the page.
   Future<void> handleDeleteAll() async {
-    await pinRepo.clear();
+    await global.localData.pinRepo.clear();
     if (!mounted) return;
     Navigator.of(context).pop();
   }

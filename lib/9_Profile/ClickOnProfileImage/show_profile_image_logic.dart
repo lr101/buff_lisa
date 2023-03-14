@@ -6,7 +6,10 @@ import 'package:flutter/cupertino.dart';
 class ShowProfileImage extends StatefulWidget {
   const ShowProfileImage({super.key, required this.provide, required this.defaultImage, });
 
+  /// Async function to get the shown image
   final Future<Uint8List?> Function() provide;
+
+  /// default image if image is loading or null
   final Image defaultImage;
 
   @override

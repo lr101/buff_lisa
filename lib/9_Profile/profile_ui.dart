@@ -71,7 +71,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
       return CustomShowAndPick(
           provide: () =>
               Provider.of<UserNotifier>(state.context, listen: false).getUser(widget.username).profileImage.asyncValue(),
-          updateCallback: state.provideImage,
+          updateCallback: state.provideProfileImage,
       );
     } else {
       return Column(

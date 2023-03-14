@@ -20,10 +20,12 @@ class Settings extends StatelessWidget {
   Widget build(BuildContext context) => SettingsUI(widget: this);
 
 
+  /// Perform toggle theme change and notify.
   void handleChangeTheme(BuildContext context) {
     Provider.of<ThemeNotifier>(context, listen: false).toggleThemeMode();
   }
 
+  /// Opends hidden pins as a new page.
   void handleHiddenPins(BuildContext context) {
     Navigator.push(
       context,
@@ -31,6 +33,7 @@ class Settings extends StatelessWidget {
     );
   }
 
+  /// Opens hidden user as a new page.
   void handleHiddenUsers(BuildContext context) {
     Navigator.push(
       context,
@@ -38,6 +41,7 @@ class Settings extends StatelessWidget {
     );
   }
 
+  /// Opens order group as a new page.
   void handleOrderGroups(BuildContext context) {
     Navigator.push(
       context,
@@ -76,6 +80,7 @@ class Settings extends StatelessWidget {
     });
   }
 
+  /// Open report page to contact developer.
   Future<void> handleReportPost(BuildContext context) async {
     String username = global.localData.username;
     Navigator.push(

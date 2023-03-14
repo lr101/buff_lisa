@@ -25,6 +25,7 @@ import 'ClickOnProfileImage/show_profile_image_logic.dart';
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key, required this.username});
 
+  /// Shows profile page of this user identified by this username
   final String username;
 
   @override
@@ -33,8 +34,13 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientMixin {
 
+  /// number of rows added by the pagingController added, when paging is activated
   static const _pageSize = 3;
+
+  /// number of images shown in a row
   static const _gridWidth = 3;
+
+  /// number of pages loaded and held in storage that are not visible currently
   static const _invisibleThresh = 2;
 
   /// Controller for the Paged List-view
@@ -42,8 +48,10 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   final PagingController<int, Widget> pagingController = PagingController(
       firstPageKey: 0, invisibleItemsThreshold: _invisibleThresh);
 
+  /// Async loading operation that is currently active or completed
   CancelableOperation? operation;
 
+  /// List of pins shown that are shown on the profile page
   late AsyncType<List<Pin>> pinList;
 
   @override
@@ -52,7 +60,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     return ProfilePageUI(state: this);
   }
 
-  /// Inits the pagingController and adds the methods to its scroll listener
+  /// Inits the pagingController
+  /// Inits pinList
   @override
   void initState() {
     pagingController.addPageRequestListener((pageKey) {
@@ -64,8 +73,10 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     pinList = AsyncType(callback: () => _getPins(groups));
   }
 
+  /// starts a new operation if pins is null and updates the shown pins.
+  /// Sort und update shown pins if pins is not null.
+  /// Always refreshed the pagingController.
   Future<bool> init(List<Pin>? pins) async {
-    print("--------init----------");
     if (pins == null) {
       if (operation != null && !operation!.isCanceled && !operation!.isCompleted) operation!.cancel();
       operation = CancelableOperation.fromFuture(
@@ -87,6 +98,11 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     return true;
   }
 
+  /// Pins from the pinList are added to the group pins, if the pins are not yet loaded.
+  /// If loaded the pin from the group with the same id substitutes the pin instance from the pinList.
+  /// Makes it possible, that images that are already loaded dont have to reloaded from the server again.
+  /// Filters pins to not show hidden users and pins.
+  /// Sorts the pin by creation date descending.
   Future<List<Pin>> initPins(List<Pin> pinList) async {
       List<Pin> pins = [];
       for (Pin pin in pinList) {
@@ -107,7 +123,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
       return pins;
   }
 
-  Future<void> _filter(List<Pin> pins) async{
+  /// Filters pins to not show hidden users and pins.
+  void _filter(List<Pin> pins) {
     Set<Pin> removesPins = {};
     List<String> usernames = global.localData.hiddenUsers.keys();
     List<int> posts = global.localData.hiddenPosts.keys();
@@ -120,6 +137,9 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     }
   }
 
+  /// Callback function used in _getPins.
+  /// Returns a group by a given id.
+  /// Group is fetched from server if not currently in groups list.
   Future<Group> getGroup(int id, List<Group> groups) async {
     if (groups.any((element) => element.groupId == id)) {
       return groups.firstWhere((element) => element.groupId == id);
@@ -135,9 +155,11 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     }
   }
 
+  /// returns the list of pins that a user created and is visible to current user
   Future<List<Pin>> _getPins(List<Group> groups) => FetchPins.fetchUserPins(widget.username,groups, getGroup);
 
-
+  /// Callback function for paging controller, when fetching a new page.
+  /// Creates rows based of the current user pin list.
   void _fetchPage(int pageKey, ) async {
     List<Pin> pins = Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).getPins ?? [];
     if (pageKey >= pins.length) {
@@ -154,6 +176,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     }
   }
 
+  /// Returns a image row using the current index.
   Future<Widget> getImageRow(int pageKey, List<Pin> pins)async {
     return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -174,6 +197,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     );
   }
 
+  /// Builds the actual square image.
+  /// Image is touchable and opens a more detailed view.
   Future<Widget> buildImage(Pin pin) async {
     Uint8List image = await pin.image.asyncValue();
     return LayoutBuilder(
@@ -195,13 +220,13 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     );
   }
 
-
-
-  Future<Uint8List?> provideImage(Uint8List image, BuildContext context) async {
+  /// Used in profile page ui as a callback function to display the profile image of a user.
+  Future<Uint8List?> provideProfileImage(Uint8List image, BuildContext context) async {
     Provider.of<UserNotifier>(context, listen: false).removeUser(global.localData.username);
     return FetchUsers.changeProfilePicture(global.localData.username, image);
   }
 
+  /// Opens a widget as a new page.
  void handlePushPage(Widget widget) {
    Navigator.push(
      context,
@@ -209,19 +234,14 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
    );
  }
 
+ /// Opens the profile image in a new page.
   void handleOpenImage() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ShowProfileImage(provide: () => Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).profileImage.asyncValue(), defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
-      ),
-    );
+    handlePushPage(ShowProfileImage(provide: () => Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).profileImage.asyncValue(), defaultImage: const Image(image: AssetImage("images/profile.jpg"),)));
   }
 
+  /// Opens a pin image in a new page.
   void handleTabOnImage(Pin pin) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ShowImageWidget(pin: pin, newPin: false))
-    );
+    handlePushPage(ShowImageWidget(pin: pin, newPin: false));
   }
 
 

@@ -46,6 +46,7 @@ class FeedCardState extends State<FeedCard> {
     return FeedCardUI(state: this);
   }
 
+  /// Hides the current pin und reloads the view.
   Future<void> handleHidePost(BuildContext context) async {
     if (global.localData.username != widget.pin.username) {
       await global.localData.hiddenPosts.put(DateTime.now(), key: widget.pin.id);
@@ -55,6 +56,7 @@ class FeedCardState extends State<FeedCard> {
     }
   }
 
+  /// Hides the user of the current pin.
   Future<void> handleHideUsers(BuildContext context) async {
     if (global.localData.username != widget.pin.username) {
       await global.localData.hiddenUsers.put(DateTime.now(), key: widget.pin.username);
@@ -64,6 +66,7 @@ class FeedCardState extends State<FeedCard> {
     }
   }
 
+  /// Report user of current pin.
   Future<void> handleReportUser(BuildContext context) async {
     String username = widget.pin.username;
     if (username != global.localData.username) {
@@ -75,6 +78,7 @@ class FeedCardState extends State<FeedCard> {
     }
   }
 
+  /// Report current pin.
   Future<void> handleReportPost(BuildContext context) async {
     String username = widget.pin.username;
     if (username != global.localData.username) {
@@ -86,16 +90,19 @@ class FeedCardState extends State<FeedCard> {
     }
   }
 
+  /// Zoom out in the map of this pin.
   void zoomOut() {
     currentZoom -= 1;
     controller.move(center, currentZoom);
   }
 
+  /// Zoom in in the map of this pin.
   void zoomIn() {
     currentZoom += 1;
     controller.move(center, currentZoom);
   }
 
+  /// Open group of current pin.
   void handleOpenGroup() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -104,6 +111,7 @@ class FeedCardState extends State<FeedCard> {
     );
   }
 
+  /// Open profile of the user of the current pin.
   void handleOpenUserProfile() {
     if (widget.pin.username == global.localData.username) return;
     Navigator.of(context).push(
@@ -113,6 +121,7 @@ class FeedCardState extends State<FeedCard> {
     );
   }
 
+  /// Open a more detailed view of current pin image.
   void handleTabOnImage() {
     Navigator.push(
       context,

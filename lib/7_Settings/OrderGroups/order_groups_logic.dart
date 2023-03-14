@@ -17,6 +17,7 @@ class OrderGroupsState extends State<OrderGroups> {
   @override
   Widget build(BuildContext context) => OrderGroupUI(state: this);
 
+  /// All groups that are available to be reordered.
   List<Group> groups = [];
 
   @override
@@ -29,6 +30,8 @@ class OrderGroupsState extends State<OrderGroups> {
     });
   }
 
+  /// saves the order locally and performs changes.
+  /// Closes this page on success.
   void saveOrder() {
     global.localData.updateGroupOrder(groups.map((e) => e.groupId).toList()).then((value) {
       Provider.of<ClusterNotifier>(context, listen: false).addGroups(groups);
@@ -36,6 +39,7 @@ class OrderGroupsState extends State<OrderGroups> {
     });
   }
 
+  /// Drag and drop changes th order in the groups list.
   void onReorder (int start, int current) {
     // dragging from top to bottom
     if (start < current) {
