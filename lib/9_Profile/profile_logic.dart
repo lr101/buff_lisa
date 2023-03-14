@@ -9,6 +9,7 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:mutex/mutex.dart';
 import 'package:provider/provider.dart';
 import '../2_ScreenMaps/ClickOnPin/image_widget_logic.dart';
 import '../7_Settings/settings_logic.dart';
@@ -42,6 +43,8 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
   /// number of pages loaded and held in storage that are not visible currently
   static const _invisibleThresh = 2;
+
+  final m = Mutex();
 
   /// Controller for the Paged List-view
   /// always shows first item first and loads 3 items that are out of view
@@ -107,16 +110,18 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
       List<Pin> pins = [];
       for (Pin pin in pinList) {
         Group group = pin.group;
-        if (!group.pins.isLoaded) {
-          Set<Pin> thPins = group.pins.syncValue ?? {};
-          pin = thPins.firstWhere((element) => element.id == pin.id, orElse: () => pin);
-          thPins.add(pin);
-          pins.add(pin);
-          await group.pins.setValueButNotLoaded(thPins);
-        } else {
-          Pin thePin = group.pins.syncValue!.firstWhere((element) => element.id == pin.id, orElse: () => pin);
-          pins.add(thePin);
-        }
+        await m.protect(() async {
+          if (!group.pins.isLoaded) {
+            Set<Pin> thPins = group.pins.syncValue ?? {};
+            pin = thPins.firstWhere((element) => element.id == pin.id, orElse: () => pin);
+            thPins.add(pin);
+            pins.add(pin);
+            await group.pins.setValueButNotLoaded(thPins);
+          } else {
+            Pin thePin = group.pins.syncValue!.firstWhere((element) => element.id == pin.id, orElse: () => pin);
+            pins.add(thePin);
+          }
+        });
       }
       _filter(pins);
       pins.sort((a,b) => a.creationDate.compareTo(b.creationDate) * -1);

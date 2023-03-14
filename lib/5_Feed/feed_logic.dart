@@ -5,6 +5,7 @@ import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
@@ -87,6 +88,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           }
         }
     } catch (error) {
+      if (kDebugMode) print(error);
       pagingController.appendLastPage([]);
     }
   }
@@ -101,21 +103,24 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   }
 
   Widget alreadySeenEverything(String text) {
-    return Container(
-      decoration: BoxDecoration(border: Border.all(color: Provider.of<ThemeNotifier>(context).getCustomTheme.c1)),
-      height: 100,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            backgroundImage: Image.asset("images/pinGui.png").image,
-            radius: 20,
-          ),
-          const SizedBox(width: 10,),
-          Text(text,textAlign: TextAlign.center,)
-        ],
-      )
+    return Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          decoration: BoxDecoration(border: Border.all(color: Provider.of<ThemeNotifier>(context, listen: false).getCustomTheme.c1)),
+          height: 100,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                backgroundImage: Image.asset("images/pinGui.png").image,
+                radius: 20,
+              ),
+              const SizedBox(width: 10,),
+              Text(text,textAlign: TextAlign.center,)
+            ],
+          )
+        )
     );
   }
 

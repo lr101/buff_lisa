@@ -37,23 +37,34 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   @override
   Widget build(BuildContext context)  => CheckImageIU(state: this);
 
+  /// flag for preventing multiple uploads
+  bool uploading = false;
+
   /// on button press of approve button
   /// init save of pin offline and online
   /// closes page if offline save is successful
   /// navigates to map screen
   Future<void> handleApprove() async {
-    Pin mona = await _createMona(widget.image, widget.group);
-    if (!mounted) return;
-    await Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(mona);
-    if (!mounted) return;
-    Provider.of<ClusterNotifier>(context, listen: false).addPin(mona);
-    _postPin(mona, widget.group);
-    final BottomNavigationBar navigationBar = widget.navbarContext.globalKey.currentWidget! as BottomNavigationBar;
-    if (!mounted) return;
-    Provider.of<DateNotifier>(context, listen: false).notifyReload();
-    Navigator.pop(context);
-    navigationBar.onTap!(2);
-
+    if (!uploading) {
+      uploading = true;
+      try {
+        Pin mona = await _createMona(widget.image, widget.group);
+        if (!mounted) return;
+        await Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(
+            mona);
+        if (!mounted) return;
+        Provider.of<ClusterNotifier>(context, listen: false).addPin(mona);
+        _postPin(mona, widget.group);
+        final BottomNavigationBar navigationBar = widget.navbarContext.globalKey
+            .currentWidget! as BottomNavigationBar;
+        if (!mounted) return;
+        Provider.of<DateNotifier>(context, listen: false).notifyReload();
+        Navigator.pop(context);
+        navigationBar.onTap!(2);
+      } finally {
+        uploading = false;
+      }
+    }
   }
 
   /// on button press of back button

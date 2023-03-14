@@ -106,10 +106,18 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                 children: [
                   const Text("Description:"),
                   Container(
+                      width: MediaQuery.of(context).size.width * 0.75,
                       decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Padding(
-                      padding: const EdgeInsets.all(3.0),
-                      child: Text(snapshot.requireData, overflow: TextOverflow.ellipsis,))
+                        padding: const EdgeInsets.all(3.0),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Text(snapshot.requireData),
+                            )
+                          ],
+                        )
+                    )
                   )
                 ],
               );

@@ -17,21 +17,24 @@ class UserNotifier with ChangeNotifier {
   }
 
   void removePin(String username, int id) {
-    //TODO null check
-    getUser(username).pins!.removeWhere((element) => element.id == id);
-    notifyListeners();
-  }
-
-  void addPin(String username,Pin pin) {
-    //TODO null check
-    if (pin.username == global.localData.username) {
-      getUser(username).pins!.add(pin);
+    List<Pin>? pins = getUser(username).pins;
+    if (pins != null) {
+      pins.removeWhere((element) => element.id == id);
       notifyListeners();
     }
   }
 
+  void addPin(String username,Pin pin) {
+    if (pin.username == global.localData.username) {
+      List<Pin>? pins = getUser(username).pins;
+      if (pins != null) {
+        pins.add(pin);
+        notifyListeners();
+      }
+    }
+  }
+
   void clearPinsNotUser(String username) {
-    print("---------------------");
     _users.where((element) => element.username != username).forEach((element) {element.pins = null;});
     notifyListeners();
   }

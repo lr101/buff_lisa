@@ -180,7 +180,10 @@ Widget getNumNewPosts(Group group, BuildContext context) {
         return CircleAvatar(
             radius: 13,
             backgroundColor: Colors.grey,
-            child: Text(snapshot.requireData.toString())
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(snapshot.requireData.toString())
+            )
         );
       } else {
         return const SizedBox.shrink();

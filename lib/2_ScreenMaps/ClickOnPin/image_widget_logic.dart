@@ -61,8 +61,6 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
                   deleted = await Provider.of<ClusterNotifier>(c, listen: false)
                       .removePin(widget.pin);
                 }
-                if (!mounted) return;
-                Navigator.pop(context);
               },
             )
         );

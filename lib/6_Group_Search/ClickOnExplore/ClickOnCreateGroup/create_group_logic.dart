@@ -16,6 +16,9 @@ class CreateGroupPage extends StatefulWidget {
 
 class CreateGroupPageState extends State<CreateGroupPage> {
 
+  /// flag for preventing multiple uploads
+  bool uploading = false;
+
   /// adds a ChangeNotifierProvider to the build
   @override
   Widget build(BuildContext context) {
@@ -36,17 +39,36 @@ class CreateGroupPageState extends State<CreateGroupPage> {
   /// Tries to create the Group with the context given in the input fields
   /// TODO input values checked for constrains. What are the Constraines?
   void createGroup(BuildContext context) {
-    final controller1 = Provider.of<CreateGroupNotifier>(context, listen: false).getText1;
-    final controller2 = Provider.of<CreateGroupNotifier>(context, listen: false).getText2;
-    final image = Provider.of<CreateGroupNotifier>(context, listen: false).getImage;
-    final sliderValue = Provider.of<CreateGroupNotifier>(context, listen: false).getSliderValue;
-    if (controller1.text.isNotEmpty && controller2.text.isNotEmpty && image != null) {
-      FetchGroups.postGroup(controller1.text, controller2.text, image, sliderValue.toInt()).then((group) {
-        if (group != null) {
-          Provider.of<ClusterNotifier>(context, listen:false).addGroup(group);
-          Navigator.pop(context);
+    if (!uploading) {
+      try{
+        uploading = true;
+        final controller1 = Provider
+            .of<CreateGroupNotifier>(context, listen: false)
+            .getText1;
+        final controller2 = Provider
+            .of<CreateGroupNotifier>(context, listen: false)
+            .getText2;
+        final image = Provider
+            .of<CreateGroupNotifier>(context, listen: false)
+            .getImage;
+        final sliderValue = Provider
+            .of<CreateGroupNotifier>(context, listen: false)
+            .getSliderValue;
+        if (controller1.text.isNotEmpty && controller2.text.isNotEmpty &&
+            image != null) {
+          FetchGroups.postGroup(
+              controller1.text, controller2.text, image, sliderValue.toInt())
+              .then((group) {
+            if (group != null) {
+              Provider.of<ClusterNotifier>(context, listen: false).addGroup(
+                  group);
+              Navigator.pop(context);
+            }
+          });
         }
-      });
+      } finally{
+        uploading = false;
+      }
     }
   }
 
