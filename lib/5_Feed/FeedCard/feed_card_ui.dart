@@ -186,7 +186,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                           ),
                                           children: [
                                             TileLayer(
-                                                urlTemplate: "${Provider.of<ThemeProvider>(context).getCustomTheme.mapUrl}?api_key={api_key}",
+                                                urlTemplate: "${Provider.of<ThemeNotifier>(context).getCustomTheme.mapUrl}?api_key={api_key}",
                                                 additionalOptions: {
                                                   "api_key": global.apiKey
                                                 }

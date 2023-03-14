@@ -23,7 +23,7 @@ class CustomActionButtonState extends State<CustomActionButton> {
         width: MediaQuery.of(context).size.width - 50,
         height: 50,
         child: OutlinedButton(
-          style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) =>  Provider.of<ThemeProvider>(context).getCustomTheme.transparent)),
+          style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) =>  Provider.of<ThemeNotifier>(context).getCustomTheme.transparent)),
             onPressed: () {
               if (widget.popup != null) {
                 showDialog(

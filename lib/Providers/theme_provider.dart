@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../Files/Other/global.dart' as global;
 
-class ThemeProvider with ChangeNotifier {
+class ThemeNotifier with ChangeNotifier {
 
   final  CustomTheme darkTheme = DarkTheme.darkThemeFactory();
   final CustomTheme lightTheme = LightTheme.lightThemeFactory();
@@ -14,7 +14,7 @@ class ThemeProvider with ChangeNotifier {
   /// false: shows light theme
   late bool _first;
 
-  ThemeProvider(bool brightness) {
+  ThemeNotifier(bool brightness) {
     _first = brightness;
   }
 

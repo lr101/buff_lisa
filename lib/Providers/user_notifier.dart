@@ -31,6 +31,7 @@ class UserNotifier with ChangeNotifier {
   }
 
   void clearPinsNotUser(String username) {
+    print("---------------------");
     _users.where((element) => element.username != username).forEach((element) {element.pins = null;});
     notifyListeners();
   }

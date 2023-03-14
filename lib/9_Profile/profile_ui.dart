@@ -41,7 +41,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
                           )
                       ),
                       FutureBuilder<bool>(
-                        future: state.init(Provider.of<UserNotifier>(context, listen: global.localData.username == state.widget.username).getUser(widget.username).getPins),
+                        future: state.init(Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));

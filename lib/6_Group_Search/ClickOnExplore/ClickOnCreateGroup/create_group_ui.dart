@@ -65,7 +65,7 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                   Switch(
                     value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
                     onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
-                    focusColor: Provider.of<ThemeProvider>(context).getCustomTheme.c1,
+                    focusColor: Provider.of<ThemeNotifier>(context).getCustomTheme.c1,
                   ),
                   const Text("private")
                 ],

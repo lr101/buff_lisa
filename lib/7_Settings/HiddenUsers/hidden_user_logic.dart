@@ -27,6 +27,8 @@ class HiddenUsersState extends State<HiddenUsers>{
   @override
   late BuildContext context;
 
+  //TODO wait for loading of hidden users (maybe different context)
+
   @override
   void initState() {
     super.initState();

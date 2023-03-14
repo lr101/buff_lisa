@@ -21,7 +21,7 @@ class Settings extends StatelessWidget {
 
 
   void handleChangeTheme(BuildContext context) {
-    Provider.of<ThemeProvider>(context, listen: false).toggleThemeMode();
+    Provider.of<ThemeNotifier>(context, listen: false).toggleThemeMode();
   }
 
   void handleHiddenPins(BuildContext context) {

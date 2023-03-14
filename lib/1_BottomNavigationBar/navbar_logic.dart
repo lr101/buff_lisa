@@ -114,7 +114,6 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     Provider.of<ClusterNotifier>(context, listen:false).addGroups(List.from(groups));
     // load all offline pins from files
     Set<Pin> value = global.localData.pinRepo.getPins(groups);
-    print(value);
     if (value.isNotEmpty) {
       // open upload page if offline saved pins exist
       Navigator.of(context).push(

@@ -206,8 +206,8 @@ class Group {
 
   Future<Set<Pin>> _filter(Set<Pin> pins) async{
     Set<Pin> removesPins = {};
-    List<String> usernames = await global.localData.hiddenUsers.keys();
-    List<int> posts = await global.localData.hiddenPosts.keys();
+    List<String> usernames = global.localData.hiddenUsers.keys();
+    List<int> posts = global.localData.hiddenPosts.keys();
     List<Pin> iterator = List.from(pins);
     for (Pin pin in iterator) {
       if (posts.any((element) => element == pin.id) || usernames.any((element) => element == pin.username)) {

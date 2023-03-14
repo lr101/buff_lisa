@@ -34,7 +34,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: "${Provider.of<ThemeProvider>(context).getCustomTheme.mapUrl}?api_key={api_key}",
+                    urlTemplate: "${Provider.of<ThemeNotifier>(context).getCustomTheme.mapUrl}?api_key={api_key}",
                     additionalOptions: {
                       "api_key": global.apiKey
                     }
@@ -76,7 +76,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
             FloatingActionButton(
               heroTag: "filterYourOwnPins",
               onPressed: state.setUserFilter,
-              backgroundColor: state.filterUser ?  Provider.of<ThemeProvider>(context).getCustomTheme.c1 : Colors.grey,
+              backgroundColor: state.filterUser ?  Provider.of<ThemeNotifier>(context).getCustomTheme.c1 : Colors.grey,
               child: const Icon(Icons.person),
             ),
             const SizedBox(
@@ -85,7 +85,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
             FloatingActionButton(
               heroTag: "setFilterBtn",
               onPressed: state.setFilter,
-              backgroundColor: state.filterState % 5 != 0 ?  Provider.of<ThemeProvider>(context).getCustomTheme.c1 : Colors.grey,
+              backgroundColor: state.filterState % 5 != 0 ?  Provider.of<ThemeNotifier>(context).getCustomTheme.c1 : Colors.grey,
               child: (state.filterState % 5 == 0 ? const Icon(Icons.timeline_rounded) : Text(state.buttonText())),
             ),
             const SizedBox(
@@ -94,7 +94,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
             FloatingActionButton(
               heroTag: "setLocationBtn",
               onPressed: state.setLocation,
-              backgroundColor: Provider.of<ThemeProvider>(context).getCustomTheme.c1,
+              backgroundColor: Provider.of<ThemeNotifier>(context).getCustomTheme.c1,
               child: const Icon(Icons.location_on),
             ),
           ],

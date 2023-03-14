@@ -32,9 +32,9 @@ class SettingsUI extends StatelessUI<Settings> {
                     value: const Text('English'),
                   ),
                   SettingsTile.switchTile(
-                    activeSwitchColor:  Provider.of<ThemeProvider>(context).getCustomTheme.c1,
-                    onToggle: (value) => Provider.of<ThemeProvider>(context, listen: false).toggleThemeMode(),
-                    initialValue: Provider.of<ThemeProvider>(context).getTheme.brightness == Brightness.dark,
+                    activeSwitchColor:  Provider.of<ThemeNotifier>(context).getCustomTheme.c1,
+                    onToggle: (value) => Provider.of<ThemeNotifier>(context, listen: false).toggleThemeMode(),
+                    initialValue: Provider.of<ThemeNotifier>(context).getTheme.brightness == Brightness.dark,
                     leading: const Icon(Icons.dark_mode),
                     title: const Text('Toggle theme'),
                   ),

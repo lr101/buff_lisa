@@ -152,7 +152,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     return GestureDetector(
       onTap: () => state.handleOpenUserProfile(member.username),
       child: Card(
-          color: (member.username == global.localData.username) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : null,
+          color: (member.username == global.localData.username) ? Provider.of<ThemeNotifier>(state.context).getCustomTheme.c1 : null,
           child: ListTile(
             leading: Text("${index + 1}. "),
             title: Text("${member.username} $adminString"),

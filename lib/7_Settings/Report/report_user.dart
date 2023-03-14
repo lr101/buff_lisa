@@ -58,7 +58,7 @@ class ReportUserState extends State<ReportUser>{
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Provider.of<ThemeProvider>(context).getCustomTheme.c1)
+                        side: BorderSide(color: Provider.of<ThemeNotifier>(context).getCustomTheme.c1)
                     )
                 ),
               ),

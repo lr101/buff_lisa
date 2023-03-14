@@ -65,10 +65,11 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   }
 
   Future<bool> init(List<Pin>? pins) async {
+    print("--------init----------");
     if (pins == null) {
       if (operation != null && !operation!.isCanceled && !operation!.isCompleted) operation!.cancel();
       operation = CancelableOperation.fromFuture(
-        initPins(global.localData.username != widget.username ? await pinList.refresh() : await pinList.asyncValue()),
+        initPins(await pinList.refresh()),
         onCancel: () => {debugPrint('onCancel')},
       );
       CancelableOperation cancelableOperation = operation!;
@@ -101,8 +102,22 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
           pins.add(thePin);
         }
       }
+      _filter(pins);
       pins.sort((a,b) => a.creationDate.compareTo(b.creationDate) * -1);
       return pins;
+  }
+
+  Future<void> _filter(List<Pin> pins) async{
+    Set<Pin> removesPins = {};
+    List<String> usernames = global.localData.hiddenUsers.keys();
+    List<int> posts = global.localData.hiddenPosts.keys();
+    List<Pin> iterator = List.from(pins);
+    for (Pin pin in iterator) {
+      if (posts.any((element) => element == pin.id) || usernames.any((element) => element == pin.username)) {
+        pins.remove(pin);
+        removesPins.add(pin);
+      }
+    }
   }
 
   Future<Group> getGroup(int id, List<Group> groups) async {

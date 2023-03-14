@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
                 value: ClusterNotifier(),
               ),
               ChangeNotifierProvider.value(
-                value: ThemeProvider(global.localData.theme == Brightness.dark),
+                value: ThemeNotifier(global.localData.theme == Brightness.dark),
               ),
               ChangeNotifierProvider.value(
                 value: UserNotifier(),
@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
             builder: (context, child) {
               Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>());
               return MaterialApp(
-                theme: Provider.of<ThemeProvider>(context).getTheme,
+                theme: Provider.of<ThemeNotifier>(context).getTheme,
                 title: 'Mona App',
                 initialRoute: isLoggedIn ? '/home' : '/login',
                 routes: {

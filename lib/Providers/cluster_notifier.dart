@@ -45,7 +45,7 @@ class ClusterNotifier extends ChangeNotifier {
 
   List<Group> otherGroups = [];
 
-  late final UserNotifier notifier;
+  late UserNotifier notifier;
 
   void init(UserNotifier notifier) {
     this.notifier = notifier;
@@ -110,6 +110,7 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _userGroups.remove(group);
+    print("num1");
     global.localData.deleteOfflineGroup(group.groupId);
     notifyListeners();
     notifier.clearPinsNotUser(global.localData.username);
@@ -152,6 +153,7 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// returns a [Group] by [groupId] if it is an item in [_userGroups]
   Group getGroupByGroupId(int groupId) {
+    print("num2");
     return _userGroups.firstWhere((element) => element.groupId == groupId);
   }
 
@@ -253,6 +255,7 @@ class ClusterNotifier extends ChangeNotifier {
     pin.group.removePin(pin);
     _removePinFromMarkers(pin);
     _updateValues();
+    notifier.clearPinsNotUser(global.localData.username);
   }
 
   Future<void> updateFilter() async {
@@ -262,6 +265,7 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _updateValues();
+    notifier.clearPinsNotUser(global.localData.username);
   }
 
   /// removes [oldPin] from [_offlinePins]
@@ -368,7 +372,6 @@ class ClusterNotifier extends ChangeNotifier {
     mark = _filterMaxDate(mark);
     mark = _filterMinDate(mark);
     mark = _filterUsers(mark);
-    print(mark.length);
     _shownMarkers = List.from(mark.values);
     notifyListeners();
   }

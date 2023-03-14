@@ -54,7 +54,7 @@ class CustomNativeAdState extends State<CustomNativeAd>  with AutomaticKeepAlive
       adUnitId: AdHelper.nativeAdUnitId,
       factoryId: 'adFactoryExample',
       request: const AdRequest(),
-      customOptions: {'brightness': Provider.of<ThemeProvider>(context, listen: false).currentBrightness},
+      customOptions: {'brightness': Provider.of<ThemeNotifier>(context, listen: false).currentBrightness},
       listener: NativeAdListener(
         onAdLoaded: (ad) {
           setState(() {

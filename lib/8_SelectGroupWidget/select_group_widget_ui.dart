@@ -97,7 +97,7 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
 
   Widget collapsedGroupCard(int index) {
     Group group = Provider.of<ClusterNotifier>(state.context, listen: false).getGroups[index];
-    Color color = (group.active) ? Provider.of<ThemeProvider>(state.context).getCustomTheme.c1 : Colors.grey;
+    Color color = (group.active) ? Provider.of<ThemeNotifier>(state.context).getCustomTheme.c1 : Colors.grey;
     return Padding(
         padding: const EdgeInsets.all(5),
         child: GestureDetector(
@@ -131,7 +131,7 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
     Color color = Colors.grey;
     Widget num = const SizedBox.shrink();
     if ((group.active)) {
-      color = Provider.of<ThemeProvider>(context).getCustomTheme.c1;
+      color = Provider.of<ThemeNotifier>(context).getCustomTheme.c1;
       num = getNumNewPosts(group, context);
     }
     return Padding(

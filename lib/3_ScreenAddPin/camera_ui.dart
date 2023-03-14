@@ -55,14 +55,14 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                                   child: Column(
                                     children: [
                                          FloatingActionButton(
-                                          backgroundColor:  Provider.of<ThemeProvider>(context).getCustomTheme.c1,
+                                          backgroundColor:  Provider.of<ThemeNotifier>(context).getCustomTheme.c1,
                                           heroTag: "cameraBtnFlash",
                                           onPressed: state.switchFlash,
                                           child: value.getFlashIcon(),
                                         ),
                                         const SizedBox(height: 5,),
                                         FloatingActionButton(
-                                          backgroundColor:  Provider.of<ThemeProvider>(context).getCustomTheme.c1,
+                                          backgroundColor:  Provider.of<ThemeNotifier>(context).getCustomTheme.c1,
                                           heroTag: "cameraSwitch",
                                           onPressed: () => state.handleCameraChange(context),
                                           child: const Icon(Icons.switch_camera),
@@ -91,7 +91,7 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                       IgnorePointer(
                         child: Container(
                           decoration: BoxDecoration(
-                              border: Border.all(width: 3.0, color: Provider.of<ThemeProvider>(context).getCustomTheme.c1),
+                              border: Border.all(width: 3.0, color: Provider.of<ThemeNotifier>(context).getCustomTheme.c1),
                               shape: BoxShape.circle,
                           ),
                           height: (MediaQuery.of(context).size.height) * 0.15,
