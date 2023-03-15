@@ -41,16 +41,25 @@ class ClusterNotifier extends ChangeNotifier {
   /// null: does NOT filter any pins
   DateTime? __filterDateMin;
 
+  /// flag if fetching of group was successfully
+  /// true: server cannot be reached
+  /// false: server can be reached
   bool offline = false;
 
+  /// Groups that the user is not a user.
+  /// Are used to save group information to reduce fetching amount in profile page.
   List<Group> otherGroups = [];
 
+  /// Is initialized at the beginning.
+  /// Used to notify changes of current user pins shown on profile page.
   late UserNotifier notifier;
 
+  /// inits the user notifier.
   void init(UserNotifier notifier) {
     this.notifier = notifier;
   }
 
+  /// ads a group if it is not a part of the userGroups
   void addOtherGroup(Group group) {
     if (!_userGroups.any((element) => element.groupId == group.groupId)) {
       otherGroups.add(group);

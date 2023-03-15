@@ -20,7 +20,7 @@ class LightTheme {
     ),
   );
 
-  static const String url = "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png";
+  static const String url = "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png";
 
   static CustomTheme lightThemeFactory() {
     return CustomTheme(theme: lightTheme, mapUrl: url, c1: c1, c2: c2,blackOrWhite: blackOrWhite);

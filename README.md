@@ -32,7 +32,7 @@ Information is mostly fetched from the server when needed. The server uses the R
 
 #### Where is the data stored? 
 
-Global data can be accessed via Providers or the [global file](/lib/Files/Other/global.dart). The global file contains static data and a LocalData class instance. This is class is initialized on startup and contains data saved offline to rebuild the app the same way it was before closing it. The data from the global class can be directly access from everywhere.
+Global data can be accessed via Providers or the [global file](/lib/Files/Other/global.dart). The global file contains static data and a LocalData class instance. This class is initialized on startup and contains data saved offline to rebuild the app the same way it was before closing it. The data from the global class can be directly access from everywhere.
 
 Additionally, there are three main globally accessible providers:
 
@@ -45,7 +45,7 @@ These classes extend the ChangeNotifier class and are created and attached in th
 
 #### [Groups](/lib/Files/DTOClasses/group.dart)
 
-A group instance has multiple attributes and can be identified through the unique groupId. To initialize a group there must be at least a groupId, name, visibility and a invite url if the visibility is not zero. The groups also contains all pins that can be loaded from the server. Groups are saved offline when created or edited, so an offline use is possible, when the server is not available.
+A group instance has multiple attributes and can be identified through the unique groupId. To initialize a group there must be at least a groupId, name, visibility and an invite url if the visibility is not zero. The groups also contains all pins that can be loaded from the server. Groups are saved offline when created or edited, so an offline use is possible, when the server is not available.
 
 #### [Pins](/lib/Files/DTOClasses/pin.dart)
 

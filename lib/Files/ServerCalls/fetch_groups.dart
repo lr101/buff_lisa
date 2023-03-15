@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
+import 'dart:convert' show utf8;
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/restAPI.dart';
@@ -144,7 +144,7 @@ class FetchGroups {
   static Future<String> getGroupDescription(int groupId) async {
     Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0);
     if (response.statusCode == 200) {
-      return  response.body;
+      return utf8.decode(response.bodyBytes);
     } else {
       throw Exception("Group is private or does not exist");
     }
