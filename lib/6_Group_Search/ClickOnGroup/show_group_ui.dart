@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
+import '../../Files/Widgets/CustomSliverList/custom_sliver_list.dart';
 import '../../Files/Widgets/cusotm_alert_dialog.dart';
 
 
@@ -19,33 +21,17 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-      body: FutureBuilder<List<Ranking>>(
-        future: (state.widget.group.visibility != 0 && !widget.myGroup) ? Future(() => []) : widget.group.members.asyncValue(),
-        builder: (context, snapshot) => ListView.builder(
-          itemCount: 1 + (snapshot.hasData ? snapshot.requireData.length : 0),
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return CustomTitle(
-                titleBar: CustomTitleBar(
-                  title: widget.group.name,
-                  back: true,
-                  action: (state.widget.group.groupAdmin.syncValue == global.localData.username) ? CustomAction(icon: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null,
-                ),
-                imageCallback: widget.group.profileImage.asyncValue,
-                child: Column(
-                  children: [
-                    _getDescription(),
-                    _getInviteLink(),
-                    const SizedBox(height: 10,),
-                    snapshot.hasData ? const SizedBox.shrink() : const CircularProgressIndicator()
-                  ],
-                )
-            );
-          } else {
-            return buildCard(snapshot.requireData[index-1], index-1);
-          }
-        }
-      ),
+      body: CustomSliverList(
+        title: CustomEasyTitle(title: widget.group.name, right: state.widget.group.groupAdmin.syncValue == global.localData.username ? CustomEasyAction(child: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null),
+        appBar: Column(
+          children: [
+            CustomRoundImage(imageCallback: widget.group.profileImage.asyncValue, size: 50),
+            _getDescription(),
+            _getInviteLink(),
+          ],
+        ),
+        appBarHeight: 200,
+        pagingController: state.controller,
       ),
       floatingActionButton: CustomActionButton(
         text: getText(),
@@ -154,19 +140,5 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     }
   }
 
-  Widget buildCard(member, index) {
-    String adminString = "";
-    if (member.username == widget.group.groupAdmin.syncValue!) adminString = "(admin)";
-    return GestureDetector(
-      onTap: () => state.handleOpenUserProfile(member.username),
-      child: Card(
-          color: (member.username == global.localData.username) ? Provider.of<ThemeNotifier>(state.context).getCustomTheme.c1 : null,
-          child: ListTile(
-            leading: Text("${index + 1}. "),
-            title: Text("${member.username} $adminString"),
-            trailing: Text("${member.points} points"),
-          )
-      ),
-    );
-  }
+
 }

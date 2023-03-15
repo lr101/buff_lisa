@@ -6,9 +6,12 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
 import '../../9_Profile/profile_logic.dart';
+import '../../Files/DTOClasses/ranking.dart';
+import '../../Providers/theme_provider.dart';
 
 class ShowGroupPage extends StatefulWidget {
   const ShowGroupPage({super.key, required this.group, required this.myGroup});
@@ -29,8 +32,42 @@ class ShowGroupPageState extends State<ShowGroupPage> {
 
   bool loaded = false;
 
+  List<Ranking>? ranking;
+
+  PagingController<dynamic, Widget> controller = PagingController(firstPageKey: 0, invisibleItemsThreshold: 50);
+
   @override
   Widget build(BuildContext context) => ShowGroupUI(state: this);
+
+   @override
+   void initState() {
+     super.initState();
+     controller.addPageRequestListener((pageKey) async {
+         ranking ??= await ((widget.group.visibility != 0 && !widget.myGroup) ? Future(() => []) : widget.group.members.asyncValue());
+         if (pageKey + 50 < ranking!.length) {
+           controller.appendPage(List.generate(50, (index) => buildCard(index + pageKey as int)), pageKey + 50);
+         } else {
+           controller.appendLastPage(List.generate(ranking!.length - pageKey as int, (index) => buildCard(index + pageKey as int)));
+         }
+       });
+   }
+
+  Widget buildCard(int index) {
+    Ranking member = ranking![index];
+    String adminString = "";
+    if (member.username == widget.group.groupAdmin.syncValue) adminString = "(admin)";
+    return GestureDetector(
+      onTap: () => handleOpenUserProfile(member.username),
+      child: Card(
+          color: (member.username == global.localData.username) ? Provider.of<ThemeNotifier>(context, listen: false).getCustomTheme.c1 : null,
+          child: ListTile(
+            leading: Text("${index + 1}. "),
+            title: Text("${member.username} $adminString"),
+            trailing: Text("${member.points} points"),
+          )
+      ),
+    );
+  }
 
   /// joins a public group and closes the current context
   /// Method can only be called when the group is public and user is not a member

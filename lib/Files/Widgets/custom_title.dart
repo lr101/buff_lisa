@@ -70,9 +70,46 @@ class CustomTitleState extends State<CustomTitle> {
     );
   }
 
+}
 
+class CustomRoundImage extends StatelessWidget {
 
+  final Future<Uint8List> Function() imageCallback;
 
+  final double size;
+
+  const CustomRoundImage({super.key,required this.imageCallback, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: () => handleOpenImage(context),
+          child:  FutureBuilder<Uint8List>(
+            future: imageCallback(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return CircleAvatar(backgroundImage: Image.memory(snapshot.requireData).image, radius: 50,);
+              } else {
+                return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: 50,);
+              }
+            },
+          ),
+        ),
+        const SizedBox(height: 10,)
+      ],
+    );
+  }
+
+  void handleOpenImage(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) => ShowProfileImage(provide: imageCallback, defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
+      ),
+    );
+  }
 
 }
 

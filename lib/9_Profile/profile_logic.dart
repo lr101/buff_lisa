@@ -96,7 +96,6 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     } else {
       pins.sort((a,b) => a.creationDate.compareTo(b.creationDate) * -1);
       Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).updatePins(pins);
-      pagingController.refresh();
     }
     return true;
   }

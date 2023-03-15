@@ -4,8 +4,10 @@ import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_ui.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
+import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 
@@ -22,14 +24,11 @@ class SearchGroupPageState extends State<SearchGroupPage> {
   final int _numPages = 15;
 
   /// controller of page list
-  final PagingController<int, Group> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 1);
+  final PagingController<dynamic, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 1);
 
 
   /// List of all group ids that could be shown in page list
   late List<int> groups = [];
-
-  Map<int, Group> loadedGroups = {};
-
 
   /// Boolean to track if groups in list are currently filtered in list view
   /// Used to know if reset is needed when deactivating search
@@ -66,41 +65,41 @@ class SearchGroupPageState extends State<SearchGroupPage> {
     super.initState();
   }
 
+  /// Get Card with button to navigate to create group page
+  /// Is always at the first postion of the list
+  Widget getCardCreateNewGroup() {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: ListTile(
+        onTap: handlePressNewGroup,
+        title: const Text("Create a new group",),
+        leading: const Icon(Icons.add),
+      ),
+    );
+  }
+
   /// Gets group information of ids from index range [pageKey, pageKey + _numPages -1]
   /// Adds the Groups to [pagingController] to be build in page List
   Future<void> _fetchPage(int pageKey) async {
-    try {
-      List<Group> g = [];
-      if (pageKey > 1) {
-        int rangeEnd = (pageKey + _numPages - 2 < groups.length ? pageKey + _numPages - 2 : groups.length);
-        List<int> sublistOfIds = [];
-        for(int groupId in groups.sublist(pageKey - 2, rangeEnd)) {
-          Group? group = loadedGroups[groupId];
-          if (group != null) {
-            g.add(group);
-          } else {
-            sublistOfIds.add(groupId);
-          }
+    if (pageKey == 0) {
+      pagingController.appendPage([getCardCreateNewGroup()], pageKey + 1);
+    } else {
+      if (pageKey + 50 < groups.length + 1) {
+        List<Widget> widgets = [];
+        int i = pageKey;
+        for (; pageKey < i + 50; pageKey++) {
+          widgets.add(await getCardOfOtherGroups(pageKey - 1));
         }
-        if (sublistOfIds.isNotEmpty) {
-          List<Group> loaded = await FetchGroups.getGroups(sublistOfIds);
-          g.addAll(loaded);
-          for (Group group in loaded) {
-            loadedGroups[group.groupId] = group;
-          }
+        pagingController.appendPage(widgets, pageKey);
+      } else {
+        List<Widget> widgets = [];
+        for (; pageKey < groups.length + 1; pageKey++) {
+          widgets.add(await getCardOfOtherGroups(pageKey - 1));
         }
-      } else {
-        g.add(Group(groupId: 0, name: "", groupAdmin: "", inviteUrl: null, visibility: 0));
+        pagingController.appendLastPage(widgets);
       }
-      if (g.length < _numPages && pageKey > 1) {
-        pagingController.appendLastPage(g);
-      } else if (pageKey == 0 || pageKey == 1) {
-        pagingController.appendPage(g, pageKey + 1);
-      } else {
-        pagingController.appendPage(g, pageKey + _numPages);
-      }
-    } catch (error) {
-      pagingController.error();
     }
   }
 
@@ -110,7 +109,6 @@ class SearchGroupPageState extends State<SearchGroupPage> {
     value = (value == null || value.isEmpty ? null : value);
     groups = await FetchGroups.fetchAllGroupsWithoutUserGroupsIds(value);
     filtered = value != null;
-    pagingController.refresh();
   }
 
 
@@ -122,6 +120,35 @@ class SearchGroupPageState extends State<SearchGroupPage> {
       ),
     );
   }
+
+/// Get Card of a Group
+/// Shows the name, group image, visibility
+Future<Widget> getCardOfOtherGroups(int index) async {
+    Group group;
+    try {
+      group = Provider.of<ClusterNotifier>(context, listen: false).otherGroups.firstWhere((element) => element.groupId == groups[index]);
+    } catch(_) {
+      group = await FetchGroups.getGroup(groups[index]);
+      if (!mounted) return const SizedBox.shrink();
+      Provider.of<ClusterNotifier>(context,listen: false).addOtherGroup(group);
+    }
+  return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: GestureDetector(
+        onTap: () => handleJoinGroupPress(group),
+        child: ListTile(
+          leading: group.profileImage.customWidget(
+              callback: (p0) => CircleAvatar(backgroundImage: Image.memory(p0).image, radius: 20),
+              elseFunc: () => const CircleAvatar(backgroundColor: Colors.grey, radius: 20,)
+          ),
+          title: Text(group.name),
+          trailing: (group.visibility != 0 ? const Icon(Icons.lock_outline) : const Icon(Icons.lock_open)),
+        ),
+      )
+  );
+}
 
   /// opens the ShowGroupPage Widget when a group card is pressed and wait for the result
   /// If the group was joined the group card is removed from the list of join able groups
