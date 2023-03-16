@@ -1,6 +1,5 @@
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:provider/provider.dart';
 
+import '../Providers/marker_notifier.dart';
 import 'maps_logic.dart';
 
 class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
@@ -48,7 +48,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                         fitBoundsOptions: const FitBoundsOptions(
                           padding: EdgeInsets.all(50),
                         ),
-                        markers: Provider.of<ClusterNotifier>(context).getMarkers,
+                        markers: Provider.of<MarkerNotifier>(context).getMarkers,
                         polygonOptions: const PolygonOptions(
                             borderColor: Colors.blueAccent,
                             color: Colors.black12,

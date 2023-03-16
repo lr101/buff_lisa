@@ -28,7 +28,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
           body: CustomSliverList(
             title: _title(),
             appBar: getImage(),
-            appBarHeight: 100,
+            appBarHeight: 130,
             initPagedList: () => state.init(Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
             pagingController: state.pagingController,
           )

@@ -4,6 +4,7 @@ import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
+import 'package:buff_lisa/Providers/marker_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:camera/camera.dart';
@@ -71,10 +72,13 @@ class MyApp extends StatelessWidget {
               ),
               ChangeNotifierProvider.value(
                 value: DateNotifier(),
+              ),
+              ChangeNotifierProvider.value(
+                  value: MarkerNotifier()
               )
             ],
             builder: (context, child) {
-              Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>());
+              Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>(), context.read<MarkerNotifier>());
               return MaterialApp(
                 theme: Provider.of<ThemeNotifier>(context).getTheme,
                 title: 'Mona App',

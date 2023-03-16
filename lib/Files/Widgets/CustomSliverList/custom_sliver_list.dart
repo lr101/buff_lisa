@@ -7,29 +7,21 @@ class CustomSliverList extends StatefulWidget {
   final CustomEasyTitle title;
   final Widget appBar;
   final double appBarHeight;
-  final PagingController<dynamic, Widget> pagingController;
+  final PagingController<dynamic, Widget>? pagingController;
   final Future<bool?> Function()? initPagedList;
+  final int? itemCount;
+  final Widget Function(int index)? itemBuilder;
 
   const CustomSliverList({
     super.key,
     required this.title,
     required this.appBar,
-    required this.pagingController,
+    this.pagingController,
+    this.itemCount,
+    this.itemBuilder,
     this.appBarHeight = 100,
     this.initPagedList
-  });
-
-  static CustomSliverList builder({required CustomEasyTitle title,required Widget appBar,required int itemCount, double? appBarHeight, required Widget Function(int index) itemBuilder}) {
-    PagingController<dynamic, Widget> controller = PagingController(firstPageKey: 0, invisibleItemsThreshold: 50);
-    controller.addPageRequestListener((pageKey) {
-      if (pageKey + 50 < itemCount) {
-        controller.appendPage(List.generate(50, (index) => itemBuilder(index + pageKey as int)), pageKey + 50);
-      } else {
-        controller.appendLastPage(List.generate(itemCount - pageKey as int, (index) => itemBuilder(index + pageKey as int)));
-      }
-    });
-    return CustomSliverList(title: title, appBar: appBar, pagingController: controller, appBarHeight: appBarHeight ?? 100);
-  }
+  }) : assert(pagingController != null || (itemCount != null && itemBuilder != null));
 
   @override
   CustomSliverListState createState() => CustomSliverListState();
@@ -62,13 +54,7 @@ class CustomSliverListState extends State<CustomSliverList> {
                       if (!snapshot.hasData) {
                         return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
                       } else {
-                        return PagedSliverList(
-                          pagingController: widget.pagingController,
-                          builderDelegate: PagedChildBuilderDelegate<Widget>(
-                              animateTransitions: false,
-                              itemBuilder: (context, item, index)  => item
-                          ),
-                        );
+                        return _list();
                       }
                     },
                   )
@@ -80,9 +66,34 @@ class CustomSliverListState extends State<CustomSliverList> {
     );
   }
 
+  Widget _list() {
+    if (widget.pagingController != null) {
+      return PagedSliverList(
+        pagingController: widget.pagingController!,
+        builderDelegate: PagedChildBuilderDelegate<Widget>(
+            animateTransitions: false,
+            itemBuilder: (context, item, index)  => item
+        ),
+      );
+    } else {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => widget.itemBuilder!(index),
+          childCount: widget.itemCount!
+        ),
+      );
+    }
+  }
+
   Future<bool?> refreshList() {
-    final result = widget.initPagedList != null ? widget.initPagedList!() : Future(() => true);
-    widget.pagingController.refresh();
+    final result = widget.initPagedList != null
+        ? widget.initPagedList!()
+        : Future(() => true);
+    if (widget.pagingController != null) {
+      widget.pagingController!.refresh();
+    } else {
+      setState(() {});
+    }
     return result;
   }
 }

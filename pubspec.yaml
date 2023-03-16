@@ -30,6 +30,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_riverpod:
+
   # BSD-3 Clause License
   flutter_map_marker_cluster:
 

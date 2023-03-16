@@ -2,6 +2,7 @@ import 'package:buff_lisa/2_ScreenMaps/maps_ui.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Other/location_class.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/marker_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
@@ -89,18 +90,18 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
       filterUser = !filterUser;
     });
     if (filterUser) {
-      Provider.of<ClusterNotifier>(context, listen:false).setFilterUsername([global.localData.username]);
+      Provider.of<MarkerNotifier>(context, listen:false).setFilterUsername([global.localData.username]);
     } else {
-      Provider.of<ClusterNotifier>(context, listen:false).setFilterUsername([]);
+      Provider.of<MarkerNotifier>(context, listen:false).setFilterUsername([]);
     }
   }
 
   /// updates the marker list via provider to filter for the pins created int the last [days]
   void _setFilterDate(int? days) {
     if (days == null) {
-      Provider.of<ClusterNotifier>(context, listen:false).setFilterDate(null, null);
+      Provider.of<MarkerNotifier>(context, listen:false).setFilterDate(null, null);
     } else {
-      Provider.of<ClusterNotifier>(context, listen:false).setFilterDate(DateTime.now().subtract(Duration(days: days)), null);
+      Provider.of<MarkerNotifier>(context, listen:false).setFilterDate(DateTime.now().subtract(Duration(days: days)), null);
     }
   }
 

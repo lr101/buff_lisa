@@ -42,7 +42,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   static const _gridWidth = 3;
 
   /// number of pages loaded and held in storage that are not visible currently
-  static const _invisibleThresh = 2;
+  static const _invisibleThresh = 4;
 
   final m = Mutex();
 
