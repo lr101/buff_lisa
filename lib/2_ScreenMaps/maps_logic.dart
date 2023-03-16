@@ -17,7 +17,7 @@ class MapsWidget extends StatefulWidget {
   State<MapsWidget> createState() => MapsWidgetState();
 }
 
-class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMixin<MapsWidget> {
+class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMixin<MapsWidget>, TickerProviderStateMixin {
 
   /// state of the filter by date [0-4]
   /// 0: no filter
@@ -51,11 +51,32 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     });
   }
 
-  /// sets google maps location to the current user position via the maps [controller]
-  void setLocation() async {
-    Position loc = await LocationClass.getLocation();
-    LatLng latLong = LatLng(loc.latitude, loc.longitude);
-    controller.move(latLong, global.initialZoom);
+  Future<void> setLocation() async  {
+    final destLocation = await LocationClass.getLocation();
+ 
+    final latTween = Tween<double>(begin: controller.center.latitude, end: destLocation.latitude);
+    final lngTween = Tween<double>(begin: controller.center.longitude, end: destLocation.longitude);
+    final zoomTween = Tween<double>(begin: controller.zoom, end: global.initialZoom);
+    
+    final animateController = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+
+    final Animation<double> animation = CurvedAnimation(parent: animateController, curve: Curves.fastOutSlowIn);
+
+    animateController.addListener(() {
+      controller.move(
+          LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
+          zoomTween.evaluate(animation));
+    });
+
+    animation.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        animateController.dispose();
+      } else if (status == AnimationStatus.dismissed) {
+        animateController.dispose();
+      }
+    });
+
+    animateController.forward();
   }
 
   /// returns the button text that will be shown depending on [filterState]

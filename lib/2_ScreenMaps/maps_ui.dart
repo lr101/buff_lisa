@@ -28,7 +28,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                     minZoom: 2,
                     maxZoom: 18,
                     center: global.initCamera,
-                    zoom: 19,
+                    zoom: global.initialZoom,
                     keepAlive: true,
                     interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
                 ),
