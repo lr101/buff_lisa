@@ -22,17 +22,20 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-      body: CustomSliverList(
-        title: CustomEasyTitle(title: widget.group.name, right: state.widget.group.groupAdmin.syncValue == global.localData.username ? CustomEasyAction(child: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null),
-        appBar: Column(
-          children: [
-            CustomRoundImage(imageCallback: widget.group.profileImage.asyncValue, size: 50),
-            _getDescription(),
-            _getInviteLink(),
-          ],
+      body: CustomTitle(
+        title: CustomEasyTitle(
+            customBackground: Column(
+              children: [
+                CustomRoundImage(imageCallback: widget.group.profileImage.asyncValue, size: 50),
+                _getDescription(),
+                _getInviteLink(),
+              ],
+            ),
+            title: Text(widget.group.name),
+            right: state.widget.group.groupAdmin.syncValue == global.localData.username ? CustomEasyAction(child: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null),
+        sliverList: CustomSliverList(
+          pagingController: state.controller,
         ),
-        appBarHeight: 200,
-        pagingController: state.controller,
       ),
       floatingActionButton: CustomActionButton(
         text: getText(),
@@ -84,7 +87,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   /// returns the description of a group
   Widget _getDescription() {
     if (state.widget.group.visibility == 0 || widget.myGroup) {
-      return FutureBuilder<String>(
+      return FutureBuilder<String?>(
           future: state.widget.group.description.asyncValue(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -100,7 +103,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                         child: Row(
                           children: [
                             Flexible(
-                              child: Text(snapshot.requireData),
+                              child: Text(snapshot.requireData != null ? snapshot.requireData! : "Could not be loaded"),
                             )
                           ],
                         )

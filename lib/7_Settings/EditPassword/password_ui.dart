@@ -4,30 +4,29 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 
+import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
+
 class PasswordUI extends StatelessUI<Password> {
 
   const PasswordUI({super.key, required widget}) : super(widget: widget);
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size.width;
     final controller1 = TextEditingController();
     final controller2 = TextEditingController();
     return Scaffold(appBar: null,
-      body: SizedBox(
-          width: size,
-          height: size,
+      body: CustomTitle(
+          title: CustomEasyTitle(
+              title: const Text("Edit Password"),
+              back: true,
+              right: CustomEasyAction(
+                child: const Icon(Icons.add_task),
+                action: () async => widget.handleSubmitPress(controller1, controller2, context)
+            ),
+          ),
           child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                CustomTitle(
-                  titleBar: CustomTitleBar(
-                    title: "Edit Password",
-                    back: true,
-                    action: CustomAction(icon: const Icon(Icons.add_task), action: () => widget.handleSubmitPress(controller1, controller2, context)),
-                    ),
-                ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
                 const Text("Type Password:"),
                 Padding (
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -38,10 +37,10 @@ class PasswordUI extends StatelessUI<Password> {
                 Padding (
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TextFormField(obscureText: true, enableSuggestions: false, autocorrect: false, validator: LoginScreen.validator, controller: controller2,),
-                ),
-              ]
-          )
-      ),
+                )
+            ]
+        )
+      )
     );
   }
 }

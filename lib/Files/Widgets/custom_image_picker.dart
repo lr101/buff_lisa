@@ -6,6 +6,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../Themes/custom_theme.dart';
 import 'custom_error_message.dart';
 
 class CustomImagePicker {
@@ -26,7 +27,7 @@ class CustomImagePicker {
           uiSettings: [
             AndroidUiSettings(
                 toolbarTitle: 'Cropper',
-                toolbarColor: Provider.of<ThemeNotifier>(context, listen: false).getCustomTheme.c1,
+                toolbarColor: CustomTheme.c1,
                 toolbarWidgetColor: Colors.white,
                 initAspectRatio: CropAspectRatioPreset.square,
                 lockAspectRatio: true

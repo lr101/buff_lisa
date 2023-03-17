@@ -35,7 +35,7 @@ class Group {
 
   /// String: description of a group
   /// null: description is not yet loaded from server or user is not a member of the private group
-  late final AsyncType<String> description;
+  late final AsyncType<String?> description;
 
   /// Uint8List: image profile picture byte data
   /// null: not yet loaded from server
@@ -74,7 +74,7 @@ class Group {
   }) {
     this.groupAdmin = AsyncType(value: groupAdmin, callback: () => FetchGroups.getGroupAdmin(groupId), callbackDefault: () async => "---", builder: (_) => Text(_));
     this.members = AsyncType(value: members, callback: _getMembers, callbackDefault: () async => []);
-    this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), callbackDefault: () async => "cannot be loaded", builder: (_) => Text(_));
+    this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), builder: (v) => v != null ? Text(v) : const Icon(Icons.lock));
     this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{});
     this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: (saveOffline) ? _saveOffline : null);
     this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: (saveOffline) ? _saveOffline : null, retry: false);

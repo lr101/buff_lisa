@@ -6,6 +6,9 @@ import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../Files/Themes/custom_theme.dart';
+import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
+
 class ReportUser extends StatefulWidget {
   const ReportUser({super.key,required this.content, required this.title, required this.hintText, required this.userText});
   final String content;
@@ -28,10 +31,10 @@ class ReportUserState extends State<ReportUser>{
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           CustomTitle(
-            titleBar: CustomTitleBar(
-              title: widget.title,
+            title: CustomEasyTitle(
+              title: Text(widget.title),
               back: true,
-            )
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(10),
@@ -58,7 +61,7 @@ class ReportUserState extends State<ReportUser>{
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Provider.of<ThemeNotifier>(context).getCustomTheme.c1)
+                        side: const BorderSide(color: CustomTheme.c1)
                     )
                 ),
               ),

@@ -1,116 +1,70 @@
 import 'dart:typed_data';
 
+import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_sliver_list.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
+import 'package:measured_size/measured_size.dart';
+import 'package:provider/provider.dart';
 
 import '../../9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
+import '../../Providers/theme_provider.dart';
+import '../Themes/custom_theme.dart';
+import 'CustomSliverList/custom_easy_title.dart';
 
 class CustomTitle extends StatefulWidget {
   const CustomTitle({
     super.key,
-    this.imageCallback,
-    this.child = const SizedBox.shrink(),
-    required this.titleBar
-  });
+    this.sliverList,
+    this.child,
+    required this.title,
+  }) : assert(sliverList != null || child != null);
 
-  final Future<Uint8List> Function()? imageCallback;
-  final CustomTitleBar titleBar;
-  final Widget child;
+  final CustomSliverList? sliverList;
+  final Widget? child;
+  final CustomEasyTitle title;
 
   @override
   CustomTitleState createState() => CustomTitleState();
 }
 
 class CustomTitleState extends State<CustomTitle> {
+
+
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child:
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            widget.titleBar,
-            const SizedBox(height: 10,),
-            image(),
-            widget.child
-          ],
+    return Container(
+        color: CustomTheme.grey,
+        child: SafeArea(
+           child: widget.sliverList != null ? _withList() :
+             CustomScrollView(
+               slivers: [
+                 widget.title,
+                 SliverFillRemaining(
+                     child: Container(
+                         color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
+                         child: widget.child
+                     )
+                   )
+               ],
+             ),
         )
     );
   }
 
-  Widget image() {
-    if (widget.imageCallback == null) {
-      return const SizedBox.shrink();
-    } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: handleOpenImage,
-            child:  CustomRoundImage(
-              size: 50,
-              imageCallback: widget.imageCallback!,
-            )
-          ),
-          const SizedBox(height: 10,)
+  Widget _withList() {
+    return NestedScrollView(
+        physics: const BouncingScrollPhysics(),
+        headerSliverBuilder: (context, innerScrolled) => <Widget>[
+          SliverOverlapAbsorber(
+                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: widget.title
+          )
         ],
-      );
-    }
-  }
-
-  void handleOpenImage() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ShowProfileImage(provide: widget.imageCallback!, defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
-      ),
-    );
-  }
-
-}
-
-
-
-class CustomAction {
-
-  CustomAction({required this.icon, required this.action});
-
-  final Icon icon;
-  final VoidCallback action;
-}
-
-class CustomTitleBar extends StatelessWidget {
-
-  final bool? back;
-  final Widget? actionBar;
-  final String? title;
-  final CustomAction? action;
-
-  const CustomTitleBar(
-      {super.key, this.back = true, this.actionBar, this.title, this.action});
-
-
-  @override
-  Widget build(BuildContext context) {
-    if (actionBar == null) {
-      return actions(context);
-    } else {
-      return SizedBox(height: 48, child: actionBar);
-    }
-  }
-
-  Widget actions(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        (back!) ?
-          IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)) :
-          const SizedBox.square(dimension: 48,),
-
-        Text(title!, style: const TextStyle(fontSize: 20),),
-
-        (action != null)
-            ? IconButton(onPressed: action?.action, icon: action!.icon)
-            : const SizedBox.square(dimension: 48,),
-      ],
+        body: Container(
+          color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
+          child: Column(children: [widget.sliverList!])
+        )
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,10 +40,10 @@ class ShowWebWidgetState extends State<ShowWebWidget> {
       body: Column(
         children: [
           CustomTitle(
-            titleBar: CustomTitleBar(
-              title: widget.title,
+            title: CustomEasyTitle(
+            title: Text(widget.title),
               back: true,
-            )
+            ),
           ),
           Expanded(
               child: WebViewWidget(

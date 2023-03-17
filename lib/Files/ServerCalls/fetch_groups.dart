@@ -141,10 +141,14 @@ class FetchGroups {
   /// returns the description of a group identified by [groupId]
   /// throws an Exception if an error occurs
   /// GET Request to Server
-  static Future<String> getGroupDescription(int groupId) async {
+  static Future<String?> getGroupDescription(int groupId) async {
     Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0);
     if (response.statusCode == 200) {
-      return utf8.decode(response.bodyBytes);
+      try {
+        return utf8.decode(response.bodyBytes);
+      } catch(_) {
+        return null;
+      }
     } else {
       throw Exception("Group is private or does not exist");
     }

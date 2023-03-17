@@ -63,22 +63,12 @@ class MyApp extends StatelessWidget {
     /// create [ClusterNotifier] used to save all important information
     return MultiProvider(
             providers: [
-              ChangeNotifierProvider.value(
-                value: ClusterNotifier(),
-              ),
-              ChangeNotifierProvider.value(
-                value: ThemeNotifier(global.localData.theme == Brightness.dark),
-              ),
-              ChangeNotifierProvider.value(
-                value: UserNotifier(),
-              ),
-              ChangeNotifierProvider.value(
-                value: DateNotifier(),
-              ),
-              ChangeNotifierProvider.value(
-                  value: MarkerNotifier()
-              ),
-              ChangeNotifierProvider.value(value: LoadingNotifier()),
+              ChangeNotifierProvider(create: (_) => ClusterNotifier(),),
+              ChangeNotifierProvider(create: (_) => ThemeNotifier(global.localData.theme == Brightness.dark),),
+              ChangeNotifierProvider(create: (_) => UserNotifier(),),
+              ChangeNotifierProvider(create: (_) => DateNotifier(),),
+              ChangeNotifierProvider(create: (_) => MarkerNotifier()),
+              ChangeNotifierProvider(create: (_) =>  LoadingNotifier()),
             ],
             builder: (context, child) {
               Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>(), context.read<MarkerNotifier>());

@@ -26,12 +26,12 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: null,
-          body: CustomSliverList(
+          body: CustomTitle(
             title: _title(),
-            appBar: getImage(),
-            appBarHeight: 130,
-            initPagedList: () => state.init(Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
-            pagingController: state.pagingController,
+            sliverList: CustomSliverList(
+              initPagedList: () => state.init(Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
+              pagingController: state.pagingController,
+            ),
           )
     );
   }
@@ -39,8 +39,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
   Widget getImage() {
     if (widget.username == global.localData.username) {
       return CustomShowAndPick(
-          provide: () =>
-              Provider.of<UserNotifier>(state.context, listen: false).getUser(widget.username).profileImage.asyncValue(),
+          provide: Provider.of<UserNotifier>(state.context, listen: false).getUser(widget.username).profileImage.asyncValue,
           updateCallback: state.provideProfileImage,
       );
     } else {
@@ -60,7 +59,8 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
   CustomEasyTitle _title() {
     if (widget.username == global.localData.username) {
       return CustomEasyTitle(
-        title: widget.username,
+        customBackground: getImage(),
+        title: Text(widget.username),
         back: false,
         right: CustomEasyAction(
           child: const Icon(Icons.settings),
@@ -69,7 +69,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
       );
     } else {
       return CustomEasyTitle(
-        title: widget.username,
+        title: Text(widget.username),
       );
     }
   }

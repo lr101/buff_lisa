@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../Files/Other/navbar_context.dart';
+import '../Files/Routes/routing.dart';
 import 'TakeImage/check_image_logic.dart';
 
 class CameraWidget extends StatefulWidget {
@@ -70,15 +71,9 @@ class CameraControllerWidget extends State<CameraWidget> {
     final state = this;
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider.value(
-            value: CameraNotifier(),
-          ),
-          ChangeNotifierProvider.value(
-            value: CameraGroupNotifier(),
-          ),
-          ChangeNotifierProvider.value(
-            value: CameraIconNotifier(),
-          ),
+          ChangeNotifierProvider(create: (_) => CameraNotifier(),),
+          ChangeNotifierProvider(create: (_) => CameraGroupNotifier(),),
+          ChangeNotifierProvider(create: (_) => CameraIconNotifier(),),
         ],
         builder: ((context, child) {
           this.context = context;
@@ -135,11 +130,7 @@ class CameraControllerWidget extends State<CameraWidget> {
           bytes = await image.readAsBytes();
         }
         Group group = groups[Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex];
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) =>
-                  CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group,)
-          ),
-        );
+        Routing.to(context,  CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group,));
       } catch (e) {
         CustomErrorMessage.message(context: context, message: "Something went wrong while taking the picture");
       }

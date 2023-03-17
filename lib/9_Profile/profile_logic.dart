@@ -16,6 +16,7 @@ import '../7_Settings/settings_logic.dart';
 import '../Files/DTOClasses/group.dart';
 import '../Files/Other/global.dart' as global;
 import '../Files/DTOClasses/pin.dart';
+import '../Files/Routes/routing.dart';
 import '../Files/ServerCalls/fetch_users.dart';
 import '../Files/Widgets/custom_show_and_pick.dart';
 import '../Files/Widgets/custom_title.dart';
@@ -232,10 +233,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
   /// Opens a widget as a new page.
  void handlePushPage(Widget widget) {
-   Navigator.push(
-     context,
-     MaterialPageRoute(builder: (context) => widget),
-   );
+   Routing.to(context,  widget);
  }
 
  /// Opens the profile image in a new page.

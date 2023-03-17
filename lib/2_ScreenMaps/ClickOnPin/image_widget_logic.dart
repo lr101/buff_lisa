@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import '../../9_Profile/profile_logic.dart';
+import '../../Files/Routes/routing.dart';
 import '../../Providers/date_notifier.dart';
 
 class ShowImageWidget extends StatefulWidget {
@@ -76,19 +77,11 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
 
   void handleOpenUserProfile() {
     if (widget.pin.username == global.localData.username) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) =>  ProfilePage(username: widget.pin.username,)
-      ),
-    );
+    Routing.to(context, ProfilePage(username: widget.pin.username,));
   }
 
   void handleOpenGroup() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) =>  ShowGroupPage(group: widget.pin.group, myGroup: true)
-      ),
-    );
+    Routing.to(context,   ShowGroupPage(group: widget.pin.group, myGroup: true));
   }
 
 }

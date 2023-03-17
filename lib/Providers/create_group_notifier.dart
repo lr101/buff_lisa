@@ -35,8 +35,8 @@ class CreateGroupNotifier with ChangeNotifier {
     initPublic = _sliderValue;
     _controller1.text = group.name;
     initName = group.name;
-    _controller2.text = await group.description.asyncValue();
-    initDesc = await group.description.asyncValue();
+    _controller2.text = await group.description.asyncValue() ?? "";
+    initDesc = await group.description.asyncValue() ?? "";
     _image = await group.profileImage.asyncValue();
     menuItems = await getMembers(group);
     notifyListeners();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../../Files/DTOClasses/group.dart';
+import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../../Files/Widgets/custom_round_image.dart';
 import 'order_groups_logic.dart';
 
@@ -12,26 +13,26 @@ class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          CustomTitle(
-              titleBar: CustomTitleBar(
-                title: "Sort Group",
-                action: CustomAction(
-                    action: state.saveOrder,
-                    icon: const Icon(Icons.add_task)
-                ),
-              ),
-            child: const Text("Order groups by long pressing to drag and drop", style: TextStyle(fontStyle: FontStyle.italic),),
-          ),
-          Expanded(child:
-            ReorderableListView(
-              onReorder: state.onReorder,
-              children: state.groups.map((item) => getCardOfGroup(item, context)).toList()
+      body: CustomTitle(
+          title: CustomEasyTitle(
+            title: Text("Sort Group"),
+            right: CustomEasyAction(
+                action: () async => state.saveOrder(),
+                child: const Icon(Icons.add_task)
             ),
-          )
-        ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Text("Order groups by long pressing to drag and drop", style: TextStyle(fontStyle: FontStyle.italic),),
+              Expanded(
+                child: ReorderableListView(
+                    onReorder: state.onReorder,
+                    children: state.groups.map((item) => getCardOfGroup(item, context)).toList()
+                  ),
+                )
+              ]
+        ),
       ),
     );
   }

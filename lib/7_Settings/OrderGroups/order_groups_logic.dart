@@ -33,6 +33,7 @@ class OrderGroupsState extends State<OrderGroups> {
   /// saves the order locally and performs changes.
   /// Closes this page on success.
   void saveOrder() {
+    print("--------------------");
     global.localData.updateGroupOrder(groups.map((e) => e.groupId).toList()).then((value) {
       Provider.of<ClusterNotifier>(context, listen: false).addGroups(groups);
       Navigator.pop(context);

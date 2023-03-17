@@ -11,6 +11,8 @@ import 'package:provider/provider.dart';
 
 import '../../9_Profile/profile_logic.dart';
 import '../../Files/DTOClasses/ranking.dart';
+import '../../Files/Routes/routing.dart';
+import '../../Files/Themes/custom_theme.dart';
 import '../../Providers/theme_provider.dart';
 
 class ShowGroupPage extends StatefulWidget {
@@ -59,7 +61,7 @@ class ShowGroupPageState extends State<ShowGroupPage> {
     return GestureDetector(
       onTap: () => handleOpenUserProfile(member.username),
       child: Card(
-          color: (member.username == global.localData.username) ? Provider.of<ThemeNotifier>(context, listen: false).getCustomTheme.c1 : null,
+          color: (member.username == global.localData.username) ?CustomTheme.c1 : null,
           child: ListTile(
             leading: Text("${index + 1}. "),
             title: Text("${member.username} $adminString"),
@@ -116,11 +118,7 @@ class ShowGroupPageState extends State<ShowGroupPage> {
   /// opens the edit page for admin if the current user is the groups admin
   Future<void> editAsAdmin() async {
     if (widget.group.groupAdmin.syncValue != null && global.localData.username == widget.group.groupAdmin.syncValue) {
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => EditGroupPage(group: widget.group)
-        ),
-      );
+      await Routing.to(context, EditGroupPage(group: widget.group));
       //trigger rebuild
       setState(() {});
     }
@@ -128,11 +126,7 @@ class ShowGroupPageState extends State<ShowGroupPage> {
 
   void handleOpenUserProfile(String username) {
     if (username == global.localData.username) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ProfilePage(username: username,)
-      ),
-    );
+    Routing.to(context,  ProfilePage(username: username,));
   }
 
 }

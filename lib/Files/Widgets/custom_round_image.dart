@@ -1,13 +1,15 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
+import 'dart:convert' as decode;
 import '../../9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
+import '../Routes/routing.dart';
 
 class CustomRoundImage extends StatelessWidget {
 
-  final ImageProvider<Object>? image;
+  final Future<Uint8List?> Function()? imageCallback;
 
-  final Future<Uint8List> Function()? imageCallback;
+  final String? asset;
 
   final double size;
 
@@ -15,7 +17,7 @@ class CustomRoundImage extends StatelessWidget {
 
   final bool clickable;
 
-  const CustomRoundImage({super.key,this.image, this.imageCallback, required this.size, this.child, this.clickable = true}) : assert(image != null || imageCallback != null);
+  const CustomRoundImage({super.key, this.imageCallback, required this.size, this.child, this.clickable = true, this.asset}) : assert (imageCallback != null || asset != null);
 
 
 
@@ -27,13 +29,14 @@ class CustomRoundImage extends StatelessWidget {
       children: [
         _clickable(
           context: context,
-          child:  FutureBuilder<ImageProvider<Object>>(
+          child:  FutureBuilder<ImageProvider<Object>?>(
             future: _image(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return CircleAvatar(backgroundImage:snapshot.requireData, radius: size, backgroundColor: Colors.transparent,child: child,);
-              }else if (image != null) {
-                return CircleAvatar(backgroundImage: image!, radius: size, backgroundColor: Colors.transparent,child: child,);
+                return CircleAvatar(backgroundImage: snapshot.requireData,
+                  radius: size,
+                  backgroundColor: Colors.transparent,
+                  child: child,);
               } else if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircleAvatar(radius: size, backgroundColor: Colors.grey ,child: child);
               } else {
@@ -57,20 +60,23 @@ class CustomRoundImage extends StatelessWidget {
     }
   }
 
-  Future<ImageProvider<Object>> _image() async {
+  Future<ImageProvider<Object>?> _image() async {
     if (imageCallback != null) {
-      return Image.memory(await imageCallback!()).image;
+      Uint8List? image = await imageCallback!();
+      if (image == null) return null;
+      return Image.memory(image).image;
     } else {
-      return Future<ImageProvider<Object>>(() => image!);
+      return Future<ImageProvider<Object>>(() => Image(image: AssetImage(asset!)).image);
     }
   }
 
+  Future<Uint8List> _bytes() async {
+    final ByteData bytes = await rootBundle.load(asset!);
+    return bytes.buffer.asUint8List();
+  }
+
   void handleOpenImage(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ShowProfileImage(provide: imageCallback != null ? imageCallback! : () async => Future<Uint8List?>(() => null), defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
-      ),
-    );
+    Routing.to(context,  ShowProfileImage(provide: imageCallback != null ? imageCallback! : _bytes, defaultImage: const Image(image: AssetImage("images/profile.jpg"),)));
   }
 
 }

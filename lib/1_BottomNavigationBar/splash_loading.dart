@@ -50,7 +50,7 @@ class SplashLoadingState extends State<SplashLoading> with TickerProviderStateMi
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            CustomRoundImage(image: const Image(image: AssetImage("images/pinGui.png")).image , size: 50),
+            const CustomRoundImage(asset: "images/pinGui.png", size: 50),
             const SizedBox(height: 30),
             const Text(
               'Loading your group information',

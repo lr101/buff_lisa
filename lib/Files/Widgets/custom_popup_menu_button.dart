@@ -5,6 +5,7 @@ import '../../7_Settings/Report/report_user.dart';
 import '../../Providers/cluster_notifier.dart';
 import '../DTOClasses/pin.dart';
 import '../Other/global.dart' as global;
+import '../Routes/routing.dart';
 
 class CustomPopupMenuButton extends StatefulWidget {
   const CustomPopupMenuButton({super.key, required this.pin, required this.update});
@@ -72,22 +73,14 @@ class CustomPopupMenuButtonState extends State<CustomPopupMenuButton> {
   Future<void> handleReportUser(BuildContext context) async {
     String username = widget.pin.username;
     if (username != global.localData.username) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ReportUser(content: username, title: "Report User", hintText: "Why do you want to report $username?", userText:  'Report user: $username')),
-      );
+      Routing.to(context, ReportUser(content: username, title: "Report User", hintText: "Why do you want to report $username?", userText:  'Report user: $username'));
     }
   }
 
   Future<void> handleReportPost(BuildContext context) async {
     String username = widget.pin.username;
     if (username != global.localData.username) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ReportUser(content: widget.pin.id.toString(), title: "Report Content", hintText: "Why do you want to report this content?",userText: "Report content of user: $username",)),
-      );
+      Routing.to(context, ReportUser(content: widget.pin.id.toString(), title: "Report Content", hintText: "Why do you want to report this content?",userText: "Report content of user: $username",));
     }
   }
 

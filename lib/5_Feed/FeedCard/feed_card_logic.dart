@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../7_Settings/Report/report_user.dart';
 import '../../Files/Other/global.dart' as global;
+import '../../Files/Routes/routing.dart';
 
 class FeedCard extends StatefulWidget {
   const FeedCard({super.key, required this.pin, this.update});
@@ -70,11 +71,7 @@ class FeedCardState extends State<FeedCard> {
   Future<void> handleReportUser(BuildContext context) async {
     String username = widget.pin.username;
     if (username != global.localData.username) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ReportUser(content: username, title: "Report User", hintText: "Why do you want to report $username?", userText:  'Report user: $username')),
-      );
+      Routing.to(context, ReportUser(content: username, title: "Report User", hintText: "Why do you want to report $username?", userText:  'Report user: $username'));
     }
   }
 
@@ -82,11 +79,7 @@ class FeedCardState extends State<FeedCard> {
   Future<void> handleReportPost(BuildContext context) async {
     String username = widget.pin.username;
     if (username != global.localData.username) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ReportUser(content: widget.pin.id.toString(), title: "Report Content", hintText: "Why do you want to report this content?",userText: "Report content of user: $username",)),
-      );
+      Routing.to(context, ReportUser(content: widget.pin.id.toString(), title: "Report Content", hintText: "Why do you want to report this content?",userText: "Report content of user: $username",));
     }
   }
 
@@ -104,29 +97,18 @@ class FeedCardState extends State<FeedCard> {
 
   /// Open group of current pin.
   void handleOpenGroup() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) =>  ShowGroupPage(group: widget.pin.group, myGroup: true)
-      ),
-    );
+    Routing.to(context, ShowGroupPage(group: widget.pin.group, myGroup: true));
   }
 
   /// Open profile of the user of the current pin.
   void handleOpenUserProfile() {
     if (widget.pin.username == global.localData.username) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) =>  ProfilePage(username: widget.pin.username,)
-      ),
-    );
+    Routing.to(context, ProfilePage(username: widget.pin.username,));
   }
 
   /// Open a more detailed view of current pin image.
   void handleTabOnImage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ShowImageWidget(pin: widget.pin, newPin: false))
-    );
+    Routing.to(context, ShowImageWidget(pin: widget.pin, newPin: false));
   }
 
 }

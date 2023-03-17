@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../Files/DTOClasses/pin.dart';
+import '../Files/Themes/custom_theme.dart';
 import '../Providers/date_notifier.dart';
 
 
@@ -23,18 +24,21 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomIfElse(
-                ifWidget: expanded(context),
-                elseWidget: collapsed(context),
-                ifTest: () => state.expanded
-            ),
-            editColumn()
-          ],
-        )
+    return Container(
+      color: CustomTheme.grey,
+      child: SafeArea(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomIfElse(
+                  ifWidget: expanded(context),
+                  elseWidget: collapsed(context),
+                  ifTest: () => state.expanded
+              ),
+              editColumn()
+            ],
+          )
+      ),
     );
   }
 
@@ -98,7 +102,7 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
 
   Widget collapsedGroupCard(int index) {
     Group group = Provider.of<ClusterNotifier>(state.context, listen: false).getGroups[index];
-    Color color = (group.active) ? Provider.of<ThemeNotifier>(state.context).getCustomTheme.c1 : Colors.grey;
+    Color color = (group.active) ? CustomTheme.c1 : Colors.grey;
     return Padding(
         padding: const EdgeInsets.all(5),
         child: GestureDetector(
@@ -132,7 +136,7 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
     Color color = Colors.grey;
     Widget num = const SizedBox.shrink();
     if ((group.active)) {
-      color = Provider.of<ThemeNotifier>(context).getCustomTheme.c1;
+      color = CustomTheme.c1;
       num = getNumNewPosts(group, context);
     }
     return Padding(

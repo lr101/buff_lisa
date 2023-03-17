@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:measured_size/measured_size.dart';
+import 'package:provider/provider.dart';
 
-class CustomEasyTitle extends StatefulWidget {
+import '../../../Providers/theme_provider.dart';
+import '../../Themes/custom_theme.dart';
+
+class CustomEasyTitle extends SliverAppBar {
   const CustomEasyTitle({
     super.key,
     this.back = true,
     this.left,
     this.right,
-    this.title,
-    this.child
-  });
+    this.child,
+    title,
+    this.customBackground = const SizedBox.shrink()
+  }) : super (title: title);
 
   final bool back;
   final CustomEasyAction? left;
   final CustomEasyAction? right;
-  final String? title;
   final Widget? child;
+  final Widget customBackground;
 
   @override
   CustomEasyTitleState createState() => CustomEasyTitleState();
@@ -22,20 +28,51 @@ class CustomEasyTitle extends StatefulWidget {
 
 class CustomEasyTitleState extends State<CustomEasyTitle> {
 
+  final GlobalKey _childKey = GlobalKey();
+  bool isHeightCalculated = false;
+  late double height;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 48,
-      child: widget.child ?? Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox.square(dimension: 48, child: _left(),),
-          _title(),
-          SizedBox.square(dimension: 48, child:_right())
-        ],
-      ),
+    return SliverAppBar(
+      automaticallyImplyLeading: false,
+      title: widget.title,
+      backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+      leading: _left(),
+      pinned: true,
+      actions: [_right()],
+      expandedHeight:  isHeightCalculated ? height : 0,
+        flexibleSpace: FlexibleSpaceBar(
+            stretchModes: const <StretchMode>[
+              StretchMode.zoomBackground,
+              StretchMode.blurBackground,
+            ],
+            background: Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                MeasuredSize(
+                  child: Container(
+                    color: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+                    child:Column(
+                        key:  _childKey,
+                        children: [
+                          const SizedBox(height: 48,),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: widget.customBackground,
+                          ),
+                        ]),),
+                  onChange: (Size size) {
+                    setState(() {
+                      height = (_childKey.currentContext?.findRenderObject() as RenderBox).size.height;
+                      height = height == 68.0 ? 0 : height;
+                      isHeightCalculated = true;
+                    });
+                  },
+                ),
+              ],
+            )
+        )
     );
   }
 
@@ -47,14 +84,6 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
       );
     } else if (!widget.back && widget.left != null) {
       return  _action(widget.left!);
-    } else {
-      return const SizedBox.shrink();
-    }
-  }
-
-  Widget _title() {
-    if (widget.title != null) {
-      return Text(widget.title!, style: const TextStyle(fontSize: 20),);
     } else {
       return const SizedBox.shrink();
     }
@@ -78,12 +107,12 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
           )
       ),
       onPressed: () async {
-        if (!action.loading) {
+        if (action.action != null && !action.loading) {
           try {
             setState(() {
               action.loading = true;
             });
-            await action.action();
+            await action.action!();
             setState(() {
               action.loading = false;
             });
@@ -99,9 +128,9 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
 
 class CustomEasyAction {
 
-  CustomEasyAction({required this.child, required this.action});
+  CustomEasyAction({required this.child, this.action});
 
   final Widget child;
-  final Future<void> Function() action;
+  final Future<void> Function()? action;
   bool loading = false;
 }

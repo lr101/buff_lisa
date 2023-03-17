@@ -23,15 +23,21 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: null,
-        body: CustomSliverList(
-          pagingController: state.pagingController,
-          appBar: const SizedBox.shrink(),
-          title: CustomEasyTitle(child: Consumer<SearchNotifier>(builder: (context, value, child) => value.getWidget(context: context, filtered: state.filtered))),
-          appBarHeight: 0,
-          initPagedList: () async {
-            await state.pullRefresh(null);
-            return true;
-          },
+        body: CustomTitle(
+          title: CustomEasyTitle(
+            title: Consumer<SearchNotifier>(builder: (context, value, child) => value.title),
+            right: CustomEasyAction(
+                child: Consumer<SearchNotifier>(builder: (context, value, child) => value.icon),
+                action: () async => Provider.of<SearchNotifier>(context, listen: false).toggle(state.filtered)
+            )
+          ),
+          sliverList: CustomSliverList(
+            pagingController: state.pagingController,
+            initPagedList: () async {
+              await state.pullRefresh(null);
+              return true;
+            },
+          )
         )
     );
   }

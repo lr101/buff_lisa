@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../Providers/theme_provider.dart';
+import '../Routes/routing.dart';
+import '../Themes/custom_theme.dart';
 import 'custom_image_picker.dart';
 
 class CustomShowAndPick extends StatefulWidget {
@@ -36,7 +38,7 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
                   return GestureDetector(
                       onTap: handleOpenImage,
                       child: CustomRoundImage(
-                        image: getProfile(snapshot.data),
+                        imageCallback: widget.provide,
                         size: 50,
                         child: Stack(
                             children: [
@@ -87,7 +89,7 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
   /// check if 100 < width, height and image is square
   /// saves image in Provider to trigger reload of image preview
   Future<void> handleImageUpload(BuildContext context) async {
-    Color theme = Provider.of<ThemeNotifier>(context, listen: false).getCustomTheme.c1;
+    Color theme = CustomTheme.c1;
     Uint8List? pickedImage = await CustomImagePicker.pick(minHeight: 100, minWidth: 100, color: theme, context: context);
     if(!mounted || pickedImage == null) return;
     setState(() {
@@ -101,11 +103,7 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
 
 
   void handleOpenImage() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ShowProfileImage(provide: widget.provide, defaultImage: widget.defaultImage,)
-      ),
-    );
+    Routing.to(context,  ShowProfileImage(provide: getImage, defaultImage: widget.defaultImage,));
   }
 
 }

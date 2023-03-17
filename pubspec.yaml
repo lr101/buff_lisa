@@ -32,6 +32,8 @@ dependencies:
 
   async_builder:
 
+  measured_size:
+
   # BSD-3 Clause License
   flutter_map_marker_cluster:
 

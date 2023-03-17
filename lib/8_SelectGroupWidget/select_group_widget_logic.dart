@@ -6,6 +6,8 @@ import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../Files/Routes/routing.dart';
+
 
 class SelectGroupWidget extends StatefulWidget {
   const SelectGroupWidget({super.key,required this.expanded});
@@ -51,11 +53,7 @@ class SelectGroupWidgetState extends State<SelectGroupWidget> {
 
   /// Opens the SearchGroupPage Widget as a new page
   void handleOrderGroup() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => const OrderGroups()
-      ),
-    );
+    Routing.to(context,  const OrderGroups());
   }
 
 }

@@ -11,6 +11,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import '../Files/Other/global.dart' as global;
 import '../Files/ServerCalls/fetch_pins.dart';
+import '../Files/Themes/custom_theme.dart';
 import '../Files/Widgets/custom_round_image.dart';
 import 'FeedCard/feed_card_logic.dart';
 
@@ -124,15 +125,15 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     return Padding(
         padding: const EdgeInsets.all(5.0),
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Provider.of<ThemeNotifier>(context, listen: false).getCustomTheme.c1)),
+          decoration: BoxDecoration(border: Border.all(color: CustomTheme.c1)),
           height: 100,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CustomRoundImage(
+              const CustomRoundImage(
                 size: 20,
-                image: Image.asset("images/pinGui.png").image,
+                asset: "images/pinGui.png",
                 clickable: false,
               ),
               const SizedBox(width: 10,),
