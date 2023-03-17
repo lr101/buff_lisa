@@ -1,5 +1,6 @@
 
 import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
+import 'package:buff_lisa/1_BottomNavigationBar/loading_notifier.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
@@ -110,6 +111,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   /// load existing offline pins from device storage -> open upload page, then
   /// load and activate previous active groups
   Future<void> groupsOnline(List<Group> groups) async {
+    Provider.of<LoadingNotifier>(context, listen: false).isLoaded();
     // add groups to global notifier
     Provider.of<ClusterNotifier>(context, listen:false).addGroups(List.from(groups));
     // load all offline pins from files
@@ -132,6 +134,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     Provider.of<ClusterNotifier>(context, listen:false).offline = true;
     // load previous offline saved groups
     Provider.of<ClusterNotifier>(context, listen:false).loadOfflineGroups();
+    Provider.of<LoadingNotifier>(context, listen: false).isLoaded();
   }
 
 }

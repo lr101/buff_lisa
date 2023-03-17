@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../../Files/DTOClasses/group.dart';
+import '../../Files/Widgets/custom_round_image.dart';
 import 'order_groups_logic.dart';
 
 class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
@@ -46,10 +47,10 @@ class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
         ),
         child: ListTile(
             title: Text(group.name),
-            leading:  group.profileImage.customWidget(
-                callback: (p0) => CircleAvatar(backgroundImage: Image.memory(p0).image, radius: 20,),
-                elseFunc: () => const CircleAvatar(backgroundColor: Colors.grey, radius: 20,),
-          ),
+            leading:  CustomRoundImage(
+              size: 20,
+              imageCallback: group.profileImage.asyncValue,
+            ),
           trailing: const Icon(Icons.menu),
         )
     );

@@ -36,6 +36,9 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
   /// used to recenter to user location from button press
   MapController controller = MapController();
 
+  late AnimationController _controller;
+  late CurvedAnimation _animation;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -46,9 +49,20 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
   @override
   void initState(){
     super.initState();
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 750));
+    _animation =
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setLocation();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.stop();
+    _controller.dispose();
   }
 
   Future<void> setLocation() async  {

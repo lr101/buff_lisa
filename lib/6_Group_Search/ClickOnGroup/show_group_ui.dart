@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../../Files/Widgets/CustomSliverList/custom_sliver_list.dart';
 import '../../Files/Widgets/cusotm_alert_dialog.dart';
+import '../../Files/Widgets/custom_round_image.dart';
 
 
 class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
@@ -92,7 +93,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                 children: [
                   const Text("Description:"),
                   Container(
-                      width: MediaQuery.of(context).size.width * 0.75,
+                      width: MediaQuery.of(context).size.width * 0.85,
                       decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
                       child: Padding(
                         padding: const EdgeInsets.all(3.0),

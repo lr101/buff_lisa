@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:buff_lisa/9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
+import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,9 +35,9 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
               builder: (context, snapshot) {
                   return GestureDetector(
                       onTap: handleOpenImage,
-                      child: CircleAvatar(
-                        backgroundImage: getProfile(snapshot.data),
-                        radius: 50,
+                      child: CustomRoundImage(
+                        image: getProfile(snapshot.data),
+                        size: 50,
                         child: Stack(
                             children: [
                               Center(child: snapshot.connectionState == ConnectionState.done && !updating ? const SizedBox.shrink() : const CircularProgressIndicator()),

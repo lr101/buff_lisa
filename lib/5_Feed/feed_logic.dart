@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import '../Files/Other/global.dart' as global;
+import '../Files/ServerCalls/fetch_pins.dart';
+import '../Files/Widgets/custom_round_image.dart';
 import 'FeedCard/feed_card_logic.dart';
 
 
@@ -24,7 +26,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
 
   /// Controller for the Paged List-view
   /// always shows first item first and loads 3 items that are out of view
-  final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 5);
+  final PagingController<int, Widget> pagingController = PagingController(firstPageKey: 0, invisibleItemsThreshold: 10);
 
   /// Set of Groups that are currently shown
   /// Used to reduce the amounts of Widgets that need to be created everytime the Provider updates its values
@@ -60,33 +62,49 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
   /// Adds a new Feed Widget to the Listview by appending it to the pagingController
   /// Checks if the Pin at the position [pageKey] already has an existing Widget
   /// If not a new one is created
-  void _fetchPage(int pageKey) {
+  void _fetchPage(int pageKey) async {
     try {
-        Pin key = allWidgets.elementAt(pageKey);
-        Widget widget =  FeedCard(pin: key, update: pullRefresh,);
-        if (key.group.active) {
-          if (allWidgets.length == pageKey + 1) {
-            pagingController.appendLastPage([widget]);
-          } else {
-            List<Widget> pages = [];
-            // no new posts in the middle
-            if (lastSeen != null && 
-                pageKey > 0 && 
-                allWidgets.elementAt(pageKey - 1).creationDate.isAfter(lastSeen!) &&
-                key.creationDate.isBefore(lastSeen!)
-            ) pages.add(alreadySeenEverything("You have seen all new posts\nTry adding something yourself"));
-            // no new posts at the start
-            if (lastSeen != null &&
-                pageKey == 0 &&
-                key.creationDate.isBefore(lastSeen!)
-            ) pages.add(alreadySeenEverything("There are no new posts\nTry adding something yourself"));
-            // add current feed page
-            pages.add(widget);
-            // add an ad
-            if (pageKey % _addEvery == 0) pages.add(const Card(child: CustomNativeAd()));
-            pagingController.appendPage(pages, pageKey + 1);
-          }
+      List<Pin> pins = [];
+      int page = pageKey;
+      bool last = false;
+      if (pageKey + 9 < allWidgets.length) {
+        for (; pageKey < page + 9; pageKey++) {
+         pins.add(allWidgets[pageKey]);
         }
+      } else {
+        last = true;
+        for (; pageKey < allWidgets.length; pageKey++) {
+          pins.add(allWidgets[pageKey]);
+        }
+      }
+      List<Widget> widgets = [];
+      await FetchPins.fetchImageOfPins(pins.where((element) => element.image.isEmpty).toList());
+      for (Pin pin in pins) {
+        Widget widget =  FeedCard(pin: pin, update: pullRefresh,);
+        if (pin.group.active) {
+          // no new posts in the middle
+          if (lastSeen != null &&
+              page > 0 &&
+              allWidgets.elementAt(page - 1).creationDate.isAfter(lastSeen!) &&
+              pin.creationDate.isBefore(lastSeen!)
+          ) widgets.add(alreadySeenEverything("You have seen all new posts\nTry adding something yourself"));
+          // no new posts at the start
+          if (lastSeen != null &&
+              page == 0 &&
+              pin.creationDate.isBefore(lastSeen!)
+          ) widgets.add(alreadySeenEverything("There are no new posts\nTry adding something yourself"));
+          // add current feed page
+          widgets.add(widget);
+          // add an ad
+          if (page % _addEvery == 0) widgets.add(const Card(child: CustomNativeAd()));
+        }
+        page++;
+      }
+      if (last) {
+        pagingController.appendLastPage(widgets);
+      } else {
+        pagingController.appendPage(widgets, pageKey);
+      }
     } catch (error) {
       if (kDebugMode) print(error);
       pagingController.appendLastPage([]);
@@ -112,9 +130,10 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                backgroundImage: Image.asset("images/pinGui.png").image,
-                radius: 20,
+              CustomRoundImage(
+                size: 20,
+                image: Image.asset("images/pinGui.png").image,
+                clickable: false,
               ),
               const SizedBox(width: 10,),
               Text(text,textAlign: TextAlign.center,)

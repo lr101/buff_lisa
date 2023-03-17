@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
@@ -45,16 +46,10 @@ class CustomTitleState extends State<CustomTitle> {
         children: [
           GestureDetector(
             onTap: handleOpenImage,
-            child:  FutureBuilder<Uint8List>(
-              future: widget.imageCallback!(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CircleAvatar(backgroundImage: Image.memory(snapshot.requireData).image, radius: 50,);
-                } else {
-                  return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: 50,);
-                }
-              },
-            ),
+            child:  CustomRoundImage(
+              size: 50,
+              imageCallback: widget.imageCallback!,
+            )
           ),
           const SizedBox(height: 10,)
         ],
@@ -72,46 +67,7 @@ class CustomTitleState extends State<CustomTitle> {
 
 }
 
-class CustomRoundImage extends StatelessWidget {
 
-  final Future<Uint8List> Function() imageCallback;
-
-  final double size;
-
-  const CustomRoundImage({super.key,required this.imageCallback, required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: () => handleOpenImage(context),
-          child:  FutureBuilder<Uint8List>(
-            future: imageCallback(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return CircleAvatar(backgroundImage: Image.memory(snapshot.requireData).image, radius: 50,);
-              } else {
-                return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: 50,);
-              }
-            },
-          ),
-        ),
-        const SizedBox(height: 10,)
-      ],
-    );
-  }
-
-  void handleOpenImage(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ShowProfileImage(provide: imageCallback, defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
-      ),
-    );
-  }
-
-}
 
 class CustomAction {
 

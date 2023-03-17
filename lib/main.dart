@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
+import 'package:buff_lisa/1_BottomNavigationBar/loading_notifier.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
@@ -15,6 +16,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
+import '1_BottomNavigationBar/splash_loading.dart';
 import 'Files/DTOClasses/groupDTO.dart';
 import 'Files/DTOClasses/pinDTO.dart';
 import 'Files/Other/global.dart' as global;
@@ -75,7 +77,8 @@ class MyApp extends StatelessWidget {
               ),
               ChangeNotifierProvider.value(
                   value: MarkerNotifier()
-              )
+              ),
+              ChangeNotifierProvider.value(value: LoadingNotifier()),
             ],
             builder: (context, child) {
               Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>(), context.read<MarkerNotifier>());
@@ -85,7 +88,10 @@ class MyApp extends StatelessWidget {
                 initialRoute: isLoggedIn ? '/home' : '/login',
                 routes: {
                   '/login': (context) => const LoginScreen(),
-                  '/home': (context) => const BottomNavigationWidget()
+                  '/home': (context) {
+                    if (!Provider.of<LoadingNotifier>(context, listen: false).getStatus) Future.delayed(Duration.zero, () => showDialog(context: context, builder: (_) => const SplashLoading()));
+                    return const BottomNavigationWidget();
+                  }
                 },
                 navigatorKey: navigatorKey, // Setting a global key for navigator
               );

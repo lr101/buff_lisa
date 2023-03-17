@@ -4,6 +4,7 @@ import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_ui.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
+import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -139,9 +140,10 @@ Future<Widget> getCardOfOtherGroups(int index) async {
       child: GestureDetector(
         onTap: () => handleJoinGroupPress(group),
         child: ListTile(
-          leading: group.profileImage.customWidget(
-              callback: (p0) => CircleAvatar(backgroundImage: Image.memory(p0).image, radius: 20),
-              elseFunc: () => const CircleAvatar(backgroundColor: Colors.grey, radius: 20,)
+          leading: CustomRoundImage(
+            size: 20,
+            imageCallback: group.profileImage.asyncValue,
+            clickable: false,
           ),
           title: Text(group.name),
           trailing: (group.visibility != 0 ? const Icon(Icons.lock_outline) : const Icon(Icons.lock_open)),

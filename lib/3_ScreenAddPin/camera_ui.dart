@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:buff_lisa/Providers/camera_icon_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:camera/camera.dart';
@@ -118,16 +119,11 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
           child: CircleAvatar(
             radius: (MediaQuery.of(context).size.height) * 0.065,
             backgroundColor: color,
-            child: FutureBuilder<Uint8List>(
-              future: group.profileImage.asyncValue(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: (MediaQuery.of(context).size.height) * 0.06,);
-                } else {
-                  return CircleAvatar(backgroundColor: Colors.grey, radius: (MediaQuery.of(context).size.height) * 0.06,);
-                }
-              },
-            ),
+            child: CustomRoundImage(
+              size: (MediaQuery.of(context).size.height) * 0.06,
+              imageCallback: group.profileImage.asyncValue,
+              clickable: false,
+            )
           )
         )
     );

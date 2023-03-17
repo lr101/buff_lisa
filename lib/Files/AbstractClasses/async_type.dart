@@ -79,6 +79,7 @@ class AsyncType<T>  {
 
     Widget getWidget() {
         if (builder != null) {
+            if (_value != null && _isLoaded) return builder!(_value as T);
             return FutureBuilder<T>(
                 future: asyncValue(),
                 builder: (context, snapshot) {

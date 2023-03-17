@@ -49,10 +49,6 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                           padding: EdgeInsets.all(50),
                         ),
                         markers: Provider.of<MarkerNotifier>(context).getMarkers,
-                        polygonOptions: const PolygonOptions(
-                            borderColor: Colors.blueAccent,
-                            color: Colors.black12,
-                            borderStrokeWidth: 3),
                         builder: (context, markers) {
                           return FloatingActionButton(
                             heroTag: markers.first.key,

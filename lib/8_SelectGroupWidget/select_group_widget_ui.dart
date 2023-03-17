@@ -4,6 +4,7 @@ import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Widgets/custom_if_else.dart';
+import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -141,31 +142,19 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
             child: CircleAvatar(
                 radius: 35,
                 backgroundColor: color,
-                child: FutureBuilder<Uint8List>(
-                  future: group.profileImage.asyncValue(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return CircleAvatar(
-                        backgroundImage: Image.memory(snapshot.data!).image,
-                        radius: 33,
-                        child: Stack(
-                        children: [
-                            Align(
-                              alignment: Alignment.topRight,
-                                child: num
-                            ),
-                          ],
-                        )
-                      );
-                    } else {
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey.shade700,
-                        highlightColor: Colors.grey.shade900,
-                        child: const CircleAvatar(radius: 33,)
-                      );
-                    }
-                  },
-                ),
+                child: CustomRoundImage(
+                  size: 33,
+                  clickable: false,
+                  imageCallback: group.profileImage.asyncValue,
+                  child: Stack(
+                    children: [
+                      Align(
+                          alignment: Alignment.topRight,
+                          child: num
+                      ),
+                    ],
+                  ),
+                )
             )
         )
     );

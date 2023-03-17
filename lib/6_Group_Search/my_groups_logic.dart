@@ -4,6 +4,7 @@ import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_logic.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
@@ -62,16 +63,10 @@ class MyGroupsPageState extends State<MyGroupsPage> with AutomaticKeepAliveClien
           onTap: () => handlePressGroupCard(group),
           child: ListTile(
             title: Text(group.name),
-            leading:FutureBuilder<Uint8List>(
-              future: group.profileImage.asyncValue(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CircleAvatar(backgroundImage: Image.memory(snapshot.data!).image, radius: 20,);
-                } else {
-                  return const CircleAvatar(backgroundColor: Colors.grey, radius: 20,);
-                }
-              },
-            ),
+            leading: CustomRoundImage(
+              size: 20,
+              imageCallback: group.profileImage.asyncValue,
+            )
           ),
         )
     );
