@@ -20,7 +20,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
     return Scaffold(appBar: null,
         body: CustomTitle(
           title: CustomEasyTitle(
-            title: Text("Image"),
+            title: const Text("Image"),
             back: true,
             right: getActionBar(),
             child: getOtherActionBar(),

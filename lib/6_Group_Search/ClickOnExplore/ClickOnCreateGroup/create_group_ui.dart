@@ -23,7 +23,7 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
           resizeToAvoidBottomInset: false,
           body: CustomTitle(
             title: CustomEasyTitle(
-              title: Text("Create Group"),
+              title: Text("Create Group", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
               back: true,
               right: CustomEasyAction(
                 child: const Icon(Icons.add_task),

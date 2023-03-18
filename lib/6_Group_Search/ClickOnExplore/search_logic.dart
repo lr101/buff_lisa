@@ -48,7 +48,7 @@ class SearchGroupPageState extends State<SearchGroupPage> {
     final state = this;
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => SearchNotifier(pullRefresh: pullRefresh),),
+          ChangeNotifierProvider(create: (_) => SearchNotifier(pullRefresh: pullRefresh, context: context),),
         ],
         builder: (context, child) {
           this.context = context;

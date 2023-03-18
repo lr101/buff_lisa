@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../../Files/Widgets/CustomSliverList/custom_sliver_list.dart';
 import '../../Files/Widgets/custom_list_tile.dart';
+import '../../Providers/theme_provider.dart';
 
 class HiddenPinUI extends StatefulUI<HiddenPin, HiddenPinState> {
 
@@ -19,15 +20,15 @@ class HiddenPinUI extends StatefulUI<HiddenPin, HiddenPinState> {
     Set<Pin> pins = Provider.of<HiddenPinPageNotifier>(context).pins;
     return Scaffold(appBar: null,
         body: CustomTitle(
-          title: const CustomEasyTitle(
-            title: Text("Hidden Users"),
+          title: CustomEasyTitle(
+            title: Text("Hidden Users", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
             back: true,
           ),
           sliverList: CustomSliverList(
               itemCount: pins.length,
               itemBuilder: (index) => CustomListTile(
                 leading: Text("${index + 1}."),
-                title: Text("Post by: ${pins.elementAt(index).username}"),
+                title: Text("Post by: ${pins.elementAt(index).username}", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
                 trailing: SizedBox(
                     width: 200,
                     child: Row(

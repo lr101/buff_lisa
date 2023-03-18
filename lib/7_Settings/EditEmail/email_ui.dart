@@ -2,8 +2,10 @@ import 'package:buff_lisa/7_Settings/EditEmail/email_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
+import '../../Providers/theme_provider.dart';
 
 class MailUI extends StatelessUI<Email> {
 
@@ -17,7 +19,7 @@ class MailUI extends StatelessUI<Email> {
     return Scaffold(appBar: null,
         body: CustomTitle(
             title: CustomEasyTitle(
-              title: const Text("Edit Email"),
+              title: Text("Edit Email", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
               back: true,
               right: CustomEasyAction(
                   child: const Icon(Icons.add_task),

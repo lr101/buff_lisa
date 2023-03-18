@@ -167,36 +167,32 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// Creates rows based of the current user pin list.
   void _fetchPage(int pageKey, ) async {
     List<Pin> pins = Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).getPins ?? [];
-    if (pageKey >= pins.length) {
-      pagingController.appendLastPage([]);
+    int currentIndex = (_pageSize * _gridWidth) * pageKey;
+    int end = (_pageSize * _gridWidth) * (pageKey + 1) < pins.length ? (_pageSize * _gridWidth) * (pageKey + 1) : pins.length - 1;
+    await FetchPins.fetchImageOfPins(pins.sublist(currentIndex, end));
+    if ((_pageSize * _gridWidth) * (pageKey + 1) < pins.length) {
+      pagingController.appendPage(List.generate(3, (index) => getImageRow(currentIndex + index * _gridWidth, pins)), pageKey + 1);
     } else {
-      List<Widget> rows = [];
-      int p = pageKey;
-      int end = pageKey + _pageSize * _gridWidth < pins.length ? pageKey + _pageSize * _gridWidth : pins.length - 1;
-      await FetchPins.fetchImageOfPins(pins.sublist(pageKey, end));
-      for (; pageKey < pins.length && pageKey < p + _pageSize * _gridWidth ; pageKey += _gridWidth){
-        rows.add(await getImageRow(pageKey, pins));
-      }
-      pagingController.appendPage(rows, pageKey + _pageSize);
+      pagingController.appendLastPage(List.generate(3 - (pins.length - currentIndex) ~/ (_pageSize * _gridWidth), (index) => getImageRow(currentIndex + index * _gridWidth, pins)));
     }
   }
 
   /// Returns a image row using the current index.
-  Future<Widget> getImageRow(int pageKey, List<Pin> pins)async {
+  Widget getImageRow(int pageKey, List<Pin> pins) {
     return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Expanded(
               flex: 1,
-              child: pageKey < pins.length ? await buildImage(pins[pageKey]) : const SizedBox.shrink(),
+              child: pageKey < pins.length ? buildImage(pins[pageKey]) : const SizedBox.shrink(),
             ),
             Expanded(
               flex: 1,
-              child: pageKey + 1 < pins.length ? await buildImage(pins[pageKey + 1]) : const SizedBox.shrink(),
+              child: pageKey + 1 < pins.length ? buildImage(pins[pageKey + 1]) : const SizedBox.shrink(),
             ),
             Expanded(
               flex: 1,
-              child: pageKey + 2 < pins.length ? await buildImage(pins[pageKey + 2]) : const SizedBox.shrink(),
+              child: pageKey + 2 < pins.length ? buildImage(pins[pageKey + 2]) : const SizedBox.shrink(),
             )
           ],
     );
@@ -204,8 +200,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
   /// Builds the actual square image.
   /// Image is touchable and opens a more detailed view.
-  Future<Widget> buildImage(Pin pin) async {
-    Uint8List image = await pin.image.asyncValue();
+  Widget buildImage(Pin pin) {
     return LayoutBuilder(
         builder: (context, constraints){
           final size = min(constraints.maxWidth, constraints.maxHeight);
@@ -216,7 +211,15 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                 width: size,
                 child: Padding(
                     padding: const EdgeInsets.all(2),
-                    child: Image.memory(image, errorBuilder: (context, error, stackTrace) => const Center(child: Text("Image data invalid"),), fit: BoxFit.cover,
+                    child: FutureBuilder<Uint8List>(
+                      future: pin.image.asyncValue(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Image.memory(snapshot.requireData, fit: BoxFit.cover,);
+                        } else {
+                          return Container(color: Colors.grey,);
+                        }
+                      },
                     )
                 )
             ),

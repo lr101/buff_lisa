@@ -37,17 +37,18 @@ class CustomTitleState extends State<CustomTitle> {
         color: CustomTheme.grey,
         child: SafeArea(
            child: widget.sliverList != null ? _withList() :
-             CustomScrollView(
-               slivers: [
-                 widget.title,
-                 SliverFillRemaining(
-                     child: Container(
-                         color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
-                         child: widget.child
-                     )
-                   )
-               ],
-             ),
+             Scaffold(
+               appBar: AppBar(
+                 backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+                 leading: widget.title.leading,
+                 title: widget.title.title,
+                 actions: widget.title.actions,
+               ),
+               body: Container(
+                   color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
+                   child: widget.child
+               ),
+             )
         )
     );
   }

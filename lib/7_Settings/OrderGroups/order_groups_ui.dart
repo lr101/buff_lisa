@@ -1,10 +1,12 @@
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../Files/AbstractClasses/abstract_widget_ui.dart';
 import '../../Files/DTOClasses/group.dart';
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../../Files/Widgets/custom_round_image.dart';
+import '../../Providers/theme_provider.dart';
 import 'order_groups_logic.dart';
 
 class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
@@ -15,7 +17,7 @@ class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
     return Scaffold(
       body: CustomTitle(
           title: CustomEasyTitle(
-            title: Text("Sort Group"),
+            title: Text("Sort Group", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
             right: CustomEasyAction(
                 action: () async => state.saveOrder(),
                 child: const Icon(Icons.add_task)
@@ -47,7 +49,7 @@ class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
           borderRadius: BorderRadius.circular(5.0),
         ),
         child: ListTile(
-            title: Text(group.name),
+            title: Text(group.name, style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
             leading:  CustomRoundImage(
               size: 20,
               imageCallback: group.profileImage.asyncValue,

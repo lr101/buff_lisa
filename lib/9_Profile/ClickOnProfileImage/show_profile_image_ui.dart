@@ -5,8 +5,10 @@ import 'package:buff_lisa/9_Profile/ClickOnProfileImage/show_profile_image_logic
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../Files/Widgets/custom_title.dart';
+import '../../Providers/theme_provider.dart';
 
 class ShowProfileImageUI extends StatefulUI<ShowProfileImage, ShowProfileImageState> {
 
@@ -16,8 +18,8 @@ class ShowProfileImageUI extends StatefulUI<ShowProfileImage, ShowProfileImageSt
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
       body: CustomTitle(
-        title: const CustomEasyTitle(
-          title: Text("Profile Image"),
+        title: CustomEasyTitle(
+          title: Text("Profile Image", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
           back: true,
         ),
         child: Column(

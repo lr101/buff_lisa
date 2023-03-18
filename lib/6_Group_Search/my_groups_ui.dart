@@ -10,6 +10,7 @@ import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_sliver_list.dart
 import 'package:buff_lisa/Files/Widgets/custom_popup_menu_button.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +27,7 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
             appBar: null,
             body: CustomTitle(
               title: CustomEasyTitle(
-                title: const Text("My Groups"),
+                title: Text("My Groups", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
                 back: false,
                 right: CustomEasyAction(
                   child: PopupMenuButton(

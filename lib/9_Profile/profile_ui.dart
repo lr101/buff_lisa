@@ -6,6 +6,7 @@ import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_sliver_list.dart';
+import 'package:buff_lisa/Files/Widgets/custom_profile_layout.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:buff_lisa/Files/Widgets/custom_show_and_pick.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
@@ -17,6 +18,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
 import '../7_Settings/settings_logic.dart';
+import '../Providers/theme_provider.dart';
 
 class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
 
@@ -27,7 +29,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
     return Scaffold(
         appBar: null,
           body: CustomTitle(
-            title: _title(),
+            title: _title(context),
             sliverList: CustomSliverList(
               initPagedList: () => state.init(Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
               pagingController: state.pagingController,
@@ -43,24 +45,21 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
           updateCallback: state.provideProfileImage,
       );
     } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CustomRoundImage(
-              imageCallback: Provider.of<UserNotifier>(state.context, listen: false).getUser(widget.username).profileImage.asyncValue,
-              size: 50
-          )
-        ],
+      return CustomRoundImage(
+          imageCallback: Provider.of<UserNotifier>(state.context, listen: false).getUser(widget.username).profileImage.asyncValue,
+          size: 50
       );
     }
   }
 
-  CustomEasyTitle _title() {
+  CustomEasyTitle _title(BuildContext context) {
     if (widget.username == global.localData.username) {
       return CustomEasyTitle(
-        customBackground: getImage(),
-        title: Text(widget.username),
+        customBackground: CustomProfileLayout(
+          image: getImage(),
+          posts: () async => (await state.pinList.asyncValue()).length,
+        ),
+        title: Text(widget.username, style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
         back: false,
         right: CustomEasyAction(
           child: const Icon(Icons.settings),
@@ -69,7 +68,11 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
       );
     } else {
       return CustomEasyTitle(
-        title: Text(widget.username),
+        customBackground: CustomProfileLayout(
+          image: getImage(),
+          posts: () async => (await state.pinList.asyncValue()).length,
+        ),
+        title: Text(widget.username, style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
       );
     }
   }

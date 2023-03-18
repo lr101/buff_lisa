@@ -1,17 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../Providers/theme_provider.dart';
 
 class SearchNotifier with ChangeNotifier {
 
-  SearchNotifier({required this.pullRefresh}) {
+  SearchNotifier({required this.pullRefresh, required this.context}) {
     streamController.stream.listen((s) {
       if (_debounce?.isActive ?? false) _debounce?.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
         pullRefresh(textController.text);
       });
     });
+    title = Text("Search Groups", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium);
   }
+
+  BuildContext context;
 
   @override
   void dispose() {
@@ -26,7 +32,7 @@ class SearchNotifier with ChangeNotifier {
   /// shows exit icon if search is active
   Icon icon = const Icon(Icons.search);
 
-  Widget title = const Text("Search Groups", style: TextStyle(fontSize: 20),);
+  late Widget title;
 
   Timer? _debounce;
 
@@ -39,7 +45,7 @@ class SearchNotifier with ChangeNotifier {
   void toggle(bool filtered) {
     if (icon.icon == Icons.cancel) {
       icon = const Icon(Icons.search);
-      title = const Text("Search Groups", style: TextStyle(fontSize: 20),);
+      title = Text("Search Groups", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium);
       textController.clear();
       if (filtered) pullRefresh(null);
     } else {

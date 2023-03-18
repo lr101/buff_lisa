@@ -4,6 +4,7 @@ import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../Providers/theme_provider.dart';
 import 'check_image_logic.dart';
 
 class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
@@ -16,7 +17,7 @@ class CheckImageIU extends StatefulUI<CheckImageWidget, StateCheckImageWidget> {
         child: Scaffold(appBar: null,
             body: CustomTitle(
               title: CustomEasyTitle(
-                title: Text("Approve"),
+                title: Text("Approve",style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
                 back: true,
                 right: CustomEasyAction(
                   child: const Icon(Icons.add_task) ,

@@ -1,7 +1,10 @@
+import 'package:buff_lisa/Files/DTOClasses/user.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import '../Other/global.dart' as global;
 import '../DTOClasses/group.dart';
+import '../Themes/custom_theme.dart';
 
 class CustomListTile extends StatefulWidget {
 
@@ -16,6 +19,21 @@ class CustomListTile extends StatefulWidget {
   final VoidCallback? onTab;
 
   const CustomListTile({super.key, required this.title, this.subtitle, this.leading, this.trailing, this.onTab});
+
+  static CustomListTile fromUser(User user, int points, bool admin, void Function(String username) onTab) {
+    TextStyle style = TextStyle(color: (global.localData.username == user.username) ? CustomTheme.c2 : null);
+    return CustomListTile(
+      leading: CustomRoundImage(
+        size: 20,
+        imageCallback: user.profileImage.asyncValue,
+        clickable: false,
+      ),
+      title: Text(user.username, style: style),
+      subtitle: Text("$points points", style: style),
+      trailing: admin ? Text("admin", style: style) : null,
+      onTab: () => onTab(user.username),
+    );
+  }
 
   static CustomListTile fromGroup(Group group, VoidCallback? onTab) {
     return CustomListTile(

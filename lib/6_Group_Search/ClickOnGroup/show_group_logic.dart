@@ -4,6 +4,7 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
+import 'package:buff_lisa/Files/Widgets/custom_list_tile.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -13,7 +14,9 @@ import '../../9_Profile/profile_logic.dart';
 import '../../Files/DTOClasses/ranking.dart';
 import '../../Files/Routes/routing.dart';
 import '../../Files/Themes/custom_theme.dart';
+import '../../Files/Widgets/custom_round_image.dart';
 import '../../Providers/theme_provider.dart';
+import '../../Providers/user_notifier.dart';
 
 class ShowGroupPage extends StatefulWidget {
   const ShowGroupPage({super.key, required this.group, required this.myGroup});
@@ -54,20 +57,25 @@ class ShowGroupPageState extends State<ShowGroupPage> {
        });
    }
 
+   Future<int> calcNumPosts() async {
+     int num = 0;
+     for (var element in (await widget.group.members.asyncValue())) {
+       num += element.points;
+     }
+     return num;
+   }
+
+   Future<int> calcNumMembers() async {
+     return (await widget.group.members.asyncValue()).length;
+   }
+
   Widget buildCard(int index) {
     Ranking member = ranking![index];
-    String adminString = "";
-    if (member.username == widget.group.groupAdmin.syncValue) adminString = "(admin)";
-    return GestureDetector(
-      onTap: () => handleOpenUserProfile(member.username),
-      child: Card(
-          color: (member.username == global.localData.username) ?CustomTheme.c1 : null,
-          child: ListTile(
-            leading: Text("${index + 1}. "),
-            title: Text("${member.username} $adminString"),
-            trailing: Text("${member.points} points"),
-          )
-      ),
+    return CustomListTile.fromUser(
+        Provider.of<UserNotifier>(context, listen: false).getUser(member.username),
+        member.points,
+        member.username == widget.group.groupAdmin.syncValue,
+        handleOpenUserProfile
     );
   }
 

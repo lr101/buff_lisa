@@ -21,8 +21,8 @@ class SettingsUI extends StatelessUI<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
       body: CustomTitle(
-        title: const CustomEasyTitle(
-          title: Text("Profile Image"),
+        title: CustomEasyTitle(
+          title: Text("Profile Image", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
           back: true,
         ),
         child: SettingsList(

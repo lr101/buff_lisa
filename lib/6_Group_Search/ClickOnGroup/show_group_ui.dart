@@ -3,6 +3,7 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Widgets/custom_action_button.dart';
+import 'package:buff_lisa/Files/Widgets/custom_profile_layout.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +25,13 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     return Scaffold(appBar: null,
       body: CustomTitle(
         title: CustomEasyTitle(
-            customBackground: Column(
-              children: [
-                CustomRoundImage(imageCallback: widget.group.profileImage.asyncValue, size: 50),
-                _getDescription(),
-                _getInviteLink(),
-              ],
+            customBackground: CustomProfileLayout(
+              posts: state.calcNumPosts,
+              members: state.calcNumMembers,
+              image:  CustomRoundImage(imageCallback: widget.group.profileImage.asyncValue, size: 50),
+              children: _getChildren()
             ),
-            title: Text(widget.group.name),
+            title: Text(widget.group.name, style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
             right: state.widget.group.groupAdmin.syncValue == global.localData.username ? CustomEasyAction(child: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null),
         sliverList: CustomSliverList(
           pagingController: state.controller,
@@ -83,6 +83,15 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     }
   }
 
+  List<Widget> _getChildren() {
+    List<Widget> children = [];
+    children.add(_getDescription());
+    if (state.widget.group.visibility != 0 && widget.myGroup) {
+      children.add(_getInviteLink());
+    }
+    return children;
+  }
+
 
   /// returns the description of a group
   Widget _getDescription() {
@@ -128,20 +137,17 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   }
 
   Widget _getInviteLink() {
-    if (state.widget.group.visibility != 0 && widget.myGroup) {
-      return FutureBuilder<String>(
-        future: state.widget.group.getInviteUrl(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return TextButton(onPressed: () => Clipboard.setData(ClipboardData(text: snapshot.requireData)), child: Text("Password: ${snapshot.requireData}"));
-          } else {
-            return const Text("LOADING");
-          }
-        },
-      );
-    } else {
-      return const SizedBox.shrink();
-    }
+
+    return FutureBuilder<String>(
+      future: state.widget.group.getInviteUrl(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return TextButton(onPressed: () => Clipboard.setData(ClipboardData(text: snapshot.requireData)), child: Text("Password: ${snapshot.requireData}"));
+        } else {
+          return const Text("LOADING");
+        }
+      },
+    );
   }
 
 

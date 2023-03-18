@@ -7,6 +7,8 @@ import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Providers/theme_provider.dart';
+
 
 class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
 
@@ -20,7 +22,7 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
         resizeToAvoidBottomInset: false,
         body: CustomTitle(
           title: CustomEasyTitle(
-            title: const Text("Edit Group"),
+            title: Text("Edit Group", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
             back: true,
             right: CustomEasyAction(
               child:  const Icon(Icons.add_task),
