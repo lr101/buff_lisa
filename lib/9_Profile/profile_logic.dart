@@ -81,22 +81,11 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// Sort und update shown pins if pins is not null.
   /// Always refreshed the pagingController.
   Future<bool> init(List<Pin>? pins) async {
+    print((pins ?? []).length);
     if (pins == null) {
-      if (operation != null && !operation!.isCanceled && !operation!.isCompleted) operation!.cancel();
-      operation = CancelableOperation.fromFuture(
-        initPins(await pinList.refresh()),
-        onCancel: () => {debugPrint('onCancel')},
-      );
-      CancelableOperation cancelableOperation = operation!;
-      pins = await cancelableOperation.value;
-      if (!cancelableOperation.isCanceled && mounted) {
-        Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).updatePins(pins!);
-        pagingController.refresh();
-      }
-      return !cancelableOperation.isCanceled;
-    } else {
-      pins.sort((a,b) => a.creationDate.compareTo(b.creationDate) * -1);
-      Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).updatePins(pins);
+      List<Pin>? pins = await initPins(await pinList.refresh());
+      if (!mounted) return false;
+      Provider.of<UserNotifier>(context, listen: false).updatePins(widget.username, pins);
     }
     return true;
   }
@@ -110,36 +99,19 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
       List<Pin> pins = [];
       for (Pin pin in pinList) {
         Group group = pin.group;
-        await m.protect(() async {
-          if (!group.pins.isLoaded) {
-            Set<Pin> thPins = group.pins.syncValue ?? {};
-            pin = thPins.firstWhere((element) => element.id == pin.id, orElse: () => pin);
-            thPins.add(pin);
-            pins.add(pin);
-            await group.pins.setValueButNotLoaded(thPins);
-          } else {
-            Pin thePin = group.pins.syncValue!.firstWhere((element) => element.id == pin.id, orElse: () => pin);
-            pins.add(thePin);
-          }
-        });
+        if (!group.pins.isLoaded) {
+          Set<Pin> thPins = group.pins.syncValue ?? {};
+          pin = thPins.firstWhere((element) => element.id == pin.id, orElse: () => pin);
+          thPins.add(pin);
+          pins.add(pin);
+          await group.pins.setValueButNotLoaded(thPins);
+        } else {
+          Pin thePin = group.pins.syncValue!.firstWhere((element) => element.id == pin.id, orElse: () => pin);
+          pins.add(thePin);
+        }
       }
-      _filter(pins);
       pins.sort((a,b) => a.creationDate.compareTo(b.creationDate) * -1);
       return pins;
-  }
-
-  /// Filters pins to not show hidden users and pins.
-  void _filter(List<Pin> pins) {
-    Set<Pin> removesPins = {};
-    List<String> usernames = global.localData.hiddenUsers.keys();
-    List<int> posts = global.localData.hiddenPosts.keys();
-    List<Pin> iterator = List.from(pins);
-    for (Pin pin in iterator) {
-      if (posts.any((element) => element == pin.id) || usernames.any((element) => element == pin.username)) {
-        pins.remove(pin);
-        removesPins.add(pin);
-      }
-    }
   }
 
   /// Callback function used in _getPins.
@@ -166,9 +138,10 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// Callback function for paging controller, when fetching a new page.
   /// Creates rows based of the current user pin list.
   void _fetchPage(int pageKey, ) async {
-    List<Pin> pins = Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).getPins ?? [];
+    List<Pin> pins = await Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).getPins ?? [];
     int currentIndex = (_pageSize * _gridWidth) * pageKey;
     int end = (_pageSize * _gridWidth) * (pageKey + 1) < pins.length ? (_pageSize * _gridWidth) * (pageKey + 1) : pins.length - 1;
+    end = end < 0 ? 0 : end;
     await FetchPins.fetchImageOfPins(pins.sublist(currentIndex, end));
     if ((_pageSize * _gridWidth) * (pageKey + 1) < pins.length) {
       pagingController.appendPage(List.generate(3, (index) => getImageRow(currentIndex + index * _gridWidth, pins)), pageKey + 1);

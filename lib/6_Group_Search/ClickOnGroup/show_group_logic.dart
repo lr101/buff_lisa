@@ -57,16 +57,36 @@ class ShowGroupPageState extends State<ShowGroupPage> {
        });
    }
 
-   Future<int> calcNumPosts() async {
-     int num = 0;
-     for (var element in (await widget.group.members.asyncValue())) {
-       num += element.points;
-     }
-     return num;
+   Widget calcNumPosts() {
+     return FutureBuilder<List<Ranking>>(
+         future: () {Provider.of<ClusterNotifier>(context).getGroups; return widget.group.members.asyncValue();}(),
+         builder: (context, snapshot) {
+           if (snapshot.hasData) {
+             if (snapshot.requireData.isEmpty) return const Icon(Icons.lock);
+             int num = 0;
+             for (var element in snapshot.requireData) {
+               num += element.points;
+             }
+             return Text(num.toString());
+           } else {
+             return const Text("---");
+           }
+         },
+     );
    }
 
-   Future<int> calcNumMembers() async {
-     return (await widget.group.members.asyncValue()).length;
+   Widget calcNumMembers() {
+     return FutureBuilder<List<Ranking>>(
+       future: () {Provider.of<ClusterNotifier>(context).getGroups; return widget.group.members.asyncValue();}(),
+       builder: (context, snapshot) {
+         if (snapshot.hasData) {
+           if (snapshot.requireData.isEmpty) return const Icon(Icons.lock);
+           return Text(snapshot.requireData.length.toString());
+         } else {
+           return const Text("---");
+         }
+       },
+     );
    }
 
   Widget buildCard(int index) {

@@ -23,7 +23,6 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
             title: const Text("Image"),
             back: true,
             right: getActionBar(),
-            child: getOtherActionBar(),
           ),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -68,27 +67,11 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
   }
 
   /// delete button only shown when current user is owner of pin
-  CustomEasyAction? getActionBar() {
+  CustomEasyAction getActionBar() {
     if(widget.pin.username == global.localData.username) {
       return CustomEasyAction(child: const Icon(Icons.delete), action: () => state.handleButtonPress());
     } else {
-      return null;
-    }
-  }
-
-  /// popup menu for hiding post when current user is NOT owner of pin
-  Widget? getOtherActionBar() {
-    if(widget.pin.username != global.localData.username) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-       children: [
-         IconButton(onPressed: () => Navigator.pop(state.context), icon: const Icon(Icons.arrow_back)),
-         const Text("Image"),
-         CustomPopupMenuButton(pin: state.widget.pin, update: () async => Navigator.of(state.context).pop(),),
-       ],
-      );
-    } else {
-      return null;
+      return CustomEasyAction(child: CustomPopupMenuButton(pin: state.widget.pin, update: () async => Navigator.of(state.context).pop(),),);
     }
   }
 

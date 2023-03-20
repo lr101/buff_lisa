@@ -52,11 +52,6 @@ class LocalData {
   /// 5. last seen date
   late HiveHandler<String, dynamic> offlineDataStorage;
 
-  /// Storage to save groups offline.
-  late GroupRepo repo;
-
-  /// Storage to save pins offline.
-  late PinRepo pinRepo;
 
   /// static function to create an LocalData instance asynchrony
   static Future<LocalData> fromInit() async {
@@ -73,8 +68,6 @@ class LocalData {
     // init hive boxes
     hiddenUsers = await HiveHandler.fromInit<String, DateTime>(hiddenUsersKey);
     hiddenPosts = await HiveHandler.fromInit<int, DateTime>(hiddenPostsKey);
-    repo = await GroupRepo.fromInit(groupFileNameKey);
-    pinRepo = await PinRepo.fromInit(pinFileNameKey);
     offlineDataStorage = await HiveHandler.fromInit<String, dynamic>(offlineKeyValue);
     // theme
     int? themeIndex = (await offlineDataStorage.get(themeKey)) as int?;
@@ -101,8 +94,8 @@ class LocalData {
     // clear content of hive boxes
     await hiddenUsers.clear();
     await hiddenPosts.clear();
-    await repo.clear();
-    await pinRepo.clear();
+    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).clear();
+    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).clear();
     await offlineDataStorage.clear();
   }
 
@@ -126,9 +119,9 @@ class LocalData {
   }
 
   /// delete an offline pin by id
-  void deleteOfflineGroup(int groupId) {
+  void deleteOfflineGroup(int groupId) async {
     deactivateGroup(groupId);
-    repo.deleteGroup(groupId);
+    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).deleteGroup(groupId);
   }
 
   /// true: top-bar is expanded

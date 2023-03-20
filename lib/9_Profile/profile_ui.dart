@@ -18,6 +18,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
 import '../7_Settings/settings_logic.dart';
+import '../Files/DTOClasses/pin.dart';
 import '../Providers/theme_provider.dart';
 
 class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
@@ -31,7 +32,7 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
           body: CustomTitle(
             title: _title(context),
             sliverList: CustomSliverList(
-              initPagedList: () => state.init(Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
+              initPagedList: () async => state.init(await Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
               pagingController: state.pagingController,
             ),
           )
@@ -57,7 +58,15 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
       return CustomEasyTitle(
         customBackground: CustomProfileLayout(
           image: getImage(),
-          posts: () async => (await state.pinList.asyncValue()).length,
+          posts: Consumer<UserNotifier>(
+            builder: (context, value, child) => FutureBuilder<List<Pin>?>(
+              future: () {
+                if (!context.mounted) return null;
+                return value.getUser(widget.username).getPins;
+              }(),
+              builder: (context, snapshot) => Text(snapshot.data != null ? snapshot.requireData!.length.toString() : "---"),
+            ),
+          )
         ),
         title: Text(widget.username, style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
         back: false,
@@ -70,7 +79,15 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
       return CustomEasyTitle(
         customBackground: CustomProfileLayout(
           image: getImage(),
-          posts: () async => (await state.pinList.asyncValue()).length,
+          posts: Consumer<UserNotifier>(
+            builder: (context, value, child) => FutureBuilder<List<Pin>?>(
+              future: () {
+                if (!context.mounted) return null;
+                return value.getUser(widget.username).getPins;
+              }(),
+              builder: (context, snapshot) => Text(snapshot.data != null ? snapshot.requireData!.length.toString() : "---"),
+            ),
+          )
         ),
         title: Text(widget.username, style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
       );

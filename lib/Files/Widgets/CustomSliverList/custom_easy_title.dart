@@ -84,7 +84,7 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
           icon: const Icon(Icons.arrow_back)
       );
     } else if (!widget.back && widget.left != null) {
-      return  _action(widget.left!);
+      return  widget.left!.build();
     } else {
       return const SizedBox.shrink();
     }
@@ -92,38 +92,10 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
 
   Widget _right() {
     if (widget.right != null) {
-      return _action(widget.right!);
+      return widget.right!.build();
     } else {
       return const SizedBox.shrink();
     }
-  }
-
-  Widget _action(CustomEasyAction action) {
-    return TextButton(
-      style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-              )
-          )
-      ),
-      onPressed: () async {
-        if (action.action != null && !action.loading) {
-          try {
-            setState(() {
-              action.loading = true;
-            });
-            await action.action!();
-            setState(() {
-              action.loading = false;
-            });
-          } finally {
-            action.loading = false;
-          }
-        }
-      },
-      child: action.loading ? const CircularProgressIndicator() : SizedBox.square(dimension: 48, child: Center (child: action.child)),
-    );
   }
 }
 
@@ -134,4 +106,28 @@ class CustomEasyAction {
   final Widget child;
   final Future<void> Function()? action;
   bool loading = false;
+
+  Widget build() {
+    return TextButton(
+      style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              )
+          )
+      ),
+      onPressed: () async {
+        if (action != null && !loading) {
+          try {
+              loading = true;
+            await action!();
+              loading = false;
+          } finally {
+            loading = false;
+          }
+        }
+      },
+      child: loading ? const CircularProgressIndicator() : SizedBox.square(dimension: 48, child: Center (child: child)),
+    );
+  }
 }

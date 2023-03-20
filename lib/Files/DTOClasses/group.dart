@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:buff_lisa/Files/AbstractClasses/async_type.dart';
+import 'package:buff_lisa/Files/DTOClasses/group_repo.dart';
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
@@ -9,6 +10,7 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../Other/local_data.dart';
 import 'pin.dart';
 
 class Group {
@@ -164,13 +166,14 @@ class Group {
   }
 
   int getNewOfflinePinId() {
-    int min = 0;
-    if (!pins.isEmpty) {
-      for (Pin p in pins.syncValue ?? {}) {
-        if (p.id < min) min = p.id;
-      }
+    Set<Pin>? list = pins.syncValue != null && pins.syncValue!.isNotEmpty ? pins.syncValue : null;
+    if (list != null) {
+      return (pins.syncValue ?? {})
+          .reduce((curr, next) => curr.id < next.id ? curr : next)
+          .id - 1;
+    } else {
+      return -1;
     }
-    return min - 1;
   }
 
   /// adds a pin to the set of pins of a group
@@ -201,7 +204,7 @@ class Group {
   }
 
   Future<void> _saveOffline() async {
-    global.localData.repo.setGroup(this);
+    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).setGroup(this);
   }
 
   Future<Set<Pin>> _filter(Set<Pin> pins) async{

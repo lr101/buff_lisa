@@ -8,6 +8,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../1_BottomNavigationBar/navbar_logic.dart';
+import '../Files/Other/local_data.dart';
+
 class UploadOfflinePage extends StatefulWidget {
   const UploadOfflinePage({super.key, required this.pins});
 
@@ -30,7 +33,7 @@ class UploadOfflinePageState extends State<UploadOfflinePage> {
         await tryUpload(pin, remainingPins);
       }
       if (!mounted) return;
-      Navigator.of(context).pop();
+      openNavBar();
   }
 
   /// Upload pin and remove pin from remainingPins list.
@@ -41,7 +44,7 @@ class UploadOfflinePageState extends State<UploadOfflinePage> {
       Pin newPin = await FetchPins.postPin(pin);
       if (!mounted) return;
       Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePinAndAddToOnline(newPin, pin);
-      global.localData.pinRepo.deletePin(pin.id);
+      (await PinRepo.fromInit(LocalData.pinFileNameKey)).deletePin(pin.id);
     } on Exception catch (_, e) {
       print(_);
       await Provider.of<ClusterNotifier>(context, listen: false).addPin(pin);
@@ -50,8 +53,18 @@ class UploadOfflinePageState extends State<UploadOfflinePage> {
 
   /// Clears the local storage und closes the page.
   Future<void> handleDeleteAll() async {
-    await global.localData.pinRepo.clear();
+    await (await PinRepo.fromInit(LocalData.pinFileNameKey)).clear();
     if (!mounted) return;
-    Navigator.of(context).pop();
+    openNavBar();
+  }
+
+  void openNavBar() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const BottomNavigationWidget()
+        ),
+        ModalRoute.withName("/navbar")
+    );
   }
 }

@@ -1,6 +1,6 @@
 
 import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
-import 'package:buff_lisa/1_BottomNavigationBar/loading_notifier.dart';
+
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
@@ -63,9 +63,6 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   void initState() {
     super.initState();
     pageController = PageController(initialPage: selectedIndex);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getGroups();
-    });
   }
 
   /// returns the multi selector widget for map and feed page
@@ -91,50 +88,6 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
       selectedIndex = index;
       pageController.jumpToPage(selectedIndex);
     });
-  }
-
-  /// tries loading the groups of user from server
-  /// on success: call groupsOnline()
-  /// on error: must be an internet error: load saved offline pins by calling groupsOffline()
-  Future<void> _getGroups() async {
-    try {
-      List<Group> groups = await FetchGroups.getUserGroups();
-      await groupsOnline(groups);
-    } on Exception catch (_, e) {
-      if (kDebugMode )print(_);
-      groupsOffline();
-    }
-
-  }
-
-  /// add loaded groups to notifier, then
-  /// load existing offline pins from device storage -> open upload page, then
-  /// load and activate previous active groups
-  Future<void> groupsOnline(List<Group> groups) async {
-    Provider.of<LoadingNotifier>(context, listen: false).isLoaded();
-    // add groups to global notifier
-    Provider.of<ClusterNotifier>(context, listen:false).addGroups(List.from(groups));
-    // load all offline pins from files
-    Set<Pin> value = global.localData.pinRepo.getPins(groups);
-    if (value.isNotEmpty) {
-      // open upload page if offline saved pins exist
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => UploadOfflinePage(pins: value),
-        )
-      );
-    }
-  }
-
-  /// load saved groups from device storage
-  /// load saved pins from device storage and add them to show on map
-  Future<void> groupsOffline() async {
-    // show error message
-    CustomErrorMessage.message(context: context, message: "Cannot connect to server, offline groups are displayed");
-    Provider.of<ClusterNotifier>(context, listen:false).offline = true;
-    // load previous offline saved groups
-    Provider.of<ClusterNotifier>(context, listen:false).loadOfflineGroups();
-    Provider.of<LoadingNotifier>(context, listen: false).isLoaded();
   }
 
 }

@@ -42,7 +42,7 @@ class CustomTitleState extends State<CustomTitle> {
                  backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
                  leading: widget.title.leading,
                  title: widget.title.title,
-                 actions: widget.title.actions,
+                 actions: widget.title.right != null ? [widget.title.right!.build()] : null,
                ),
                body: Container(
                    color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,

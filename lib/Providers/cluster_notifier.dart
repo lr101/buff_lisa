@@ -12,6 +12,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../2_ScreenMaps/ClickOnPin/image_widget_logic.dart';
+import '../Files/Other/local_data.dart';
 import '../main.dart';
 
 class ClusterNotifier extends ChangeNotifier {
@@ -86,8 +87,8 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// adds a list of [Group] saved offline in [_offlineGroupHandler] in [_userGroups] if they not already existing
   /// NOTIFIES CHANGES
-  void loadOfflineGroups() {
-    GroupRepo repo = global.localData.repo;
+  Future<void> loadOfflineGroups() async {
+    GroupRepo repo = (await GroupRepo.fromInit(LocalData.groupFileNameKey));
     addGroups(repo.getGroups());
   }
 
@@ -101,7 +102,6 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _userGroups.remove(group);
-    print("num1");
     global.localData.deleteOfflineGroup(group.groupId);
     notifyListeners();
     _userNotifier.clearPinsNotUser(global.localData.username);
@@ -190,7 +190,7 @@ class ClusterNotifier extends ChangeNotifier {
 
   Future<void> _loadGroupPins(Group group) async {
     //get pins from server or load from offline
-    if (offline && group.pins.syncValue == null) group.pins.setValue(global.localData.pinRepo.getPins(_userGroups));
+    if (offline && group.pins.syncValue == null) group.pins.setValue((await PinRepo.fromInit(LocalData.pinFileNameKey)).getPins(_userGroups));
     Set<Pin> pins = await group.pins.asyncValueMerge((isLoaded, current, asyncVal) {
       if (!isLoaded && current != null) {
         for (Pin pin in current) {
@@ -234,7 +234,7 @@ class ClusterNotifier extends ChangeNotifier {
   Future<bool> removePin(Pin pin) async {
     try {
       await FetchPins.deleteMonaFromPinId(pin.id);
-      _userNotifier.removePin(global.localData.username, pin.id);
+      await _userNotifier.removePin(pin.username, pin.id);
       hidePin(pin);
       return true;
     } catch(e) {
@@ -275,8 +275,8 @@ class ClusterNotifier extends ChangeNotifier {
     _markerNotifier.removeMarker(pin);
     _markerNotifier.update();
     pin.group.removePin(pin);
-    PinRepo pinRepo = global.localData.pinRepo;
-    pinRepo.deletePin(pin.id);
+    await _userNotifier.removePin(pin.username, pin.id);
+    (await PinRepo.fromInit(LocalData.pinFileNameKey)).deletePin(pin.id);
   }
 
   /// adds an offline [Pin] to device storage
@@ -285,12 +285,8 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> addOfflinePin(Pin mona) async{
     if (!kIsWeb) {
-      PinRepo pinRepo = global.localData.pinRepo;
-      pinRepo.setPin(mona);
-      if (mona.group.active) {
-          _markerNotifier.addMarker(mona);
-          _markerNotifier.removeMarker(mona);
-      }
+      (await PinRepo.fromInit(LocalData.pinFileNameKey)).setPin(mona);
+      addPin(mona);
     }
   }
 

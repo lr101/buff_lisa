@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
-import 'package:buff_lisa/1_BottomNavigationBar/loading_notifier.dart';
+
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
@@ -68,7 +68,6 @@ class MyApp extends StatelessWidget {
               ChangeNotifierProvider(create: (_) => UserNotifier(),),
               ChangeNotifierProvider(create: (_) => DateNotifier(),),
               ChangeNotifierProvider(create: (_) => MarkerNotifier()),
-              ChangeNotifierProvider(create: (_) =>  LoadingNotifier()),
             ],
             builder: (context, child) {
               Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>(), context.read<MarkerNotifier>());
@@ -79,8 +78,7 @@ class MyApp extends StatelessWidget {
                 routes: {
                   '/login': (context) => const LoginScreen(),
                   '/home': (context) {
-                    if (!Provider.of<LoadingNotifier>(context, listen: false).getStatus) Future.delayed(Duration.zero, () => showDialog(context: context, builder: (_) => const SplashLoading()));
-                    return const BottomNavigationWidget();
+                    return const SplashLoading();
                   }
                 },
                 navigatorKey: navigatorKey, // Setting a global key for navigator

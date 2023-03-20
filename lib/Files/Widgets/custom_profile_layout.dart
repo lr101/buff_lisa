@@ -7,8 +7,8 @@ class CustomProfileLayout extends StatefulWidget {
   const CustomProfileLayout({super.key, required this.image, required this.posts, this.members, this.ranking, this.children});
 
   final Widget image;
-  final Future<int> Function() posts;
-  final Future<int> Function()? members;
+  final Widget posts;
+  final Widget? members;
   final List<Widget>? ranking;
   final List<Widget>? children;
 
@@ -39,17 +39,11 @@ class CustomProfileLayoutState extends State<CustomProfileLayout> {
                   children: [
                     Expanded(
                       flex: 1,
-                        child: FutureBuilder<int>(
-                          future: widget.posts(),
-                          builder: (context, snapshot) => Align(alignment: Alignment.bottomCenter, child: Text("${snapshot.data ?? "---"}")),
-                        ),
+                        child:  Align(alignment: Alignment.bottomCenter, child: widget.posts),
                     ),
                     Expanded(
                       flex: 1,
-                      child: widget.members != null ? FutureBuilder<int>(
-                        future: widget.members!(),
-                        builder: (context, snapshot) => Align(alignment: Alignment.bottomCenter, child: Text("${snapshot.data ?? "---"}")),
-                      ) : const SizedBox.shrink()
+                      child: widget.members != null ?  Align(alignment: Alignment.bottomCenter, child: widget.members) : const SizedBox.shrink()
                     ),
                   ],
                 ),

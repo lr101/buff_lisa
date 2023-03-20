@@ -47,23 +47,22 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   Future<void> handleApprove() async {
     if (!uploading) {
       uploading = true;
-      try {
         Pin mona = await _createMona(widget.image, widget.group);
-        if (!mounted) return;
-        await Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(
-            mona);
-        if (!mounted) return;
-        Provider.of<ClusterNotifier>(context, listen: false).addPin(mona);
-        _postPin(mona, widget.group);
-        final BottomNavigationBar navigationBar = widget.navbarContext.globalKey
-            .currentWidget! as BottomNavigationBar;
+        try {
+          Pin pin =  await FetchPins.postPin(mona);
+          if (!mounted) return;
+          Provider.of<ClusterNotifier>(context, listen: false).addPin(pin);
+        } catch(_) {
+          if (!mounted) return;
+          await Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(mona);
+        }
+        uploading = false;
+        final BottomNavigationBar navigationBar = widget.navbarContext.globalKey.currentWidget! as BottomNavigationBar;
         if (!mounted) return;
         Provider.of<DateNotifier>(context, listen: false).notifyReload();
         Navigator.pop(context);
         navigationBar.onTap!(2);
-      } finally {
-        uploading = false;
-      }
+
     }
   }
 
@@ -92,21 +91,6 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
         image: image
     );
     return pin;
-  }
-
-  /// pin is send to the server
-  /// on success at the server -> offline pin is deleted and replaced by the online pin
-  /// CAUTION: handheld in background even when this context is destroyed -> uses navbar context
-  /// TODO wait for post to server but dont make it possible to click on post twice
-  Future<void> _postPin(Pin mona, Group group) async {
-    try {
-      final pin = await FetchPins.postPin(mona);
-      Provider.of<ClusterNotifier>(widget.navbarContext.context, listen: false).deleteOfflinePin(mona);
-      Provider.of<ClusterNotifier>(widget.navbarContext.context, listen: false).addPin(pin);
-    } catch (e) {
-      print(e);
-    }
-
   }
 
 }

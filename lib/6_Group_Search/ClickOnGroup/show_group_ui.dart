@@ -26,8 +26,8 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
       body: CustomTitle(
         title: CustomEasyTitle(
             customBackground: CustomProfileLayout(
-              posts: state.calcNumPosts,
-              members: state.calcNumMembers,
+              posts: state.calcNumPosts(),
+              members: state.calcNumMembers(),
               image:  CustomRoundImage(imageCallback: widget.group.profileImage.asyncValue, size: 50),
               children: _getChildren()
             ),
