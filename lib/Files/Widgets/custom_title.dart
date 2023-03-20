@@ -64,7 +64,7 @@ class CustomTitleState extends State<CustomTitle> {
         ],
         body: Container(
           color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
-          child: Column(children: [widget.sliverList!])
+          child: Column(children: [Expanded(child: (widget.sliverList!))])
         )
     );
   }

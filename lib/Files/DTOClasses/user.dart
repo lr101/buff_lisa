@@ -62,8 +62,9 @@ class User {
 
   Future<void> addPin(Pin pin) async {
     await m.protectWrite(() async {
-      pins = pins ?? [];
-      pins!.insert(0, pin);
+      if (pins != null) {
+        pins!.insert(0, pin);
+      }
     });
   }
 }

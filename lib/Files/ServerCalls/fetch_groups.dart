@@ -14,6 +14,7 @@ class FetchGroups {
   static Future<List<Group>> getUserGroups() async {
     Response response = await RestAPI.createHttpsRequest("/api/users/${global.localData.username}/groups" , {}, 0, timeout: 20);
     if (response.statusCode == 200) {
+      await global.localData.groupRepo.clear();
       return _toGroupList(response);
     } else {
       throw Exception("Groups could not be loaded: ${response.statusCode} error code");
@@ -23,10 +24,10 @@ class FetchGroups {
   /// returns a the group corresponding the [groupId]
   /// GET request to server
   /// throws an Exception when an error occurs during server call
-  static Future<Group> getGroup(int groupId) async {
+  static Future<Group> getGroup(int groupId, [saveOffline = true]) async {
     Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId" , {}, 0);
     if (response.statusCode == 200) {
-      return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
+      return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>, saveOffline);
     } else {
       throw Exception("Groups could not be loaded: ${response.statusCode} error code");
     }
@@ -211,7 +212,6 @@ class FetchGroups {
   /// returns a list of groups by converting the body of a http response to Group objects
   static Future<List<Group>> _toGroupList(Response response, [saveOffline = true]) async {
     List<dynamic> values = json.decode( response.body);
-
     List<Group> groups = [];
     for (var element in values) {
       groups.add(Group.fromJson(element, saveOffline));

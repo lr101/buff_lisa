@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 
 import '1_BottomNavigationBar/splash_loading.dart';
 import 'Files/DTOClasses/groupDTO.dart';
+import 'Files/DTOClasses/group_repo.dart';
 import 'Files/DTOClasses/pinDTO.dart';
 import 'Files/Other/global.dart' as global;
 import 'Files/Other/local_data.dart';

@@ -81,7 +81,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
       List<Widget> widgets = [];
       await FetchPins.fetchImageOfPins(pins.where((element) => element.image.isEmpty).toList());
       for (Pin pin in pins) {
-        Widget widget =  FeedCard(pin: pin, update: pullRefresh,);
+        Widget widget =  FeedCard(pin: pin, update: () async => pagingController.refresh(),);
         if (pin.group.active) {
           // no new posts in the middle
           if (lastSeen != null &&
@@ -112,15 +112,6 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     }
   }
 
-  /// Triggers when new ClusterNotifier notifies changes.
-  /// Updates groups and last seen.
-  /// Rebuilds FeedCards.
-  void init() {
-    groups = Provider.of<ClusterNotifier>(context).getActiveGroups.toSet();
-    lastSeen = Provider.of<DateNotifier>(context, listen:false).getDate();
-    pullRefresh();
-  }
-
   Widget alreadySeenEverything(String text) {
     return Padding(
         padding: const EdgeInsets.all(5.0),
@@ -146,7 +137,8 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
 
   /// Rebuilds all FeedCards by using all active pins of groups or reloading them from server.
   /// Sorts all pins by creation date desc.
-  Future<void> pullRefresh({refresh = false}) async {
+  Future<bool> pullRefresh(Set<Group> groups, {refresh = false}) async {
+    this.groups = groups;
     if (refresh) {
       lastSeen = Provider.of<DateNotifier>(context, listen:false).getDate();
       Provider.of<DateNotifier>(context, listen: false).setDateNow();
@@ -157,7 +149,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
       allWidgets.addAll(pins);
     }
     allWidgets.sort((k1, k2) => k1.creationDate.compareTo(k2.creationDate) * -1);
-    pagingController.refresh();
+    return true;
   }
 
   /// disposed the controller when the page is closed

@@ -15,7 +15,6 @@ class AsyncType<T>  {
     AsyncType({T? value, required this.callback, this.callbackDefault, this.builder, this.save, retry = true}) {
         if (value != null) {
             _value = value;
-            if (save != null) save!();
             _isLoaded = true;
         }
         _retry = retry;

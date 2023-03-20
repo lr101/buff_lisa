@@ -78,13 +78,13 @@ class Group {
     this.members = AsyncType(value: members, callback: _getMembers, callbackDefault: () async => []);
     this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), builder: (v) => v != null ? Text(v) : const Icon(Icons.lock));
     this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{});
-    this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: (saveOffline) ? _saveOffline : null);
-    this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: (saveOffline) ? _saveOffline : null, retry: false);
+    this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: (saveOffline) ? saveGroupsOffline : null);
+    this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: (saveOffline) ? saveGroupsOffline : null, retry: false);
   }
 
   /// Constructor of group when data is in json format
   static Group fromJson(Map<String, dynamic> json, [bool saveOffline = true]) {
-    return Group(
+    Group group =  Group(
         groupId: json['groupId'],
         name:  json['name'],
         visibility: json['visibility'],
@@ -96,6 +96,8 @@ class Group {
         profileImage: _getImageBinary(json['profileImage']),
         saveOffline: saveOffline
     );
+    if (saveOffline) group.saveGroupsOffline();
+    return group;
   }
 
   /// Formats group data to json
@@ -203,8 +205,8 @@ class Group {
     }
   }
 
-  Future<void> _saveOffline() async {
-    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).setGroup(this);
+  Future<void> saveGroupsOffline() async {
+    global.localData.groupRepo.setGroup(this);
   }
 
   Future<Set<Pin>> _filter(Set<Pin> pins) async{

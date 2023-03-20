@@ -81,13 +81,17 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// Sort und update shown pins if pins is not null.
   /// Always refreshed the pagingController.
   Future<bool> init(List<Pin>? pins) async {
-    print((pins ?? []).length);
-    if (pins == null) {
-      List<Pin>? pins = await initPins(await pinList.refresh());
-      if (!mounted) return false;
-      Provider.of<UserNotifier>(context, listen: false).updatePins(widget.username, pins);
+    try {
+      if (pins == null) {
+        List<Pin>? pins = await initPins(await pinList.refresh());
+        if (!mounted) return false;
+        Provider.of<UserNotifier>(context, listen: false)
+            .updatePins(widget.username, pins);
+      }
+      return true;
+    } catch(_) {
+      return false;
     }
-    return true;
   }
 
   /// Pins from the pinList are added to the group pins, if the pins are not yet loaded.
@@ -142,11 +146,22 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
     int currentIndex = (_pageSize * _gridWidth) * pageKey;
     int end = (_pageSize * _gridWidth) * (pageKey + 1) < pins.length ? (_pageSize * _gridWidth) * (pageKey + 1) : pins.length - 1;
     end = end < 0 ? 0 : end;
-    await FetchPins.fetchImageOfPins(pins.sublist(currentIndex, end));
-    if ((_pageSize * _gridWidth) * (pageKey + 1) < pins.length) {
-      pagingController.appendPage(List.generate(3, (index) => getImageRow(currentIndex + index * _gridWidth, pins)), pageKey + 1);
-    } else {
-      pagingController.appendLastPage(List.generate(3 - (pins.length - currentIndex) ~/ (_pageSize * _gridWidth), (index) => getImageRow(currentIndex + index * _gridWidth, pins)));
+    try {
+      await FetchPins.fetchImageOfPins(pins.sublist(currentIndex, end));
+      if ((_pageSize * _gridWidth) * (pageKey + 1) < pins.length) {
+        pagingController.appendPage(
+            List.generate(
+                3,
+                (index) =>
+                    getImageRow(currentIndex + index * _gridWidth, pins)),
+            pageKey + 1);
+      } else {
+        pagingController.appendLastPage(List.generate(
+            3 - (pins.length - currentIndex) ~/ (_pageSize * _gridWidth),
+            (index) => getImageRow(currentIndex + index * _gridWidth, pins)));
+      }
+    } catch(_) {
+      pagingController.appendLastPage([]);
     }
   }
 

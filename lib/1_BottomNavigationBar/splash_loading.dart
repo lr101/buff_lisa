@@ -87,7 +87,6 @@ class SplashLoadingState extends State<SplashLoading> with TickerProviderStateMi
   /// load existing offline pins from device storage -> open upload page, then
   /// load and activate previous active groups
   Future<void> groupsOnline(List<Group> groups) async {
-    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).clear();
     // add groups to global notifier
     if (!mounted) return;
     Provider.of<ClusterNotifier>(context, listen:false).addGroups(List.from(groups));

@@ -13,9 +13,11 @@ class CustomSliverList extends StatefulWidget {
   final List<Widget>? items;
   final int? itemCount;
   final Widget Function(int index)? itemBuilder;
+  final bool nestedScrollView;
 
   const CustomSliverList({
     super.key,
+    this.nestedScrollView = true,
     this.pagingController,
     this.itemCount,
     this.itemBuilder,
@@ -33,27 +35,29 @@ class CustomSliverListState extends State<CustomSliverList> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Container(
+    List<Widget> slivers = [];
+    if (widget.nestedScrollView) {
+      slivers.add(SliverOverlapInjector(
+        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+      ),);
+    }
+    slivers.add(
+        FutureBuilder<bool?>(
+          future: refreshList(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
+            } else {
+              return _list();
+            }
+          },
+        )
+    );
+    return Container(
           color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
           child:CustomScrollView(
-          slivers: [
-            SliverOverlapInjector(
-                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            ),
-            FutureBuilder<bool?>(
-              future: refreshList(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
-                } else {
-                  return _list();
-                }
-              },
-            )
-          ],
+          slivers: slivers
         )
-      )
     );
   }
 
@@ -80,10 +84,10 @@ class CustomSliverListState extends State<CustomSliverList> {
     }
   }
 
-  Future<bool?> refreshList() {
-    final result = widget.initPagedList != null
-        ? widget.initPagedList!()
-        : Future(() => true);
+  Future<bool?> refreshList() async {
+    bool? result = widget.initPagedList != null
+        ? await widget.initPagedList!()
+        : true;
     if (widget.pagingController != null) {
       widget.pagingController!.refresh();
     } else {

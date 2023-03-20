@@ -32,12 +32,14 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CustomShowAndPick(
-                  updateCallback: (p0, context) {
-                    Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
-                    return Future(() => p0);
-                  },
-                  provide: () => Future(() => null),
+                Consumer<CreateGroupNotifier>(
+                  builder: (context, value, child) => CustomShowAndPick(
+                    updateCallback: (p0, context) {
+                      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
+                      return Future(() => p0);
+                    },
+                    provide: () async => value.getImage,
+                  ),
                 ),
                 const SizedBox(height: 20,),
                 const Text("group name:"),

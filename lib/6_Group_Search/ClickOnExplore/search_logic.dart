@@ -108,7 +108,7 @@ Future<Widget> getCardOfOtherGroups(int index) async {
     try {
       group = Provider.of<ClusterNotifier>(context, listen: false).otherGroups.firstWhere((element) => element.groupId == groups[index]);
     } catch(_) {
-      group = await FetchGroups.getGroup(groups[index]);
+      group = await FetchGroups.getGroup(groups[index], false);
       if (!mounted) return const SizedBox.shrink();
       Provider.of<ClusterNotifier>(context,listen: false).addOtherGroup(group);
     }

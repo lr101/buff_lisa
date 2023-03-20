@@ -44,6 +44,8 @@ class LocalData {
   /// Storage to save ids of hidden posts.
   late HiveHandler<int, DateTime> hiddenPosts;
 
+  late GroupRepo groupRepo;
+
   /// Storage for multiple offline data:
   /// 1. theme
   /// 2. order
@@ -69,6 +71,7 @@ class LocalData {
     hiddenUsers = await HiveHandler.fromInit<String, DateTime>(hiddenUsersKey);
     hiddenPosts = await HiveHandler.fromInit<int, DateTime>(hiddenPostsKey);
     offlineDataStorage = await HiveHandler.fromInit<String, dynamic>(offlineKeyValue);
+    groupRepo = (await GroupRepo.fromInit(LocalData.groupFileNameKey));
     // theme
     int? themeIndex = (await offlineDataStorage.get(themeKey)) as int?;
     if (themeIndex == null) {
@@ -94,8 +97,8 @@ class LocalData {
     // clear content of hive boxes
     await hiddenUsers.clear();
     await hiddenPosts.clear();
-    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).clear();
-    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).clear();
+    groupRepo.clear();
+    (await GroupRepo.fromInit(LocalData.pinFileNameKey)).clear();
     await offlineDataStorage.clear();
   }
 
@@ -121,7 +124,7 @@ class LocalData {
   /// delete an offline pin by id
   void deleteOfflineGroup(int groupId) async {
     deactivateGroup(groupId);
-    (await GroupRepo.fromInit(LocalData.groupFileNameKey)).deleteGroup(groupId);
+    groupRepo.deleteGroup(groupId);
   }
 
   /// true: top-bar is expanded

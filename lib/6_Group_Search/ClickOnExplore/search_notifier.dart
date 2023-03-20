@@ -45,7 +45,7 @@ class SearchNotifier with ChangeNotifier {
   void toggle(bool filtered) {
     if (icon.icon == Icons.cancel) {
       icon = const Icon(Icons.search);
-      title = Text("Search Groups", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium);
+      title = Text("Search Groups", style: Provider.of<ThemeNotifier>(context, listen: false).getTheme.textTheme.titleMedium);
       textController.clear();
       if (filtered) pullRefresh(null);
     } else {

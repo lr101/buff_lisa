@@ -40,7 +40,7 @@ class CustomRoundImage extends StatelessWidget {
               } else if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircleAvatar(radius: size, backgroundColor: Colors.grey ,child: child);
               } else {
-                return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: size, backgroundColor: Colors.transparent);
+                return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: size, backgroundColor: Colors.transparent, child: child,);
               }
             },
           ),

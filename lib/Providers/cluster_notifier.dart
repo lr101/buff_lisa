@@ -88,8 +88,7 @@ class ClusterNotifier extends ChangeNotifier {
   /// adds a list of [Group] saved offline in [_offlineGroupHandler] in [_userGroups] if they not already existing
   /// NOTIFIES CHANGES
   Future<void> loadOfflineGroups() async {
-    GroupRepo repo = (await GroupRepo.fromInit(LocalData.groupFileNameKey));
-    addGroups(repo.getGroups());
+    addGroups(global.localData.groupRepo.getGroups());
   }
 
   /// removes a specific [group] form [_userGroups]
@@ -98,7 +97,7 @@ class ClusterNotifier extends ChangeNotifier {
   void removeGroup(Group group) {
     if (group.active) {
       for (Pin pin in group.pins.syncValue ?? {}) {
-        removePin(pin);
+        _removePin(pin);
       }
     }
     _userGroups.remove(group);
@@ -140,7 +139,6 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// returns a [Group] by [groupId] if it is an item in [_userGroups]
   Group getGroupByGroupId(int groupId) {
-    print("num2");
     return _userGroups.firstWhere((element) => element.groupId == groupId);
   }
 
@@ -163,6 +161,7 @@ class ClusterNotifier extends ChangeNotifier {
         group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
       }
     }
+    notifyListeners();
   }
 
   Future<void> addPins(Set<Pin> pins) async {
@@ -173,6 +172,7 @@ class ClusterNotifier extends ChangeNotifier {
       }
     }
     _markerNotifier.update();
+    notifyListeners();
   }
 
   /// activates the [group] : the group will show its marker on the map and the feed
@@ -231,7 +231,7 @@ class ClusterNotifier extends ChangeNotifier {
   /// 4. rebuild [_shownMarkers] list
   /// REBUILD MAP MARKERS
   /// NOTIFIES CHANGES
-  Future<bool> removePin(Pin pin) async {
+  Future<bool> _removePin(Pin pin) async {
     try {
       await FetchPins.deleteMonaFromPinId(pin.id);
       await _userNotifier.removePin(pin.username, pin.id);
@@ -240,6 +240,12 @@ class ClusterNotifier extends ChangeNotifier {
     } catch(e) {
       return false;
     }
+  }
+
+  Future<bool> removePin(Pin pin) async {
+    bool ret = await _removePin(pin);
+    notifyListeners();
+    return ret;
   }
 
   Future<void> hidePin(Pin pin) async {
@@ -277,6 +283,7 @@ class ClusterNotifier extends ChangeNotifier {
     pin.group.removePin(pin);
     await _userNotifier.removePin(pin.username, pin.id);
     (await PinRepo.fromInit(LocalData.pinFileNameKey)).deletePin(pin.id);
+    notifyListeners();
   }
 
   /// adds an offline [Pin] to device storage

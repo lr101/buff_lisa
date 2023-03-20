@@ -71,20 +71,19 @@ class FetchPins {
 
   static Future<void> fetchImageOfPins(List<Pin> pins) async {
     String ids = "";
-    for (Pin pin in pins) {
-      if (pin.image.isEmpty) {
-        ids += pin.id.toString();
-        ids+="-";
-      }
+    List<Pin> filtered = pins.where((element) => element.image.isEmpty).toList();
+    for (Pin pin in filtered) {
+      ids += pin.id.toString();
+      ids+="-";
     }
     if (ids == "") return;
     ids = ids.substring(0, ids.length - 1);
     Response response = await RestAPI.createHttpsRequest("/api/images", {"ids" : ids}, 0,timeout: 60);
     if (response.statusCode == 200) {
       List<dynamic> list = json.decode(response.body);
-      for(int i = 0; i < pins.length; i++) {
+      for(int i = 0; i < filtered.length; i++) {
         try {
-          pins[i].image.setValue(base64Decode(list[i]));
+          filtered[i].image.setValue(base64Decode(list[i]));
         } catch(_) {}
       }
     } else {
