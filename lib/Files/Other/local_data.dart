@@ -97,8 +97,8 @@ class LocalData {
     // clear content of hive boxes
     await hiddenUsers.clear();
     await hiddenPosts.clear();
-    groupRepo.clear();
-    (await GroupRepo.fromInit(LocalData.pinFileNameKey)).clear();
+    await groupRepo.clear();
+    (await PinRepo.fromInit(LocalData.pinFileNameKey)).clear();
     await offlineDataStorage.clear();
   }
 

@@ -55,15 +55,14 @@ class Settings extends StatelessWidget {
   /// the login screen widget page is opened
   Future<void> handleLogoutPress(BuildContext context) async {
     Provider.of<ClusterNotifier>(context, listen: false).clearAll();
-    await global.localData.logout().then((value) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const LoginScreen()
-          ),
-          ModalRoute.withName("/login")
-      );
-    });
+    await global.localData.logout();
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const LoginScreen()
+        ),
+        ModalRoute.withName("/login")
+    );
   }
 
   /// Open report page to contact developer.

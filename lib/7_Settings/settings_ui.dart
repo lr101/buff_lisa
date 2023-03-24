@@ -19,6 +19,7 @@ class SettingsUI extends StatelessUI<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    final con = context;
     return Scaffold(appBar: null,
       body: CustomTitle(
         title: CustomEasyTitle(
@@ -112,7 +113,7 @@ class SettingsUI extends StatelessUI<Settings> {
                            title: "Confirm Logout",
                            text2: "Logout",
                            text1: "Cancel",
-                           onPressed: () => widget.handleLogoutPress(context),
+                           onPressed: () => widget.handleLogoutPress(con),
                          )
                      )
                    ),
