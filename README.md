@@ -125,3 +125,8 @@ Look [here](https://docs.flutter.dev/deployment/ios) for more information
 
 - run: ```flutter build appbundle```
 
+### Build ios release
+
+- run ```flutter build ipa```
+- run ```xcrun altool --upload-app --type ios -f build/ios/ipa/*.ipa --apiKey B4589LDTP6 --apiIssuer 085ec48f-332a-4138-b4dd-c64be661fa63```
+
