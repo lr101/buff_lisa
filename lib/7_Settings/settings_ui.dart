@@ -105,17 +105,22 @@ class SettingsUI extends StatelessUI<Settings> {
                 title: const Text("Logout"),
                  tiles: [
                    SettingsTile.navigation(
-                     leading: const Icon(Icons.logout),
-                     title: const Text('Logout'),
-                     onPressed: (context) =>  showDialog(
-                         context: context,
-                         builder: (context) =>  CustomAlertDialog(
-                           title: "Confirm Logout",
-                           text2: "Logout",
-                           text1: "Cancel",
-                           onPressed: () => widget.handleLogoutPress(con),
-                         )
-                     )
+                     leading: const Icon(Icons.delete, color: Colors.red),
+                     title: const Text('Delete Account', style: TextStyle(color: Colors.red),),
+                     onPressed: (context) => widget.handleDeleteAccount(context)
+                   ),
+                   SettingsTile.navigation(
+                       leading: const Icon(Icons.logout, color: Colors.red),
+                       title: const Text('Logout', style: TextStyle(color: Colors.red),),
+                       onPressed: (context) =>  showDialog(
+                           context: context,
+                           builder: (context) =>  CustomAlertDialog(
+                             title: "Confirm Logout",
+                             text2: "Logout",
+                             text1: "Cancel",
+                             onPressed: () => widget.handleLogoutPress(con),
+                           )
+                       )
                    ),
                 ]
               )

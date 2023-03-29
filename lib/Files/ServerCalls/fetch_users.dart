@@ -191,4 +191,23 @@ class FetchUsers {
     }
     return false;
   }
+
+  static Future<bool> getDeleteCode() async {
+    final response = await RestAPI.createHttpsRequest("/api/delete-code/${global.localData.username}", {}, 0);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    }
+    return false;
+  }
+
+  static Future<bool> deleteAccount(String code) async {
+    final String json = jsonEncode(<String, dynamic>{
+      "code" : code
+    });
+    final response = await RestAPI.createHttpsRequest("/api/users/${global.localData.username}", {}, 3, encode: json);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    }
+    return false;
+  }
 }
