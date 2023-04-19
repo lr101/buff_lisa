@@ -73,6 +73,7 @@ class MyApp extends StatelessWidget {
             builder: (context, child) {
               Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>(), context.read<MarkerNotifier>());
               return MaterialApp(
+                debugShowCheckedModeBanner: false,
                 theme: Provider.of<ThemeNotifier>(context).getTheme,
                 title: 'Mona App',
                 initialRoute: isLoggedIn ? '/home' : '/login',

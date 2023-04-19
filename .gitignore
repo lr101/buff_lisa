@@ -59,3 +59,5 @@ app.*.map.json
 pubspec.lock
 /ios/.symlinks/plugins/
 /ios/Pods/
+/macos/
+/linux/
