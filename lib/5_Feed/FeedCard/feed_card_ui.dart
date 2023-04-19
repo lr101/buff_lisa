@@ -5,6 +5,7 @@ import 'package:buff_lisa/5_Feed/FeedCard/feed_card_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
+import 'package:buff_lisa/Providers/map_notifier.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:configurable_expansion_tile_null_safety/configurable_expansion_tile_null_safety.dart';
 import 'package:flutter/material.dart';
@@ -181,9 +182,9 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                           ),
                                           children: [
                                             TileLayer(
-                                                urlTemplate: "${Provider.of<ThemeNotifier>(context).getCustomTheme.mapUrl}?api_key={api_key}",
+                                                urlTemplate: "${Provider.of<MapNotifier>(context).getMapUrl(Provider.of<ThemeNotifier>(context).getTheme.brightness)}?api_key={api_key}",
                                                 additionalOptions: {
-                                                  "api_key": global.apiKey
+                                                  "api_key": global.localData.getMapApiKey()
                                                 }
                                             ),
                                             MarkerLayer(

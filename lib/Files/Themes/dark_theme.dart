@@ -20,10 +20,8 @@ class DarkTheme {
 
   );
 
-  static const String url = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png";
-
   static CustomTheme darkThemeFactory() {
-    return CustomTheme(theme: darkTheme, mapUrl: url, blackOrWhite: blackOrWhite);
+    return CustomTheme(theme: darkTheme, blackOrWhite: blackOrWhite);
   }
 
 

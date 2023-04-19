@@ -1,5 +1,6 @@
 import 'package:buff_lisa/Files/DTOClasses/pin_repo.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../0_ScreenSignIn/secure.dart';
 import '../DTOClasses/group_repo.dart';
@@ -20,6 +21,8 @@ class LocalData {
   static const String langKey = "langKey";
   static const String expandKey = "expandKey";
   static const String lastSeenKey = "lastSeenKey";
+  static const String mapApiKey = "mapApiKey";
+  static const String mapStyle = "mapStyle";
 
 
   late Secure secure = Secure();
@@ -167,6 +170,22 @@ class LocalData {
   /// updates last seen to the current time
   void setLastSeenNow() {
     offlineDataStorage.put(DateTime.now(), key: lastSeenKey);
+  }
+
+  void setMapApiKey(String apiKey) {
+    offlineDataStorage.put(apiKey, key: mapApiKey);
+  }
+
+  String getMapApiKey() {
+    return offlineDataStorage.get(mapApiKey) ?? dotenv.env["MAPS_API_KEY"]!;
+  }
+
+  int? getMapStyle () {
+    return offlineDataStorage.get(mapStyle);
+  }
+
+  void setMapStyle(int? style) {
+    offlineDataStorage.put(style, key: mapStyle);
   }
 
 }

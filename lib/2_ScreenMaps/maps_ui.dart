@@ -8,6 +8,7 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:provider/provider.dart';
 
 import '../Files/Themes/custom_theme.dart';
+import '../Providers/map_notifier.dart';
 import '../Providers/marker_notifier.dart';
 import 'maps_logic.dart';
 
@@ -35,9 +36,9 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: "${Provider.of<ThemeNotifier>(context).getCustomTheme.mapUrl}?api_key={api_key}",
+                    urlTemplate: "${Provider.of<MapNotifier>(context).getMapUrl(Provider.of<ThemeNotifier>(context).getTheme.brightness)}?api_key={api_key}",
                     additionalOptions: {
-                      "api_key": global.apiKey
+                      "api_key": global.localData.getMapApiKey()
                     }
                   ),
                   CurrentLocationLayer(),

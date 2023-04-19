@@ -219,7 +219,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// Used in profile page ui as a callback function to display the profile image of a user.
   Future<Uint8List?> provideProfileImage(Uint8List image, BuildContext context) async {
     Provider.of<UserNotifier>(context, listen: false).removeUser(global.localData.username);
-    return FetchUsers.changeProfilePicture(global.localData.username, image);
+    return await FetchUsers.changeProfilePicture(global.localData.username, image);
   }
 
   /// Opens a widget as a new page.

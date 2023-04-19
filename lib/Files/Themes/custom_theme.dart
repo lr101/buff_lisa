@@ -7,10 +7,9 @@ class CustomTheme {
   static Color grey = Colors.blueGrey.withOpacity(0.1);
 
   final ThemeData theme;
-  final String mapUrl;
   final Color blackOrWhite;
   final Color transparent = const Color(0x22000000);
 
-  const CustomTheme({required this.blackOrWhite,required this.theme, required this.mapUrl});
+  const CustomTheme({required this.blackOrWhite,required this.theme});
 
 }

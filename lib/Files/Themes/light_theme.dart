@@ -18,9 +18,7 @@ class LightTheme {
     ),
   );
 
-  static const String url = "https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png";
-
   static CustomTheme lightThemeFactory() {
-    return CustomTheme(theme: lightTheme, mapUrl: url,blackOrWhite: blackOrWhite);
+    return CustomTheme(theme: lightTheme,blackOrWhite: blackOrWhite);
   }
 }

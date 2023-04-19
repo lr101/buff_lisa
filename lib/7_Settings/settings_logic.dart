@@ -1,4 +1,5 @@
 import 'package:buff_lisa/7_Settings/DeleteAccount/delete_account.dart';
+import 'package:buff_lisa/7_Settings/EditMap/edit_map.dart';
 import 'package:buff_lisa/7_Settings/HiddenUsers/hidden_user_logic.dart';
 import 'package:buff_lisa/7_Settings/OrderGroups/order_groups_logic.dart';
 import 'package:buff_lisa/7_Settings/settings_ui.dart';
@@ -45,6 +46,11 @@ class Settings extends StatelessWidget {
   /// on password button press the password widget page is opened
   void handlePasswordPress(BuildContext context) {
     Routing.to(context,  const Password());
+  }
+
+  /// on map button press the map widget page is opened
+  void handleMapPress(BuildContext context) {
+    Routing.to(context,  const EditMap());
   }
 
   /// on email button press the email widget page is opened

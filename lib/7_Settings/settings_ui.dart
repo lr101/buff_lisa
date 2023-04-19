@@ -45,6 +45,11 @@ class SettingsUI extends StatelessUI<Settings> {
                     leading: const Icon(Icons.dark_mode),
                     title: const Text('Toggle theme'),
                   ),
+                  SettingsTile.navigation(
+                    leading: const Icon(Icons.map),
+                    title: const Text('Edit map'),
+                    onPressed: (context) => widget.handleMapPress(context),
+                  ),
                 ],
               ),
               SettingsSection(

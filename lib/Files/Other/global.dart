@@ -20,10 +20,6 @@ LatLng initCamera =  LatLng(49.006889, 8.403653);
 /// localhost: 10.0.2.2
 String host = dotenv.env["HOST"]!;
 
-/// api key for the stadia map service
-/// loaded from .env file
-String apiKey = dotenv.env["MAPS_API_KEY"]!;
-
 /// list of available cameras
 late List<CameraDescription> cameras;
 
