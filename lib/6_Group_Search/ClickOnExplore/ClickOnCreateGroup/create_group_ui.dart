@@ -19,6 +19,7 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
   Widget build(BuildContext context) {
     TextEditingController t1 = Provider.of<CreateGroupNotifier>(context).getText1;
     TextEditingController t2 = Provider.of<CreateGroupNotifier>(context).getText2;
+    TextEditingController t3 = Provider.of<CreateGroupNotifier>(context).getText3;
     return Scaffold(appBar: null,
           resizeToAvoidBottomInset: false,
           body: CustomTitle(
@@ -59,6 +60,18 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     controller: t2,
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                const Text("Web Url/Link:"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextField(
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.url,
+                    maxLines: 1,
+                    controller: t3,
+                    decoration: const InputDecoration(hintText: "not required"),
                   ),
                 ),
                 const SizedBox(height: 20,),

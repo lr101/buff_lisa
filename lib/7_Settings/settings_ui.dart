@@ -23,7 +23,7 @@ class SettingsUI extends StatelessUI<Settings> {
     return Scaffold(appBar: null,
       body: CustomTitle(
         title: CustomEasyTitle(
-          title: Text("Profile Image", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
+          title: Text("Settings", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
           back: true,
         ),
         child: SettingsList(

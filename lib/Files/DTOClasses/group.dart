@@ -39,6 +39,9 @@ class Group {
   /// null: description is not yet loaded from server or user is not a member of the private group
   late final AsyncType<String?> description;
 
+
+  late final AsyncType<String?> link;
+
   /// Uint8List: image profile picture byte data
   /// null: not yet loaded from server
   late final AsyncType<Uint8List> profileImage;
@@ -72,11 +75,13 @@ class Group {
     pins,
     profileImage,
     pinImage,
+    link,
     saveOffline = true
   }) {
     this.groupAdmin = AsyncType(value: groupAdmin, callback: () => FetchGroups.getGroupAdmin(groupId), callbackDefault: () async => "---", builder: (_) => Text(_));
     this.members = AsyncType(value: members, callback: _getMembers, callbackDefault: () async => []);
     this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), builder: (v) => v != null ? Text(v) : const Icon(Icons.lock));
+    this.link = AsyncType(value: link, callback: () => FetchGroups.getGroupLink(groupId), builder: (v) => v != null ? Text(v) : const Icon(Icons.lock));
     this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{});
     this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: (saveOffline) ? saveGroupsOffline : null);
     this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: (saveOffline) ? saveGroupsOffline : null, retry: false);
@@ -94,7 +99,8 @@ class Group {
         members: _getMemberList(json['members']),
         pinImage: _getImageBinary(json['pinImage']),
         profileImage: _getImageBinary(json['profileImage']),
-        saveOffline: saveOffline
+        saveOffline: saveOffline,
+        link: json['link']
     );
     if (saveOffline) group.saveGroupsOffline();
     return group;
@@ -109,7 +115,8 @@ class Group {
       "groupAdmin" : groupAdmin,
       "description" : description,
       "visibility" : visibility,
-      "inviteUrl" : inviteUrl
+      "inviteUrl" : inviteUrl,
+      "link" : link
     };
   }
 

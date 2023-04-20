@@ -18,6 +18,7 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
   Widget build(BuildContext context) {
     TextEditingController t1 = Provider.of<CreateGroupNotifier>(context).getText1;
     TextEditingController t2 = Provider.of<CreateGroupNotifier>(context).getText2;
+    TextEditingController t3 = Provider.of<CreateGroupNotifier>(context).getText3;
     return Scaffold(appBar: null,
         resizeToAvoidBottomInset: false,
         body: CustomTitle(
@@ -28,61 +29,75 @@ class EditGroupUI extends StatefulUI<EditGroupPage, EditGroupPageState>{
               child:  const Icon(Icons.add_task),
               action: () async => state.editGroup(context))
             ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomShowAndPick(
-                updateCallback: (p0, context) {
-                  Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
-                  return Future(() => p0);
-                },
-                provide: state.widget.group.profileImage.asyncValue,
-              ),
-              const SizedBox(height: 20,),
-              const Text("group name:"),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextFormField(
-                    textAlign: TextAlign.center,
-                    controller: t1
+          child: SingleChildScrollView(
+            child:Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomShowAndPick(
+                  updateCallback: (p0, context) {
+                    Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
+                    return Future(() => p0);
+                  },
+                  provide: state.widget.group.profileImage.asyncValue,
                 ),
-              ),
-              const SizedBox(height: 20,),
-              const Text("Description:"),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextField(
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  controller: t2,
-                ),
-              ),
-              const SizedBox(height: 20,),
-              const Text("group admin:"),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: DropdownButton(
-                    isExpanded: true,
-                    items: Provider.of<CreateGroupNotifier>(context, listen: false).menuItems,
-                    onChanged: (String? value) => Provider.of<CreateGroupNotifier>(context, listen: false).setCurrentItem(value!),
-                    value:  Provider.of<CreateGroupNotifier>(context).currentItem
-                ),
-              ),
-              const SizedBox(height: 20,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("public "),
-                  Switch(
-                    value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
-                    onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
+                const SizedBox(height: 20,),
+                const Text("group name:"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextFormField(
+                      textAlign: TextAlign.center,
+                      controller: t1
                   ),
-                  const Text("private")
-                ],
-              )
-            ],
-          ),
+                ),
+                const SizedBox(height: 20,),
+                const Text("Description:"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextField(
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: t2,
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                const Text("Web Url/Link:"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextField(
+                    textAlign: TextAlign.center,
+                    keyboardType: TextInputType.url,
+                    maxLines: 1,
+                    controller: t3,
+                    decoration: const InputDecoration(hintText: "not required"),
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                const Text("group admin:"),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: DropdownButton(
+                      isExpanded: true,
+                      items: Provider.of<CreateGroupNotifier>(context, listen: false).menuItems,
+                      onChanged: (String? value) => Provider.of<CreateGroupNotifier>(context, listen: false).setCurrentItem(value!),
+                      value:  Provider.of<CreateGroupNotifier>(context).currentItem
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("public "),
+                    Switch(
+                      value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
+                      onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
+                    ),
+                    const Text("private")
+                  ],
+                )
+              ],
+            ),
+          )
         )
     );
   }

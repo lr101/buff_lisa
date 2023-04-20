@@ -7,6 +7,7 @@ import 'package:fading_image_button/fading_image_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../Files/Other/global.dart' as global;
 import '../../0_ScreenSignIn/login_logic.dart';
 import '../../Files/Themes/custom_theme.dart';
@@ -40,31 +41,71 @@ class EditMapState extends State<EditMap> {
 
             child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(10),
-                child: Text("API-Key:", textAlign: TextAlign.center),
-              ),
               Padding(
                 padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Short Tutorial:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
+                    GestureDetector(
+                      onTap: () => launchUrl(Uri.parse("https://client.stadiamaps.com/signup/"),mode: LaunchMode.externalApplication),
+                      child: const Text(
+                        "1. Create an Stadia Maps account",  
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                            fontSize: 15
+                        ),
+                      ),
+                    ),
+                    const Text("2. Create 'Property' and finally click on 'Add API Key'", style: TextStyle(fontSize: 15),),
+                    const Text("3. Copy API Key into field bellow", style: TextStyle(fontSize: 15),)
+                  ],
+                )
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 10),
                 child: TextFormField(
                   controller: controller,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 20),
-                  decoration: const InputDecoration.collapsed(hintText: "API-Key", border: UnderlineInputBorder()),
+                  textAlign: TextAlign.start,
+                  decoration: InputDecoration(
+                    hintText: "API-Key",
+                    border: const UnderlineInputBorder(),
+                    suffixIcon: IconButton(
+                      onPressed: submit,
+                      icon: const Icon(Icons.save),
+                    ),
+                  ),
                   maxLines: 1,
-                ),
+
+                  ),
               ),
+              Padding(padding: const EdgeInsets.all(10), child: GestureDetector(onTap: _launchUrl,
+                  child: const Text.rich( //underline partially
+                      TextSpan(
+                          style: TextStyle(fontSize: 15), //global text style
+                          children: [
+                            TextSpan(text:"- More information: "),
+                            TextSpan(text:"How to create an API Key", style: TextStyle(
+                                decoration:TextDecoration.underline
+                            )), //partial text style
+                          ]
+                      )
+                  ),
+              ),
+              ),
+              const Divider(),
               const Padding(
                 padding: EdgeInsets.all(10),
-                child: Text("Select map style:", textAlign: TextAlign.center),
+                child: Text("Select map style:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
               ),
               Padding(
                   padding: const EdgeInsets.all(10),
                   child: Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(5),
@@ -76,7 +117,7 @@ class EditMapState extends State<EditMap> {
                               ),
                               child:FadingImageButton(
                                 image: Image.asset("images/map.png"),
-                                onPressed: () => setState(() {selected = null;}),
+                                onPressed: () =>  updateStyle(null),
                                 onPressedImage: Image.asset("images/map.png"),
                                 height: MediaQuery.of(context).size.width / 5 * 0.75,
                                 width: MediaQuery.of(context).size.width / 5,
@@ -93,35 +134,35 @@ class EditMapState extends State<EditMap> {
                               ),
                               child:FadingImageButton(
                                 image: Image.asset("images/map0.png"),
-                                onPressed: () => setState(() {selected = 0;}),
+                                onPressed: () =>  updateStyle(0),
                                 onPressedImage: Image.asset("images/map0.png"),
                                 height: MediaQuery.of(context).size.width / 5 * 0.75,
                                 width: MediaQuery.of(context).size.width / 5,
                               ),
                             ),
-                          )
+                          ),
+                          Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border:Border.all(color: selected == 1 ?
+                                    CustomTheme.c1 :
+                                    Colors.grey)
+                                ),
+                                child: FadingImageButton(
+                                  image: Image.asset("images/map1.png"),
+                                  onPressed: () =>  updateStyle(1),
+                                  onPressedImage: Image.asset("images/map1.png"),
+                                  height: MediaQuery.of(context).size.width / 5 * 0.75,
+                                  width: MediaQuery.of(context).size.width / 5,
+                                ),
+                              )
+                          ),
                         ],
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  border:Border.all(color: selected == 1 ?
-                                  CustomTheme.c1 :
-                                  Colors.grey)
-                              ),
-                              child: FadingImageButton(
-                                image: Image.asset("images/map1.png"),
-                                onPressed: () => setState(() {selected = 1;}),
-                                onPressedImage: Image.asset("images/map1.png"),
-                                height: MediaQuery.of(context).size.width / 5 * 0.75,
-                                width: MediaQuery.of(context).size.width / 5,
-                              ),
-                            )
-                          ),
                           Padding(
                             padding: const EdgeInsets.all(5),
                             child: Container(
@@ -132,56 +173,35 @@ class EditMapState extends State<EditMap> {
                               ),
                               child: FadingImageButton(
                                 image: Image.asset("images/map2.png"),
-                                onPressed: () => setState(() {selected = 2;}),
+                                onPressed: () =>  updateStyle(2),
                                 onPressedImage: Image.asset("images/map2.png"),
                                 height: MediaQuery.of(context).size.width / 5 * 0.75,
                                 width: MediaQuery.of(context).size.width / 5,
                               ),
                             )
                           ),
+                          Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border:Border.all(color: selected == 3 ?
+                                    CustomTheme.c1 :
+                                    Colors.grey)
+                                ),
+                                child: FadingImageButton(
+                                  image: Image.asset("images/map3.png"),
+                                  onPressed: () => updateStyle(3),
+                                  onPressedImage: Image.asset("images/map3.png"),
+                                  height: MediaQuery.of(context).size.width / 5 * 0.75,
+                                  width: MediaQuery.of(context).size.width / 5,
+                                ),
+                              )
+                          ),
                         ],
                       ),
-                      Align(
-                        child:  Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border:Border.all(color: selected == 3 ?
-                                CustomTheme.c1 :
-                                Colors.grey)
-                            ),
-                            child: FadingImageButton(
-                              image: Image.asset("images/map3.png"),
-                              onPressed: () => setState(() {selected = 3;}),
-                              onPressedImage: Image.asset("images/map3.png"),
-                              height: MediaQuery.of(context).size.width / 5 * 0.75,
-                              width: MediaQuery.of(context).size.width / 5,
-                            ),
-                          )
-                        ),
-                      )
                     ],
                   )
               ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextButton(
-                  onPressed: () => submit(),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                            side: const BorderSide(color: CustomTheme.c1))),
-                  ),
-                  child: const Text("Submit Changes"),
-                ),
-              ),
-              Padding(padding: const EdgeInsets.all(20), child:
-                    TextButton(onPressed: () {
-                        Clipboard.setData(ClipboardData(text: "https://${global.host}/public/docs/stadia-key.pdf"));
-                        CustomErrorMessage.message(context: context, message: "URL copied to clipboard");
-                    },
-                    child: const Text("How to create an API Key", style: TextStyle(decoration: TextDecoration.underline,),)))
             ],
           )),
       )
@@ -194,10 +214,22 @@ class EditMapState extends State<EditMap> {
           controller.text);
       CustomErrorMessage.message(context: context, message: "Api Key successfully updated");
     }
-
-    if (selected != start) {
-      Provider.of<MapNotifier>(context,listen: false).setMapStyle(selected);
-      CustomErrorMessage.message(context: context, message: "Map style successfully updated");
-    }
   }
+
+  void updateStyle(int? num) {
+    setState(() {
+      if (selected != num) {
+        Provider.of<MapNotifier>(context, listen: false).setMapStyle(num);
+        selected = num;
+        CustomErrorMessage.message(context: context, message: "Map style successfully updated");
+      }
+    });
+  }
+
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(Uri.parse("https://${global.host}/public/docs/stadia-key.pdf"),mode: LaunchMode.externalApplication)) {
+    //Clipboard.setData(ClipboardData(text: "https://${global.host}/public/docs/stadia-key.pdf"));
+    //                         CustomErrorMessage.message(context: context, message: "URL copied to clipboard");
+  }
+}
 }

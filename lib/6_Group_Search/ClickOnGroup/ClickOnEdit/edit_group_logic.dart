@@ -23,6 +23,8 @@ class EditGroupPageState extends State<EditGroupPage> {
   @override
   late BuildContext context;
 
+  bool loading = false;
+
   /// adds a ChangeNotifierProvider to the build
   @override
   Widget build(BuildContext context) {
@@ -56,13 +58,17 @@ class EditGroupPageState extends State<EditGroupPage> {
   /// Tries to create the Group with the context given in the input fields
   /// TODO input values checked for constrains. What are the Constraines?
   void editGroup(BuildContext context) {
+    if (loading) return;
+    loading = true;
     final controller1 = Provider.of<CreateGroupNotifier>(context, listen: false).getText1IfChanged;
     final controller2 = Provider.of<CreateGroupNotifier>(context, listen: false).getText2IfChanged;
+    final controller3 = Provider.of<CreateGroupNotifier>(context, listen: false).getText3IfChanged;
     Uint8List? image = Provider.of<CreateGroupNotifier>(context, listen: false).getImageIfChanged;
     final sliderValue = Provider.of<CreateGroupNotifier>(context, listen: false).getSliderValueIfChanged;
     final groupAdmin = Provider.of<CreateGroupNotifier>(context, listen: false).getAdminIfChanged;
     if (( controller1 == null || controller1.text.isNotEmpty) && (controller2 == null || controller2.text.isNotEmpty)) {
-      FetchGroups.putGroup(widget.group.groupId, controller1?.text, controller2?.text, image, sliderValue, groupAdmin).then((group) {
+      FetchGroups.putGroup(widget.group.groupId, controller1?.text, controller2?.text, image, sliderValue, groupAdmin, controller3?.text).then((group) {
+        loading = false;
         if (group != null) {
           Provider.of<ClusterNotifier>(context, listen:false).updateGroup(widget.group, group);
           Navigator.pop(context);

@@ -76,13 +76,14 @@ class FetchGroups {
   /// returns the group that is created on the server with [name], [description], [image], [visibility]
   /// POST request to server
   /// returns null if an Error occurred during server call TODO exception?
-  static Future<Group?> postGroup(String name, String description, Uint8List image, int visibility) async {
+  static Future<Group?> postGroup(String name, String description, Uint8List image, int visibility, String? link) async {
     final String json = jsonEncode(<String, dynamic> {
       "name" : name,
       "groupAdmin": global.localData.username,
       "description" : description,
       "profileImage": image,
-      "visibility" : visibility
+      "visibility" : visibility,
+      "link" : link
     });
     final response =  await RestAPI.createHttpsRequest("/api/groups", {}, 1,encode:  json);
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -95,13 +96,14 @@ class FetchGroups {
   /// returns the group that is updating on the server with [name], [description], [image], [visibility]
   /// PUT request to server
   /// returns null if an Error occurred during server call TODO exception?
-  static Future<Group?> putGroup(int groupId, String? name, String? description, Uint8List? image, double? visibility, String? groupAdmin) async {
+  static Future<Group?> putGroup(int groupId, String? name, String? description, Uint8List? image, double? visibility, String? groupAdmin, String? link) async {
     Map<String, dynamic> map =  {};
     if (name != null) map["name"] = name;
     if (description != null) map["description"] = description;
     if (image != null) map["profileImage"] = image;
     if (visibility != null) map["visibility"] = visibility.toInt();
     if (groupAdmin != null) map["groupAdmin"] = groupAdmin;
+    if (link != null) map["link"] = link;
     final String json = jsonEncode(map);
     final response =  await RestAPI.createHttpsRequest("/api/groups/$groupId", {}, 2, encode: json);
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -144,6 +146,22 @@ class FetchGroups {
   /// GET Request to Server
   static Future<String?> getGroupDescription(int groupId) async {
     Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/description", {}, 0);
+    if (response.statusCode == 200) {
+      try {
+        return utf8.decode(response.bodyBytes);
+      } catch(_) {
+        return null;
+      }
+    } else {
+      throw Exception("Group is private or does not exist");
+    }
+  }
+
+  /// returns the description of a group identified by [groupId]
+  /// throws an Exception if an error occurs
+  /// GET Request to Server
+  static Future<String?> getGroupLink(int groupId) async {
+    Response response = await RestAPI.createHttpsRequest("/api/groups/$groupId/link", {}, 0);
     if (response.statusCode == 200) {
       try {
         return utf8.decode(response.bodyBytes);

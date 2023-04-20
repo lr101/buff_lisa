@@ -3,12 +3,14 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Widgets/custom_action_button.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Files/Widgets/custom_profile_layout.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../../Files/Widgets/CustomSliverList/custom_sliver_list.dart';
@@ -89,6 +91,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
     if (state.widget.group.visibility != 0 && widget.myGroup) {
       children.add(_getInviteLink());
     }
+    children.add(_getLink());
     return children;
   }
 
@@ -103,21 +106,21 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Description:"),
-                  Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Row(
-                          children: [
-                            Flexible(
-                              child: Text(snapshot.requireData != null ? snapshot.requireData! : "Could not be loaded"),
-                            )
-                          ],
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    child: Text.rich( //underline partially
+                        TextSpan(
+                            style: const TextStyle(fontSize: 12), //global text style
+                            children: [
+                              const TextSpan(text:"Description:\n",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)),
+                              TextSpan(text:snapshot.requireData, style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                              )), //partial text style
+                            ]
                         )
-                    )
-                  )
+                    ),
+                  ),
                 ],
               );
             } else {
@@ -142,13 +145,95 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
       future: state.widget.group.getInviteUrl(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return TextButton(onPressed: () => Clipboard.setData(ClipboardData(text: snapshot.requireData)), child: Text("Password: ${snapshot.requireData}"));
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  height: 40,
+                  child:
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                      minWidth: double.maxFinite,
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: snapshot.requireData));
+                        CustomErrorMessage.message(context: context, message: "Copied invite code to clipboard");
+                      },
+                      child: Align(
+                        alignment: FractionalOffset.centerLeft,
+                          child:  Text.rich( //underline partially
+                              TextSpan(
+                              style: const TextStyle(fontSize: 12), //global text style
+                              children: [
+                              const TextSpan(text:"Invite code:\n",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)),
+                              TextSpan(text:snapshot.requireData, style: const TextStyle(
+                                fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                              decoration:TextDecoration.underline
+                              )), //partial text style
+                              ]
+                              )
+                              ),
+                      )
+                  ),
+                ),
+
+            ],
+          );
         } else {
           return const Text("LOADING");
         }
       },
     );
   }
+
+  Widget _getLink() {
+      return FutureBuilder<String?>(
+        future: state.widget.group.link.asyncValue(),
+        builder: (context, snapshot) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  height: 40,
+                  child:
+                  MaterialButton(
+                    padding: EdgeInsets.zero,
+                    minWidth: double.maxFinite,
+                    onPressed: () {
+                      if (snapshot.hasData && snapshot.requireData != null && snapshot.requireData!.isNotEmpty) {
+                        Clipboard.setData(ClipboardData(text: snapshot.requireData));
+                        CustomErrorMessage.message(context: context, message: "Copied link to clipboard");
+                        launchUrl(Uri.parse(snapshot.requireData!),mode: LaunchMode.externalApplication);
+                      }
+                    },
+                    child: Align(
+                        alignment: FractionalOffset.centerLeft,
+                        child:  Text.rich( //underline partially
+                          maxLines: 2,
+                            TextSpan(
+                                style: const TextStyle(fontSize: 12), //global text style
+                                children: [
+                                  const TextSpan(text:"Url/Link:\n",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)),
+                                  TextSpan(text: snapshot.hasData && (snapshot.requireData == null || snapshot.requireData == "")? ""
+                                      : snapshot.hasData && snapshot.requireData != null ? "${snapshot.requireData}"
+                                      : "loading", style: const TextStyle(
+                                      fontSize: 16,
+                                      overflow: TextOverflow.fade,
+                                      fontWeight: FontWeight.normal,
+                                      decoration:TextDecoration.underline,
+                                  )), //partial text style
+                                ]
+                            )
+                        )
+                    ),
+                  ),
+                ),
+              ],
+            )
+      );
+    }
+
 
 
 }

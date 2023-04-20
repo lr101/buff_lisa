@@ -114,6 +114,7 @@ class ClusterNotifier extends ChangeNotifier {
     group.groupAdmin.setValue(changes.groupAdmin.syncValue!);
     group.visibility = changes.visibility;
     group.inviteUrl = changes.inviteUrl;
+    group.link.setValue(changes.link.syncValue);
     notifyListeners();
   }
 

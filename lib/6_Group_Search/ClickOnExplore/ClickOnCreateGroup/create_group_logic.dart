@@ -48,6 +48,9 @@ class CreateGroupPageState extends State<CreateGroupPage> {
         final controller2 = Provider
             .of<CreateGroupNotifier>(context, listen: false)
             .getText2;
+        final controller3 = Provider
+            .of<CreateGroupNotifier>(context, listen: false)
+            .getText3;
         final image = Provider
             .of<CreateGroupNotifier>(context, listen: false)
             .getImage;
@@ -57,7 +60,7 @@ class CreateGroupPageState extends State<CreateGroupPage> {
         if (controller1.text.isNotEmpty && controller2.text.isNotEmpty &&
             image != null) {
           FetchGroups.postGroup(
-              controller1.text, controller2.text, image, sliderValue.toInt())
+              controller1.text, controller2.text, image, sliderValue.toInt(), controller3.text == "" ? null : controller3.text)
               .then((group) {
             if (group != null) {
               Provider.of<ClusterNotifier>(context, listen: false).addGroup(
