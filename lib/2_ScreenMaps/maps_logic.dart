@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:buff_lisa/2_ScreenMaps/maps_ui.dart';
+import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Other/location_class.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
@@ -8,6 +12,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+
+import '../6_Group_Search/ClickOnGroup/show_group_logic.dart';
+import '../Files/DTOClasses/pin.dart';
+import '../Files/Routes/routing.dart';
+import 'ClickOnPin/image_widget_logic.dart';
 
 class MapsWidget extends StatefulWidget {
 
@@ -26,6 +35,8 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
   /// 3: 1 month
   /// 4: 1 year
   int filterState = 0;
+
+  ValueNotifier<double> slider = ValueNotifier<double>(0);
 
   /// flag for showing only pins of user or all
   /// false: all pins are shown
@@ -138,6 +149,43 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     } else {
       Provider.of<MarkerNotifier>(context, listen:false).setFilterDate(DateTime.now().subtract(Duration(days: days)), null);
     }
+  }
+
+  Future<List<MapEntry<Pin, double>>> pinsCloseBy() async {
+    try {
+      Set<Group> groups = Provider.of<ClusterNotifier>(context).getActiveGroups;
+      final destLocation = await LocationClass.getLocation();
+      final LatLng position =
+          LatLng(destLocation.latitude, destLocation.longitude);
+      Map<Pin, double> pins = {};
+      const Distance d = Distance();
+      for (Group group in groups) {
+        for (Pin pin in await group.pins.asyncValue()) {
+          double distance2 =
+              d.distance(LatLng(pin.latitude, pin.longitude), position);
+          pins[pin] = distance2;
+        }
+      }
+      List<MapEntry<Pin, double>> sorted = pins.entries.toList()
+        ..sort((e1, e2) => e1.value.compareTo(e2.value));
+      return sorted.sublist(0, 10);
+    } catch(e) {
+      return [];
+    }
+  }
+
+
+
+  void handleTabOnImage(Pin pin) {
+    Routing.to(context, ShowImageWidget(pin: pin, newPin: false));
+  }
+
+  Future<void> onPanelOpen() async {
+    setState(() {});
+  }
+
+  void handleOpenGroup(Pin pin) {
+    Routing.to(context,   ShowGroupPage(group: pin.group, myGroup: true));
   }
 
 

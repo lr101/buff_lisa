@@ -38,7 +38,7 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
                   return GestureDetector(
                       onTap: handleOpenImage,
                       child: CustomRoundImage(
-                        imageCallback: widget.provide,
+                        imageCallback: getImage,
                         size: 50,
                         child: Stack(
                             children: [
@@ -64,7 +64,7 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
   }
 
   Future<Uint8List?> getImage() {
-    if (image == null && !updating) {
+    if (image == null) {
       return widget.provide();
     } else {
       return Future(() => image);

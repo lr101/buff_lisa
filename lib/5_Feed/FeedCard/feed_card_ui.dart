@@ -47,9 +47,12 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                           Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                CustomRoundImage(
-                                  size: 18,
-                                  imageCallback: Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImageSmall.asyncValue,
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child:CustomRoundImage(
+                                    size: 16,
+                                    imageCallback: Provider.of<UserNotifier>(context).getUser(state.widget.pin.username).profileImageSmall.asyncValue,
+                                  ),
                                 ),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -174,7 +174,7 @@ class FetchUsers {
     });
     Response response = await RestAPI.createHttpsRequest("/api/users/$username/profile_picture", {}, 2,encode:  json);
     if (response.statusCode == 200) {
-      return profilePicture;
+      return response.bodyBytes;
     }
     return null;
   }

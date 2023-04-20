@@ -16,7 +16,7 @@ class RestAPI {
   static Future<http.Response> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, {String? encode, int timeout = 30}) async {
     Map<String, String> header = {"Authorization" : "Bearer ${global.localData.token}"};
     if (encode != null) header["Content-Type"] = "application/json";
-    //Uri uri = Uri(scheme: "http", host: "10.0.2.2", port: 8081, path: path, queryParameters: queryParameters);
+    //Uri uri = Uri(scheme: "http", host: "10.0.2.2", port: 3000, path: path, queryParameters: queryParameters);
     Uri uri = Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters);
     if (kDebugMode) print(uri);
     switch (requestType) {

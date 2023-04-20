@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:buff_lisa/Files/DTOClasses/user.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -12,6 +14,12 @@ class UserNotifier with ChangeNotifier {
 
   Future<void> updatePins(String username, List<Pin> pins) async {
     await getUser(username).updatePins(pins);
+    notifyListeners();
+  }
+
+  Future<void> updateProfileImage(String username) async {
+    await getUser(username).profileImage.refresh();
+    await getUser(username).profileImageSmall.refresh();
     notifyListeners();
   }
 
@@ -40,5 +48,6 @@ class UserNotifier with ChangeNotifier {
 
   void removeUser(String username) {
     _users.removeWhere((element) => element.username == username);
+    notifyListeners();
   }
 }
