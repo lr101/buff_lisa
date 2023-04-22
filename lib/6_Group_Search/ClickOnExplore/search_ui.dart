@@ -31,13 +31,12 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
                 action: () async => Provider.of<SearchNotifier>(context, listen: false).toggle(state.filtered)
             )
           ),
-          sliverList: CustomSliverList(
+          child: PagedListView<dynamic, Widget>(
             pagingController: state.pagingController,
-            initPagedList: () async {
-              await state.pullRefresh(null);
-              return true;
-            },
-          )
+            builderDelegate: PagedChildBuilderDelegate<Widget>(
+              itemBuilder: (context, item, index) => item,
+            ),
+          ),
         )
     );
   }
