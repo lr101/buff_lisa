@@ -60,6 +60,7 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
         final BottomNavigationBar navigationBar = widget.navbarContext.globalKey.currentWidget! as BottomNavigationBar;
         if (!mounted) return;
         Provider.of<DateNotifier>(context, listen: false).notifyReload();
+        Provider.of<ClusterNotifier>(context, listen: false).activateGroup(widget.group);
         Navigator.pop(context);
         navigationBar.onTap!(2);
 

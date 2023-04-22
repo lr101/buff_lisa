@@ -168,7 +168,7 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
       }
       List<MapEntry<Pin, double>> sorted = pins.entries.toList()
         ..sort((e1, e2) => e1.value.compareTo(e2.value));
-      return sorted.sublist(0, 10);
+      return sorted.sublist(0, sorted.length > 10 ? 10 : sorted.length);
     } catch(e) {
       return [];
     }

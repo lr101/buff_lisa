@@ -144,6 +144,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                         center:
                             LatLng(widget.pin.latitude, widget.pin.longitude),
                         zoom: global.feedZoom,
+                        interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
                         keepAlive: false),
                     children: [
                       TileLayer(

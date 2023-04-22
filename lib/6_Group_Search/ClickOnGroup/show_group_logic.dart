@@ -104,6 +104,7 @@ class ShowGroupPageState extends State<ShowGroupPage> {
   void joinPublicGroup() {
     FetchGroups.joinGroup(widget.group.groupId, null).then((value) {
       Provider.of<ClusterNotifier>(context, listen: false).addGroup(value);
+      Provider.of<ClusterNotifier>(context, listen: false).activateGroup(value);
       Navigator.pop(context, {"joined" : true});
     });
   }
@@ -114,6 +115,7 @@ class ShowGroupPageState extends State<ShowGroupPage> {
     try {
       FetchGroups.joinGroup(widget.group.groupId, controller.text).then((value) {
         Provider.of<ClusterNotifier>(context, listen: false).addGroup(value);
+        Provider.of<ClusterNotifier>(context, listen: false).activateGroup(value);
         Navigator.pop(context, {"joined" : true});
       });
     } catch(e) {
