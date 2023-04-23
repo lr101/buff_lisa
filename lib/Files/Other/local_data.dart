@@ -23,6 +23,7 @@ class LocalData {
   static const String lastSeenKey = "lastSeenKey";
   static const String mapApiKey = "mapApiKey";
   static const String mapStyle = "mapStyle";
+  static const String notice0 = "notice0";
 
 
   late Secure secure = Secure();
@@ -186,6 +187,14 @@ class LocalData {
 
   void setMapStyle(int? style) {
     offlineDataStorage.put(style, key: mapStyle);
+  }
+
+  void setNoticeTrue(String notice) {
+    offlineDataStorage.put(true, key: notice);
+  }
+
+  bool getNotice(String notice) {
+    return offlineDataStorage.get(notice) ?? false;
   }
 
 }

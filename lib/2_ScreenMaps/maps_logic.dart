@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:buff_lisa/2_ScreenMaps/maps_ui.dart';
+import 'package:buff_lisa/7_Settings/EditMap/edit_map.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Other/location_class.dart';
@@ -16,6 +17,7 @@ import 'package:provider/provider.dart';
 import '../6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/Routes/routing.dart';
+import '../Files/Widgets/cusotm_alert_dialog.dart';
 import 'ClickOnPin/image_widget_logic.dart';
 
 class MapsWidget extends StatefulWidget {
@@ -67,6 +69,24 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setLocation();
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!global.localData.getNotice("notice1")) {
+        showDialog(
+            context: context,
+            builder: (context) =>
+                CustomAlertDialog(
+                  title: "Is your Map not working?",
+                  text2: "Open Settings",
+                  text1: "Remind me later",
+                  onPressed: () {
+                    global.localData.setNoticeTrue("notice1");
+                    Routing.to(context, const EditMap());
+                  },
+                  child: const Text(
+                      "Why should I create an map account myself?\n\nStick-It is kept alive without spending any money. Server, memory and also the map service can therefore only be used up to a certain point, otherwise costs would be incurred. Stick-It uses 'Stadia Maps' as its map provider. Anyone can register a free account with 'Stadia Maps'. No payment information is stored; For the account, only an e-email address required. To connect the account to Sick-It an API Key must be inserted in the Settings under 'Edit Map'."),
+                ));
+        }
+      });
   }
 
   @override

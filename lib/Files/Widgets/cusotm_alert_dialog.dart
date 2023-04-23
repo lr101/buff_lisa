@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,25 +15,40 @@ class CustomAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoAlertDialog(
-      title: Text(title),
-      content: Padding(padding: const EdgeInsets.all(10), child: Material(child: child)),
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: text1 != null ? Text(text1!) : const SizedBox.shrink(),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            onPressed();
-          },
-          child: Text(text2),
-        ),
-      ],
+    return dialog(
+        Text(title),
+        child == null ? null : Padding(padding: const EdgeInsets.all(10), child: Material(child: child)),
+        <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: text1 != null ? Text(text1!) : const SizedBox.shrink(),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              onPressed();
+            },
+            child: Text(text2),
+          ),
+        ],
     );
   }
 
+  Widget dialog(Widget title, Widget? content, List<Widget> actions) {
+    if (Platform.isIOS) {
+      return CupertinoAlertDialog(
+        title: title,
+        content: content,
+        actions: actions,
+      );
+    } else {
+      return AlertDialog(
+        title: title,
+        content: content,
+        actions: actions,
+      );
+    }
+  }
 
 
 }
