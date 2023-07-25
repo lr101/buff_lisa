@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../DTOClasses/group.dart';
 import 'local_data.dart';
 
 /// zoom when the maps controller sets the current location to the user location
@@ -26,3 +27,5 @@ late List<CameraDescription> cameras;
 /// holds information of data that is stored locally on device
 /// is initialized on startup of app
 late LocalData localData;
+
+Group basicGroup = Group(groupId: -1, name: "", visibility: 0, inviteUrl: "", description: "");

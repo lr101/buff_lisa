@@ -177,8 +177,8 @@ class LocalData {
     offlineDataStorage.put(apiKey, key: mapApiKey);
   }
 
-  String getMapApiKey() {
-    return offlineDataStorage.get(mapApiKey) ?? dotenv.env["MAPS_API_KEY"]!;
+  String? getMapApiKey() {
+    return offlineDataStorage.get(mapApiKey);
   }
 
   int? getMapStyle () {

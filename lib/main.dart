@@ -40,6 +40,7 @@ Future<void> main() async {
   Hive.registerAdapter(GroupDTOAdapter());
   Hive.registerAdapter(PinDTOAdapter());
   global.localData = await LocalData.fromInit();
+  await global.basicGroup.profileImage.setValue((await rootBundle.load('images/profile.jpg')).buffer.asUint8List());
   runApp(MyApp(isLoggedIn: global.localData.username != ""));
 }
 

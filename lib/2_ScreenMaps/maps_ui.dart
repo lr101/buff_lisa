@@ -54,7 +54,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                   TileLayer(
                     urlTemplate: "${Provider.of<MapNotifier>(context).getMapUrl(Provider.of<ThemeNotifier>(context).getTheme.brightness)}?api_key={api_key}",
                     additionalOptions: {
-                      "api_key": global.localData.getMapApiKey()
+                      "api_key": global.localData.getMapApiKey() ?? ""
                     }
                   ),
                   CurrentLocationLayer(),

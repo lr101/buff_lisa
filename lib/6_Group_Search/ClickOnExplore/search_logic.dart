@@ -5,12 +5,15 @@ import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Routes/routing.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 import '../../Files/Widgets/custom_list_tile.dart';
 
@@ -70,10 +73,10 @@ class SearchGroupPageState extends State<SearchGroupPage> {
   /// Gets group information of ids from index range [pageKey, pageKey + _numPages -1]
   /// Adds the Groups to [pagingController] to be build in page List
   Future<void> _fetchPage(int pageKey) async {
-      if (pageKey + 50 < groups.length) {
+      if (pageKey + 15 < groups.length) {
         List<Widget> widgets = [];
         int i = pageKey;
-        for (; pageKey < i + 50; pageKey++) {
+        for (; pageKey < i + 15; pageKey++) {
           widgets.add(await getCardOfOtherGroups(pageKey));
         }
         pagingController.appendPage(widgets, pageKey);
@@ -104,15 +107,28 @@ class SearchGroupPageState extends State<SearchGroupPage> {
 /// Get Card of a Group
 /// Shows the name, group image, visibility
 Future<Widget> getCardOfOtherGroups(int index) async {
-    Group group;
-    try {
-      group = Provider.of<ClusterNotifier>(context, listen: false).otherGroups.firstWhere((element) => element.groupId == groups[index]);
-    } catch(_) {
-      group = await FetchGroups.getGroup(groups[index], false);
-      if (!mounted) return const SizedBox.shrink();
-      Provider.of<ClusterNotifier>(context,listen: false).addOtherGroup(group);
-    }
-      return CustomListTile.fromGroup(group, () => handleJoinGroupPress(group));
+    return FutureBuilder<Group>(
+        future:  getGroup(index),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return CustomListTile.fromGroup(snapshot.requireData, () => handleJoinGroupPress(snapshot.requireData));
+          } else {
+            return CustomListTile.fromGroup(global.basicGroup, () {CustomErrorMessage.message(context: context, message: "loading...");});
+          }
+        },
+    );
+}
+
+Future<Group> getGroup(int index) async {
+  Group group;
+  try {
+    group = Provider.of<ClusterNotifier>(context, listen: false).otherGroups.firstWhere((element) => element.groupId == groups[index]);
+  } catch(_) {
+    group = await FetchGroups.getGroup(groups[index], false);
+    if (!mounted) return global.basicGroup;
+    Provider.of<ClusterNotifier>(context,listen: false).addOtherGroup(group);
+  }
+  return group;
 }
 
   /// opens the ShowGroupPage Widget when a group card is pressed and wait for the result

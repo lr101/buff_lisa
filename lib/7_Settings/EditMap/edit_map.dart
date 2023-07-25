@@ -217,13 +217,18 @@ class EditMapState extends State<EditMap> {
   }
 
   void updateStyle(int? num) {
-    setState(() {
-      if (selected != num) {
-        Provider.of<MapNotifier>(context, listen: false).setMapStyle(num);
-        selected = num;
-        CustomErrorMessage.message(context: context, message: "Map style successfully updated");
-      }
-    });
+    if (global.localData.getMapApiKey() != null) {
+      setState(() {
+        if (selected != num) {
+          Provider.of<MapNotifier>(context, listen: false).setMapStyle(num);
+          selected = num;
+          CustomErrorMessage.message(
+              context: context, message: "Map style successfully updated");
+        }
+      });
+    } else {
+      CustomErrorMessage.message(context: context, message: "Create own API-Key fist");
+    }
   }
 
   Future<void> _launchUrl() async {

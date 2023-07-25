@@ -9,7 +9,7 @@ class MapNotifier with ChangeNotifier {
     notifyListeners();
   }
 
-  String get mapApiKey => global.localData.getMapApiKey();
+  String? get mapApiKey => global.localData.getMapApiKey();
 
   void setMapStyle(int? style) {
     global.localData.setMapStyle(style);
@@ -28,7 +28,7 @@ class MapNotifier with ChangeNotifier {
  break;
       case 3 : url += "osm_bright";
  break;
-      default : url += (mode == Brightness.dark) ? "alidade_smooth_dark" : "osm_bright";
+      default : return "https://map.lr-projects.de/tile/{z}/{x}/{y}.png";
     }
     return url += "/{z}/{x}/{y}{r}.png";
   }
