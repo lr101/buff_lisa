@@ -6,6 +6,7 @@ import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Other/location_class.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
 import 'package:flutter/material.dart';
@@ -45,26 +46,25 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   /// closes page if offline save is successful
   /// navigates to map screen
   Future<void> handleApprove() async {
-    if (!uploading) {
-      uploading = true;
-        Pin mona = await _createMona(widget.image, widget.group);
-        try {
-          Pin pin =  await FetchPins.postPin(mona);
-          if (!mounted) return;
-          Provider.of<ClusterNotifier>(context, listen: false).addPin(pin);
-        } catch(_) {
-          if (!mounted) return;
-          await Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(mona);
-        }
-        uploading = false;
-        final BottomNavigationBar navigationBar = widget.navbarContext.globalKey.currentWidget! as BottomNavigationBar;
-        if (!mounted) return;
-        Provider.of<DateNotifier>(context, listen: false).notifyReload();
-        Provider.of<ClusterNotifier>(context, listen: false).activateGroup(widget.group);
-        Navigator.pop(context);
-        navigationBar.onTap!(2);
+    _tryUpload(widget.navbarContext.context);
+    final BottomNavigationBar navigationBar = widget.navbarContext.globalKey.currentWidget! as BottomNavigationBar;
+    Provider.of<DateNotifier>(context, listen: false).notifyReload();
+    Provider.of<ClusterNotifier>(context, listen: false).activateGroup(widget.group);
+    Navigator.pop(widget.navbarContext.context);
+    navigationBar.onTap!(2);
+  }
 
+  Future<void> _tryUpload(BuildContext context) async {
+    Pin mona = await _createMona(widget.image, widget.group);
+    if (context.mounted) {
+      Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(mona);
+      await FetchPins.postPin(mona).then((value) {
+        Provider.of<ClusterNotifier>(context,listen: false).deleteOfflinePinAndAddToOnline(value, mona);
+      }, onError: (_) => _sendMessage(context));
     }
+  }
+  _sendMessage(BuildContext context) {
+    CustomErrorMessage.message(context: context, message: "Error while uploading, pin is saved offline");
   }
 
   /// on button press of back button

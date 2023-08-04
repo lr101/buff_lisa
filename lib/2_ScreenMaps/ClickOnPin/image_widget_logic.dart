@@ -48,31 +48,41 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   Future<void> handleButtonPress() async{
       if (widget.pin.username == global.localData.username) {
         BuildContext c = context;
-        bool deleted = true;
-        await showDialog<bool>(context: context, builder: (context) =>
+        await showDialog<bool>(context: context, builder: (_) =>
             CustomAlertDialog(
               title: "Delete this post?",
               text1: "Cancel",
               text2: "Delete",
               onPressed: () async {
-                if (widget.pin.id < 0) {
-                  await Provider.of<ClusterNotifier>(c, listen: false)
-                      .deleteOfflinePin(widget.pin);
-                } else {
-                  deleted = await Provider.of<ClusterNotifier>(c, listen: false)
-                      .removePin(widget.pin);
+                bool deleted = false;
+                try {
+                  if (widget.pin.id < 0) {
+                    await Provider.of<ClusterNotifier>(c, listen: false)
+                        .deleteOfflinePin(widget.pin);
+                    deleted = true;
+                  } else {
+                    deleted = await Provider.of<ClusterNotifier>(c, listen: false)
+                        .removePin(widget.pin);
+                  }
+                } catch (_) {
+                  deleted = false;
                 }
+                closeIfMounted(deleted);
               },
             )
         );
-        if (deleted && mounted) {
-          Provider.of<DateNotifier>(c, listen: false).notifyReload();
-          Navigator.pop(context);
-        } else {
-          CustomErrorMessage.message(
-              context: context, message: "Image could not be deleted");
-        }
+
       }
+  }
+
+  closeIfMounted(bool deleted) {
+    if (deleted && mounted) {
+      Provider.of<DateNotifier>(context, listen: false).notifyReload();
+      Navigator.pop(context);
+    } else {
+      CustomErrorMessage.message(
+          context: context, message: "Image could not be deleted");
+    }
   }
 
   void handleOpenUserProfile() {

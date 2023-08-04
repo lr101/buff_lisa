@@ -157,12 +157,23 @@ class ClusterNotifier extends ChangeNotifier {
         _markerNotifier.addMarker(pin);
         _markerNotifier.update();
       }
-      if (!group.members.isEmpty && pin.username == global.localData.username) {
-        group.members.syncValue!.firstWhere((element) => element.username == global.localData.username).addOnePoint();
-        group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
-      }
+      addPointToMembers(group, pin);
     }
     notifyListeners();
+  }
+
+  addPointToMembers(Group group, Pin pin) {
+    if (!group.members.isEmpty && pin.username == global.localData.username) {
+      group.members.syncValue!.firstWhere((element) => element.username == global.localData.username).addOnePoint();
+      group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
+    }
+  }
+
+  removePointFromMembers(Group group, Pin pin) {
+    if (!group.members.isEmpty && pin.username == global.localData.username) {
+      group.members.syncValue!.firstWhere((element) => element.username == global.localData.username).subOnePoint();
+      group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
+    }
   }
 
   Future<void> addPins(Set<Pin> pins) async {
@@ -236,7 +247,11 @@ class ClusterNotifier extends ChangeNotifier {
     try {
       await FetchPins.deleteMonaFromPinId(pin.id);
       await _userNotifier.removePin(pin.username, pin.id);
-      hidePin(pin);
+      pin.group.removePin(pin);
+      _userNotifier.removePin(global.localData.username, pin.id);
+      _markerNotifier.removeMarker(pin);
+      _markerNotifier.update();
+      removePointFromMembers(pin.group, pin);
       return true;
     } catch(e) {
       return false;
@@ -273,6 +288,7 @@ class ClusterNotifier extends ChangeNotifier {
   Future<void> deleteOfflinePinAndAddToOnline(Pin newPin, Pin oldPin) async{
     await deleteOfflinePin(oldPin);
     await addPin(newPin);
+    notifyListeners();
   }
 
   /// remove [pin] from [_offlinePins] and device storage
@@ -284,6 +300,7 @@ class ClusterNotifier extends ChangeNotifier {
     pin.group.removePin(pin);
     await _userNotifier.removePin(pin.username, pin.id);
     (await PinRepo.fromInit(LocalData.pinFileNameKey)).deletePin(pin.id);
+    removePointFromMembers(pin.group, pin);
     notifyListeners();
   }
 
@@ -295,6 +312,7 @@ class ClusterNotifier extends ChangeNotifier {
     if (!kIsWeb) {
       (await PinRepo.fromInit(LocalData.pinFileNameKey)).setPin(mona);
       addPin(mona);
+      notifyListeners();
     }
   }
 

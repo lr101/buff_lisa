@@ -47,9 +47,10 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
                                 alignment: Alignment.bottomRight,
                                 child: GestureDetector(
                                     onTap: () => handleImageUpload(context),
-                                    child: const CircleAvatar(
+                                    child: CircleAvatar(
+                                      backgroundColor: Provider.of<ThemeNotifier>(context).getTheme.iconTheme.color,
                                       radius: 18,
-                                      child: Icon(Icons.edit),
+                                      child: const Icon(Icons.edit),
                                     )
                                 ),
                               ),

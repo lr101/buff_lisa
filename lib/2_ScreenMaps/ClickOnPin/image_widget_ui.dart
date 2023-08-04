@@ -30,7 +30,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
         appBar: null,
         body: CustomTitle(
             title: CustomEasyTitle(
-              title: const Text("Image"),
+              title: Text("Image ${widget.pin.id < 0 ? "(offline)":""}"),
               back: true,
               right: getActionBar(),
             ),

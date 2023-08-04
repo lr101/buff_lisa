@@ -40,7 +40,8 @@ class CustomTitleState extends State<CustomTitle> {
              Scaffold(
                appBar: AppBar(
                  backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
-                 leading: widget.title.leading,
+                 automaticallyImplyLeading: false,
+                 leading: left(),
                  title: widget.title.title,
                  actions: widget.title.right != null ? [widget.title.right!.build()] : null,
                ),
@@ -67,5 +68,26 @@ class CustomTitleState extends State<CustomTitle> {
           child: Column(children: [Expanded(child: (widget.sliverList!))])
         )
     );
+  }
+
+  Widget left() {
+    if (widget.title.back) {
+      return IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: Icon(Icons.arrow_back, color: Provider.of<ThemeNotifier>(context).getTheme.iconTheme.color),
+      );
+    } else if (!widget.title.back && widget.title.left != null) {
+      return  widget.title.left!.build();
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget right() {
+    if (widget.title.right != null) {
+      return widget.title.right!.build();
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 }

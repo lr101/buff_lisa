@@ -28,4 +28,4 @@ late List<CameraDescription> cameras;
 /// is initialized on startup of app
 late LocalData localData;
 
-Group basicGroup = Group(groupId: -1, name: "", visibility: 0, inviteUrl: "", description: "");
+Group basicGroup = Group(groupId: -1, name: "", visibility: 0, inviteUrl: "", description: "", saveOffline: false);

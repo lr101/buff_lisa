@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:buff_lisa/Files/DTOClasses/pin_repo.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/foundation.dart';
@@ -27,13 +29,20 @@ class SplashLoadingState extends State<SplashLoading> with TickerProviderStateMi
   late AnimationController controller;
   bool determinate = false;
 
+  String offlineMessage = "Connecting to server";
+
   @override
   void initState() {
+    Timer(const Duration(seconds: 8, milliseconds: 50), () {
+      setState(() {
+        offlineMessage = "Logging in offline";
+      });
+    });
     controller = AnimationController(
       /// [AnimationController]s can be created with `vsync: this` because of
       /// [TickerProviderStateMixin].
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 10),
     )..addListener(() {
       setState(() {});
     });
@@ -63,6 +72,8 @@ class SplashLoadingState extends State<SplashLoading> with TickerProviderStateMi
               value: controller.value,
               semanticsLabel: 'Linear progress indicator',
             ),
+            const SizedBox(height: 10),
+            Text(offlineMessage)
           ],
         ),
       ),

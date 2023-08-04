@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:measured_size/measured_size.dart';
 import 'package:provider/provider.dart';
-
 import '../../../Providers/theme_provider.dart';
 import '../../Themes/custom_theme.dart';
 
@@ -39,9 +38,9 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
       automaticallyImplyLeading: false,
       title: Consumer<ThemeNotifier>(builder: (context, value, child) => widget.title ?? const SizedBox.shrink()),
       backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
-      leading: _left(),
+      leading: left(),
       pinned: true,
-      actions: [_right()],
+      actions: [right()],
       expandedHeight:  isHeightCalculated ? height : 0,
         flexibleSpace: FlexibleSpaceBar(
             stretchModes: const <StretchMode>[
@@ -77,11 +76,11 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
     );
   }
 
-  Widget _left() {
+  Widget left() {
     if (widget.back) {
       return IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back)
+          icon: Icon(Icons.arrow_back, color: Provider.of<ThemeNotifier>(context).getTheme.iconTheme.color),
       );
     } else if (!widget.back && widget.left != null) {
       return  widget.left!.build();
@@ -90,7 +89,7 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
     }
   }
 
-  Widget _right() {
+  Widget right() {
     if (widget.right != null) {
       return widget.right!.build();
     } else {
