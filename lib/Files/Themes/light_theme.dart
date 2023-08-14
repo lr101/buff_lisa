@@ -18,10 +18,7 @@ class LightTheme {
       tertiaryKey:  const Color(0xFF4c8077),
       tones: FlexTones.vivid(Brightness.light),
     ),
-    // colorScheme: ColorScheme.fromSeed(
-    //     seedColor: const Color(0xFFFDAD3E),
-    //     secondary: const Color(0xFF4b8078),
-    //     primary: const Color(0xff005248)),
+    applyElevationOverlayColor: false,
     outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
           overlayColor: MaterialStateColor.resolveWith((states) =>  CustomTheme.c2.withOpacity(0.2)),

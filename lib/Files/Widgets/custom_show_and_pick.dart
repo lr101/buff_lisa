@@ -11,11 +11,13 @@ import '../Themes/custom_theme.dart';
 import 'custom_image_picker.dart';
 
 class CustomShowAndPick extends StatefulWidget {
-  const CustomShowAndPick({super.key, required this.updateCallback, this.defaultImage = const Image(image: AssetImage("images/profile.jpg")), required this.provide});
+  const CustomShowAndPick({super.key, required this.updateCallback, this.defaultImage = const Image(image: AssetImage("images/profile.jpg")), required this.provide, this.size = 50, this.iconSize = 18});
 
   final Future<Uint8List?> Function() provide;
   final Future<Uint8List?> Function(Uint8List, BuildContext context) updateCallback;
   final Image defaultImage;
+  final double size;
+  final double iconSize;
 
   @override
   CustomShowAndPickState createState() => CustomShowAndPickState();
@@ -28,18 +30,14 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FutureBuilder<Uint8List?>(
+    return FutureBuilder<Uint8List?>(
               future:  getImage(),
               builder: (context, snapshot) {
                   return GestureDetector(
                       onTap: handleOpenImage,
                       child: CustomRoundImage(
                         imageCallback: getImage,
-                        size: 50,
+                        size: widget.size,
                         child: Stack(
                             children: [
                               Center(child: snapshot.connectionState == ConnectionState.done && !updating ? const SizedBox.shrink() : const CircularProgressIndicator()),
@@ -47,9 +45,9 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
                                 alignment: Alignment.bottomRight,
                                 child: GestureDetector(
                                     onTap: () => handleImageUpload(context),
-                                    child: const CircleAvatar(
-                                      radius: 18,
-                                      child: Icon(Icons.edit),
+                                    child: CircleAvatar(
+                                      radius: widget.iconSize,
+                                      child: const Icon(Icons.edit),
                                     )
                                 ),
                               ),
@@ -58,8 +56,6 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
                       )
                   );
               }
-          )
-        ]
     );
   }
 

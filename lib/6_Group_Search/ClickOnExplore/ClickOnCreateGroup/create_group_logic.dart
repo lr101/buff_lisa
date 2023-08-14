@@ -1,4 +1,5 @@
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,13 @@ class CreateGroupPageState extends State<CreateGroupPage> {
                   group);
               Navigator.pop(context);
             }
-          });
+          }, onError: (_) => CustomErrorMessage.message(context: context, message: "Error during server upload. Try again later"));
+        } else if (controller1.text.isEmpty) {
+          CustomErrorMessage.message(context: context, message: "Group name to short");
+        } else if (controller2.text.isEmpty) {
+          CustomErrorMessage.message(context: context, message: "Group description to short");
+        } else if (image == null) {
+          CustomErrorMessage.message(context: context, message: "Group image missing");
         }
       } finally{
         uploading = false;

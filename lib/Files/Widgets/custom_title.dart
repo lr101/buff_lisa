@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_sliver_list.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:measured_size/measured_size.dart';
 import 'package:provider/provider.dart';
 
@@ -52,8 +53,13 @@ class CustomTitleState extends State<CustomTitle> {
     if (widget.sliverList != null) {
       return Scaffold(
         backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
-        body: SafeArea(
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.light.copyWith(
+                statusBarColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+            ),
+            child: SafeArea(
             child: _withList()
+         )
         )
       );
     } else if (widget.child != null) {
@@ -96,7 +102,6 @@ class CustomTitleState extends State<CustomTitle> {
   Widget _withList() {
     return NestedScrollView(
         physics: const BouncingScrollPhysics(),
-        floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerScrolled) => <Widget>[
           SliverOverlapAbsorber(
                 handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),

@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../Files/Themes/custom_theme.dart';
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../../Files/Widgets/CustomSliverList/custom_sliver_list.dart';
 import '../../Files/Widgets/cusotm_alert_dialog.dart';
@@ -129,9 +130,9 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
           }
       );
     } else {
-      return const Row(
+      return Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Text("Description: "),
             Icon(Icons.lock)
           ]

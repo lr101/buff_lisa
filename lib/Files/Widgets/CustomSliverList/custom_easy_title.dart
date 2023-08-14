@@ -35,6 +35,7 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
   Widget build(BuildContext context) {
     return SliverAppBar(
       automaticallyImplyLeading: false,
+      scrolledUnderElevation: 0.0,
       title: Consumer<ThemeNotifier>(builder: (context, value, child) => widget.title ?? const SizedBox.shrink()),
       backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
       leading: left(),

@@ -20,6 +20,7 @@ class DarkTheme {
          tertiaryKey:  const Color(0xFF4c8077),
          tones: FlexTones.vivid(Brightness.dark),
       ),
+      applyElevationOverlayColor: false,
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
           overlayColor: MaterialStateColor.resolveWith((states) =>  CustomTheme.c2.withOpacity(0.2)),

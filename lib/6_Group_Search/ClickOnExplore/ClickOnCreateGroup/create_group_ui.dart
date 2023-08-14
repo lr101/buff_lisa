@@ -22,75 +22,116 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
     TextEditingController t3 = Provider.of<CreateGroupNotifier>(context).getText3;
     return Scaffold(appBar: null,
           resizeToAvoidBottomInset: false,
-          body: CustomTitle(
+          body: CustomTitle.withoutSlivers(
             title: CustomEasyTitle(
               title: Text("Create Group", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
-              back: true,
-              right: CustomEasyAction(
-                child: const Icon(Icons.add_task),
-                action: () async => state.createGroup(context))
-              ),
+              back: true,),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Consumer<CreateGroupNotifier>(
-                  builder: (context, value, child) => CustomShowAndPick(
-                    updateCallback: (p0, context) {
-                      Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
-                      return Future(() => p0);
-                    },
-                    provide: () async => value.getImage,
-                  ),
-                ),
-                const SizedBox(height: 20,),
-                const Text("group name:"),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: TextFormField(
-                      textAlign: TextAlign.center,
-                      controller: t1
-                  ),
-                ),
-                const SizedBox(height: 20,),
-                const Text("Description:"),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    controller: t2,
-                  ),
-                ),
-                const SizedBox(height: 20,),
-                const Text("Web Url/Link:"),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.url,
-                    maxLines: 1,
-                    controller: t3,
-                    decoration: const InputDecoration(hintText: "not required"),
-                  ),
-                ),
-                const SizedBox(height: 20,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              Container(
+              color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+              child: Padding(padding: const EdgeInsets.all(10), child: Row(
                   children: [
-                    const Text("public "),
-                    Switch(
-                      value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
-                      onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
-                      focusColor: CustomTheme.c1,
-                    ),
-                    const Text("private")
+                    SizedBox(
+                      width: 90,
+                      child: Consumer<CreateGroupNotifier>(
+                      builder: (context, value, child) => CustomShowAndPick(
+                        size: 40,
+                        iconSize: 15,
+                        updateCallback: (p0, context) {
+                          Provider.of<CreateGroupNotifier>(context, listen: false).setImage(p0);
+                          return Future(() => p0);
+                        },
+                        provide: () async => value.getImage,
+                      ),
+                    ),),
+                    const SizedBox(width: 10,),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 120,
+                      child:
+                        TextFormField(
+                          textAlign: TextAlign.left,
+                          decoration: const InputDecoration(hintText: "Type your group name"),
+                          controller: t1
+                      ),
+                    )
                   ],
+                ),),),
+                const SizedBox(height: 5,),
+      Container(
+        color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+        child: Padding(padding: const EdgeInsets.all( 10),
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Description:",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
+                            TextField(
+                              textAlign: TextAlign.start,
+                              keyboardType: TextInputType.multiline,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
+                              decoration: const InputDecoration(hintText: "Type your group description"),
+                              maxLines: null,
+                              controller: t2,
+                            ),
+                          ]
+                      )
+                ),),),
+                const SizedBox(height: 5,),
+                Container(
+                  color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+                  child: Padding(padding: const EdgeInsets.all( 10),
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Url/Link:",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
+                            TextField(
+                              textAlign: TextAlign.start,
+                              keyboardType: TextInputType.url,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
+                              decoration: const InputDecoration(hintText: "Type your link (optional)"),
+                              maxLines: 1,
+                              controller: t3,
+                            ),
+                          ]
+                      )
+                  ),),),
+                const SizedBox(height: 5,),
+                Container(
+                  color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+                  child: Padding(padding: EdgeInsets.all(10), child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Group privacy (default public):", style:  TextStyle(fontSize: 14, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)),
+                        Switch(
+                          value: Provider.of<CreateGroupNotifier>(context).getSliderValue != 0,
+                          onChanged: (value) => state.sliderOnChange(value ? 1 : 0, context),
+                          focusColor: CustomTheme.c1,
+                        ),
+                      ],
+                    ),
+                  ),)
                 )
               ],
             ),
-          )
-        );
+          ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.check),
+            onPressed: () async => state.createGroup(context))
+    );
   }
 
 }
