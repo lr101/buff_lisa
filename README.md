@@ -74,6 +74,7 @@ Look [here](https://docs.flutter.dev/deployment/android) for more information
 
 Look [here](https://docs.flutter.dev/deployment/ios) for more information
 
+ - Set Developer Profile under Runner -> Signing & Automatic signing
 ## Other
 
 ### Packages used
@@ -128,5 +129,5 @@ Look [here](https://docs.flutter.dev/deployment/ios) for more information
 ### Build ios release
 
 - run ```flutter build ipa```
-- run ```xcrun altool --upload-app --type ios -f build/ios/ipa/*.ipa --apiKey B4589LDTP6 --apiIssuer 085ec48f-332a-4138-b4dd-c64be661fa63```
-
+- run ```xcrun altool --upload-app --type ios -f build/ios/ipa/*.ipa --apiKey B4589LDTP6 --apiIssuer 085ec48f-332a-4138-b4dd-c64be661fa63``` 
+- or ```xcrun altool --upload-app --type ios -f build/ios/ipa/*.ipa --apiKey 5QT3Y74Q5L --apiIssuer 085ec48f-332a-4138-b4dd-c64be661fa63```

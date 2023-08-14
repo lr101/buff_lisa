@@ -25,7 +25,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-      body: CustomTitle(
+      body: CustomTitle.withSliverList(
         title: CustomEasyTitle(
             customBackground: CustomProfileLayout(
               posts: state.calcNumPosts(),
@@ -129,9 +129,9 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
           }
       );
     } else {
-      return Row(
+      return const Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text("Description: "),
             Icon(Icons.lock)
           ]
@@ -202,7 +202,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                     minWidth: double.maxFinite,
                     onPressed: () {
                       if (snapshot.hasData && snapshot.requireData != null && snapshot.requireData!.isNotEmpty) {
-                        Clipboard.setData(ClipboardData(text: snapshot.requireData));
+                        Clipboard.setData(ClipboardData(text: snapshot.requireData ?? ""));
                         CustomErrorMessage.message(context: context, message: "Copied link to clipboard");
                         launchUrl(Uri.parse(snapshot.requireData!),mode: LaunchMode.externalApplication);
                       }
@@ -215,14 +215,21 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                                 style: const TextStyle(fontSize: 12), //global text style
                                 children: [
                                   const TextSpan(text:"Url/Link:\n",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)),
-                                  TextSpan(text: snapshot.hasData && (snapshot.requireData == null || snapshot.requireData == "")? ""
-                                      : snapshot.hasData && snapshot.requireData != null ? "${snapshot.requireData}"
-                                      : "loading", style: const TextStyle(
+                                  snapshot.hasData && (snapshot.requireData != null && snapshot.requireData != "") ?
+                                  TextSpan(text: snapshot.requireData, style: const TextStyle(
                                       fontSize: 16,
                                       overflow: TextOverflow.fade,
                                       fontWeight: FontWeight.normal,
                                       decoration:TextDecoration.underline,
-                                  )), //partial text style
+                                  )) : snapshot.connectionState == ConnectionState.waiting ?
+                                  const TextSpan(text: "loading...", style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                  )) :
+                                  const TextSpan(text: "no link yet", style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                  ))//partial text style
                                 ]
                             )
                         )
