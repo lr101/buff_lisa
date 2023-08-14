@@ -1,5 +1,6 @@
 import 'package:buff_lisa/Files/Themes/custom_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flex_seed_scheme/flex_seed_scheme.dart';
 
 class DarkTheme {
 
@@ -10,7 +11,15 @@ class DarkTheme {
   /// TODO [Balti] dark theme color palate
   static final darkTheme = ThemeData(
       brightness: Brightness.dark,
-      colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFc66500), brightness: Brightness.dark, secondary: const Color(0xFF5a7b73)),
+      useMaterial3: true,
+      //colorSchemeSeed: const Color(0xFFc66500),
+      colorScheme:  SeedColorScheme.fromSeeds(
+         brightness: Brightness.dark,
+         primaryKey:  const Color(0xFFc66500),
+         secondaryKey: const Color(0xFF63baab),
+         tertiaryKey:  const Color(0xFF4c8077),
+         tones: FlexTones.vivid(Brightness.dark),
+      ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
           overlayColor: MaterialStateColor.resolveWith((states) =>  CustomTheme.c2.withOpacity(0.2)),

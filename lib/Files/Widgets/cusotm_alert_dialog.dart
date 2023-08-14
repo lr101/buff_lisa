@@ -17,7 +17,7 @@ class CustomAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return dialog(
         Text(title),
-        child == null ? null : Padding(padding: const EdgeInsets.all(10), child: Material(child: child)),
+        child == null ? null : Material(color: Colors.transparent,child: child,),
         <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context),

@@ -4,6 +4,7 @@ class CustomTheme {
 
   static const Color c1 = Color(0xFFFF9400);
   static const Color c2 = Color(0xFFFDAD3E);
+  static const Color c3 = Color(0xFFFDAD3E);
   static Color grey = Colors.blueGrey.withOpacity(0.1);
 
   final ThemeData theme;

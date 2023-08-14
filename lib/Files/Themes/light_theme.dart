@@ -1,3 +1,4 @@
+import 'package:flex_seed_scheme/flex_seed_scheme.dart';
 import 'package:flutter/material.dart';
 
 import 'custom_theme.dart';
@@ -8,8 +9,19 @@ class LightTheme {
 
   /// TODO [Balti] light theme color palate
   static final lightTheme = ThemeData(
+    useMaterial3: true,
     brightness: Brightness.light,
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFDAD3E), brightness: Brightness.light, secondary: const Color(0xFF88aaa2)),
+    colorScheme:  SeedColorScheme.fromSeeds(
+      brightness: Brightness.light,
+      primaryKey:  const Color(0xFFc66500),
+      secondaryKey: const Color(0xFF63baab),
+      tertiaryKey:  const Color(0xFF4c8077),
+      tones: FlexTones.vivid(Brightness.light),
+    ),
+    // colorScheme: ColorScheme.fromSeed(
+    //     seedColor: const Color(0xFFFDAD3E),
+    //     secondary: const Color(0xFF4b8078),
+    //     primary: const Color(0xff005248)),
     outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
           overlayColor: MaterialStateColor.resolveWith((states) =>  CustomTheme.c2.withOpacity(0.2)),

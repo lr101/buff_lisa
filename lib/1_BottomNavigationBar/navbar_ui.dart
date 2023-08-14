@@ -29,7 +29,7 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          unselectedIconTheme: IconThemeData(color:  CustomTheme.c1,),
+          showUnselectedLabels: true,
           key: state.navBarKey,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -54,7 +54,8 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
             ),
           ],
           currentIndex: state.selectedIndex,
-          selectedItemColor: CustomTheme.c1,
+          selectedItemColor: Provider.of<ThemeNotifier>(context).getTheme.iconTheme.color,
+          unselectedItemColor: CustomTheme.c1,
           onTap: state.onItemTapped,
         )
     );

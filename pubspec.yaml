@@ -138,6 +138,9 @@ dependencies:
 
   change_app_package_name:
 
+  # BSD-3-Clause
+  flex_seed_scheme:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -85,9 +85,8 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
               children: [
                 Container(
                   height: 22,
-                  decoration: BoxDecoration(
-                      color: Provider.of<ThemeNotifier>(context).getTheme.scaffoldBackgroundColor,
-                      borderRadius: const BorderRadius.only(
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10),
                         topRight: Radius.circular(10)
                       ),
@@ -98,7 +97,6 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                           width: MediaQuery.of(context).size.width * 0.35,
                           height: 5,
                           decoration: const BoxDecoration(
-                              color: CustomTheme.c1,
                               borderRadius: BorderRadius.all(Radius.circular(2.5))
                           )
                       )

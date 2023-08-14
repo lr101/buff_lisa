@@ -83,7 +83,8 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
                     Routing.to(context, const EditMap());
                   },
                   child: const Text(
-                      "Why should I create an map account myself?\n\nStick-It is kept alive without spending any money. Server, memory and also the map service can therefore only be used up to a certain point, otherwise costs would be incurred. Stick-It uses 'Stadia Maps' as its map provider. Anyone can register a free account with 'Stadia Maps'. No payment information is stored; For the account, only an e-email address required. To connect the account to Sick-It an API Key must be inserted in the Settings under 'Edit Map'."),
+                      "Why should I create an map account myself?\n\nStick-It is kept alive without spending any money. Server, memory and also the map service can therefore only be used up to a certain point, otherwise costs would be incurred. Stick-It uses 'Stadia Maps' as its map provider. Anyone can register a free account with 'Stadia Maps'. No payment information is stored; For the account, only an e-email address required. To connect the account to Sick-It an API Key must be inserted in the Settings under 'Edit Map'.",
+                      style: TextStyle(backgroundColor: Colors.transparent))
                 ));
         }
       });

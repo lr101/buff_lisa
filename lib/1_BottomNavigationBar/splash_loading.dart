@@ -34,9 +34,11 @@ class SplashLoadingState extends State<SplashLoading> with TickerProviderStateMi
   @override
   void initState() {
     Timer(const Duration(seconds: 8, milliseconds: 50), () {
-      setState(() {
-        offlineMessage = "Logging in offline";
-      });
+      if(mounted) {
+        setState(() {
+          offlineMessage = "Logging in offline";
+        });
+      }
     });
     controller = AnimationController(
       /// [AnimationController]s can be created with `vsync: this` because of
