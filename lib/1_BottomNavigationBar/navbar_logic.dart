@@ -51,7 +51,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
     const MyGroupsPage(),
     CameraWidget(navbarContext : navbarContext),
     Stack(children: [const MapsWidget(), multiSelect]),
-    Column(children: [multiSelect, const Expanded(child: FeedPage())]),
+    Column(children: [multiSelect, const SizedBox(height: 10,), const Expanded(child: FeedPage())]),
     ProfilePage( username: global.localData.username,)
   ];
 

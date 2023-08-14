@@ -17,7 +17,7 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-        backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+        backgroundColor: state.selectedIndex == 2 ? Colors.transparent : Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
         body: PageView(
           controller: state.pageController,
           physics: const NeverScrollableScrollPhysics(),
