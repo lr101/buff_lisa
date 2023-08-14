@@ -34,7 +34,6 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      iconTheme: Provider.of<ThemeNotifier>(context).getTheme.iconTheme,
       automaticallyImplyLeading: false,
       title: Consumer<ThemeNotifier>(builder: (context, value, child) => widget.title ?? const SizedBox.shrink()),
       backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
@@ -42,37 +41,37 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
       pinned: true,
       actions: [right()],
       expandedHeight:  isHeightCalculated ? height : 0,
-        flexibleSpace: FlexibleSpaceBar(
-            stretchModes: const <StretchMode>[
-              StretchMode.zoomBackground,
-              StretchMode.blurBackground,
+      flexibleSpace: FlexibleSpaceBar(
+          stretchModes: const <StretchMode>[
+            StretchMode.zoomBackground,
+            StretchMode.blurBackground,
+          ],
+          background: Wrap(
+            alignment: WrapAlignment.center,
+            children: [
+              MeasuredSize(
+                child: Container(
+                  color: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+                  child:Column(
+                      key:  _childKey,
+                      children: [
+                        const SizedBox(height: 48,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: widget.customBackground,
+                        ),
+                      ]),),
+                onChange: (Size size) {
+                  setState(() {
+                    height = (_childKey.currentContext?.findRenderObject() as RenderBox).size.height;
+                    height = height == 68.0 ? 0 : height;
+                    isHeightCalculated = true;
+                  });
+                },
+              ),
             ],
-            background: Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                MeasuredSize(
-                  child: Container(
-                    color: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
-                    child:Column(
-                        key:  _childKey,
-                        children: [
-                          const SizedBox(height: 48,),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: widget.customBackground,
-                          ),
-                        ]),),
-                  onChange: (Size size) {
-                    setState(() {
-                      height = (_childKey.currentContext?.findRenderObject() as RenderBox).size.height;
-                      height = height == 68.0 ? 0 : height;
-                      isHeightCalculated = true;
-                    });
-                  },
-                ),
-              ],
-            )
-        )
+          )
+      )
     );
   }
 

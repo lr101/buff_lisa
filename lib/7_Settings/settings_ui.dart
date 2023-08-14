@@ -1,15 +1,18 @@
 import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
+import 'package:buff_lisa/Files/settings_ui/src/list/settings_list.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:settings_ui/settings_ui.dart';
 
 import '../Files/Routes/routing.dart';
 import '../Files/Themes/custom_theme.dart';
 import '../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../Files/Widgets/cusotm_alert_dialog.dart';
+import '../Files/settings_ui/src/sections/settings_section.dart';
+import '../Files/settings_ui/src/tiles/settings_tile.dart';
+import '../Files/settings_ui/src/utils/settings_theme.dart';
 import 'WebView/show_web_widget.dart';
 
 class SettingsUI extends StatelessUI<Settings> {
@@ -19,13 +22,12 @@ class SettingsUI extends StatelessUI<Settings> {
   @override
   Widget build(BuildContext context) {
     final con = context;
-    return Scaffold(appBar: null,
-      body: CustomTitle(
+    return CustomTitle.fromSlivers (
         title: CustomEasyTitle(
           title: Text("Settings", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
           back: true,
-        ),
-        child: SettingsList(
+    ),
+        slivers: [CustomSettingsList(
           darkTheme: SettingsThemeData(settingsListBackground: Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
           lightTheme: SettingsThemeData(settingsListBackground: Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
             sections: [
@@ -129,8 +131,7 @@ class SettingsUI extends StatelessUI<Settings> {
                 ]
               )
             ],
-          ),
-      )
+          )],
     );
   }
 }

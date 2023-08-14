@@ -23,9 +23,7 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-            appBar: null,
-            body: CustomTitle(
+    return CustomTitle.withSliverList(
               title: CustomEasyTitle(
                 title: Text("My Groups", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
                 back: false,
@@ -60,8 +58,7 @@ class MyGroupsUI extends StatefulUI<MyGroupsPage, MyGroupsPageState>{
                   return true;
                 },
               ),
-            )
-          );
+            );
   }
 
 

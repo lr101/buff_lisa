@@ -21,9 +21,7 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: null,
-        body: CustomTitle(
+    return CustomTitle.withoutSlivers(
           title: CustomEasyTitle(
             title: Consumer<SearchNotifier>(builder: (context, value, child) => value.title),
             right: CustomEasyAction(
@@ -37,7 +35,6 @@ class SearchUI extends StatefulUI<SearchGroupPage, SearchGroupPageState>{
               itemBuilder: (context, item, index) => item,
             ),
           ),
-        )
     );
   }
 

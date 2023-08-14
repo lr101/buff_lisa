@@ -27,15 +27,12 @@ class ProfilePageUI extends StatefulUI<ProfilePage, ProfilePageState> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: null,
-          body: CustomTitle(
-            title: _title(context),
-            sliverList: CustomSliverList(
-              initPagedList: () async => state.init(await Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
-              pagingController: state.pagingController,
-            ),
-          )
+    return CustomTitle.withSliverList(
+      title: _title(context),
+      sliverList: CustomSliverList(
+        initPagedList: () async => state.init(await Provider.of<UserNotifier>(context).getUser(widget.username).getPins),
+        pagingController: state.pagingController,
+      ),
     );
   }
 

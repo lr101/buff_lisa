@@ -118,14 +118,10 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
         padding: const EdgeInsets.all(5),
         child: GestureDetector(
           onTap: () => state.takePicture(context, index),
-          child: CircleAvatar(
-            radius: (MediaQuery.of(context).size.height) * 0.065,
-            backgroundColor: color,
-            child: CustomRoundImage(
-              size: (MediaQuery.of(context).size.height) * 0.06,
-              imageCallback: group.profileImage.asyncValue,
-              clickable: false,
-            )
+          child:  CustomRoundImage(
+            size: (MediaQuery.of(context).size.height) * 0.065,
+            imageCallback: group.profileImage.asyncValue,
+            clickable: false,
           )
         )
     );

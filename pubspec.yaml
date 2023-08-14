@@ -128,8 +128,6 @@ dependencies:
 
   fading_image_button:
 
-  # Apache-2.0
-  settings_ui:
 
   flutter_native_splash:
   # The following adds the Cupertino Icons font to your application.
@@ -140,6 +138,10 @@ dependencies:
 
   # BSD-3-Clause
   flex_seed_scheme:
+
+  #MIT
+  sliver_tools:
+  draggable_home: ^1.0.4
 
 dev_dependencies:
   flutter_test:

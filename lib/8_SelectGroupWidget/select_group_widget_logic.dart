@@ -10,19 +10,12 @@ import '../Files/Routes/routing.dart';
 
 
 class SelectGroupWidget extends StatefulWidget {
-  const SelectGroupWidget({super.key,required this.expanded});
-
-  /// flag for initializing expanded or not
-  final bool expanded;
-
+  const SelectGroupWidget({super.key});
   @override
   SelectGroupWidgetState createState() => SelectGroupWidgetState();
 }
 
 class SelectGroupWidgetState extends State<SelectGroupWidget> {
-
-  /// flag for saving if top bar is currently expanded or not
-  late bool expanded;
 
   @override
   Widget build(BuildContext context) => SelectGroupWidgetUI(state: this,);
@@ -30,14 +23,6 @@ class SelectGroupWidgetState extends State<SelectGroupWidget> {
   @override
   void initState() {
     super.initState();
-    expanded = widget.expanded;
-  }
-
-  void toggleExpanded() {
-    setState(() {
-      expanded = !expanded;
-    });
-    global.localData.setExpanded(expanded);
   }
 
   /// handles group press

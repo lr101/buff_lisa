@@ -13,7 +13,9 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
-      body: RefreshIndicator(
+      body: Padding(
+        padding: const EdgeInsets.only(top: 5),
+        child: RefreshIndicator(
           onRefresh: () async {await state.pullRefresh(refresh: true, state.groups); state.pagingController.refresh();},
           child: CustomSliverList(
             nestedScrollView: false,
@@ -21,7 +23,7 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState> {
             initPagedList: () async => await state.pullRefresh(
                 refresh: false,
                 Provider.of<ClusterNotifier>(context).getActiveGroups.toSet()),
-          )),
+          ))),
     );
   }
 }

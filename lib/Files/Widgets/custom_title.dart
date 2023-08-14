@@ -16,12 +16,26 @@ class CustomTitle extends StatefulWidget {
     super.key,
     this.sliverList,
     this.child,
+    this.slivers,
     required this.title,
-  }) : assert(sliverList != null || child != null);
+  }) : assert(sliverList != null || child != null || slivers != null);
 
   final CustomSliverList? sliverList;
   final Widget? child;
+  final List<Widget>? slivers;
   final CustomEasyTitle title;
+
+  static CustomTitle fromSlivers({required CustomEasyTitle title, required List<Widget> slivers}) {
+    return CustomTitle(title: title, slivers: slivers);
+  }
+
+  static CustomTitle withoutSlivers({required CustomEasyTitle title, required Widget child}) {
+    return CustomTitle(title: title, child: child);
+  }
+
+  static CustomTitle withSliverList({required CustomEasyTitle title, required CustomSliverList sliverList}) {
+    return CustomTitle(title: title, sliverList: sliverList);
+  }
 
   @override
   CustomTitleState createState() => CustomTitleState();
@@ -31,32 +45,58 @@ class CustomTitleState extends State<CustomTitle> {
 
 
 
+
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: CustomTheme.grey,
-        child: SafeArea(
-           child: widget.sliverList != null ? _withList() :
-             Scaffold(
-               appBar: AppBar(
-                 backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
-                 automaticallyImplyLeading: false,
-                 leading: left(),
-                 title: widget.title.title,
-                 actions: widget.title.right != null ? [widget.title.right!.build()] : null,
-               ),
-               body: Container(
-                   color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
-                   child: widget.child
-               ),
-             )
+    if (widget.sliverList != null) {
+      return Scaffold(
+        backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+        body: SafeArea(
+            child: _withList()
         )
+      );
+    } else if (widget.child != null) {
+      return Scaffold(
+        appBar: _normalAppBar(),
+        body: _withChild()
+      );
+    } else {
+      return Scaffold(
+        body: _withSlivers()
+      );
+    }
+  }
+
+  Widget _withSlivers() {
+    List<Widget> widgets = List.from(widget.slivers!);
+    widgets.insert(0, widget.title);
+    return  CustomScrollView(
+      slivers: widgets
+    );
+  }
+
+  Widget _withChild() {
+    return Container(
+      color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
+      child: widget.child
+    );
+  }
+
+  PreferredSizeWidget _normalAppBar() {
+    return AppBar(
+      backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+      automaticallyImplyLeading: false,
+      leading: left(),
+      title: widget.title.title,
+      actions: widget.title.right != null ? [widget.title.right!.build()] : null,
     );
   }
 
   Widget _withList() {
     return NestedScrollView(
         physics: const BouncingScrollPhysics(),
+        floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerScrolled) => <Widget>[
           SliverOverlapAbsorber(
                 handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),

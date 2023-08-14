@@ -1,6 +1,7 @@
 
 import 'package:buff_lisa/1_BottomNavigationBar/splash_loading.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/Widgets/custom_if_else.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,17 +17,11 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-        body: Column(
-          children: [
-            state.getMultiSelector(),
-            Expanded(child:
-              PageView(
-                controller: state.pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: state.widgetOptions,
-              ),
-            )
-          ],
+        backgroundColor: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
+        body: PageView(
+          controller: state.pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: state.widgetOptions,
         ),
         bottomNavigationBar: BottomNavigationBar(
           showUnselectedLabels: true,

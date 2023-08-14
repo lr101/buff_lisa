@@ -44,14 +44,14 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
   /// selector widget for groups
   /// shown on top of screen in map and feed page
-  final Widget multiSelect = SelectGroupWidget(expanded: global.localData.getExpanded());
+  final Widget multiSelect = const SelectGroupWidget();
 
   /// List of Widgets shown and used in the navbar
   late final List<Widget> widgetOptions = <Widget>[
     const MyGroupsPage(),
     CameraWidget(navbarContext : navbarContext),
-    const MapsWidget(),
-    const FeedPage(),
+    Stack(children: [const MapsWidget(), multiSelect]),
+    Column(children: [multiSelect, const Expanded(child: FeedPage())]),
     ProfilePage( username: global.localData.username,)
   ];
 
@@ -68,7 +68,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   /// returns the multi selector widget for map and feed page
   Widget getMultiSelector() {
     if (selectedIndex == 2 || selectedIndex == 3) {
-      return multiSelect;
+      return Align(alignment: AlignmentDirectional.topCenter, child: multiSelect);
     } else {
       return const SizedBox.shrink();
     }
