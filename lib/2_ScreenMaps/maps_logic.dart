@@ -197,7 +197,7 @@ class MapsWidgetState extends State<MapsWidget> with AutomaticKeepAliveClientMix
 
 
   void handleTabOnImage(Pin pin) {
-    Routing.to(context, ShowImageWidget(pin: pin, newPin: false));
+    Routing.to(context, ShowImageWidget(pin: pin));
   }
 
   Future<void> onPanelOpen() async {

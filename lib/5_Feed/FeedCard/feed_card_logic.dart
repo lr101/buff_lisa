@@ -108,7 +108,7 @@ class FeedCardState extends State<FeedCard> {
 
   /// Open a more detailed view of current pin image.
   void handleTabOnImage() {
-    Routing.to(context, ShowImageWidget(pin: widget.pin, newPin: false));
+    Routing.to(context, ShowImageWidget(pin: widget.pin));
   }
 
 }

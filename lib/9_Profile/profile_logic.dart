@@ -236,7 +236,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
 
   /// Opens a pin image in a new page.
   void handleTabOnImage(Pin pin) {
-    handlePushPage(ShowImageWidget(pin: pin, newPin: false));
+    handlePushPage(ShowImageWidget(pin: pin));
   }
 
 

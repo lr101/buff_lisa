@@ -44,7 +44,7 @@ MarkerNotifier with ChangeNotifier {
               child: pin.group.pinImage.getWidget(),
               onTap: () => Navigator.push(
                 navigatorKey.currentContext!,
-                MaterialPageRoute(builder: (context) => ShowImageWidget(newPin: pin.isOffline, pin: pin,)),
+                MaterialPageRoute(builder: (context) => ShowImageWidget(pin: pin,)),
               ),
             )
         )

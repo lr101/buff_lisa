@@ -13,12 +13,7 @@ import '../../Files/Routes/routing.dart';
 import '../../Providers/date_notifier.dart';
 
 class ShowImageWidget extends StatefulWidget {
-  const ShowImageWidget({Key? key, required this.pin, required this.newPin}) : super(key: key);
-
-  /// Boolean for showing if shown pin is a new pin and therefore an online saved pin
-  /// true: Pin is an offline Pin
-  /// false: Pin is a Pin that is saved on server
-  final bool newPin;
+  const ShowImageWidget({Key? key, required this.pin}) : super(key: key);
 
   /// The Pin that is shown on this page
   final Pin pin;
