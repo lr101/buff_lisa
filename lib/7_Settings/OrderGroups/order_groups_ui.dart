@@ -18,10 +18,6 @@ class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
       body: CustomTitle(
           title: CustomEasyTitle(
             title: Text("Sort Group", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
-            right: CustomEasyAction(
-                action: () async => state.saveOrder(),
-                child: const Icon(Icons.add_task)
-            ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -35,6 +31,10 @@ class OrderGroupUI extends StatefulUI<OrderGroups, OrderGroupsState>{
                 )
               ]
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async => state.saveOrder(),
+        child: const Icon(Icons.check),
       ),
     );
   }

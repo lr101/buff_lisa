@@ -88,6 +88,7 @@ class CustomTitleState extends State<CustomTitle> {
     return AppBar(
       backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
       automaticallyImplyLeading: false,
+      scrolledUnderElevation: 0.0,
       leading: left(),
       title: widget.title.title,
       actions: widget.title.right != null ? [widget.title.right!.build()] : null,

@@ -151,8 +151,14 @@ class CameraControllerWidget extends State<CameraWidget> {
   }
 
   /// changes the camera on double tab via provider and its listeners
-  Future<void> handleCameraChange(context) async {
-    if (init) Provider.of<CameraNotifier>(context, listen: false).changeCameraIndex();
+  Future<void> handleCameraChange(context, [int? index]) async {
+    if (init) {
+      if (index == null) {
+        Provider.of<CameraNotifier>(context, listen: false).changeCameraIndex();
+      } else {
+        Provider.of<CameraNotifier>(context, listen: false).changeCameraToIndex(index);
+      }
+    }
   }
 
   /// changes the selected group index via provider

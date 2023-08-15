@@ -21,12 +21,11 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
     TextEditingController t2 = Provider.of<CreateGroupNotifier>(context).getText2;
     TextEditingController t3 = Provider.of<CreateGroupNotifier>(context).getText3;
     return Scaffold(appBar: null,
-          resizeToAvoidBottomInset: false,
           body: CustomTitle.withoutSlivers(
             title: CustomEasyTitle(
               title: Text("Create Group", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
               back: true,),
-            child: Column(
+            child: SingleChildScrollView(child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -127,7 +126,7 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                 )
               ],
             ),
-          ),
+          ),),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.check),
             onPressed: () async => state.createGroup(context))

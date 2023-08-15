@@ -9,8 +9,11 @@ import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:snapping_page_scroll/snapping_page_scroll.dart';
 
 import '../Files/Themes/custom_theme.dart';
+import '../Providers/camera_notifier.dart';
 
 class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
 
@@ -18,11 +21,10 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(appBar: null,
+    return Scaffold(appBar: null,
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
              Expanded(
                 child: Stack(
@@ -50,31 +52,45 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                         ),
                       ),
                       Align(
-                          alignment: Alignment.topRight,
-                          child: Consumer<CameraIconNotifier>(
-                            builder: (context, value, child) {
-                              return Padding(
-                                  padding:const EdgeInsets.all(10),
-                                  child: Column(
-                                    children: [
-                                         FloatingActionButton(
-                                          backgroundColor:  CustomTheme.c1,
-                                          heroTag: "cameraBtnFlash",
-                                          onPressed: state.switchFlash,
-                                          child: value.getFlashIcon(),
-                                        ),
-                                        const SizedBox(height: 5,),
-                                        FloatingActionButton(
-                                          backgroundColor:  CustomTheme.c1,
-                                          heroTag: "cameraSwitch",
-                                          onPressed: () => state.handleCameraChange(context),
-                                          child: const Icon(Icons.switch_camera),
-                                        )
-                                      ],
-                                    )
-                                  );
-                            },
-                          )
+                        alignment: FractionalOffset.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                            child: SizedBox(
+                              height: 50,
+                              child:  Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Consumer<CameraIconNotifier>(
+                                    builder: (context, value, child) =>
+                                      Padding(
+                                        padding: const EdgeInsets.all(2.5),
+                                        child:CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor: Colors.grey.withOpacity(0.5),
+                                            child: Center(child: IconButton(
+                                                onPressed: state.switchFlash,
+                                                icon: value.getFlashIcon()
+                                            ),)
+                                        ))
+                                  ),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: global.cameras.length,
+                                      itemBuilder: (context, index) => Padding(
+                                        padding: const EdgeInsets.all(2.5),
+                                          child:CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor: Provider.of<CameraNotifier>(context).currentCameraIndex == index ? CustomTheme.c1.withOpacity(0.8) : Colors.grey.withOpacity(0.5),
+                                            child: Center(child: IconButton(
+                                                onPressed: () => state.handleCameraChange(context, index),
+                                                icon: global.cameras[index].lensDirection == CameraLensDirection.back ? const Icon(Icons.landscape) : const Icon(Icons.person)
+                                            ),)
+                                      ))
+                                    ),
+                                  const SizedBox.square(dimension: 45,)
+                                ],),
+                        ))
                       )
                     ],
                   ),
@@ -84,11 +100,11 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                 child: Stack(
                   children: [
                     Center(
-                      child: PageView.builder(
-                          itemCount: state.groups.length,
+                      child:SnappingPageScroll(
                           controller: state.pageController,
                           onPageChanged: (index) => state.onPageChange(index, context),
-                          itemBuilder: (context, i) => groupCard(context, i)
+                          children: List.generate(state.groups.length, (index) => groupCard(context, index),
+                        ),
                       ),
                     ),
                       IgnorePointer(
@@ -102,10 +118,10 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                       )
                   ],
                 ),
-              )
+              ),
+              const SizedBox(height: 5,)
             ],
           ),
-        )
       );
     }
 
@@ -113,7 +129,6 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
   /// returns a round representation (profile image) of the group identified by [index]
   Widget groupCard(BuildContext context,int index) {
     Group group = state.groups[index];
-    Color color = Colors.grey;
     return Padding(
         padding: const EdgeInsets.all(5),
         child: GestureDetector(

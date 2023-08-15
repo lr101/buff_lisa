@@ -30,52 +30,75 @@ class ReportUserState extends State<ReportUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: null,
       body: CustomTitle(
           title: CustomEasyTitle(
             title: Text(widget.title, style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
             back: true,
           ),
-          child: Column(
+          child: SingleChildScrollView( child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(widget.userText, textAlign: TextAlign.center),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextFormField(
-                  controller: controller,
-                  maxLength: 500,
-                  decoration:
-                      InputDecoration.collapsed(hintText: widget.hintText),
-                  maxLines: 5,
-                  validator: (v) => v != null && v.length < 2
-                      ? "Text must be longer than 10 characters"
-                      : null,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: TextButton(
-                  onPressed: () => submitReport(),
-                  style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                            side: const BorderSide(color: CustomTheme.c1))),
-                  ),
-                  child: const Text("Submit reporting"),
-                ),
-              )
+              const SizedBox(height: 5,),
+              Container(
+                color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+                child: Padding(padding: const EdgeInsets.all( 10),
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Username",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
+                            Text(widget.userText,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
+                              maxLines: 1,
+                            ),
+                          ]
+                      ))
+                  ),),
+              const SizedBox(height: 5,),
+              Container(
+                color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+                child: Padding(padding: const EdgeInsets.all( 10),
+                  child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Message",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
+                            TextFormField(
+                              textAlign: TextAlign.start,
+                              keyboardType: TextInputType.url,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
+                              decoration: const InputDecoration(hintText: "Write your message hear"),
+                              maxLines: 10,
+                              maxLength: 1000,
+                              controller: controller,
+                              validator: (v) => v != null && v.length < 2
+                                  ? "Text must be longer than one characters"
+                                  : null,
+                            ),
+                          ]
+                      )
+                  ),),),
             ],
-          )),
+          )),),
+      floatingActionButton: FloatingActionButton(
+        onPressed: submitReport,
+        child: const Icon(Icons.send),
+      ),
     );
   }
 
   Future<void> submitReport() async {
-    if (controller.text.length > 10) {
+    if (controller.text.length > 1) {
       FetchUsers.postReportUser(widget.content, controller.text);
       Navigator.pop(context);
     }

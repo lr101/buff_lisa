@@ -46,7 +46,7 @@ class CustomSliverListState extends State<CustomSliverList> {
           future: refreshList(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
+              return const SliverToBoxAdapter(child: Center(child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator())));
             } else {
               return _list();
             }

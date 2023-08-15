@@ -142,6 +142,7 @@ dependencies:
   #MIT
   sliver_tools:
   draggable_home: ^1.0.4
+  snapping_page_scroll: ^3.0.0
 
 dev_dependencies:
   flutter_test:

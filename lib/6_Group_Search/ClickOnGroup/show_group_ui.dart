@@ -42,7 +42,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showDialog(context: context, builder: (_) => getPopup()),
-        child: const Icon(Icons.exit_to_app),
+        child: getIcon(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
@@ -62,6 +62,14 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
       return CustomAlertDialog(text1: "Cancel", text2: "Yes", title: "Leave ${widget.group.name}?", onPressed: state.leaveGroup);
     } else {
       return CustomAlertDialog(text1: "Cancel", text2: "Yes", title: "Join ${widget.group.name}?", onPressed: getCallback(controller), child: getChild(controller),);
+    }
+  }
+
+  Icon getIcon() {
+    if (state.widget.myGroup) {
+      return const Icon(Icons.exit_to_app );
+    } else {
+      return const Icon(Icons.check);
     }
   }
 
@@ -189,57 +197,86 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   }
 
   Widget _getLink() {
+    if (state.widget.group.visibility == 0 || widget.myGroup) {
       return FutureBuilder<String?>(
-        future: state.widget.group.link.asyncValue(),
-        builder: (context, snapshot) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  height: 40,
-                  child:
-                  MaterialButton(
-                    padding: EdgeInsets.zero,
-                    minWidth: double.maxFinite,
-                    onPressed: () {
-                      if (snapshot.hasData && snapshot.requireData != null && snapshot.requireData!.isNotEmpty) {
-                        Clipboard.setData(ClipboardData(text: snapshot.requireData ?? ""));
-                        CustomErrorMessage.message(context: context, message: "Copied link to clipboard");
-                        launchUrl(Uri.parse(snapshot.requireData!),mode: LaunchMode.externalApplication);
-                      }
-                    },
-                    child: Align(
-                        alignment: FractionalOffset.centerLeft,
-                        child:  Text.rich( //underline partially
-                          maxLines: 2,
-                            TextSpan(
-                                style: const TextStyle(fontSize: 12), //global text style
-                                children: [
-                                  const TextSpan(text:"Url/Link:\n",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)),
-                                  snapshot.hasData && (snapshot.requireData != null && snapshot.requireData != "") ?
-                                  TextSpan(text: snapshot.requireData, style: const TextStyle(
+          future: state.widget.group.link.asyncValue(),
+          builder: (context, snapshot) =>
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.85,
+                    height: 40,
+                    child:
+                    MaterialButton(
+                      padding: EdgeInsets.zero,
+                      minWidth: double.maxFinite,
+                      onPressed: () {
+                        if (snapshot.hasData && snapshot.requireData != null &&
+                            snapshot.requireData!.isNotEmpty) {
+                          Clipboard.setData(
+                              ClipboardData(text: snapshot.requireData ?? ""));
+                          CustomErrorMessage.message(context: context,
+                              message: "Copied link to clipboard");
+                          launchUrl(Uri.parse(snapshot.requireData!),
+                              mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      child: Align(
+                          alignment: FractionalOffset.centerLeft,
+                          child: Text.rich( //underline partially
+                              maxLines: 2,
+                              TextSpan(
+                                  style: const TextStyle(fontSize: 12),
+                                  //global text style
+                                  children: [
+                                    const TextSpan(
+                                        text: "Url/Link:\n", style: TextStyle(
+                                        fontSize: 12,
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.normal)),
+                                    snapshot.hasData &&
+                                        (snapshot.requireData != null &&
+                                            snapshot.requireData != "") ?
+                                    TextSpan(text: snapshot.requireData,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          overflow: TextOverflow.fade,
+                                          fontWeight: FontWeight.normal,
+                                          decoration: TextDecoration.underline,
+                                        )) : snapshot.connectionState ==
+                                        ConnectionState.waiting ?
+                                    const TextSpan(
+                                        text: "loading...", style: TextStyle(
                                       fontSize: 16,
-                                      overflow: TextOverflow.fade,
                                       fontWeight: FontWeight.normal,
-                                      decoration:TextDecoration.underline,
-                                  )) : snapshot.connectionState == ConnectionState.waiting ?
-                                  const TextSpan(text: "loading...", style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.normal,
-                                  )) :
-                                  const TextSpan(text: "no link yet", style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.normal,
-                                  ))//partial text style
-                                ]
-                            )
-                        )
+                                    )) :
+                                    const TextSpan(
+                                        text: "no link yet", style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                    )) //partial text style
+                                  ]
+                              )
+                          )
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )
+                ],
+              )
       );
+    } else {
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text("Url/Link: "),
+            Icon(Icons.lock)
+          ]
+      );
+    }
     }
 
 

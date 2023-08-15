@@ -4,6 +4,7 @@ import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../Files/Themes/custom_theme.dart';
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../../Providers/theme_provider.dart';
 
@@ -21,28 +22,86 @@ class MailUI extends StatelessUI<Email> {
             title: CustomEasyTitle(
               title: Text("Edit Email", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
               back: true,
-              right: CustomEasyAction(
-                  child: const Icon(Icons.add_task),
-                  action: () async => widget.changeMail(controller1, controller2, context)
-              ),
             ),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            child: SingleChildScrollView( child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Type Email:"),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: TextFormField(controller: controller1) ,
-                  ),
-                  const SizedBox(height: 20,),
-                  const Text("Repeat Email:"),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: TextFormField(controller: controller2,),
-                  ),
+                  const SizedBox(height: 5,),
+                  Container(
+                    color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+                    child: Padding(padding: const EdgeInsets.all( 10),
+                      child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text("Current email",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
+                                Text("coming soon...",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                              ]
+                          )
+                      ),),),
+                  const SizedBox(height: 5,),
+                  Container(
+                    color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+                    child: Padding(padding: const EdgeInsets.all( 10),
+                      child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("New email",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
+                                TextFormField(
+                                  textAlign: TextAlign.start,
+                                  keyboardType: TextInputType.url,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                  decoration: const InputDecoration(hintText: "New email"),
+                                  maxLines: 1,
+                                  controller: controller1,
+                                ),
+                              ]
+                          )
+                      ),),),
+                  const SizedBox(height: 5,),
+                  Container(
+                    color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
+                    child: Padding(padding: const EdgeInsets.all( 10),
+                      child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Repeat email",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
+                                TextFormField(
+                                  textAlign: TextAlign.start,
+                                  keyboardType: TextInputType.url,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                  decoration: const InputDecoration(hintText: "Repeat email"),
+                                  maxLines: 1,
+                                  controller: controller2,
+                                ),
+                              ]
+                          )
+                      ),),),
                 ]
             )
-        )
+        ),),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () async => widget.changeMail(controller1, controller2, context),
+          child: const Icon(Icons.check),
+      ),
     );
   }
 }

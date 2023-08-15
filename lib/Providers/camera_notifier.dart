@@ -21,4 +21,9 @@ class CameraNotifier with ChangeNotifier {
     notifyListeners();
   }
 
+  void changeCameraToIndex(int index) {
+    currentCameraIndex = index;
+    notifyListeners();
+  }
+
 }

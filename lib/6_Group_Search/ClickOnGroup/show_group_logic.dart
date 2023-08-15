@@ -112,15 +112,11 @@ class ShowGroupPageState extends State<ShowGroupPage> {
   /// joins a private group by getting the invite code from the text field and closes the current context
   /// Method can only be called when the group is private and user is not a member
   void joinPrivateGroup(TextEditingController controller)  {
-    try {
       FetchGroups.joinGroup(widget.group.groupId, controller.text).then((value) {
         Provider.of<ClusterNotifier>(context, listen: false).addGroup(value);
         Provider.of<ClusterNotifier>(context, listen: false).activateGroup(value);
         Navigator.pop(context, {"joined" : true});
-      });
-    } catch(e) {
-      //TODO wrong invite code
-    }
+      },onError:  (_) => CustomErrorMessage.message(context: context, message: "Could not join group..."));
   }
 
   /// leaves the group and closes the current context
