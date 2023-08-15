@@ -200,9 +200,13 @@ class ClusterNotifier extends ChangeNotifier {
     }
   }
 
+  Future<List<Pin>> getAllOfflinePins() async {
+    return (await PinRepo.fromInit(LocalData.pinFileNameKey)).getPins(_userGroups).toList();
+  }
+
   Future<void> _loadGroupPins(Group group) async {
     //get pins from server or load from offline
-    if (offline && group.pins.syncValue == null) group.pins.setValue((await PinRepo.fromInit(LocalData.pinFileNameKey)).getPins(_userGroups));
+    if (offline && group.pins.syncValue == null) group.pins.setValue((await PinRepo.fromInit(LocalData.pinFileNameKey)).getPins([group]));
     Set<Pin> pins = await group.pins.asyncValueMerge((isLoaded, current, asyncVal) {
       if (!isLoaded && current != null) {
         for (Pin pin in current) {

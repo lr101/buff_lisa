@@ -35,9 +35,11 @@ class PinRepo {
     List<PinDTO> list = box.values.toList();
     Set<Pin> pins = {};
     for (PinDTO pinDTO in list) {
-      Iterable<Group> group = groups.where((element) => element.groupId == pinDTO.groupId);
-      if (group.isNotEmpty) {
-        pins.add(pinDTO.toPin(group.first)!);
+      for (Group group in groups) {
+        if (group.groupId == pinDTO.groupId) {
+          pins.add(pinDTO.toPin(group)!);
+          break;
+        }
       }
     }
     return pins;

@@ -82,8 +82,9 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// Always refreshed the pagingController.
   Future<bool> init(List<Pin>? pins) async {
     try {
+      bool offline = Provider.of<ClusterNotifier>(context, listen: false).offline;
       if (pins == null) {
-        List<Pin>? pins = await initPins(await pinList.refresh());
+        List<Pin>? pins = await initPins(offline ? await Provider.of<ClusterNotifier>(context, listen: false).getAllOfflinePins() : await pinList.refresh());
         if (!mounted) return false;
         Provider.of<UserNotifier>(context, listen: false)
             .updatePins(widget.username, pins);
