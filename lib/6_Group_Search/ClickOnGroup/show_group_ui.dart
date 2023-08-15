@@ -40,11 +40,11 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
           pagingController: state.controller,
         ),
       ),
-      floatingActionButton: CustomActionButton(
-        text: getText(),
-        popup: getPopup(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showDialog(context: context, builder: (_) => getPopup()),
+        child: const Icon(Icons.exit_to_app),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 

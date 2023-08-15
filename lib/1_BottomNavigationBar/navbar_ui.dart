@@ -17,11 +17,16 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-        backgroundColor: state.selectedIndex == 2 ? Colors.transparent : Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
-        body: PageView(
-          controller: state.pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: state.widgetOptions,
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          children: [
+            PageView(
+              controller: state.pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: state.widgetOptions,
+            ),
+            state.selectedIndex == 2 || state.selectedIndex == 3 ? state.multiSelect : const SizedBox.shrink(),
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           showUnselectedLabels: true,
@@ -49,8 +54,8 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
             ),
           ],
           currentIndex: state.selectedIndex,
-          selectedItemColor: Provider.of<ThemeNotifier>(context).getTheme.iconTheme.color,
-          unselectedItemColor: CustomTheme.c1,
+          unselectedItemColor: Provider.of<ThemeNotifier>(context).getTheme.iconTheme.color,
+          selectedItemColor: CustomTheme.c1,
           onTap: state.onItemTapped,
         )
     );

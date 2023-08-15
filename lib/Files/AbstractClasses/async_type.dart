@@ -67,7 +67,7 @@ class AsyncType<T>  {
                 _m.release();
             }
         }
-        return _value!;
+        return _value as T;
     }
 
     Future<T> asyncValueMerge(T Function(bool isLoaded, T? current, T asyncVal) func) async {

@@ -53,13 +53,8 @@ class CustomTitleState extends State<CustomTitle> {
     if (widget.sliverList != null) {
       return Scaffold(
         backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
-        body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light.copyWith(
-                statusBarColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
-            ),
-            child: SafeArea(
+        body: SafeArea(
             child: _withList()
-         )
         )
       );
     } else if (widget.child != null) {

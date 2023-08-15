@@ -15,15 +15,14 @@ class SelectGroupWidget extends StatefulWidget {
   SelectGroupWidgetState createState() => SelectGroupWidgetState();
 }
 
-class SelectGroupWidgetState extends State<SelectGroupWidget> {
+class SelectGroupWidgetState extends State<SelectGroupWidget> with AutomaticKeepAliveClientMixin<SelectGroupWidget> {
 
   @override
-  Widget build(BuildContext context) => SelectGroupWidgetUI(state: this,);
-
-  @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    super.build(context);
+    return SelectGroupWidgetUI(state: this,);
   }
+
 
   /// handles group press
   /// [multiSelector] true: activates or deactivates group and saves it in ClusterNotifier
@@ -40,5 +39,8 @@ class SelectGroupWidgetState extends State<SelectGroupWidget> {
   void handleOrderGroup() {
     Routing.to(context,  const OrderGroups());
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
 }
