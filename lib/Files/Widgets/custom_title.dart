@@ -21,7 +21,7 @@ class CustomTitle extends StatefulWidget {
     required this.title,
   }) : assert(sliverList != null || child != null || slivers != null);
 
-  final CustomSliverList? sliverList;
+  final Widget? sliverList;
   final Widget? child;
   final List<Widget>? slivers;
   final CustomEasyTitle title;
@@ -34,7 +34,7 @@ class CustomTitle extends StatefulWidget {
     return CustomTitle(title: title, child: child);
   }
 
-  static CustomTitle withSliverList({required CustomEasyTitle title, required CustomSliverList sliverList}) {
+  static CustomTitle withSliverList({required CustomEasyTitle title, required Widget sliverList}) {
     return CustomTitle(title: title, sliverList: sliverList);
   }
 

@@ -11,14 +11,18 @@ class CustomEasyTitle extends SliverAppBar {
     this.left,
     this.right,
     this.child,
+    this.bottomWidget,
+    this.bottomHeight = 55,
     title,
     this.customBackground = const SizedBox.shrink()
   }) : super (title: title);
 
   final bool back;
+  final PreferredSizeWidget? bottomWidget;
   final CustomEasyAction? left;
   final CustomEasyAction? right;
   final Widget? child;
+  final double bottomHeight;
   final Widget customBackground;
 
   @override
@@ -40,8 +44,10 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
       backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
       leading: left(),
       pinned: true,
+      forceElevated: true,
       actions: [right()],
-      expandedHeight:  isHeightCalculated ? height : 0,
+      bottom: widget.bottomWidget,
+      expandedHeight:  isHeightCalculated ? height : widget.bottomHeight + 5,
       flexibleSpace: FlexibleSpaceBar(
           stretchModes: const <StretchMode>[
             StretchMode.zoomBackground,
@@ -59,13 +65,19 @@ class CustomEasyTitleState extends State<CustomEasyTitle> {
                         const SizedBox(height: 48,),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: widget.customBackground,
+                          child: Column(
+                            children: [
+                              widget.customBackground,
+                              widget.bottomWidget != null ? Container(height: 5, color:  Provider.of<ThemeNotifier>(context).getTheme.canvasColor) : const SizedBox.shrink(),
+                            ],
+                          )
                         ),
                       ]),),
                 onChange: (Size size) {
                   setState(() {
                     height = (_childKey.currentContext?.findRenderObject() as RenderBox).size.height;
                     height = height == 68.0 ? 0 : height;
+                    height += widget.bottomHeight + 5;
                     isHeightCalculated = true;
                   });
                 },

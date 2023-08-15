@@ -26,7 +26,9 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-      body: CustomTitle.withSliverList(
+      body: DefaultTabController(
+        length: 2,
+        child:CustomTitle.withSliverList(
         title: CustomEasyTitle(
             customBackground: CustomProfileLayout(
               posts: state.calcNumPosts(),
@@ -34,12 +36,22 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
               image:  CustomRoundImage(imageCallback: widget.group.profileImage.asyncValue, size: 50),
               children: _getChildren()
             ),
+            bottomWidget: TabBar(
+              tabs: [
+                state.pages[0].toTab(),
+                state.pages[1].toTab()
+              ],
+            ),
+            bottomHeight : 42,
             title: Text(widget.group.name, style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
             right: state.widget.group.groupAdmin.syncValue == global.localData.username ? CustomEasyAction(child: const Icon(Icons.edit), action: () => state.editAsAdmin()) : null),
-        sliverList: CustomSliverList(
-          pagingController: state.controller,
-        ),
-      ),
+        sliverList: TabBarView(
+            children: [
+              state.pages[0].widget,
+              state.pages[1].widget
+            ]
+        )
+      ),),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showDialog(context: context, builder: (_) => getPopup()),
         child: getIcon(),

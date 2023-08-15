@@ -1,4 +1,6 @@
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/ClickOnEdit/edit_group_logic.dart';
+import 'package:buff_lisa/6_Group_Search/ClickOnGroup/images_sub_page.dart';
+import 'package:buff_lisa/6_Group_Search/ClickOnGroup/members_sub_page.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
@@ -12,6 +14,7 @@ import 'package:provider/provider.dart';
 
 import '../../9_Profile/profile_logic.dart';
 import '../../Files/DTOClasses/ranking.dart';
+import '../../Files/Other/tupel_3.dart';
 import '../../Files/Routes/routing.dart';
 import '../../Files/Themes/custom_theme.dart';
 import '../../Files/Widgets/custom_round_image.dart';
@@ -33,13 +36,13 @@ class ShowGroupPage extends StatefulWidget {
   ShowGroupPageState createState() => ShowGroupPageState();
 }
 
-class ShowGroupPageState extends State<ShowGroupPage> {
+class ShowGroupPageState extends State<ShowGroupPage> with SingleTickerProviderStateMixin{
 
-  bool loaded = false;
 
-  List<Ranking>? ranking;
 
-  PagingController<dynamic, Widget> controller = PagingController(firstPageKey: 0, invisibleItemsThreshold: 50);
+  late TabController _tabController;
+
+  late List<Tupel3> pages;
 
   @override
   Widget build(BuildContext context) => ShowGroupUI(state: this);
@@ -47,14 +50,11 @@ class ShowGroupPageState extends State<ShowGroupPage> {
    @override
    void initState() {
      super.initState();
-     controller.addPageRequestListener((pageKey) async {
-         ranking ??= await ((widget.group.visibility != 0 && !widget.myGroup) ? Future(() => []) : widget.group.members.asyncValue());
-         if (pageKey + 50 < ranking!.length) {
-           controller.appendPage(List.generate(50, (index) => buildCard(index + pageKey as int)), pageKey + 50);
-         } else {
-           controller.appendLastPage(List.generate(ranking!.length - pageKey as int, (index) => buildCard(index + pageKey as int)));
-         }
-       });
+     pages = [
+       Tupel3('Members', MembersSubPage(group: widget.group, myGroup: widget.myGroup,), const Icon(Icons.groups)),
+       Tupel3('Images', ImagesSubPage(group: widget.group,), const Icon(Icons.image)),
+     ];
+     _tabController = TabController(length: pages.length, vsync: this);
    }
 
    Widget calcNumPosts() {
@@ -89,15 +89,7 @@ class ShowGroupPageState extends State<ShowGroupPage> {
      );
    }
 
-  Widget buildCard(int index) {
-    Ranking member = ranking![index];
-    return CustomListTile.fromUser(
-        Provider.of<UserNotifier>(context, listen: false).getUser(member.username),
-        member.points,
-        member.username == widget.group.groupAdmin.syncValue,
-        handleOpenUserProfile
-    );
-  }
+
 
   /// joins a public group and closes the current context
   /// Method can only be called when the group is public and user is not a member
@@ -150,9 +142,13 @@ class ShowGroupPageState extends State<ShowGroupPage> {
     }
   }
 
-  void handleOpenUserProfile(String username) {
-    if (username == global.localData.username) return;
-    Routing.to(context,  ProfilePage(username: username,));
+
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
+
 
 }
