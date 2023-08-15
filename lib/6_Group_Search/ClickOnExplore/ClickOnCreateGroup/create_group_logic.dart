@@ -67,6 +67,8 @@ class CreateGroupPageState extends State<CreateGroupPage> {
               Provider.of<ClusterNotifier>(context, listen: false).addGroup(
                   group);
               Navigator.pop(context);
+            } else {
+              CustomErrorMessage.message(context: context, message: "Group name already exists");
             }
           }, onError: (_) => CustomErrorMessage.message(context: context, message: "Error during server upload. Try again later"));
         } else if (controller1.text.isEmpty) {
