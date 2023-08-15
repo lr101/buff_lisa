@@ -14,6 +14,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
+import '../../Files/Widgets/custom_layer.dart';
 import '../../Files/Widgets/custom_popup_menu_button.dart';
 import '../../Providers/theme_provider.dart';
 
@@ -199,7 +200,8 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                                       builder: (BuildContext context) => state.widget.pin.group.pinImage.getWidget()
                                                   )
                                                 ]
-                                            )
+                                            ),
+                                            const CustomLayer(height: 18),
                                           ],
                                           ),
                                         ),
