@@ -43,6 +43,8 @@ class SearchGroupPageState extends State<SearchGroupPage> {
   /// false: groups in list are not filtered currently
   bool filtered = false;
 
+  bool searching = false;
+
   @override
   late BuildContext context;
 
@@ -73,6 +75,10 @@ class SearchGroupPageState extends State<SearchGroupPage> {
   /// Gets group information of ids from index range [pageKey, pageKey + _numPages -1]
   /// Adds the Groups to [pagingController] to be build in page List
   Future<void> _fetchPage(int pageKey) async {
+    if (searching) {
+      pagingController.appendLastPage([const Center(child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator()),)]);
+      return;
+    }
       if (pageKey + 15 < groups.length) {
         List<Widget> widgets = [];
         int i = pageKey;
@@ -92,9 +98,12 @@ class SearchGroupPageState extends State<SearchGroupPage> {
   /// gets all Group ids that could be shown in page list
   /// [value] is the search term passed to the server to get the corresponding results
   Future<void> pullRefresh(String? value) async {
+    searching = true;
+    pagingController.refresh();
     value = (value == null || value.isEmpty ? null : value);
     groups = await FetchGroups.fetchAllGroupsWithoutUserGroupsIds(value);
     filtered = value != null;
+    searching = false;
     pagingController.refresh();
   }
 

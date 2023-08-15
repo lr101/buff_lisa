@@ -57,6 +57,7 @@ class SearchNotifier with ChangeNotifier {
               controller: textController,
               onChanged: (value) => streamController.add(value),
               onSubmitted: (value) => pullRefresh(value),
+              autofocus: true,
               decoration: const InputDecoration(
                 hintText: 'type a group name...',
                 hintStyle: TextStyle(
