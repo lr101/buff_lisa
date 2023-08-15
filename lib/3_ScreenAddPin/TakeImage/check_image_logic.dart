@@ -1,6 +1,7 @@
 
 import 'dart:typed_data';
 
+import 'package:buff_lisa/5_Feed/FeedCard/feed_card_logic.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
@@ -37,6 +38,8 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
 
   @override
   Widget build(BuildContext context)  => CheckImageIU(state: this);
+
+  Pin? pin;
 
   /// flag for preventing multiple uploads
   bool uploading = false;
@@ -75,11 +78,13 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
 
   /// builds the image widget
   Future<Widget> handleFutureImage() async{
-    return Image.memory(widget.image);
+    pin = await _createMona(widget.image, widget.group);
+    return FeedCard(pin: pin!);
   }
 
   /// creates a Pin (mona) by accessing the location of the user
   Future<Pin> _createMona(Uint8List image, Group group) async {
+    if (this.pin != null) return this.pin!;
     Position locationData = await LocationClass.getLocation();
     //create Pin
     Pin pin = Pin(
