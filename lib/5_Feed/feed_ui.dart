@@ -15,7 +15,7 @@ class FeedUI extends StatefulUI<FeedPage, FeedPageState> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 80,
+        toolbarHeight: MediaQuery.of(context).size.height * 0.09 + 10,
         centerTitle: true,
         automaticallyImplyLeading: false,
         scrolledUnderElevation: 0.0,

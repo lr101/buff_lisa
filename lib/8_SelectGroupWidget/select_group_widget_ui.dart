@@ -58,22 +58,23 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
 
 
   Widget expanded(BuildContext context) {
+    double baseHeight = MediaQuery.of(context).size.height * 0.09;
     return Container(
       clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
             border: Border.all(color:Colors.transparent),
-            borderRadius: const BorderRadius.all(Radius.circular(35)),
+            borderRadius: BorderRadius.all(Radius.circular(baseHeight / 2)),
             color: Colors.grey.withOpacity(0.4)
         ),
           width: MediaQuery.of(context).size.width - 10,
-          height: 70,
+          height: baseHeight,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2),
             child:Container(
               clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                   border: Border.all(color:Colors.transparent),
-                  borderRadius: const BorderRadius.all(Radius.circular(35)),
+                  borderRadius: BorderRadius.all(Radius.circular(baseHeight / 2)),
                   color:Colors.transparent
               ),
               child: ListView.builder(
@@ -86,6 +87,7 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
 
   /// returns the circle avatar of the group and dynamically loads the image from the server
   Widget groupCard(BuildContext context,int index) {
+    double baseHeight =( MediaQuery.of(context).size.height * 0.09) - 15;
     Group group = Provider.of<ClusterNotifier>(context, listen: false).getGroups[index];
     Color color = Colors.grey.withOpacity(0.8);
     Widget num = const SizedBox.shrink();
@@ -98,13 +100,13 @@ class SelectGroupWidgetUI extends StatefulUI<SelectGroupWidget, SelectGroupWidge
         child: GestureDetector(
             onTap: () => state.onGroupTab(group),
             child: CustomRoundImage(
-                  size: 28,
+                  size: baseHeight / 2,
                   clickable: false,
                   imageCallback: group.profileImage.asyncValue,
                   child: Stack(
                     children: [
                     CircleAvatar(
-                      radius: 28,
+                      radius: baseHeight / 2,
                       backgroundColor: color,
                     ),
                     Align(

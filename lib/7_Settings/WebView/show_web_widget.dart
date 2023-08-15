@@ -32,7 +32,7 @@ class ShowWebWidgetState extends State<ShowWebWidget> {
             onNavigationRequest: (NavigationRequest request) =>
                 NavigationDecision.navigate),
       )
-      ..loadRequest(Uri.parse('https://${global.host}/${widget.route}'));
+      ..loadRequest(Uri.parse(widget.route));
   }
 
   @override

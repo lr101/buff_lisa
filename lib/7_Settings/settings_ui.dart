@@ -5,7 +5,7 @@ import 'package:buff_lisa/Files/settings_ui/src/list/settings_list.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import '../Files/Other/global.dart' as global;
 import '../Files/Routes/routing.dart';
 import '../Files/Themes/custom_theme.dart';
 import '../Files/Widgets/CustomSliverList/custom_easy_title.dart';
@@ -95,14 +95,21 @@ class SettingsUI extends StatelessUI<Settings> {
                     leading: const Icon(Icons.document_scanner),
                     title: const Text('Privacy Policy'),
                     onPressed: (context) {
-                      Routing.to(context, const ShowWebWidget(route: "public/privacy-policy",title: "Privacy Policy",));
+                      Routing.to(context, ShowWebWidget(route: "https://${global.host}/public/privacy-policy",title: "Privacy Policy",));
                     },
                   ),
                   SettingsTile.navigation(
                     leading: const Icon(Icons.document_scanner),
                     title: const Text('Terms of Service'),
                     onPressed: (context) {
-                      Routing.to(context, const ShowWebWidget(route: "public/agb",title: "Terms of Service",));
+                      Routing.to(context, ShowWebWidget(route: "https://${global.host}/public/agb",title: "Terms of Service",));
+                    },
+                  ),
+                  SettingsTile.navigation(
+                    leading: const Icon(Icons.document_scanner),
+                    title: const Text('OpenStreetMap Copyright'),
+                    onPressed: (context) {
+                      Routing.to(context, const ShowWebWidget(route: "https://www.openstreetmap.org/copyright",title: "OpenStreetMap Copyright",));
                     },
                   ),
                 ],

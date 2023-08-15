@@ -1,6 +1,8 @@
 import 'package:buff_lisa/Files/Themes/custom_theme.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomLayer extends StatelessWidget {
@@ -14,7 +16,7 @@ class CustomLayer extends StatelessWidget {
     return LayoutBuilder(builder: (context, p1) =>  Align(
         alignment: Alignment.bottomLeft,
         child: Container(
-          color: CustomTheme.grey.withOpacity(0.5),
+          color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor.withOpacity(0.8),
           height: height,
           child: GestureDetector(
             onTap: () => launchUrl(Uri.parse("https://www.openstreetmap.org/copyright"),mode: LaunchMode.externalApplication),
