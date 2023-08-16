@@ -51,8 +51,8 @@ class ShowGroupPageState extends State<ShowGroupPage> with SingleTickerProviderS
    void initState() {
      super.initState();
      pages = [
-       Tupel3('Members', MembersSubPage(group: widget.group, myGroup: widget.myGroup,), const Icon(Icons.groups)),
-       Tupel3('Images', ImagesSubPage(group: widget.group,), const Icon(Icons.image)),
+       Tupel3('Members', widget.group.visibility == 0 || widget.myGroup ? MembersSubPage(group: widget.group, myGroup: widget.myGroup,) : const SizedBox.shrink(), const Icon(Icons.groups)),
+       Tupel3('Images', widget.group.visibility == 0 || widget.myGroup ? ImagesSubPage(group: widget.group,) : const SizedBox.shrink(), const Icon(Icons.image)),
      ];
      _tabController = TabController(length: pages.length, vsync: this);
    }
