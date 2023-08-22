@@ -72,7 +72,7 @@ class ReportUserState extends State<ReportUser> {
                             const Text("Message",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
                             TextFormField(
                               textAlign: TextAlign.start,
-                              keyboardType: TextInputType.url,
+                              keyboardType: TextInputType.multiline,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.normal,

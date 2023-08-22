@@ -88,8 +88,10 @@ class FetchGroups {
     final response =  await RestAPI.createHttpsRequest("/api/groups", {}, 1,encode:  json);
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Group.fromJson(jsonDecode( response.body) as Map<String, dynamic>);
+    } else if (response.statusCode == 422) {
+      throw Exception("Group name already in use");
     } else {
-      return null;
+      throw Exception("Something went wrong during the upload. Try again later or contact the developer");
     }
   }
 

@@ -70,7 +70,7 @@ class CreateGroupPageState extends State<CreateGroupPage> {
             } else {
               CustomErrorMessage.message(context: context, message: "Group name already exists");
             }
-          }, onError: (_) => CustomErrorMessage.message(context: context, message: "Error during server upload. Try again later"));
+          }, onError: (e) => CustomErrorMessage.message(context: context, message: e.toString()));
         } else if (controller1.text.isEmpty) {
           CustomErrorMessage.message(context: context, message: "Group name to short");
         } else if (controller2.text.isEmpty) {
