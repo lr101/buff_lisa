@@ -24,7 +24,7 @@ class LoginUI extends StatelessUI<LoginScreen> {
       passwordValidator: LoginScreen.validator,
       onSubmitAnimationCompleted: () => widget.handleLoginComplete(context),
       onRecoverPassword: widget.recoverPassword,
-      messages: LoginMessages(recoverPasswordDescription: "Check your mails to reset password"),
+      messages: LoginMessages(recoverPasswordDescription: "Type your username here and than check your emails", recoverPasswordSuccess: "Check your emails for a recovery link"),
       additionalSignupFields: const [UserFormField(keyName: "email", userType: LoginUserType.email)],
       children: [ Positioned.fill(
           child: Align(

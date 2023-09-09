@@ -37,13 +37,13 @@ class ProfilePage extends StatefulWidget {
 class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientMixin {
 
   /// number of rows added by the pagingController added, when paging is activated
-  static const _pageSize = 3;
+  static const _pageSize = 5;
 
   /// number of images shown in a row
   static const _gridWidth = 3;
 
   /// number of pages loaded and held in storage that are not visible currently
-  static const _invisibleThresh = 4;
+  static const _invisibleThresh = 3;
 
   final m = Mutex();
 
@@ -143,22 +143,24 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
   /// Callback function for paging controller, when fetching a new page.
   /// Creates rows based of the current user pin list.
   void _fetchPage(int pageKey, ) async {
+    int width = MediaQuery.of(context).size.width ~/ _gridWidth;
     List<Pin> pins = await Provider.of<UserNotifier>(context, listen: false).getUser(widget.username).getPins ?? [];
     int currentIndex = (_pageSize * _gridWidth) * pageKey;
     int end = (_pageSize * _gridWidth) * (pageKey + 1) < pins.length ? (_pageSize * _gridWidth) * (pageKey + 1) : pins.length - 1;
     end = end < 0 ? 0 : end;
+
     try {
-      await FetchPins.fetchImageOfPins(pins.sublist(currentIndex, end));
+      await FetchPins.fetchPreviewsOfPins(pins.sublist(currentIndex, end), width);
       if ((_pageSize * _gridWidth) * (pageKey + 1) < pins.length) {
         pagingController.appendPage(
             List.generate(
-                3,
+                _pageSize,
                 (index) =>
                     getImageRow(currentIndex + index * _gridWidth, pins)),
             pageKey + 1);
       } else {
         pagingController.appendLastPage(List.generate(
-            3 - (pins.length - currentIndex) ~/ (_pageSize * _gridWidth),
+            _pageSize - (pins.length - currentIndex) ~/ (_pageSize * _gridWidth),
             (index) => getImageRow(currentIndex + index * _gridWidth, pins)));
       }
     } catch(_) {
@@ -201,7 +203,7 @@ class ProfilePageState extends State<ProfilePage> with AutomaticKeepAliveClientM
                 child: Padding(
                     padding: const EdgeInsets.all(2),
                     child: FutureBuilder<Uint8List>(
-                      future: pin.image.asyncValue(),
+                      future: pin.preview.asyncValue(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Image.memory(snapshot.requireData, fit: BoxFit.cover,);

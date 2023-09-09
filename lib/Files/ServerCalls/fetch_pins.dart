@@ -60,8 +60,11 @@ class FetchPins {
   /// returns the image of a pin as a byte list that is identified by [pin]
   /// throws an Exception if an error occurs
   /// GET Request to Server
-  static Future<Uint8List> fetchImageOfPin(Pin pin) async {
-    Response response = await RestAPI.createHttpsRequest("/api/pins/${pin.id}/image", {}, 0,);
+  static Future<Uint8List> fetchImageOfPin(Pin pin, [String? compression, String? height]) async {
+    Map<String, String> queryParams = {};
+    if (compression != null) queryParams["compression"] = compression;
+    if (height != null) queryParams["height"] = height;
+    Response response = await RestAPI.createHttpsRequest("/api/pins/${pin.id}/image", queryParams, 0,);
     if (response.statusCode == 200) {
       return response.bodyBytes;
     } else {
@@ -69,7 +72,31 @@ class FetchPins {
     }
   }
 
-  static Future<void> fetchImageOfPins(List<Pin> pins) async {
+  static Future<void> fetchPreviewsOfPins(List<Pin> pins, [int? height, int? compression]) async {
+    String ids = "";
+    List<Pin> filtered = pins.where((element) => element.preview.isEmpty).toList();
+    for (Pin pin in filtered) {
+      ids += pin.id.toString();
+      ids+="-";
+    }
+    if (ids == "") return;
+    ids = ids.substring(0, ids.length - 1);
+    Map<String, String> queryParams = {"ids" : ids};
+    if (height != null) queryParams["height"] = height.toString();
+    if (compression != null) queryParams["compression"] = compression.toString();
+    Response response = await RestAPI.createHttpsRequest("/api/images", queryParams, 0,timeout: 60);
+    if (response.statusCode == 200) {
+      List<dynamic> list = json.decode(response.body);
+      for(int i = 0; i < filtered.length; i++) {
+        try {
+          filtered[i].preview.setValue(base64Decode(list[i]));
+        } catch(_) {}
+      }
+    } else {
+      throw Exception("failed to load monas");
+    }
+  }
+  static Future<void> fetchImagesOfPins(List<Pin> pins, [int? compression]) async {
     String ids = "";
     List<Pin> filtered = pins.where((element) => element.image.isEmpty).toList();
     for (Pin pin in filtered) {
@@ -78,7 +105,9 @@ class FetchPins {
     }
     if (ids == "") return;
     ids = ids.substring(0, ids.length - 1);
-    Response response = await RestAPI.createHttpsRequest("/api/images", {"ids" : ids}, 0,timeout: 60);
+    Map<String, String> queryParams = {"ids" : ids};
+    if (compression != null) queryParams["compression"] = compression.toString();
+    Response response = await RestAPI.createHttpsRequest("/api/images", queryParams, 0,timeout: 60);
     if (response.statusCode == 200) {
       List<dynamic> list = json.decode(response.body);
       for(int i = 0; i < filtered.length; i++) {
@@ -87,7 +116,7 @@ class FetchPins {
         } catch(_) {}
       }
     } else {
-      throw Exception("failed to load mona");
+      throw Exception("failed to load monas");
     }
   }
 

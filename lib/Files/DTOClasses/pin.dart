@@ -30,6 +30,8 @@ class Pin {
   /// null: not loaded from server yet
   late final AsyncType<Uint8List> image;
 
+  late final AsyncType<Uint8List> preview;
+
   bool isOffline;
 
   /// Constructor of pin
@@ -41,9 +43,11 @@ class Pin {
     required this.username,
     required this.group,
     this.isOffline = false,
-    Uint8List? image
+    Uint8List? image,
+    Uint8List? preview
   }) {
     this.image = AsyncType<Uint8List>(value: image, callback: () => FetchPins.fetchImageOfPin(this), builder: (_) => Image.memory(_));
+    this.preview = AsyncType<Uint8List>(value: image, callback: () => FetchPins.fetchImageOfPin(this, "1", "500"), builder: (_) => Image.memory(_));
   }
 
   /// Constructor of pin from json when pin is loaded from server

@@ -99,4 +99,12 @@ class LoginScreen extends StatelessWidget {
       return false;
     }
   }
+
+  static String? emailValidatorWithErrorMessage(String? s) {
+    if (s != null && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(s)){
+      return null;
+    } else {
+      return "does not match email format";
+    }
+  }
 }

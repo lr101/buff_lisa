@@ -16,9 +16,21 @@ class RestAPI {
   static Future<http.Response> createHttpsRequest (String path, Map<String,dynamic> queryParameters, int requestType, {String? encode, int timeout = 30}) async {
     Map<String, String> header = {"Authorization" : "Bearer ${global.localData.token}"};
     if (encode != null) header["Content-Type"] = "application/json";
-    //Uri uri = Uri(scheme: "http", host: "10.0.2.2", port: 3000, path: path, queryParameters: queryParameters);
-    Uri uri = Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters);
-    if (kDebugMode) print(uri);
+    Uri uri = Uri(scheme: "http", host: "10.0.2.2", port: 3000, path: path, queryParameters: queryParameters);
+    //Uri uri = Uri(scheme: "https", host: global.host, path: path, queryParameters: queryParameters);
+    if (kDebugMode) {
+      String uriDebug = "";
+      switch (requestType) {
+        case 0: uriDebug += "GET ";break;
+        case 1: uriDebug += "POST ";break;
+        case 2: uriDebug += "PUT ";break;
+        case 3: uriDebug += "DELETE ";break;
+        default: uriDebug += "ERROR (NO TYPE) ";break;
+      }
+      uriDebug += uri.toString();
+      print(uriDebug);
+      print(header);
+    }
     switch (requestType) {
       case 0: return await http.get(uri, headers: header,).timeout(Duration(seconds: timeout));
       case 1: return await http.post(uri, headers: header, body: encode).timeout(Duration(seconds: timeout));
