@@ -53,6 +53,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                   child:CustomRoundImage(
                                     size: 16,
                                     imageCallback: Provider.of<UserNotifier>(context).getUser(state.widget.pin.username).profileImageSmall.asyncValue,
+                                    imageCallbackClickable: Provider.of<UserNotifier>(context).getUser(state.widget.pin.username).profileImage.asyncValue,
                                   ),
                                 ),
                                 Column(

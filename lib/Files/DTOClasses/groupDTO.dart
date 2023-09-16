@@ -49,6 +49,9 @@ class GroupDTO extends HiveObject {
   @HiveField(7)
   Uint8List? pinImage;
 
+  @HiveField(8)
+  DateTime? lastUpdated;
+
   GroupDTO({
     required this.groupId,
     required this.name,
@@ -57,7 +60,8 @@ class GroupDTO extends HiveObject {
     required this.groupAdmin,
     required this.description,
     required this.profileImage,
-    required this.pinImage
+    required this.pinImage,
+    required this.lastUpdated
   });
 
   GroupDTO.fromGroup(Group group):
@@ -68,9 +72,10 @@ class GroupDTO extends HiveObject {
       visibility = group.visibility,
       inviteUrl = group.inviteUrl,
       groupAdmin = group.groupAdmin.syncValue,
-      description = group.description.syncValue;
+      description = group.description.syncValue,
+      lastUpdated = group.lastUpdated;
 
   Group toGroup() {
-    return Group(groupId: groupId, name: name, visibility: visibility, inviteUrl: inviteUrl, groupAdmin: groupAdmin, description: description, profileImage: profileImage,  pinImage: pinImage);
+    return Group(groupId: groupId, name: name, visibility: visibility, inviteUrl: inviteUrl, groupAdmin: groupAdmin, description: description, profileImage: profileImage,  pinImage: pinImage, lastUpdated: lastUpdated);
   }
 }

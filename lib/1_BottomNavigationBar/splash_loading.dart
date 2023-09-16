@@ -87,7 +87,19 @@ class SplashLoadingState extends State<SplashLoading> with TickerProviderStateMi
   /// on error: must be an internet error: load saved offline pins by calling groupsOffline()
   Future<void> _getGroups() async {
     try {
+      List<Group> offlineGroups = global.localData.groupRepo.getGroups();
       List<Group> groups = await FetchGroups.getUserGroups();
+      for (var group in groups) {
+        if (group.lastUpdated != null) {
+          offlineGroups.where((g) => group.groupId == g.groupId).forEach((g) {
+            if (g.lastUpdated != null && (g.lastUpdated!.isAfter(group.lastUpdated!) || g.lastUpdated!.isAtSameMomentAs(group.lastUpdated!))) {
+              group.profileImage.setValue(g.profileImage.syncValue!);
+              group.pinImage.setValue(g.pinImage.syncValue!);
+            }
+          });
+        }
+      }
+
       await groupsOnline(groups);
     } on Exception catch (_, e) {
       if (kDebugMode )print(_);

@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import 'package:buff_lisa/Files/AbstractClasses/async_type.dart';
 import 'package:buff_lisa/Files/DTOClasses/group_repo.dart';
 import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
@@ -30,6 +30,8 @@ class Group {
   /// String: invite url of a private group
   /// null: user is not a member or group is public
   String? inviteUrl;
+
+  DateTime? lastUpdated;
 
   /// String: group admin of a group
   /// null: group admin not yet loaded from server or user is not a member of the private group
@@ -76,7 +78,8 @@ class Group {
     profileImage,
     pinImage,
     link,
-    saveOffline = true
+    saveOffline = true,
+    this.lastUpdated
   }) {
     this.groupAdmin = AsyncType(value: groupAdmin, callback: () => FetchGroups.getGroupAdmin(groupId), callbackDefault: () async => "---", builder: (_) => Text(_));
     this.members = AsyncType(value: members, callback: _getMembers, callbackDefault: () async => []);
@@ -100,7 +103,8 @@ class Group {
         pinImage: _getImageBinary(json['pinImage']),
         profileImage: _getImageBinary(json['profileImage']),
         saveOffline: saveOffline,
-        link: json['link']
+        link: json['link'],
+        lastUpdated: json['lastUpdated'] != Null && json['lastUpdated'] != null ? DateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(json['lastUpdated']) : null
     );
     if (saveOffline) group.saveGroupsOffline();
     return group;
@@ -116,7 +120,8 @@ class Group {
       "description" : description,
       "visibility" : visibility,
       "inviteUrl" : inviteUrl,
-      "link" : link
+      "link" : link,
+      "lastUpdated": lastUpdated?.toIso8601String()
     };
   }
 

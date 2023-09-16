@@ -9,6 +9,8 @@ class CustomRoundImage extends StatelessWidget {
 
   final Future<Uint8List?> Function()? imageCallback;
 
+  final Future<Uint8List?> Function()? imageCallbackClickable;
+
   final String? asset;
 
   final double size;
@@ -17,7 +19,7 @@ class CustomRoundImage extends StatelessWidget {
 
   final bool clickable;
 
-  const CustomRoundImage({super.key, this.imageCallback, required this.size, this.child, this.clickable = true, this.asset}) : assert (imageCallback != null || asset != null);
+  const CustomRoundImage({super.key, this.imageCallback, required this.size, this.child, this.clickable = true, this.asset, this.imageCallbackClickable}) : assert (imageCallback != null || asset != null);
 
 
 
@@ -76,7 +78,11 @@ class CustomRoundImage extends StatelessWidget {
   }
 
   void handleOpenImage(BuildContext context) {
-    Routing.to(context,  ShowProfileImage(provide: imageCallback != null ? imageCallback! : _bytes, defaultImage: const Image(image: AssetImage("images/profile.jpg"),)));
+    Routing.to(context,  ShowProfileImage(
+        provide: imageCallbackClickable != null ? imageCallbackClickable! :
+          imageCallback != null ? imageCallback! : _bytes,
+        defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
+    );
   }
 
 }
