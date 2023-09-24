@@ -88,12 +88,12 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
               page > 0 &&
               allWidgets.elementAt(page - 1).creationDate.isAfter(lastSeen!) &&
               pin.creationDate.isBefore(lastSeen!)
-          ) widgets.add(alreadySeenEverything("You have seen all new posts\nTry adding something yourself"));
+          ) widgets.add(alreadySeenEverything());
           // no new posts at the start
           if (lastSeen != null &&
               page == 0 &&
               pin.creationDate.isBefore(lastSeen!)
-          ) widgets.add(alreadySeenEverything("There are no new posts\nTry adding something yourself"));
+          ) widgets.add(alreadySeenEverything());
           // add current feed page
           widgets.add(widget);
           // add an ad
@@ -112,7 +112,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
     }
   }
 
-  Widget alreadySeenEverything(String text) {
+  Widget alreadySeenEverything() {
     return Padding(
         padding: const EdgeInsets.all(5.0),
         child: Container(
@@ -121,14 +121,14 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CustomRoundImage(
+            children: const [
+              CustomRoundImage(
                 size: 20,
                 asset: "images/pinGui.png",
                 clickable: false,
               ),
-              const SizedBox(width: 10,),
-              Text(text,textAlign: TextAlign.center,)
+              SizedBox(width: 10,),
+              Text("There are no new posts\nTry adding something yourself ",textAlign: TextAlign.center,)
             ],
           )
         )

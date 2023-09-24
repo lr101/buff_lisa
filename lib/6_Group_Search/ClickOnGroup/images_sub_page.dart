@@ -48,7 +48,7 @@ class ImagesSubPageState extends State<ImagesSubPage> with AutomaticKeepAliveCli
   Widget build(BuildContext context) {
     super.build(context);
     return CustomSliverList(
-      initPagedList: () async => init(await widget.group.pins.asyncValue()),
+      initPagedList: () async => init(await Provider.of<ClusterNotifier>(context).getGroupByGroupId(widget.group.groupId).pins.asyncValue()),
       pagingController: pagingController,
     );
   }
