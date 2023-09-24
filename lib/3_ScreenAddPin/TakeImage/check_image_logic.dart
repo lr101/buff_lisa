@@ -12,19 +12,22 @@ import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:native_exif/native_exif.dart';
 import 'package:provider/provider.dart';
 
 import '../../Files/Other/navbar_context.dart';
 import 'check_image_ui.dart';
 
 class CheckImageWidget extends StatefulWidget {
-  const CheckImageWidget({Key? key, required this.image, required this.navbarContext, required this.group}) : super(key: key);
+  const CheckImageWidget({Key? key, required this.image, required this.navbarContext, required this.group, this.coordinates}) : super(key: key);
 
   /// the image taken by the camera
   final Uint8List image;
 
   /// navbar context to navigate to map on success
   final NavBarContext navbarContext;
+
+  final  ExifLatLong? coordinates;
 
   /// selected group in camera
   final Group group;
@@ -85,11 +88,20 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
   /// creates a Pin (mona) by accessing the location of the user
   Future<Pin> _createMona(Uint8List image, Group group) async {
     if (this.pin != null) return this.pin!;
-    Position locationData = await LocationClass.getLocation();
+    double lat;
+    double long;
+    if (widget.coordinates != null) {
+      lat = widget.coordinates!.latitude;
+      long = widget.coordinates!.longitude;
+    } else {
+      Position locationData = await LocationClass.getLocation();
+      lat = locationData.latitude;
+      long = locationData.longitude;
+    }
     //create Pin
     Pin pin = Pin(
-        latitude: locationData.latitude,
-        longitude: locationData.longitude,
+        latitude: lat,
+        longitude: long,
         id: group.getNewOfflinePinId(),
         username: global.localData.username,
         creationDate: DateTime.now(),

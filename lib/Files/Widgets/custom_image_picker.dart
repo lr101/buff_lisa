@@ -12,12 +12,21 @@ import 'custom_error_message.dart';
 
 class CustomImagePicker {
 
+  static Future<XFile?> pick({required BuildContext context}) async {
+    try {
+      return await ImagePicker().pickImage(source: ImageSource.gallery);
+    } catch (e) {
+      CustomErrorMessage.message(context: context, message: "Something went wrong while trying to pick an image");
+    }
+    return null;
+  }
+
   /// opens the input picker for selecting an image from the gallery
   /// after selecting an image it is opened in an image cropper
   /// check if 100 < width, height and image is square
-  static Future<Uint8List?> pick({required int minHeight, required int minWidth, required Color color, required BuildContext context}) async {
+  static Future<Uint8List?> pickAndCrop({required int minHeight, required int minWidth, required Color color, required BuildContext context}) async {
     try {
-      final XFile? res =  await ImagePicker().pickImage(source: ImageSource.gallery);
+      final XFile? res =  await CustomImagePicker.pick(context: context);
       if (res != null && context.mounted) {
         CroppedFile? croppedFile = await ImageCropper().cropImage(
           sourcePath: res.path,

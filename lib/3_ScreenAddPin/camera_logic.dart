@@ -4,6 +4,7 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
+import 'package:buff_lisa/Files/Widgets/custom_image_picker.dart';
 import 'package:buff_lisa/Providers/camera_group_notifier.dart';
 import 'package:buff_lisa/Providers/camera_icon_notifier.dart';
 import 'package:buff_lisa/Providers/camera_notifier.dart';
@@ -12,6 +13,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:native_exif/native_exif.dart';
 
 import '../Files/Other/navbar_context.dart';
 import '../Files/Routes/routing.dart';
@@ -129,18 +131,41 @@ class CameraControllerWidget extends State<CameraWidget> {
         } else {
           bytes = await image.readAsBytes();
         }
-        Group group = groups[Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex];
-        Routing.to(context,  CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group,));
+        routeToCheckImage(bytes);
       } catch (e) {
         CustomErrorMessage.message(context: context, message: "Something went wrong while taking the picture");
       }
     }
   }
 
+  void routeToCheckImage(Uint8List bytes, [ExifLatLong? coord]) {
+    Group group = groups[Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex];
+    Routing.to(context,  CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group, coordinates: coord,));
+  }
+
   /// switch the flash mode to the next
   void switchFlash() {
     if(init) controller.setFlashMode(Provider.of<CameraIconNotifier>(context, listen: false).nextFlashMode());
   }
+
+  Future<void> upload() async {
+    final imageFile = await CustomImagePicker.pick(context: context);
+    try {
+      final exif = await Exif.fromPath(imageFile!.path);
+      final coord = await exif.getLatLong();
+      final bytes = await imageFile.readAsBytes();
+      if (coord != null) {
+        routeToCheckImage(bytes, coord);
+      } else {
+        throw Exception();
+      }
+    } catch(e) {
+      if (!mounted) return;
+      CustomErrorMessage.message(context: context, message: "Coordination could not be read from image metadata");
+    }
+
+  }
+
 
   /// uses the camera zoom if zoom is inside [_minZoom] and [_maxZoom]
   Future<void> handleZoom(ScaleUpdateDetails scale) async{

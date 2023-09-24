@@ -161,6 +161,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                                 state.widget.pin.longitude),
                             width: 50,
                             height: 50,
+                            anchorPos: AnchorPos.align(AnchorAlign.top),
                             builder: (BuildContext context) =>
                                 state.widget.pin.group.pinImage.getWidget())
                       ]),

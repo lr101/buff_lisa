@@ -88,7 +88,16 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                                             ),)
                                       ))
                                     ),
-                                  const SizedBox.square(dimension: 45,)
+                                  Padding(
+                                      padding: const EdgeInsets.all(2.5),
+                                      child:CircleAvatar(
+                                          radius: 20,
+                                          backgroundColor: Colors.grey.withOpacity(0.5),
+                                          child: Center(child: IconButton(
+                                              onPressed: state.upload,
+                                              icon: const Icon(Icons.upload)
+                                          ),)
+                                      ))
                                 ],),
                         ))
                       )

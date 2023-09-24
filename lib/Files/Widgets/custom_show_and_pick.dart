@@ -86,7 +86,7 @@ class CustomShowAndPickState extends State<CustomShowAndPick> {
   /// saves image in Provider to trigger reload of image preview
   Future<void> handleImageUpload(BuildContext context) async {
     Color theme = CustomTheme.c1;
-    Uint8List? pickedImage = await CustomImagePicker.pick(minHeight: 100, minWidth: 100, color: theme, context: context);
+    Uint8List? pickedImage = await CustomImagePicker.pickAndCrop(minHeight: 100, minWidth: 100, color: theme, context: context);
     if(!mounted || pickedImage == null) return;
     setState(() {
       updating = true;
