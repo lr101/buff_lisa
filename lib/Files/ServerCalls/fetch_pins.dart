@@ -145,6 +145,7 @@ class FetchPins {
       "groupId" : mona.group.groupId,
       "image": mona.image.syncValue,
       "username": global.localData.username,
+      "creationDate": mona.creationDate.toIso8601String()
     });
     final response =  await RestAPI.createHttpsRequest("/api/pins", {}, 1, encode:  json);
     if (response.statusCode == 201 || response.statusCode == 200) {

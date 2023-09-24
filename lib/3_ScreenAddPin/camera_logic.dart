@@ -150,16 +150,12 @@ class CameraControllerWidget extends State<CameraWidget> {
 
   Future<void> upload() async {
     final imageFile = await CustomImagePicker.pick(context: context);
-    try {
-      final exif = await Exif.fromPath(imageFile!.path);
-      final coord = await exif.getLatLong();
-      final bytes = await imageFile.readAsBytes();
-      if (coord != null) {
-        routeToCheckImage(bytes, coord);
-      } else {
-        throw Exception();
-      }
-    } catch(e) {
+    final exif = await Exif.fromPath(imageFile!.path);
+    final coord = await exif.getLatLong();
+    final bytes = await imageFile.readAsBytes();
+    if (coord != null) {
+      routeToCheckImage(bytes, coord);
+    } else {
       if (!mounted) return;
       CustomErrorMessage.message(context: context, message: "Coordination could not be read from image metadata");
     }

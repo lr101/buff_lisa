@@ -14,7 +14,7 @@ class CustomImagePicker {
 
   static Future<XFile?> pick({required BuildContext context}) async {
     try {
-      return await ImagePicker().pickImage(source: ImageSource.gallery);
+      return await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 25,);
     } catch (e) {
       CustomErrorMessage.message(context: context, message: "Something went wrong while trying to pick an image");
     }
