@@ -5,16 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../Themes/custom_theme.dart';
 import 'custom_error_message.dart';
+import 'package:image_picker_android/image_picker_android.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
 class CustomImagePicker {
 
   static Future<XFile?> pick({required BuildContext context}) async {
+
+
     try {
-      return await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 25,);
+      if (!(await Permission.photos.isGranted)) {
+        await Permission.photos.request();
+      }
+      if (!(await Permission.accessMediaLocation.isGranted)) {
+        await Permission.accessMediaLocation.request();
+      }
+      // ImagePickerPlatform.instance.getImageFromSource(source: ImageSource.gallery, options: const ImagePickerOptions(imageQuality: 25, requestFullMetadata: true))
+      return await ImagePicker().pickMedia(imageQuality: 25, requestFullMetadata: true);
     } catch (e) {
       CustomErrorMessage.message(context: context, message: "Something went wrong while trying to pick an image");
     }

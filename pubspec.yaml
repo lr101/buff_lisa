@@ -101,7 +101,7 @@ dependencies:
   url_launcher:
 
   # MIT License
-  infinite_scroll_pagination:
+  infinite_scroll_pagination: 3.2.0
 
   #MIT License
   internet_connection_checker:
