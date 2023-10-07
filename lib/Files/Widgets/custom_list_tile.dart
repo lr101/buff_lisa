@@ -18,7 +18,9 @@ class CustomListTile extends StatefulWidget {
 
   final VoidCallback? onTab;
 
-  const CustomListTile({super.key, required this.title, this.subtitle, this.leading, this.trailing, this.onTab});
+  final Color? backgroundColor;
+
+  const CustomListTile({super.key, required this.title, this.subtitle, this.leading, this.trailing, this.onTab, this.backgroundColor});
 
   static CustomListTile fromUser(User user, int points, bool admin, void Function(String username) onTab) {
     TextStyle style = TextStyle(color: (global.localData.username == user.username) ? CustomTheme.c2 : null);
@@ -35,7 +37,7 @@ class CustomListTile extends StatefulWidget {
     );
   }
 
-  static CustomListTile fromGroup(Group group, VoidCallback? onTab) {
+  static CustomListTile fromGroup(Group group, [VoidCallback? onTab, Color? backgroundColor]) {
     return CustomListTile(
       title: Text(group.name),
       subtitle: FutureBuilder<String?>(
@@ -54,6 +56,7 @@ class CustomListTile extends StatefulWidget {
         clickable: false,
       ),
       onTab: onTab,
+      backgroundColor: backgroundColor,
     );
   }
 
@@ -72,6 +75,7 @@ class CustomListTileState extends State<CustomListTile> {
       leading: widget.leading,
       trailing: widget.trailing,
       onTap: widget.onTab,
+      tileColor: widget.backgroundColor,
     );
   }
 

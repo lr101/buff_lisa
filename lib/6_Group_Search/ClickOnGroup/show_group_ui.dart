@@ -221,7 +221,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                         .of(context)
                         .size
                         .width * 0.85,
-                    height: 40,
+                    height: 56,
                     child:
                     MaterialButton(
                       padding: EdgeInsets.zero,
@@ -255,7 +255,7 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                                             snapshot.requireData != "") ?
                                     TextSpan(text: snapshot.requireData,
                                         style: const TextStyle(
-                                          fontSize: 16,
+                                          fontSize: 15,
                                           overflow: TextOverflow.fade,
                                           fontWeight: FontWeight.normal,
                                           decoration: TextDecoration.underline,
@@ -263,12 +263,12 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
                                         ConnectionState.waiting ?
                                     const TextSpan(
                                         text: "loading...", style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.normal,
                                     )) :
                                     const TextSpan(
                                         text: "no link yet", style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.normal,
                                     )) //partial text style
                                   ]

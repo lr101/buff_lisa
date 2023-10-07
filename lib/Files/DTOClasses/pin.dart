@@ -24,7 +24,7 @@ class Pin {
   final String username;
 
   /// group the pin belongs to
-  final Group group;
+  Group group;
 
   /// Uint8List:  image as byte list of the pin
   /// null: not loaded from server yet

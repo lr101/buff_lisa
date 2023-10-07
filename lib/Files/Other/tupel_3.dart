@@ -9,6 +9,6 @@ class Tupel3 {
   Tupel3(this.name, this.widget, this.icon);
 
   Tab toTab() {
-    return Tab(icon: icon, text: name, height: 55,);
+    return Tab(icon: icon, text: name, height: 56,);
   }
 }

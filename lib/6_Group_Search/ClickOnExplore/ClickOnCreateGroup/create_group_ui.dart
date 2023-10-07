@@ -96,7 +96,7 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                               textAlign: TextAlign.start,
                               keyboardType: TextInputType.url,
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 15,
                                 fontWeight: FontWeight.normal,
                               ),
                               decoration: const InputDecoration(hintText: "Type your link (optional)"),

@@ -24,6 +24,7 @@ class LocalData {
   static const String mapApiKey = "mapApiKey";
   static const String mapStyle = "mapStyle";
   static const String notice0 = "notice0";
+  static const String cameraTorch = "cameraTorch";
 
 
   late Secure secure = Secure();
@@ -189,12 +190,30 @@ class LocalData {
     offlineDataStorage.put(style, key: mapStyle);
   }
 
-  void setNoticeTrue(String notice) {
-    offlineDataStorage.put(true, key: notice);
+  void setTip(Tips key, {bool value = true}) {
+    offlineDataStorage.put(value, key: key.name);
   }
 
-  bool getNotice(String notice) {
-    return offlineDataStorage.get(notice) ?? false;
+  bool getTip(Tips key) {
+    return offlineDataStorage.get(key.name) ?? false;
   }
 
+  void setCamera(CameraOfflineValues key, int value) {
+    offlineDataStorage.put(value, key: key.name);
+  }
+
+  int getCamera(CameraOfflineValues key) {
+    return offlineDataStorage.get(key.name) ?? 0;
+  }
+
+}
+
+enum Tips {
+  uploadFromGallery
+}
+
+enum CameraOfflineValues {
+  flashMode,
+  groupScroll,
+  cameraSelection
 }

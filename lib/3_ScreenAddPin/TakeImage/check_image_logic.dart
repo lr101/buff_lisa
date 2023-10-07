@@ -7,15 +7,21 @@ import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Other/location_class.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:buff_lisa/Files/Widgets/cusotm_alert_dialog.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
+import 'package:buff_lisa/Files/settings_ui/src/utils/theme_provider.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:native_exif/native_exif.dart';
 import 'package:provider/provider.dart';
+import 'package:select_dialog/select_dialog.dart';
 
 import '../../Files/Other/navbar_context.dart';
+import '../../Files/Widgets/custom_list_tile.dart';
+import '../camera_ui.dart';
 import 'check_image_ui.dart';
 
 class CheckImageWidget extends StatefulWidget {
@@ -44,8 +50,18 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
 
   Pin? pin;
 
+  final TransformationController controller = TransformationController();
+
+  late Group selectedGroup;
+
   /// flag for preventing multiple uploads
   bool uploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedGroup = widget.group;
+  }
 
   /// on button press of approve button
   /// init save of pin offline and online
@@ -55,13 +71,13 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
     _tryUpload(widget.navbarContext.context);
     final BottomNavigationBar navigationBar = widget.navbarContext.globalKey.currentWidget! as BottomNavigationBar;
     Provider.of<DateNotifier>(context, listen: false).notifyReload();
-    Provider.of<ClusterNotifier>(context, listen: false).activateGroup(widget.group);
+    Provider.of<ClusterNotifier>(context, listen: false).activateGroup(selectedGroup);
     Navigator.pop(widget.navbarContext.context);
     navigationBar.onTap!(2);
   }
 
   Future<void> _tryUpload(BuildContext context) async {
-    Pin mona = await _createMona(widget.image, widget.group);
+    Pin mona = await _createMona(widget.image, selectedGroup);
     if (context.mounted) {
       Provider.of<ClusterNotifier>(context, listen: false).addOfflinePin(mona);
       await FetchPins.postPin(mona).then((value) {
@@ -81,7 +97,7 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
 
   /// builds the image widget
   Future<Widget> handleFutureImage() async{
-    pin = await _createMona(widget.image, widget.group);
+    pin = await _createMona(widget.image, selectedGroup);
     return FeedCard(pin: pin!);
   }
 
@@ -105,10 +121,29 @@ class StateCheckImageWidget extends State<CheckImageWidget>{
         id: group.getNewOfflinePinId(),
         username: global.localData.username,
         creationDate: DateTime.now().toUtc(),
-        group: group,
+        group: selectedGroup,
         image: image
     );
     return pin;
+  }
+
+    Future<void> handleEdit() async {
+      await SelectDialog.showModal<Group>(
+        context,
+        showSearchBox: false,
+        label: "Change Group",
+        selectedValue: selectedGroup,
+        itemBuilder: (context, group, b) => CustomListTile.fromGroup(group),
+        items: Provider.of<ClusterNotifier>(context, listen: false).getGroups,
+        onChange: (group) {
+          setState(() {
+            selectedGroup = group;
+            pin?.group = group;
+          });
+        },
+      );
+    setState(() {});
+
   }
 
 }

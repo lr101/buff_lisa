@@ -63,15 +63,15 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                     GestureDetector(
                                       onTap: state.handleOpenUserProfile,
                                       child: SizedBox(
-                                        height: 25,
-                                        child: Text(widget.pin.username),
+                                        height: 22,
+                                        child: FittedBox(fit: BoxFit.fitHeight, child: Text(widget.pin.username))
                                       )
                                     ),
                                     GestureDetector(
                                       onTap: state.handleOpenGroup,
                                       child: SizedBox(
-                                        height: 15,
-                                        child: Text(widget.pin.group.name, style: const TextStyle(fontStyle: FontStyle.italic),)
+                                        height: 18,
+                                        child: FittedBox(fit: BoxFit.fitHeight, child: Text(widget.pin.group.name, style: const TextStyle(fontStyle: FontStyle.italic),))
                                       )
                                     )
                                   ],

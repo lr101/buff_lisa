@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:snapping_page_scroll/snapping_page_scroll.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 
 import '../Files/Themes/custom_theme.dart';
 import '../Providers/camera_notifier.dart';
@@ -93,10 +94,16 @@ class CameraUI extends StatefulUI<CameraWidget, CameraControllerWidget> {
                                       child:CircleAvatar(
                                           radius: 20,
                                           backgroundColor: Colors.grey.withOpacity(0.5),
-                                          child: Center(child: IconButton(
-                                              onPressed: state.upload,
-                                              icon: const Icon(Icons.upload)
-                                          ),)
+                                          child: Center(
+                                              child: SuperTooltip(
+                                                controller: state.tooltipController,
+                                                popupDirection: TooltipDirection.up,
+                                                content: const Text("New: Upload an image with existing location metadata from your gallery"),
+                                                child: GestureDetector(
+                                                  onTap: state.upload,
+                                                  onLongPress: () => state.tooltipController.showTooltip(),
+                                                  child: Container(child: const Icon(Icons.upload)),
+                                          ),))
                                       ))
                                 ],),
                         ))

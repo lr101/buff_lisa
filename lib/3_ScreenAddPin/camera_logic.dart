@@ -14,7 +14,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:native_exif/native_exif.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 
+import '../Files/Other/local_data.dart';
 import '../Files/Other/navbar_context.dart';
 import '../Files/Routes/routing.dart';
 import 'TakeImage/check_image_logic.dart';
@@ -68,6 +70,8 @@ class CameraControllerWidget extends State<CameraWidget> {
   @override
   late BuildContext context;
 
+  final tooltipController = SuperTooltipController();
+
   @override
   Widget build(BuildContext context) {
     final state = this;
@@ -83,6 +87,17 @@ class CameraControllerWidget extends State<CameraWidget> {
           }
         )
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!global.localData.getTip(Tips.uploadFromGallery)) {
+        tooltipController.showTooltip();
+        global.localData.setTip(Tips.uploadFromGallery);
+      }
+    });
   }
 
   /// initializes the camera and its controller and saves relevant values of this camera to the corresponding attributes

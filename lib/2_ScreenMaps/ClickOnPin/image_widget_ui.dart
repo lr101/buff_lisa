@@ -31,7 +31,7 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
         appBar: null,
         body: CustomTitle(
             title: CustomEasyTitle(
-              title: Text("Image ${widget.pin.id < 0 ? "(offline)":""}"),
+              title: Text("Image ${widget.pin.id < 0 ? "(offline)" : ""}"),
               back: true,
               right: getActionBar(),
             ),
@@ -55,7 +55,9 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    const SizedBox(width: 5,),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
                                     Padding(
                                       padding: const EdgeInsets.all(2),
                                       child: CustomRoundImage(
@@ -75,19 +77,29 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        GestureDetector(
-                                          onTap: state.handleOpenUserProfile,
-                                          child: Text(widget.pin.username),
-                                        ),
-                                        GestureDetector(
-                                          onTap: state.handleOpenGroup,
-                                          child: Text(
-                                            widget.pin.group.name,
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                fontStyle: FontStyle.italic),
+                                        SizedBox(
+                                          height: 22,
+                                          child: GestureDetector(
+                                            onTap: state.handleOpenUserProfile,
+                                            child: FittedBox(
+                                                fit: BoxFit.fitHeight,
+                                                child:
+                                                    Text(widget.pin.username)),
                                           ),
-                                        )
+                                        ),
+                                        SizedBox(
+                                            height: 18,
+                                            child: GestureDetector(
+                                              onTap: state.handleOpenGroup,
+                                              child: FittedBox(
+                                                  fit: BoxFit.fitHeight,
+                                                  child: Text(
+                                                    widget.pin.group.name,
+                                                    style: const TextStyle(
+                                                        fontStyle:
+                                                            FontStyle.italic),
+                                                  )),
+                                            ))
                                       ],
                                     )
                                   ]),
@@ -95,7 +107,9 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(DateFormat('d. MMMM y').format(now)),
-                                  const SizedBox(width: 5,),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
                                 ],
                               )
                             ],
@@ -127,25 +141,24 @@ class ImageWidgetUI extends StatefulUI<ShowImageWidget, ShowImageWidgetState> {
                   SizedBox(
                     height: 40,
                     child: Center(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        height: 5,
-                        decoration: const BoxDecoration(
-                            color: CustomTheme.c1,
-                            borderRadius: BorderRadius.all(Radius.circular(2.5))
-                        )
-                      )
-                    ),
+                        child: Container(
+                            width: MediaQuery.of(context).size.width * 0.35,
+                            height: 5,
+                            decoration: const BoxDecoration(
+                                color: CustomTheme.c1,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(2.5))))),
                   ),
                   Expanded(
-                    child: FlutterMap(
+                      child: FlutterMap(
                     options: MapOptions(
                         minZoom: 2,
                         maxZoom: 18,
                         center:
                             LatLng(widget.pin.latitude, widget.pin.longitude),
                         zoom: global.feedZoom,
-                        interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+                        interactiveFlags:
+                            InteractiveFlag.pinchZoom | InteractiveFlag.drag,
                         keepAlive: false),
                     children: [
                       TileLayer(
