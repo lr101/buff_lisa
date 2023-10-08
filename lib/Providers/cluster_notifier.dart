@@ -140,7 +140,7 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// returns a [Group] by [groupId] if it is an item in [_userGroups]
   Group getGroupByGroupId(int groupId) {
-    return _userGroups.firstWhere((element) => element.groupId == groupId);
+    return _userGroups.firstWhere((element) => element.groupId == groupId, orElse: () => otherGroups.firstWhere((e) => e.groupId == groupId));
   }
 
   /// adds a pin to the [pin.group] Group
