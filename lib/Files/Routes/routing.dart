@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class Routing {
 
-  static dynamic to(BuildContext context, Widget to, [bool transition = true]) async {
+  static Future<dynamic> to(BuildContext context, Widget to, [bool transition = true]) async {
      return await Navigator.of(context).push(
          PageRouteBuilder(
            pageBuilder: (context, animation, secondaryAnimation) => to,

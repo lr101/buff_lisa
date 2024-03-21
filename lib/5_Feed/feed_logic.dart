@@ -94,7 +94,7 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
           // add current feed page
           widgets.add(widget);
           // add an ad
-          if (page % _addEvery == 0) widgets.add(const Card(child: CustomNativeAd()));
+          // TODO: uncomment for adds if (page % _addEvery == 0) widgets.add(const Card(child: CustomNativeAd()));
         }
         page++;
       }

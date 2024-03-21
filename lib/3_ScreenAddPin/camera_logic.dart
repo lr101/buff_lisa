@@ -12,6 +12,7 @@ import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mutex/mutex.dart';
 import 'package:native_exif/native_exif.dart';
 import 'package:provider/provider.dart';
 import 'package:super_tooltip/super_tooltip.dart';
@@ -67,6 +68,8 @@ class CameraControllerWidget extends State<CameraWidget> {
   /// controller of group selector list
   final PageController pageController = PageController(viewportFraction: 0.3);
 
+  final _m = Mutex();
+
   @override
   late BuildContext context;
 
@@ -74,7 +77,6 @@ class CameraControllerWidget extends State<CameraWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final state = this;
     return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => CameraNotifier(),),
@@ -133,29 +135,36 @@ class CameraControllerWidget extends State<CameraWidget> {
   /// takes an image via the controller
   /// selected group and image byte list used for showing [CheckImageWidget] page
   Future<void> takePicture(context, index) async {
-    if (index != Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex) {
-      pageController.animateToPage(index, duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
+    if (index != Provider
+        .of<CameraGroupNotifier>(context, listen: false)
+        .currentGroupIndex) {
+      pageController.animateToPage(
+          index, duration: const Duration(milliseconds: 200),
+          curve: Curves.easeIn);
       return;
     }
-    if (init) {
-      final image = await controller.takePicture();
-      try {
-        Uint8List bytes;
-        if (kIsWeb) {
-          bytes = await FetchPins.fetchImageFromBrowserCash(image.path);
-        } else {
-          bytes = await image.readAsBytes();
+    _m.protect(() async{
+      if (init) {
+        final image = await controller.takePicture();
+        try {
+          Uint8List bytes;
+          if (kIsWeb) {
+            bytes = await FetchPins.fetchImageFromBrowserCash(image.path);
+          } else {
+            bytes = await image.readAsBytes();
+          }
+          await routeToCheckImage(bytes);
+        } catch (e) {
+          CustomErrorMessage.message(context: context,
+              message: "Something went wrong while taking the picture");
         }
-        routeToCheckImage(bytes);
-      } catch (e) {
-        CustomErrorMessage.message(context: context, message: "Something went wrong while taking the picture");
       }
-    }
+    });
   }
 
-  void routeToCheckImage(Uint8List bytes, [ExifLatLong? coord]) {
+  Future<void> routeToCheckImage(Uint8List bytes, [ExifLatLong? coord]) async {
     Group group = groups[Provider.of<CameraGroupNotifier>(context, listen: false).currentGroupIndex];
-    Routing.to(context,  CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group, coordinates: coord,));
+    await Routing.to(context,  CheckImageWidget(image: bytes, navbarContext: widget.navbarContext, group: group, coordinates: coord,));
   }
 
   /// switch the flash mode to the next
@@ -169,7 +178,7 @@ class CameraControllerWidget extends State<CameraWidget> {
     final coord = await exif.getLatLong();
     final bytes = await imageFile.readAsBytes();
     if (coord != null) {
-      routeToCheckImage(bytes, coord);
+      await routeToCheckImage(bytes, coord);
     } else {
       if (!mounted) return;
       CustomErrorMessage.message(context: context, message: "Coordination could not be read from image metadata");
