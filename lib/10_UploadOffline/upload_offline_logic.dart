@@ -43,7 +43,7 @@ class UploadOfflinePageState extends State<UploadOfflinePage> {
       if (!mounted) return;
       Provider.of<ClusterNotifier>(context, listen: false).deleteOfflinePinAndAddToOnline(newPin, pin);
       (await PinRepo.fromInit(LocalData.pinFileNameKey)).deletePin(pin.id);
-    } on Exception catch (_, e) {
+    } on Exception catch (_) {
       print(_);
       await Provider.of<ClusterNotifier>(context, listen: false).addPin(pin);
     }

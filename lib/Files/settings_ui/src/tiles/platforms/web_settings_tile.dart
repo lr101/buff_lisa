@@ -16,8 +16,8 @@ class WebSettingsTile extends StatelessWidget {
     required this.activeSwitchColor,
     required this.enabled,
     required this.trailing,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final SettingsTileType tileType;
   final Widget? leading;
@@ -91,7 +91,7 @@ class WebSettingsTile extends StatelessWidget {
                         ),
                         if (value != null)
                           Padding(
-                            padding: EdgeInsets.only(top: 4.0),
+                            padding: const EdgeInsets.only(top: 4.0),
                             child: DefaultTextStyle(
                               style: TextStyle(
                                 color: theme.themeData.tileDescriptionTextColor,
@@ -101,7 +101,7 @@ class WebSettingsTile extends StatelessWidget {
                           )
                         else if (description != null)
                           Padding(
-                            padding: EdgeInsets.only(top: 4.0),
+                            padding: const EdgeInsets.only(top: 4.0),
                             child: DefaultTextStyle(
                               style: TextStyle(
                                 color: theme.themeData.tileDescriptionTextColor,

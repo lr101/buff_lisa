@@ -5,11 +5,11 @@ class SettingsTheme extends InheritedWidget {
   final SettingsThemeData themeData;
   final DevicePlatform platform;
 
-  SettingsTheme({
+  const SettingsTheme({super.key, 
     required this.themeData,
     required this.platform,
-    required Widget child,
-  }) : super(child: child);
+    required super.child,
+  });
 
   @override
   bool updateShouldNotify(SettingsTheme old) => true;
@@ -53,7 +53,7 @@ class SettingsThemeData {
   }) {
     if (theme == null) return this;
 
-    return this.copyWith(
+    return copyWith(
       leadingIconsColor: theme.leadingIconsColor,
       tileDescriptionTextColor: theme.tileDescriptionTextColor,
       dividerColor: theme.dividerColor,

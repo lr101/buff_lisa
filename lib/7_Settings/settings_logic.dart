@@ -17,7 +17,7 @@ import 'HiddenPins/hidden_pin_logic.dart';
 import 'Report/report_user.dart';
 
 class Settings extends StatelessWidget {
-  const Settings({Key? key}) : super(key: key);
+  const Settings({super.key});
 
   @override
   Widget build(BuildContext context) => SettingsUI(widget: this);

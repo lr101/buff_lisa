@@ -5,8 +5,8 @@ import 'abstract_settings_tile.dart';
 class CustomSettingsTile extends AbstractSettingsTile {
   const CustomSettingsTile({
     required this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Widget child;
 

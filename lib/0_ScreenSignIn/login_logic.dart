@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) => LoginUI(widget: this);
@@ -30,7 +30,7 @@ class LoginScreen extends StatelessWidget {
       return Secure.loginAuthentication(data.name, data.password, ).then((value) {
         return value ? null : 'username or password are wrong';
       });
-    } on Exception catch (_, e) {
+    } on Exception catch (_) {
       print(_);
       return Future<String>.value("cannot connect to server");
     }

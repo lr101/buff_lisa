@@ -100,7 +100,7 @@ class SplashLoadingState extends State<SplashLoading> with TickerProviderStateMi
       }
 
       await groupsOnline(groups);
-    } on Exception catch (_, e) {
+    } on Exception catch (_) {
       if (kDebugMode )print(_);
       groupsOffline();
     }

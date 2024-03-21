@@ -13,7 +13,7 @@ import '../Files/Other/navbar_context.dart';
 
 
 class BottomNavigationWidget extends StatefulWidget {
-  const BottomNavigationWidget({Key? key}) : super(key: key);
+  const BottomNavigationWidget({super.key});
 
   @override
   State<BottomNavigationWidget> createState() => BottomNavigationWidgetState();

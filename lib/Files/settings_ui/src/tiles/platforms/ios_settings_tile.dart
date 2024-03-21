@@ -20,8 +20,8 @@ class IOSSettingsTile extends StatefulWidget {
     required this.activeSwitchColor,
     required this.enabled,
     required this.trailing,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final SettingsTileType tileType;
   final Widget? leading;
@@ -83,10 +83,10 @@ class _IOSSettingsTileState extends State<IOSSettingsTile> {
     return ClipRRect(
       borderRadius: BorderRadius.vertical(
         top: additionalInfo.enableTopBorderRadius
-            ? Radius.circular(12)
+            ? const Radius.circular(12)
             : Radius.zero,
         bottom: additionalInfo.enableBottomBorderRadius
-            ? Radius.circular(12)
+            ? const Radius.circular(12)
             : Radius.zero,
       ),
       child: content,
@@ -198,7 +198,7 @@ class _IOSSettingsTileState extends State<IOSSettingsTile> {
               widget.onPressed!.call(context);
 
               Future.delayed(
-                Duration(milliseconds: 100),
+                const Duration(milliseconds: 100),
                 () => changePressState(isPressed: false),
               );
             },
@@ -212,7 +212,7 @@ class _IOSSettingsTileState extends State<IOSSettingsTile> {
         color: isPressed
             ? theme.themeData.tileHighlightColor
             : theme.themeData.settingsSectionBackground,
-        padding: EdgeInsetsDirectional.only(start: 18),
+        padding: const EdgeInsetsDirectional.only(start: 18),
         child: Row(
           children: [
             if (widget.leading != null)
@@ -279,12 +279,12 @@ class IOSSettingsTileAdditionalInfo extends InheritedWidget {
   final bool enableTopBorderRadius;
   final bool enableBottomBorderRadius;
 
-  IOSSettingsTileAdditionalInfo({
+  const IOSSettingsTileAdditionalInfo({super.key, 
     required this.needToShowDivider,
     required this.enableTopBorderRadius,
     required this.enableBottomBorderRadius,
-    required Widget child,
-  }) : super(child: child);
+    required super.child,
+  });
 
   @override
   bool updateShouldNotify(IOSSettingsTileAdditionalInfo old) => true;
@@ -294,7 +294,7 @@ class IOSSettingsTileAdditionalInfo extends InheritedWidget {
         .dependOnInheritedWidgetOfExactType<IOSSettingsTileAdditionalInfo>();
     // assert(result != null, 'No IOSSettingsTileAdditionalInfo found in context');
     return result ??
-        IOSSettingsTileAdditionalInfo(
+        const IOSSettingsTileAdditionalInfo(
           needToShowDivider: true,
           enableBottomBorderRadius: true,
           enableTopBorderRadius: true,

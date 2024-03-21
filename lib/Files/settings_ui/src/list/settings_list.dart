@@ -32,8 +32,8 @@ class CustomSettingsList extends StatelessWidget {
     this.brightness,
     this.contentPadding,
     this.applicationType = ApplicationType.material,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final bool shrinkWrap;
   final ScrollPhysics? physics;
@@ -79,11 +79,11 @@ class CustomSettingsList extends StatelessWidget {
       case DevicePlatform.android:
       case DevicePlatform.fuchsia:
       case DevicePlatform.linux:
-        return EdgeInsets.only(top: 0);
+        return const EdgeInsets.only(top: 0);
       case DevicePlatform.iOS:
       case DevicePlatform.macOS:
       case DevicePlatform.windows:
-        return EdgeInsets.symmetric(vertical: 20);
+        return const EdgeInsets.symmetric(vertical: 20);
       case DevicePlatform.web:
         return EdgeInsets.zero;
       case DevicePlatform.device:

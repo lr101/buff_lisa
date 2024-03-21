@@ -146,9 +146,9 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
           }
       );
     } else {
-      return Row(
+      return const Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text("Description: "),
             Icon(Icons.lock)
           ]
@@ -277,9 +277,9 @@ class ShowGroupUI extends StatefulUI<ShowGroupPage, ShowGroupPageState>{
               )
       );
     } else {
-      return Row(
+      return const Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text("Url/Link: "),
             Icon(Icons.lock)
           ]

@@ -21,7 +21,7 @@ import '../../Files/Widgets/custom_list_tile.dart';
 import 'check_image_ui.dart';
 
 class CheckImageWidget extends StatefulWidget {
-  const CheckImageWidget({Key? key, required this.image, required this.navbarContext, required this.group, this.coordinates}) : super(key: key);
+  const CheckImageWidget({super.key, required this.image, required this.navbarContext, required this.group, this.coordinates});
 
   /// the image taken by the camera
   final Uint8List image;

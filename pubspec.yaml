@@ -153,6 +153,8 @@ dependencies:
 
   snapping_page_scroll:
 
+  intl: any
+  async: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -115,10 +115,10 @@ class FeedPageState extends State<FeedPage>  with AutomaticKeepAliveClientMixin<
         child: Container(
           decoration: BoxDecoration(border: Border.all(color: CustomTheme.c1)),
           height: 100,
-          child: Row(
+          child: const Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               CustomRoundImage(
                 size: 20,
                 asset: "images/pinGui.png",

@@ -67,7 +67,7 @@ class FetchUsers {
         return response.body;
       }
       return null;
-    } catch(_,e) {
+    } catch(_) {
       if (kDebugMode) print(_);
     }
     return null;

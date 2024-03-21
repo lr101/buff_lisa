@@ -8,8 +8,8 @@ class AndroidSettingsSection extends StatelessWidget {
     required this.tiles,
     required this.margin,
     this.title,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final List<AbstractSettingsTile> tiles;
   final EdgeInsetsDirectional? margin;
@@ -59,7 +59,7 @@ class AndroidSettingsSection extends StatelessWidget {
       shrinkWrap: true,
       itemCount: tiles.length,
       padding: EdgeInsets.zero,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
         return tiles[index];
       },

@@ -13,7 +13,7 @@ double feedZoom = 13;
 
 /// position of flutter map on start
 /// Is set to the center of Karlsruhe, Germany
-LatLng initCamera =  LatLng(49.006889, 8.403653);
+LatLng initCamera =  const LatLng(49.006889, 8.403653);
 
 /// server ip address loaded from .env file
 /// useful ip addresses:

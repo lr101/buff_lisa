@@ -33,9 +33,9 @@ class MailUI extends StatelessUI<Email> {
                     child: Padding(padding: const EdgeInsets.all( 10),
                       child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.85,
-                          child: Column(
+                          child: const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text("Current email",style:  TextStyle(fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.normal)) ,
                                 Text("coming soon...",
                                   style: TextStyle(

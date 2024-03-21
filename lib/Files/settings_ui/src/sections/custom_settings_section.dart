@@ -5,8 +5,8 @@ import 'abstract_settings_section.dart';
 class CustomSettingsSection extends AbstractSettingsSection {
   const CustomSettingsSection({
     required this.child,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final Widget child;
 

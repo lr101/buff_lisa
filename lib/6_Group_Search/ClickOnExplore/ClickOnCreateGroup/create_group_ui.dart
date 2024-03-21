@@ -109,7 +109,7 @@ class CreateGroupUI extends StatefulUI<CreateGroupPage, CreateGroupPageState>{
                 const SizedBox(height: 5,),
                 Container(
                   color: CustomTheme.grey, width: MediaQuery.of(context).size.width,
-                  child: Padding(padding: EdgeInsets.all(10), child: SizedBox(
+                  child: Padding(padding: const EdgeInsets.all(10), child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.85,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

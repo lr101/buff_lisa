@@ -5,7 +5,7 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
 
 class Email extends StatelessWidget {
-  const Email({Key? key}) : super(key: key);
+  const Email({super.key});
 
   @override
   Widget build(BuildContext context) => MailUI(widget: this);

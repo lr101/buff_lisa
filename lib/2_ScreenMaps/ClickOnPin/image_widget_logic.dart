@@ -13,7 +13,7 @@ import '../../Files/Routes/routing.dart';
 import '../../Providers/date_notifier.dart';
 
 class ShowImageWidget extends StatefulWidget {
-  const ShowImageWidget({Key? key, required this.pin}) : super(key: key);
+  const ShowImageWidget({super.key, required this.pin});
 
   /// The Pin that is shown on this page
   final Pin pin;
