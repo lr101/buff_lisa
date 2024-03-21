@@ -1,16 +1,13 @@
 import 'package:buff_lisa/5_Feed/feed_ui.dart';
-import 'package:buff_lisa/8_SelectGroupWidget/select_group_widget_logic.dart';
 import 'package:buff_lisa/Ads/custom_native_ad.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
-import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
-import '../Files/Other/global.dart' as global;
+
 import '../Files/ServerCalls/fetch_pins.dart';
 import '../Files/Themes/custom_theme.dart';
 import '../Files/Widgets/custom_round_image.dart';

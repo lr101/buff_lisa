@@ -1,6 +1,7 @@
 import 'package:buff_lisa/Files/Other/local_data.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+
 import '../Files/Other/global.dart' as global;
 
 /// ChangeNotifier saving changes and information of the [CameraPage] Widget

@@ -1,18 +1,15 @@
-import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:buff_lisa/Providers/map_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:fading_image_button/fading_image_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../Files/Other/global.dart' as global;
-import '../../0_ScreenSignIn/login_logic.dart';
 import '../../Files/Themes/custom_theme.dart';
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
-import '../../Providers/cluster_notifier.dart';
 
 class EditMap extends StatefulWidget {
   const EditMap({super.key});

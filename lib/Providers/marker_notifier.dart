@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../2_ScreenMaps/ClickOnPin/image_widget_logic.dart';
-import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../main.dart';
 

@@ -3,9 +3,7 @@ import 'dart:typed_data';
 import 'package:buff_lisa/9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../Providers/theme_provider.dart';
 import '../Routes/routing.dart';
 import '../Themes/custom_theme.dart';
 import 'custom_image_picker.dart';

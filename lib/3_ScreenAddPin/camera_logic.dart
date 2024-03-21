@@ -12,8 +12,8 @@ import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:native_exif/native_exif.dart';
+import 'package:provider/provider.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 
 import '../Files/Other/local_data.dart';

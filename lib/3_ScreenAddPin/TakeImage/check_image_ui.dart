@@ -3,6 +3,7 @@ import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_easy_title.dart'
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../Files/Other/global.dart' as global;
 import '../../Files/Widgets/custom_round_image.dart';
 import '../../Providers/theme_provider.dart';

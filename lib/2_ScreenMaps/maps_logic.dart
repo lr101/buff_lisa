@@ -1,8 +1,4 @@
-import 'dart:typed_data';
-import 'dart:ui';
-
 import 'package:buff_lisa/2_ScreenMaps/maps_ui.dart';
-import 'package:buff_lisa/7_Settings/EditMap/edit_map.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Other/location_class.dart';
@@ -10,14 +6,12 @@ import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/marker_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 import '../6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import '../Files/DTOClasses/pin.dart';
 import '../Files/Routes/routing.dart';
-import '../Files/Widgets/cusotm_alert_dialog.dart';
 import 'ClickOnPin/image_widget_logic.dart';
 
 class MapsWidget extends StatefulWidget {

@@ -1,15 +1,12 @@
-import 'dart:typed_data';
-
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:buff_lisa/Providers/camera_icon_notifier.dart';
-import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:snapping_page_scroll/snapping_page_scroll.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 

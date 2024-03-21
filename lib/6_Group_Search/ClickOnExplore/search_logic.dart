@@ -3,17 +3,14 @@ import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_notifier.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_ui.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/Routes/routing.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
-import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
 
 import '../../Files/Widgets/custom_list_tile.dart';
 

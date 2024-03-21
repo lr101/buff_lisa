@@ -6,14 +6,13 @@ import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../10_UploadOffline/upload_offline_logic.dart';
-import '../Files/DTOClasses/group_repo.dart';
-import '../Files/Other/global.dart' as global;
 import '../Files/DTOClasses/group.dart';
 import '../Files/DTOClasses/pin.dart';
+import '../Files/Other/global.dart' as global;
 import '../Files/Other/local_data.dart';
 import '../Files/ServerCalls/fetch_groups.dart';
-import '../Files/Widgets/custom_error_message.dart';
 import '../Providers/cluster_notifier.dart';
 import 'navbar_logic.dart';
 

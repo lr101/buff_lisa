@@ -1,13 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:buff_lisa/6_Group_Search/ClickOnExplore/ClickOnCreateGroup/create_group_logic.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnExplore/search_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_sliver_list.dart';
-import 'package:buff_lisa/Files/Widgets/custom_popup_menu_button.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';

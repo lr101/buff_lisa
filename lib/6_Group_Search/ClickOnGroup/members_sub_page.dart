@@ -1,7 +1,8 @@
+import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:flutter/cupertino.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
-import 'package:buff_lisa/Files/Other/global.dart' as global;
+
 import '../../9_Profile/profile_logic.dart';
 import '../../Files/DTOClasses/group.dart';
 import '../../Files/DTOClasses/ranking.dart';

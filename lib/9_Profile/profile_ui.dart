@@ -1,20 +1,14 @@
-import 'dart:typed_data';
-
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_sliver_list.dart';
 import 'package:buff_lisa/Files/Widgets/custom_profile_layout.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:buff_lisa/Files/Widgets/custom_show_and_pick.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
 import '../7_Settings/settings_logic.dart';

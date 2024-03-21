@@ -1,9 +1,9 @@
 import 'package:buff_lisa/Files/DTOClasses/user.dart';
 import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../Other/global.dart' as global;
+
 import '../DTOClasses/group.dart';
+import '../Other/global.dart' as global;
 import '../Themes/custom_theme.dart';
 
 class CustomListTile extends StatefulWidget {

@@ -1,8 +1,6 @@
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
-import 'package:buff_lisa/Files/DTOClasses/ranking.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/Widgets/custom_action_button.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Files/Widgets/custom_profile_layout.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
@@ -12,9 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../Files/Themes/custom_theme.dart';
 import '../../Files/Widgets/CustomSliverList/custom_easy_title.dart';
-import '../../Files/Widgets/CustomSliverList/custom_sliver_list.dart';
 import '../../Files/Widgets/cusotm_alert_dialog.dart';
 import '../../Files/Widgets/custom_round_image.dart';
 

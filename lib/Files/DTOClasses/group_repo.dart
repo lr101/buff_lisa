@@ -2,8 +2,8 @@ import 'package:buff_lisa/Files/DTOClasses/groupDTO.dart';
 import 'package:buff_lisa/Files/Other/local_data.dart';
 import 'package:hive/hive.dart';
 
-import 'group.dart';
 import '../Other/global.dart' as global;
+import 'group.dart';
 
 class GroupRepo {
   late Box<GroupDTO> box;

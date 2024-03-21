@@ -6,20 +6,13 @@ import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
-import 'package:buff_lisa/Files/Widgets/custom_list_tile.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
-import '../../9_Profile/profile_logic.dart';
 import '../../Files/DTOClasses/ranking.dart';
 import '../../Files/Other/tupel_3.dart';
 import '../../Files/Routes/routing.dart';
-import '../../Files/Themes/custom_theme.dart';
-import '../../Files/Widgets/custom_round_image.dart';
-import '../../Providers/theme_provider.dart';
-import '../../Providers/user_notifier.dart';
 
 class ShowGroupPage extends StatefulWidget {
   const ShowGroupPage({super.key, required this.group, required this.myGroup});

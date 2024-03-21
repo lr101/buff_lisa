@@ -1,13 +1,6 @@
-import 'dart:typed_data';
-
-import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_sliver_list.dart';
-import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:measured_size/measured_size.dart';
 import 'package:provider/provider.dart';
 
-import '../../9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
 import '../../Providers/theme_provider.dart';
 import '../Themes/custom_theme.dart';
 import 'CustomSliverList/custom_easy_title.dart';

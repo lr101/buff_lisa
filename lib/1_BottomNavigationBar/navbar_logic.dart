@@ -1,19 +1,10 @@
 
-import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
-
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
-import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../2_ScreenMaps/maps_logic.dart';
 import '../5_Feed/feed_logic.dart';

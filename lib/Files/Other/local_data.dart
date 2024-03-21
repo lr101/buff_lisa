@@ -1,6 +1,5 @@
 import 'package:buff_lisa/Files/DTOClasses/pin_repo.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../0_ScreenSignIn/secure.dart';
 import '../DTOClasses/group_repo.dart';

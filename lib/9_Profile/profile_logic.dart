@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:async/async.dart';
 import 'package:buff_lisa/9_Profile/profile_ui.dart';
 import 'package:buff_lisa/Files/AbstractClasses/async_type.dart';
-import 'package:buff_lisa/Files/DTOClasses/user.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
@@ -11,15 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mutex/mutex.dart';
 import 'package:provider/provider.dart';
+
 import '../2_ScreenMaps/ClickOnPin/image_widget_logic.dart';
-import '../7_Settings/settings_logic.dart';
 import '../Files/DTOClasses/group.dart';
-import '../Files/Other/global.dart' as global;
 import '../Files/DTOClasses/pin.dart';
+import '../Files/Other/global.dart' as global;
 import '../Files/Routes/routing.dart';
 import '../Files/ServerCalls/fetch_users.dart';
-import '../Files/Widgets/custom_show_and_pick.dart';
-import '../Files/Widgets/custom_title.dart';
 import '../Providers/user_notifier.dart';
 import 'ClickOnProfileImage/show_profile_image_logic.dart';
 
