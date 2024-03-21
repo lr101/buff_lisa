@@ -1,4 +1,6 @@
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/ClickOnEdit/edit_group_logic.dart';
+import 'package:buff_lisa/6_Group_Search/ClickOnGroup/images_sub_page.dart';
+import 'package:buff_lisa/6_Group_Search/ClickOnGroup/members_sub_page.dart';
 import 'package:buff_lisa/6_Group_Search/ClickOnGroup/show_group_ui.dart';
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
@@ -6,12 +8,11 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
 import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:flutter/material.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
-import '../../9_Profile/profile_logic.dart';
 import '../../Files/DTOClasses/ranking.dart';
-import '../../Providers/theme_provider.dart';
+import '../../Files/Other/tupel_3.dart';
+import '../../Files/Routes/routing.dart';
 
 class ShowGroupPage extends StatefulWidget {
   const ShowGroupPage({super.key, required this.group, required this.myGroup});
@@ -28,13 +29,13 @@ class ShowGroupPage extends StatefulWidget {
   ShowGroupPageState createState() => ShowGroupPageState();
 }
 
-class ShowGroupPageState extends State<ShowGroupPage> {
+class ShowGroupPageState extends State<ShowGroupPage> with SingleTickerProviderStateMixin{
 
-  bool loaded = false;
 
-  List<Ranking>? ranking;
 
-  PagingController<dynamic, Widget> controller = PagingController(firstPageKey: 0, invisibleItemsThreshold: 50);
+  late TabController _tabController;
+
+  late List<Tupel3> pages;
 
   @override
   Widget build(BuildContext context) => ShowGroupUI(state: this);
@@ -42,38 +43,53 @@ class ShowGroupPageState extends State<ShowGroupPage> {
    @override
    void initState() {
      super.initState();
-     controller.addPageRequestListener((pageKey) async {
-         ranking ??= await ((widget.group.visibility != 0 && !widget.myGroup) ? Future(() => []) : widget.group.members.asyncValue());
-         if (pageKey + 50 < ranking!.length) {
-           controller.appendPage(List.generate(50, (index) => buildCard(index + pageKey as int)), pageKey + 50);
-         } else {
-           controller.appendLastPage(List.generate(ranking!.length - pageKey as int, (index) => buildCard(index + pageKey as int)));
-         }
-       });
+     pages = [
+       Tupel3('Members', widget.group.visibility == 0 || widget.myGroup ? MembersSubPage(group: widget.group, myGroup: widget.myGroup,) : const SizedBox.shrink(), const Icon(Icons.groups)),
+       Tupel3('Images', widget.group.visibility == 0 || widget.myGroup ? ImagesSubPage(group: widget.group,) : const SizedBox.shrink(), const Icon(Icons.image)),
+     ];
+     _tabController = TabController(length: pages.length, vsync: this);
    }
 
-  Widget buildCard(int index) {
-    Ranking member = ranking![index];
-    String adminString = "";
-    if (member.username == widget.group.groupAdmin.syncValue) adminString = "(admin)";
-    return GestureDetector(
-      onTap: () => handleOpenUserProfile(member.username),
-      child: Card(
-          color: (member.username == global.localData.username) ? Provider.of<ThemeNotifier>(context, listen: false).getCustomTheme.c1 : null,
-          child: ListTile(
-            leading: Text("${index + 1}. "),
-            title: Text("${member.username} $adminString"),
-            trailing: Text("${member.points} points"),
-          )
-      ),
-    );
-  }
+   Widget calcNumPosts() {
+     return FutureBuilder<List<Ranking>>(
+         future: () {Provider.of<ClusterNotifier>(context).getGroups; return widget.group.members.asyncValue();}(),
+         builder: (context, snapshot) {
+           if (snapshot.hasData) {
+             if (snapshot.requireData.isEmpty) return const Icon(Icons.lock);
+             int num = 0;
+             for (var element in snapshot.requireData) {
+               num += element.points;
+             }
+             return Text(num.toString());
+           } else {
+             return const Text("---");
+           }
+         },
+     );
+   }
+
+   Widget calcNumMembers() {
+     return FutureBuilder<List<Ranking>>(
+       future: () {Provider.of<ClusterNotifier>(context).getGroups; return widget.group.members.asyncValue();}(),
+       builder: (context, snapshot) {
+         if (snapshot.hasData) {
+           if (snapshot.requireData.isEmpty) return const Icon(Icons.lock);
+           return Text(snapshot.requireData.length.toString());
+         } else {
+           return const Text("---");
+         }
+       },
+     );
+   }
+
+
 
   /// joins a public group and closes the current context
   /// Method can only be called when the group is public and user is not a member
   void joinPublicGroup() {
     FetchGroups.joinGroup(widget.group.groupId, null).then((value) {
       Provider.of<ClusterNotifier>(context, listen: false).addGroup(value);
+      Provider.of<ClusterNotifier>(context, listen: false).activateGroup(value);
       Navigator.pop(context, {"joined" : true});
     });
   }
@@ -81,14 +97,11 @@ class ShowGroupPageState extends State<ShowGroupPage> {
   /// joins a private group by getting the invite code from the text field and closes the current context
   /// Method can only be called when the group is private and user is not a member
   void joinPrivateGroup(TextEditingController controller)  {
-    try {
       FetchGroups.joinGroup(widget.group.groupId, controller.text).then((value) {
         Provider.of<ClusterNotifier>(context, listen: false).addGroup(value);
+        Provider.of<ClusterNotifier>(context, listen: false).activateGroup(value);
         Navigator.pop(context, {"joined" : true});
-      });
-    } catch(e) {
-      //TODO wrong invite code
-    }
+      },onError:  (_) => CustomErrorMessage.message(context: context, message: "Could not join group..."));
   }
 
   /// leaves the group and closes the current context
@@ -116,23 +129,19 @@ class ShowGroupPageState extends State<ShowGroupPage> {
   /// opens the edit page for admin if the current user is the groups admin
   Future<void> editAsAdmin() async {
     if (widget.group.groupAdmin.syncValue != null && global.localData.username == widget.group.groupAdmin.syncValue) {
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => EditGroupPage(group: widget.group)
-        ),
-      );
+      await Routing.to(context, EditGroupPage(group: widget.group));
       //trigger rebuild
       setState(() {});
     }
   }
 
-  void handleOpenUserProfile(String username) {
-    if (username == global.localData.username) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ProfilePage(username: username,)
-      ),
-    );
+
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
+
 
 }

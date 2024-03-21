@@ -24,11 +24,13 @@ class Pin {
   final String username;
 
   /// group the pin belongs to
-  final Group group;
+  Group group;
 
   /// Uint8List:  image as byte list of the pin
   /// null: not loaded from server yet
   late final AsyncType<Uint8List> image;
+
+  late final AsyncType<Uint8List> preview;
 
   bool isOffline;
 
@@ -41,9 +43,11 @@ class Pin {
     required this.username,
     required this.group,
     this.isOffline = false,
-    Uint8List? image
+    Uint8List? image,
+    Uint8List? preview
   }) {
     this.image = AsyncType<Uint8List>(value: image, callback: () => FetchPins.fetchImageOfPin(this), builder: (_) => Image.memory(_));
+    this.preview = AsyncType<Uint8List>(value: image, callback: () => FetchPins.fetchImageOfPin(this, "1", "500"), builder: (_) => Image.memory(_));
   }
 
   /// Constructor of pin from json when pin is loaded from server
@@ -52,7 +56,7 @@ class Pin {
         latitude : json['latitude'],
         longitude : json['longitude'],
         id : json['id'],
-        username : json.containsKey('username') ? json['username'] : "",
+        username : json.containsKey('username') ? json['username'] : json.containsKey('creationUser') ? json['creationUser'] : "",
         creationDate : DateTime.parse((json['creationDate']).toString()),
         group: group,
         isOffline : false

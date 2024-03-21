@@ -21,6 +21,10 @@ class CreateGroupNotifier with ChangeNotifier {
   final _controller2 = TextEditingController();
   late String initDesc;
 
+  /// text controller of the group description input text field
+  final _controller3 = TextEditingController();
+  late String initLink;
+
   /// slider value of the public, private selector
   double _sliderValue = 0;
   late double initPublic;
@@ -35,8 +39,10 @@ class CreateGroupNotifier with ChangeNotifier {
     initPublic = _sliderValue;
     _controller1.text = group.name;
     initName = group.name;
-    _controller2.text = await group.description.asyncValue();
-    initDesc = await group.description.asyncValue();
+    _controller2.text = await group.description.asyncValue() ?? "";
+    _controller3.text = await group.link.asyncValue() ?? "";
+    initDesc = await group.description.asyncValue() ?? "";
+    initLink = await group.link.asyncValue() ?? "";
     _image = await group.profileImage.asyncValue();
     menuItems = await getMembers(group);
     notifyListeners();
@@ -82,13 +88,28 @@ class CreateGroupNotifier with ChangeNotifier {
     return _controller2;
   }
 
+  /// get method of the [_controller2]
+  TextEditingController get getText3 {
+    return _controller3;
+  }
+
   TextEditingController? get getText2IfChanged {
     return _controller2.text == initDesc ? null : _controller2;
   }
+  TextEditingController? get getText3IfChanged {
+    return _controller3.text == initLink ? null : _controller3;
+  }
+
 
   /// set method of the text inside the second text field
   void setText2(String text) {
     _controller2.text = text;
+    notifyListeners();
+  }
+
+  /// set method of the text inside the second text field
+  void setText3(String text) {
+    _controller3.text = text;
     notifyListeners();
   }
 

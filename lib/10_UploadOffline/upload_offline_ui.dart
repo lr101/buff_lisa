@@ -1,7 +1,10 @@
 import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
 import 'package:buff_lisa/5_Feed/FeedCard/feed_card_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
+import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import 'package:flutter/material.dart';
+
+import '../Files/Widgets/custom_title.dart';
 
 
 class UploadOfflinePageUI extends StatefulUI<UploadOfflinePage, UploadOfflinePageState> {
@@ -11,43 +14,18 @@ class UploadOfflinePageUI extends StatefulUI<UploadOfflinePage, UploadOfflinePag
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-      body: ListView.builder(
-        itemCount: state.widget.pins.length + 1,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return getTitle();
-          } else {
-            return FeedCard(pin: state.widget.pins.elementAt(index-1));
-          }
-        },
-      ),
-      floatingActionButton: Container(
-          width: MediaQuery.of(context).size.width - 50,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              color: const Color(0x99ffffff)
-          ),
-          child: Row(
-            children: [
-              TextButton(onPressed: () => state.handleUploadAll(), child: const Text("upload all")),
-              TextButton(onPressed: () => state.handleDeleteAll(), child: const Text("delete all"))
-            ],
-          )
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-
-  Widget getTitle() {
-    return SizedBox(
-      height: 100,
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
-            SizedBox(height: 25,),
-            Text("Approve uploads", style: TextStyle(fontSize: 20),)
-          ]
+      body: CustomTitle.withoutSlivers(title: const CustomEasyTitle(title: Text("Approve upload"),back:  false),
+            child: ListView.builder(
+          itemCount: state.widget.pins.length,
+          itemBuilder: (context, index) => FeedCard(pin: state.widget.pins.elementAt(index))
+      ),),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(onPressed: () => state.handleDeleteAll(), tooltip: "delete all", child: const Icon(Icons.delete)),
+          const SizedBox(height: 10,),
+          FloatingActionButton(onPressed: () => state.handleUploadAll(), tooltip: "upload all", child: const Icon(Icons.upload),),
+        ],
       ),
     );
   }

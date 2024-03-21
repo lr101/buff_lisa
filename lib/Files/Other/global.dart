@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../DTOClasses/group.dart';
 import 'local_data.dart';
 
 /// zoom when the maps controller sets the current location to the user location
@@ -12,7 +13,7 @@ double feedZoom = 13;
 
 /// position of flutter map on start
 /// Is set to the center of Karlsruhe, Germany
-LatLng initCamera =  LatLng(49.006889, 8.403653);
+LatLng initCamera =  const LatLng(49.006889, 8.403653);
 
 /// server ip address loaded from .env file
 /// useful ip addresses:
@@ -20,13 +21,11 @@ LatLng initCamera =  LatLng(49.006889, 8.403653);
 /// localhost: 10.0.2.2
 String host = dotenv.env["HOST"]!;
 
-/// api key for the stadia map service
-/// loaded from .env file
-String apiKey = dotenv.env["MAPS_API_KEY"]!;
-
 /// list of available cameras
 late List<CameraDescription> cameras;
 
 /// holds information of data that is stored locally on device
 /// is initialized on startup of app
 late LocalData localData;
+
+Group basicGroup = Group(groupId: -1, name: "", visibility: 0, inviteUrl: "", description: "", saveOffline: false);

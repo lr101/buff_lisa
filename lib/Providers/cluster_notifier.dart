@@ -1,45 +1,19 @@
 import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/DTOClasses/group_repo.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/DTOClasses/pin_repo.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
+import 'package:buff_lisa/Providers/marker_notifier.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 
-import '../2_ScreenMaps/ClickOnPin/image_widget_logic.dart';
-import '../main.dart';
+import '../Files/Other/local_data.dart';
 
 class ClusterNotifier extends ChangeNotifier {
 
 
   /// list of groups the user is a member of
   final  List<Group> _userGroups = [];
-
-
-  /// map of pins and their corresponding markers that are currently selected by active groups
-  /// includes all pins by active groups even when some are not shown by applying filters
-  final Map<Pin, Marker> _allMarkers = {};
-
-  /// list of markers that are currently shown
-  /// filters affect the shown markers
-  List<Marker> _shownMarkers = [];
-
-  /// list of users that are filtered in [_shownMarkers]
-  List<String> __filterUsernames = [];
-
-  /// all pins than are created after [__filterDateMax] are removed
-  /// all pins from 'infinity small' to [__filterDateMax] are NOT removed
-  /// null: does NOT filter any pins
-  DateTime? __filterDateMax;
-
-  /// all pins that are created before [__filterDateMin] are removed
-  /// all pins from [__filterDateMin] to current time are NOT removed
-  /// null: does NOT filter any pins
-  DateTime? __filterDateMin;
 
   /// flag if fetching of group was successfully
   /// true: server cannot be reached
@@ -52,11 +26,14 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// Is initialized at the beginning.
   /// Used to notify changes of current user pins shown on profile page.
-  late UserNotifier notifier;
+  late UserNotifier _userNotifier;
+
+  late MarkerNotifier _markerNotifier;
 
   /// inits the user notifier.
-  void init(UserNotifier notifier) {
-    this.notifier = notifier;
+  void init(UserNotifier userNotifier, MarkerNotifier markerNotifier) {
+    _userNotifier = userNotifier;
+    _markerNotifier = markerNotifier;
   }
 
   /// ads a group if it is not a part of the userGroups
@@ -104,9 +81,8 @@ class ClusterNotifier extends ChangeNotifier {
 
   /// adds a list of [Group] saved offline in [_offlineGroupHandler] in [_userGroups] if they not already existing
   /// NOTIFIES CHANGES
-  void loadOfflineGroups() {
-    GroupRepo repo = global.localData.repo;
-    addGroups(repo.getGroups());
+  Future<void> loadOfflineGroups() async {
+    addGroups(global.localData.groupRepo.getGroups());
   }
 
   /// removes a specific [group] form [_userGroups]
@@ -115,14 +91,13 @@ class ClusterNotifier extends ChangeNotifier {
   void removeGroup(Group group) {
     if (group.active) {
       for (Pin pin in group.pins.syncValue ?? {}) {
-        removePin(pin);
+        _removePin(pin);
       }
     }
     _userGroups.remove(group);
-    print("num1");
     global.localData.deleteOfflineGroup(group.groupId);
     notifyListeners();
-    notifier.clearPinsNotUser(global.localData.username);
+    _userNotifier.clearPinsNotUser(global.localData.username);
   }
 
   void updateGroup(Group group, Group changes) async {
@@ -133,6 +108,7 @@ class ClusterNotifier extends ChangeNotifier {
     group.groupAdmin.setValue(changes.groupAdmin.syncValue!);
     group.visibility = changes.visibility;
     group.inviteUrl = changes.inviteUrl;
+    group.link.setValue(changes.link.syncValue);
     notifyListeners();
   }
 
@@ -146,24 +122,19 @@ class ClusterNotifier extends ChangeNotifier {
       global.localData.updateGroupOrder(order);
     }
     notifyListeners(); // new thread
-    notifier.clearPinsNotUser(global.localData.username);
+    _userNotifier.clearPinsNotUser(global.localData.username);
   }
 
   /// clears all values from lists, attributes and maps
   void clearAll() {
     //TODO remove all offline pins too?
     _userGroups.clear();
-    _shownMarkers.clear();
-    _allMarkers.clear();
-    __filterUsernames.clear();
-    __filterDateMax = null;
-    __filterDateMin = null;
+    _markerNotifier.clear();
   }
 
   /// returns a [Group] by [groupId] if it is an item in [_userGroups]
   Group getGroupByGroupId(int groupId) {
-    print("num2");
-    return _userGroups.firstWhere((element) => element.groupId == groupId);
+    return _userGroups.firstWhere((element) => element.groupId == groupId, orElse: () => otherGroups.firstWhere((e) => e.groupId == groupId));
   }
 
   /// adds a pin to the [pin.group] Group
@@ -175,26 +146,39 @@ class ClusterNotifier extends ChangeNotifier {
     Group group = pin.group;
     bool success = await group.setPin(pin);
     if (success) {
+      _userNotifier.addPin(global.localData.username, pin);
       if (group.active) {
-        _addPinToMarkers(pin);
+        _markerNotifier.addMarker(pin);
+        _markerNotifier.update();
       }
-      if (!group.members.isEmpty && pin.username == global.localData.username) {
-        group.members.syncValue!.firstWhere((element) => element.username == global.localData.username).addOnePoint();
-        group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
-      }
+      addPointToMembers(group, pin);
     }
-    _updateValues();
-    notifier.addPin(global.localData.username, pin);
+    notifyListeners();
+  }
+
+  addPointToMembers(Group group, Pin pin) {
+    if (!group.members.isEmpty && pin.username == global.localData.username) {
+      group.members.syncValue!.firstWhere((element) => element.username == global.localData.username).addOnePoint();
+      group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
+    }
+  }
+
+  removePointFromMembers(Group group, Pin pin) {
+    if (!group.members.isEmpty && pin.username == global.localData.username) {
+      group.members.syncValue!.firstWhere((element) => element.username == global.localData.username).subOnePoint();
+      group.members.syncValue!.sort((a,b) =>  a.points.compareTo(b.points) * -1);
+    }
   }
 
   Future<void> addPins(Set<Pin> pins) async {
     for (Pin pin in pins) {
       bool success = await pin.group.setPin(pin);
       if (success && pin.group.active) {
-        _addPinToMarkers(pin);
+        _markerNotifier.addMarker(pin);
       }
     }
-    _updateValues();
+    _markerNotifier.update();
+    notifyListeners();
   }
 
   /// activates the [group] : the group will show its marker on the map and the feed
@@ -206,23 +190,31 @@ class ClusterNotifier extends ChangeNotifier {
       group.active = true;
       notifyListeners();
       global.localData.activateGroup(group.groupId);
-      //get pins from server or load from offline
-      if (offline && group.pins.syncValue == null) group.pins.setValue(global.localData.pinRepo.getPins(_userGroups));
-      Set<Pin> pins = await group.pins.asyncValueMerge((isLoaded, current, asyncVal) {
-        if (!isLoaded && current != null) {
-          for (Pin pin in current) {
-            asyncVal.removeWhere((element) => element.id == pin.id);
-            asyncVal.add(pin);
-          }
-        }
-        return asyncVal;
-      });
-      //converts pins to markers on google maps
-      for (Pin pin in pins) {
-        await _addPinToMarkers(pin);
-      }
-      _updateValues();
+      _loadGroupPins(group);  // new thread
     }
+  }
+
+  Future<List<Pin>> getAllOfflinePins() async {
+    return (await PinRepo.fromInit(LocalData.pinFileNameKey)).getPins(_userGroups).toList();
+  }
+
+  Future<void> _loadGroupPins(Group group) async {
+    //get pins from server or load from offline
+    if (offline && group.pins.syncValue == null) group.pins.setValue((await PinRepo.fromInit(LocalData.pinFileNameKey)).getPins([group]));
+    Set<Pin> pins = await group.pins.asyncValueMerge((isLoaded, current, asyncVal) {
+      if (!isLoaded && current != null) {
+        for (Pin pin in current) {
+          asyncVal.removeWhere((element) => element.id == pin.id);
+          asyncVal.add(pin);
+        }
+      }
+      return asyncVal;
+    });
+    //converts pins to markers on google maps
+    for (Pin pin in pins) {
+      _markerNotifier.addMarker(pin);
+    }
+    _markerNotifier.update();
   }
 
   /// deactivate the [group] : the groups pins will be removed from the map and the feed
@@ -236,9 +228,9 @@ class ClusterNotifier extends ChangeNotifier {
       global.localData.deactivateGroup(group.groupId);
       //removes markers from maps
       for (Pin pin in group.pins.syncValue ?? {}) {
-         _removePinFromMarkers(pin);
+         _markerNotifier.removeMarker(pin);
       }
-      _updateValues();
+      _markerNotifier.update();
     }
   }
 
@@ -249,32 +241,42 @@ class ClusterNotifier extends ChangeNotifier {
   /// 4. rebuild [_shownMarkers] list
   /// REBUILD MAP MARKERS
   /// NOTIFIES CHANGES
-  Future<bool> removePin(Pin pin) async {
+  Future<bool> _removePin(Pin pin) async {
     try {
       await FetchPins.deleteMonaFromPinId(pin.id);
-      notifier.removePin(global.localData.username, pin.id);
-      hidePin(pin);
+      await _userNotifier.removePin(pin.username, pin.id);
+      pin.group.removePin(pin);
+      _userNotifier.removePin(global.localData.username, pin.id);
+      _markerNotifier.removeMarker(pin);
+      _markerNotifier.update();
+      removePointFromMembers(pin.group, pin);
       return true;
     } catch(e) {
       return false;
     }
   }
 
+  Future<bool> removePin(Pin pin) async {
+    bool ret = await _removePin(pin);
+    notifyListeners();
+    return ret;
+  }
+
   Future<void> hidePin(Pin pin) async {
     pin.group.removePin(pin);
-    _removePinFromMarkers(pin);
-    _updateValues();
-    notifier.clearPinsNotUser(global.localData.username);
+    _userNotifier.clearPinsNotUser(global.localData.username);
+    _markerNotifier.removeMarker(pin);
+    _markerNotifier.update();
   }
 
   Future<void> updateFilter() async {
     for (Group group in _userGroups) {
-      for (var element in (await group.filter())) {
-        _removePinFromMarkers(element);
+      for (var pin in (await group.filter())) {
+        _markerNotifier.removeMarker(pin);
       }
     }
-    _updateValues();
-    notifier.clearPinsNotUser(global.localData.username);
+    _markerNotifier.update();
+    _userNotifier.clearPinsNotUser(global.localData.username);
   }
 
   /// removes [oldPin] from [_offlinePins]
@@ -284,17 +286,20 @@ class ClusterNotifier extends ChangeNotifier {
   Future<void> deleteOfflinePinAndAddToOnline(Pin newPin, Pin oldPin) async{
     await deleteOfflinePin(oldPin);
     await addPin(newPin);
+    notifyListeners();
   }
 
-  /// remove [mona] from [_offlinePins] and device storage
+  /// remove [pin] from [_offlinePins] and device storage
   /// REBUILD MAP MARKERS
   /// NOTIFIES CHANGES
-  Future<void> deleteOfflinePin(Pin mona) async{
-    _removePinFromMarkers(mona);
-    mona.group.removePin(mona);
-    PinRepo pinRepo = global.localData.pinRepo;
-    pinRepo.deletePin(mona.id);
-    _updateValues();
+  Future<void> deleteOfflinePin(Pin pin) async{
+    _markerNotifier.removeMarker(pin);
+    _markerNotifier.update();
+    pin.group.removePin(pin);
+    await _userNotifier.removePin(pin.username, pin.id);
+    (await PinRepo.fromInit(LocalData.pinFileNameKey)).deletePin(pin.id);
+    removePointFromMembers(pin.group, pin);
+    notifyListeners();
   }
 
   /// adds an offline [Pin] to device storage
@@ -303,18 +308,10 @@ class ClusterNotifier extends ChangeNotifier {
   /// NOTIFIES CHANGES
   Future<void> addOfflinePin(Pin mona) async{
     if (!kIsWeb) {
-      PinRepo pinRepo = global.localData.pinRepo;
-      pinRepo.setPin(mona);
-      if (mona.group.active) {
-        await _addPinToMarkers(mona);
-      }
-      _updateValues();
+      (await PinRepo.fromInit(LocalData.pinFileNameKey)).setPin(mona);
+      addPin(mona);
+      notifyListeners();
     }
-  }
-
-  /// get method of [_shownMarkers] attribute
-  List<Marker> get getMarkers {
-    return _shownMarkers;
   }
 
   /// get method of [_userGroups] attribute
@@ -331,82 +328,4 @@ class ClusterNotifier extends ChangeNotifier {
     return activeGroups;
   }
 
-  /// set [__filterDateMin] to [filterDateMin]
-  /// set [__filterDateMax] to [filterDateMax]
-  /// REBUILD MAP MARKERS
-  /// NOTIFIES CHANGES
-  void setFilterDate(DateTime? filterDateMin, DateTime? filterDateMax) {
-    __filterDateMin = filterDateMin;
-    __filterDateMax = filterDateMax;
-    _updateValues();
-  }
-
-  /// set [__filterUsernames] to [usernames]
-  /// REBUILD MAP MARKERS
-  /// NOTIFIES CHANGES
-  void setFilterUsername(List<String> usernames) {
-    __filterUsernames = usernames;
-    _updateValues();
-  }
-
-  /// remove [pin] from [_allMarkers]
-  void _removePinFromMarkers(Pin pin) {
-    _allMarkers.removeWhere((key, value) => key.id == pin.id && key.group.groupId == pin.group.groupId);
-  }
-
-  /// adds a Marker with attributes from [pin] to [_allMarkers]
-  /// key id of pin: '[pin.id]'
-  /// key of offline pin: 'new[pin.id]'
-  _addPinToMarkers(Pin pin) {
-    _allMarkers[pin] = (
-      Marker(
-          key: Key((pin.isOffline ? "${pin.group.groupId}${pin.id.toString()}" : pin.id.toString())),
-          point: LatLng(pin.latitude, pin.longitude), 
-          builder: (_)  => GestureDetector(
-            child: pin.group.pinImage.getWidget(),
-            onTap: () => Navigator.push(
-              navigatorKey.currentContext!,
-              MaterialPageRoute(builder: (context) => ShowImageWidget(newPin: pin.isOffline, pin: pin,)),
-            ),
-          )
-      )
-    );
-  }
-
-  /// updates the [_shownMarkers] list by rebuilding and filtering all markers form [_allMarkers]
-  /// REBUILD MAP MARKERS
-  /// NOTIFIES CHANGES
-  Future<void>  _updateValues() async {
-    Map<Pin, Marker> mark = Map.from(_allMarkers);
-    mark = _filterMaxDate(mark);
-    mark = _filterMinDate(mark);
-    mark = _filterUsers(mark);
-    _shownMarkers = List.from(mark.values);
-    notifyListeners();
-  }
-
-  /// filter to filter all pins in [mark] with [__filterDateMin]
-  Map<Pin, Marker> _filterMinDate(Map<Pin, Marker> mark) {
-    if (__filterDateMin == null) return mark;
-    mark.removeWhere((k,v) => k.creationDate.isBefore(__filterDateMin!));
-    return mark;
-  }
-
-  /// filter to filter all pins in [mark] with [__filterDateMax]
-  Map<Pin, Marker> _filterMaxDate(Map<Pin, Marker> mark) {
-    if (__filterDateMax == null) return mark;
-    mark.removeWhere((k,v) => k.creationDate.isAfter(__filterDateMax!));
-    return mark;
-  }
-
-  Map<Pin, Marker> _filterUsers(Map<Pin, Marker> mark) {
-    if (__filterUsernames.isEmpty) return mark;
-    if (__filterUsernames.length == 1)  {
-      mark.removeWhere((key, value) => key.username != __filterUsernames.first);
-    } else {
-      mark.removeWhere((key, value) => !__filterUsernames.any((element) => element == key.username));
-    }
-    return mark;
-
-  }
 }

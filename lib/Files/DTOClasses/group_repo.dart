@@ -1,6 +1,8 @@
 import 'package:buff_lisa/Files/DTOClasses/groupDTO.dart';
+import 'package:buff_lisa/Files/Other/local_data.dart';
 import 'package:hive/hive.dart';
 
+import '../Other/global.dart' as global;
 import 'group.dart';
 
 class GroupRepo {
@@ -29,7 +31,7 @@ class GroupRepo {
     return null;
   }
 
-  Future<void> clear() async{
+  Future<void> clear() async {
     await box.clear();
   }
 
@@ -38,5 +40,8 @@ class GroupRepo {
     return list.map((e) => e.toGroup()).toList();
   }
 
-  void deleteGroup (int id) => box.delete(id);
+  void deleteGroup(int id) {
+    box.delete(id);
+    global.localData.setCamera(CameraOfflineValues.groupScroll, 0);
+  }
 }

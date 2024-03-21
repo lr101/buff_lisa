@@ -9,15 +9,11 @@ import 'package:provider/provider.dart';
 
 import '../../6_Group_Search/ClickOnGroup/show_group_logic.dart';
 import '../../9_Profile/profile_logic.dart';
+import '../../Files/Routes/routing.dart';
 import '../../Providers/date_notifier.dart';
 
 class ShowImageWidget extends StatefulWidget {
-  const ShowImageWidget({Key? key, required this.pin, required this.newPin}) : super(key: key);
-
-  /// Boolean for showing if shown pin is a new pin and therefore an online saved pin
-  /// true: Pin is an offline Pin
-  /// false: Pin is a Pin that is saved on server
-  final bool newPin;
+  const ShowImageWidget({super.key, required this.pin});
 
   /// The Pin that is shown on this page
   final Pin pin;
@@ -47,48 +43,50 @@ class ShowImageWidgetState extends State<ShowImageWidget> {
   Future<void> handleButtonPress() async{
       if (widget.pin.username == global.localData.username) {
         BuildContext c = context;
-        bool deleted = true;
-        await showDialog<bool>(context: context, builder: (context) =>
+        await showDialog<bool>(context: context, builder: (_) =>
             CustomAlertDialog(
               title: "Delete this post?",
               text1: "Cancel",
               text2: "Delete",
               onPressed: () async {
-                if (widget.pin.id < 0) {
-                  await Provider.of<ClusterNotifier>(c, listen: false)
-                      .deleteOfflinePin(widget.pin);
-                } else {
-                  deleted = await Provider.of<ClusterNotifier>(c, listen: false)
-                      .removePin(widget.pin);
+                bool deleted = false;
+                try {
+                  if (widget.pin.id < 0) {
+                    await Provider.of<ClusterNotifier>(c, listen: false)
+                        .deleteOfflinePin(widget.pin);
+                    deleted = true;
+                  } else {
+                    deleted = await Provider.of<ClusterNotifier>(c, listen: false)
+                        .removePin(widget.pin);
+                  }
+                } catch (_) {
+                  deleted = false;
                 }
+                closeIfMounted(deleted);
               },
             )
         );
-        if (deleted && mounted) {
-          Provider.of<DateNotifier>(c, listen: false).notifyReload();
-          Navigator.pop(context);
-        } else {
-          CustomErrorMessage.message(
-              context: context, message: "Image could not be deleted");
-        }
+
       }
+  }
+
+  closeIfMounted(bool deleted) {
+    if (deleted && mounted) {
+      Provider.of<DateNotifier>(context, listen: false).notifyReload();
+      Navigator.pop(context);
+    } else {
+      CustomErrorMessage.message(
+          context: context, message: "Image could not be deleted");
+    }
   }
 
   void handleOpenUserProfile() {
     if (widget.pin.username == global.localData.username) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) =>  ProfilePage(username: widget.pin.username,)
-      ),
-    );
+    Routing.to(context, ProfilePage(username: widget.pin.username,));
   }
 
   void handleOpenGroup() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) =>  ShowGroupPage(group: widget.pin.group, myGroup: true)
-      ),
-    );
+    Routing.to(context,   ShowGroupPage(group: widget.pin.group, myGroup: true));
   }
 
 }

@@ -1,12 +1,19 @@
 import 'package:buff_lisa/7_Settings/settings_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Widgets/custom_title.dart';
+import 'package:buff_lisa/Files/settings_ui/src/list/settings_list.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:settings_ui/settings_ui.dart';
 
+import '../Files/Other/global.dart' as global;
+import '../Files/Routes/routing.dart';
+import '../Files/Themes/custom_theme.dart';
+import '../Files/Widgets/CustomSliverList/custom_easy_title.dart';
 import '../Files/Widgets/cusotm_alert_dialog.dart';
+import '../Files/settings_ui/src/sections/settings_section.dart';
+import '../Files/settings_ui/src/tiles/settings_tile.dart';
+import '../Files/settings_ui/src/utils/settings_theme.dart';
 import 'WebView/show_web_widget.dart';
 
 class SettingsUI extends StatelessUI<Settings> {
@@ -15,14 +22,16 @@ class SettingsUI extends StatelessUI<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: null,
-      body: SettingsList(
+    final con = context;
+    return CustomTitle.fromSlivers (
+        title: CustomEasyTitle(
+          title: Text("Settings", style: Provider.of<ThemeNotifier>(context).getTheme.textTheme.titleMedium),
+          back: true,
+    ),
+        slivers: [CustomSettingsList(
+          darkTheme: SettingsThemeData(settingsListBackground: Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+          lightTheme: SettingsThemeData(settingsListBackground: Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
             sections: [
-              const CustomSettingsSection(
-                  child: CustomTitle(
-                    titleBar: CustomTitleBar(title: "Settings"),
-                  )
-              ),
               SettingsSection(
                 title: const Text('App Settings'),
                 tiles: [
@@ -32,11 +41,16 @@ class SettingsUI extends StatelessUI<Settings> {
                     value: const Text('English'),
                   ),
                   SettingsTile.switchTile(
-                    activeSwitchColor:  Provider.of<ThemeNotifier>(context).getCustomTheme.c1,
+                    activeSwitchColor:  CustomTheme.c1,
                     onToggle: (value) => Provider.of<ThemeNotifier>(context, listen: false).toggleThemeMode(),
                     initialValue: Provider.of<ThemeNotifier>(context).getTheme.brightness == Brightness.dark,
                     leading: const Icon(Icons.dark_mode),
                     title: const Text('Toggle theme'),
+                  ),
+                  SettingsTile.navigation(
+                    leading: const Icon(Icons.map),
+                    title: const Text('Edit map'),
+                    onPressed: (context) => widget.handleMapPress(context),
                   ),
                 ],
               ),
@@ -82,20 +96,21 @@ class SettingsUI extends StatelessUI<Settings> {
                     leading: const Icon(Icons.document_scanner),
                     title: const Text('Privacy Policy'),
                     onPressed: (context) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ShowWebWidget(route: "public/privacy-policy",title: "Privacy Policy",)),
-                      );
+                      Routing.to(context, ShowWebWidget(route: "https://${global.host}/public/privacy-policy",title: "Privacy Policy",));
                     },
                   ),
                   SettingsTile.navigation(
                     leading: const Icon(Icons.document_scanner),
                     title: const Text('Terms of Service'),
                     onPressed: (context) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ShowWebWidget(route: "public/agb",title: "Terms of Service",)),
-                      );
+                      Routing.to(context, ShowWebWidget(route: "https://${global.host}/public/agb",title: "Terms of Service",));
+                    },
+                  ),
+                  SettingsTile.navigation(
+                    leading: const Icon(Icons.document_scanner),
+                    title: const Text('OpenStreetMap Copyright'),
+                    onPressed: (context) {
+                      Routing.to(context, const ShowWebWidget(route: "https://www.openstreetmap.org/copyright",title: "OpenStreetMap Copyright",));
                     },
                   ),
                 ],
@@ -104,22 +119,27 @@ class SettingsUI extends StatelessUI<Settings> {
                 title: const Text("Logout"),
                  tiles: [
                    SettingsTile.navigation(
-                     leading: const Icon(Icons.logout),
-                     title: const Text('Logout'),
-                     onPressed: (context) =>  showDialog(
-                         context: context,
-                         builder: (context) =>  CustomAlertDialog(
-                           title: "Confirm Logout",
-                           text2: "Logout",
-                           text1: "Cancel",
-                           onPressed: () => widget.handleLogoutPress(context),
-                         )
-                     )
+                     leading: const Icon(Icons.delete, color: Colors.red),
+                     title: const Text('Delete Account', style: TextStyle(color: Colors.red),),
+                     onPressed: (context) => widget.handleDeleteAccount(context)
+                   ),
+                   SettingsTile.navigation(
+                       leading: const Icon(Icons.logout, color: Colors.red),
+                       title: const Text('Logout', style: TextStyle(color: Colors.red),),
+                       onPressed: (context) =>  showDialog(
+                           context: context,
+                           builder: (context) =>  CustomAlertDialog(
+                             title: "Confirm Logout",
+                             text2: "Logout",
+                             text1: "Cancel",
+                             onPressed: () => widget.handleLogoutPress(con),
+                           )
+                       )
                    ),
                 ]
               )
             ],
-          ),
+          )],
     );
   }
 }

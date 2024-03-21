@@ -1,8 +1,10 @@
+
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../Files/Themes/custom_theme.dart';
 import 'navbar_logic.dart';
 
 
@@ -13,20 +15,19 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: null,
-        body: Column(
+        backgroundColor: Colors.transparent,
+        body: Stack(
           children: [
-            state.getMultiSelector(),
-            Expanded(child:
-              PageView(
-                controller: state.pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: state.widgetOptions,
-              ),
-            )
+            PageView(
+              controller: state.pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: state.widgetOptions,
+            ),
+            state.selectedIndex == 2 || state.selectedIndex == 3 ? state.multiSelect : const SizedBox.shrink(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          unselectedIconTheme: IconThemeData(color:  Provider.of<ThemeNotifier>(context).getCustomTheme.c1,),
+          showUnselectedLabels: true,
           key: state.navBarKey,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -51,7 +52,8 @@ class NavBarUI extends StatefulUI<BottomNavigationWidget, BottomNavigationWidget
             ),
           ],
           currentIndex: state.selectedIndex,
-          selectedItemColor: Provider.of<ThemeNotifier>(context).getCustomTheme.c1,
+          unselectedItemColor: Provider.of<ThemeNotifier>(context).getTheme.iconTheme.color,
+          selectedItemColor: CustomTheme.c1,
           onTap: state.onItemTapped,
         )
     );

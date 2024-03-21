@@ -25,13 +25,14 @@ class GroupDTOAdapter extends TypeAdapter<GroupDTO> {
       description: fields[5] as String?,
       profileImage: fields[6] as Uint8List?,
       pinImage: fields[7] as Uint8List?,
+      lastUpdated: fields[8] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, GroupDTO obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.groupId)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class GroupDTOAdapter extends TypeAdapter<GroupDTO> {
       ..writeByte(6)
       ..write(obj.profileImage)
       ..writeByte(7)
-      ..write(obj.pinImage);
+      ..write(obj.pinImage)
+      ..writeByte(8)
+      ..write(obj.lastUpdated);
   }
 
   @override

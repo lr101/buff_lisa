@@ -20,6 +20,10 @@ class LocalData {
   static const String langKey = "langKey";
   static const String expandKey = "expandKey";
   static const String lastSeenKey = "lastSeenKey";
+  static const String mapApiKey = "mapApiKey";
+  static const String mapStyle = "mapStyle";
+  static const String notice0 = "notice0";
+  static const String cameraTorch = "cameraTorch";
 
 
   late Secure secure = Secure();
@@ -44,6 +48,8 @@ class LocalData {
   /// Storage to save ids of hidden posts.
   late HiveHandler<int, DateTime> hiddenPosts;
 
+  late GroupRepo groupRepo;
+
   /// Storage for multiple offline data:
   /// 1. theme
   /// 2. order
@@ -52,11 +58,6 @@ class LocalData {
   /// 5. last seen date
   late HiveHandler<String, dynamic> offlineDataStorage;
 
-  /// Storage to save groups offline.
-  late GroupRepo repo;
-
-  /// Storage to save pins offline.
-  late PinRepo pinRepo;
 
   /// static function to create an LocalData instance asynchrony
   static Future<LocalData> fromInit() async {
@@ -73,9 +74,8 @@ class LocalData {
     // init hive boxes
     hiddenUsers = await HiveHandler.fromInit<String, DateTime>(hiddenUsersKey);
     hiddenPosts = await HiveHandler.fromInit<int, DateTime>(hiddenPostsKey);
-    repo = await GroupRepo.fromInit(groupFileNameKey);
-    pinRepo = await PinRepo.fromInit(pinFileNameKey);
     offlineDataStorage = await HiveHandler.fromInit<String, dynamic>(offlineKeyValue);
+    groupRepo = (await GroupRepo.fromInit(LocalData.groupFileNameKey));
     // theme
     int? themeIndex = (await offlineDataStorage.get(themeKey)) as int?;
     if (themeIndex == null) {
@@ -101,8 +101,8 @@ class LocalData {
     // clear content of hive boxes
     await hiddenUsers.clear();
     await hiddenPosts.clear();
-    await repo.clear();
-    await pinRepo.clear();
+    await groupRepo.clear();
+    (await PinRepo.fromInit(LocalData.pinFileNameKey)).clear();
     await offlineDataStorage.clear();
   }
 
@@ -126,9 +126,9 @@ class LocalData {
   }
 
   /// delete an offline pin by id
-  void deleteOfflineGroup(int groupId) {
+  void deleteOfflineGroup(int groupId) async {
     deactivateGroup(groupId);
-    repo.deleteGroup(groupId);
+    groupRepo.deleteGroup(groupId);
   }
 
   /// true: top-bar is expanded
@@ -173,4 +173,46 @@ class LocalData {
     offlineDataStorage.put(DateTime.now(), key: lastSeenKey);
   }
 
+  void setMapApiKey(String apiKey) {
+    offlineDataStorage.put(apiKey, key: mapApiKey);
+  }
+
+  String? getMapApiKey() {
+    return offlineDataStorage.get(mapApiKey);
+  }
+
+  int? getMapStyle () {
+    return offlineDataStorage.get(mapStyle);
+  }
+
+  void setMapStyle(int? style) {
+    offlineDataStorage.put(style, key: mapStyle);
+  }
+
+  void setTip(Tips key, {bool value = true}) {
+    offlineDataStorage.put(value, key: key.name);
+  }
+
+  bool getTip(Tips key) {
+    return offlineDataStorage.get(key.name) ?? false;
+  }
+
+  void setCamera(CameraOfflineValues key, int value) {
+    offlineDataStorage.put(value, key: key.name);
+  }
+
+  int getCamera(CameraOfflineValues key) {
+    return offlineDataStorage.get(key.name) ?? 0;
+  }
+
+}
+
+enum Tips {
+  uploadFromGallery
+}
+
+enum CameraOfflineValues {
+  flashMode,
+  groupScroll,
+  cameraSelection
 }

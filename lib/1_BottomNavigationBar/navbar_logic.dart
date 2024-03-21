@@ -1,18 +1,10 @@
 
-import 'package:buff_lisa/10_UploadOffline/upload_offline_logic.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_ui.dart';
 import 'package:buff_lisa/3_ScreenAddPin/camera_logic.dart';
 import 'package:buff_lisa/6_Group_Search/my_groups_logic.dart';
 import 'package:buff_lisa/9_Profile/profile_logic.dart';
-import 'package:buff_lisa/Files/DTOClasses/group.dart';
-import 'package:buff_lisa/Files/DTOClasses/pin.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
-import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
-import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
-import 'package:buff_lisa/Providers/cluster_notifier.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../2_ScreenMaps/maps_logic.dart';
 import '../5_Feed/feed_logic.dart';
@@ -21,7 +13,7 @@ import '../Files/Other/navbar_context.dart';
 
 
 class BottomNavigationWidget extends StatefulWidget {
-  const BottomNavigationWidget({Key? key}) : super(key: key);
+  const BottomNavigationWidget({super.key});
 
   @override
   State<BottomNavigationWidget> createState() => BottomNavigationWidgetState();
@@ -43,7 +35,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
 
   /// selector widget for groups
   /// shown on top of screen in map and feed page
-  final Widget multiSelect = SelectGroupWidget(expanded: global.localData.getExpanded());
+  final SelectGroupWidget multiSelect = const SelectGroupWidget();
 
   /// List of Widgets shown and used in the navbar
   late final List<Widget> widgetOptions = <Widget>[
@@ -62,18 +54,6 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   void initState() {
     super.initState();
     pageController = PageController(initialPage: selectedIndex);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getGroups();
-    });
-  }
-
-  /// returns the multi selector widget for map and feed page
-  Widget getMultiSelector() {
-    if (selectedIndex == 2 || selectedIndex == 3) {
-      return multiSelect;
-    } else {
-      return const SizedBox.shrink();
-    }
   }
 
 
@@ -90,48 +70,6 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
       selectedIndex = index;
       pageController.jumpToPage(selectedIndex);
     });
-  }
-
-  /// tries loading the groups of user from server
-  /// on success: call groupsOnline()
-  /// on error: must be an internet error: load saved offline pins by calling groupsOffline()
-  Future<void> _getGroups() async {
-    try {
-      List<Group> groups = await FetchGroups.getUserGroups();
-      await groupsOnline(groups);
-    } on Exception catch (_, e) {
-      if (kDebugMode )print(_);
-      groupsOffline();
-    }
-
-  }
-
-  /// add loaded groups to notifier, then
-  /// load existing offline pins from device storage -> open upload page, then
-  /// load and activate previous active groups
-  Future<void> groupsOnline(List<Group> groups) async {
-    // add groups to global notifier
-    Provider.of<ClusterNotifier>(context, listen:false).addGroups(List.from(groups));
-    // load all offline pins from files
-    Set<Pin> value = global.localData.pinRepo.getPins(groups);
-    if (value.isNotEmpty) {
-      // open upload page if offline saved pins exist
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => UploadOfflinePage(pins: value),
-        )
-      );
-    }
-  }
-
-  /// load saved groups from device storage
-  /// load saved pins from device storage and add them to show on map
-  Future<void> groupsOffline() async {
-    // show error message
-    CustomErrorMessage.message(context: context, message: "Cannot connect to server, offline groups are displayed");
-    Provider.of<ClusterNotifier>(context, listen:false).offline = true;
-    // load previous offline saved groups
-    Provider.of<ClusterNotifier>(context, listen:false).loadOfflineGroups();
   }
 
 }

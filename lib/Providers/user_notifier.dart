@@ -10,27 +10,32 @@ class UserNotifier with ChangeNotifier {
 
   User getUser(String username) => _users.firstWhere((element) => element.username == username, orElse: () => _createUser(username));
 
+  Future<void> updatePins(String username, List<Pin> pins) async {
+    await getUser(username).updatePins(pins);
+    notifyListeners();
+  }
+
+  Future<void> updateProfileImage(String username) async {
+    await getUser(username).profileImage.refresh();
+    await getUser(username).profileImageSmall.refresh();
+    notifyListeners();
+  }
+
   User _createUser(String username) {
     User user = User(username: username);
     _users.add(user);
     return user;
   }
 
-  void removePin(String username, int id) {
-    List<Pin>? pins = getUser(username).pins;
-    if (pins != null) {
-      pins.removeWhere((element) => element.id == id);
-      notifyListeners();
-    }
+  Future<void> removePin(String username, int id) async {
+    await getUser(username).removePin(id);
+    notifyListeners();
   }
 
-  void addPin(String username,Pin pin) {
+  Future<void> addPin(String username,Pin pin) async {
     if (pin.username == global.localData.username) {
-      List<Pin>? pins = getUser(username).pins;
-      if (pins != null) {
-        pins.add(pin);
-        notifyListeners();
-      }
+     await getUser(username).addPin(pin);
+     notifyListeners();
     }
   }
 
@@ -41,5 +46,6 @@ class UserNotifier with ChangeNotifier {
 
   void removeUser(String username) {
     _users.removeWhere((element) => element.username == username);
+    notifyListeners();
   }
 }

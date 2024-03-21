@@ -1,160 +1,127 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../9_Profile/ClickOnProfileImage/show_profile_image_logic.dart';
+import '../../Providers/theme_provider.dart';
+import '../Themes/custom_theme.dart';
+import 'CustomSliverList/custom_easy_title.dart';
 
 class CustomTitle extends StatefulWidget {
   const CustomTitle({
     super.key,
-    this.imageCallback,
-    this.child = const SizedBox.shrink(),
-    required this.titleBar
-  });
+    this.sliverList,
+    this.child,
+    this.slivers,
+    required this.title,
+  }) : assert(sliverList != null || child != null || slivers != null);
 
-  final Future<Uint8List> Function()? imageCallback;
-  final CustomTitleBar titleBar;
-  final Widget child;
+  final Widget? sliverList;
+  final Widget? child;
+  final List<Widget>? slivers;
+  final CustomEasyTitle title;
+
+  static CustomTitle fromSlivers({required CustomEasyTitle title, required List<Widget> slivers}) {
+    return CustomTitle(title: title, slivers: slivers);
+  }
+
+  static CustomTitle withoutSlivers({required CustomEasyTitle title, required Widget child}) {
+    return CustomTitle(title: title, child: child);
+  }
+
+  static CustomTitle withSliverList({required CustomEasyTitle title, required Widget sliverList}) {
+    return CustomTitle(title: title, sliverList: sliverList);
+  }
 
   @override
   CustomTitleState createState() => CustomTitleState();
 }
 
 class CustomTitleState extends State<CustomTitle> {
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child:
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            widget.titleBar,
-            const SizedBox(height: 10,),
-            image(),
-            widget.child
-          ],
+    if (widget.sliverList != null) {
+      return Scaffold(
+        backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+        body: SafeArea(
+            child: _withList()
         )
-    );
-  }
-
-  Widget image() {
-    if (widget.imageCallback == null) {
-      return const SizedBox.shrink();
+      );
+    } else if (widget.child != null) {
+      return Scaffold(
+        appBar: _normalAppBar(),
+        body: _withChild()
+      );
     } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: handleOpenImage,
-            child:  FutureBuilder<Uint8List>(
-              future: widget.imageCallback!(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CircleAvatar(backgroundImage: Image.memory(snapshot.requireData).image, radius: 50,);
-                } else {
-                  return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: 50,);
-                }
-              },
-            ),
-          ),
-          const SizedBox(height: 10,)
-        ],
+      return Scaffold(
+        body: _withSlivers()
       );
     }
   }
 
-  void handleOpenImage() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ShowProfileImage(provide: widget.imageCallback!, defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
-      ),
+  Widget _withSlivers() {
+    List<Widget> widgets = List.from(widget.slivers!);
+    widgets.insert(0, widget.title);
+    return  CustomScrollView(
+      slivers: widgets
     );
   }
 
-}
-
-class CustomRoundImage extends StatelessWidget {
-
-  final Future<Uint8List> Function() imageCallback;
-
-  final double size;
-
-  const CustomRoundImage({super.key,required this.imageCallback, required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: () => handleOpenImage(context),
-          child:  FutureBuilder<Uint8List>(
-            future: imageCallback(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return CircleAvatar(backgroundImage: Image.memory(snapshot.requireData).image, radius: 50,);
-              } else {
-                return CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg")).image, radius: 50,);
-              }
-            },
-          ),
-        ),
-        const SizedBox(height: 10,)
-      ],
+  Widget _withChild() {
+    return Container(
+      color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
+      child: widget.child
     );
   }
 
-  void handleOpenImage(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => ShowProfileImage(provide: imageCallback, defaultImage: const Image(image: AssetImage("images/profile.jpg"),))
-      ),
+  PreferredSizeWidget _normalAppBar() {
+    return AppBar(
+      backgroundColor: Color.alphaBlend(CustomTheme.grey, Provider.of<ThemeNotifier>(context).getTheme.canvasColor),
+      automaticallyImplyLeading: false,
+      scrolledUnderElevation: 0.0,
+      leading: left(),
+      title: widget.title.title,
+      actions: widget.title.right != null ? [widget.title.right!.build()] : null,
     );
   }
 
-}
+  Widget _withList() {
+    return NestedScrollView(
+        physics: const BouncingScrollPhysics(),
+        headerSliverBuilder: (context, innerScrolled) => <Widget>[
+          SliverOverlapAbsorber(
+                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: widget.title
+          )
+        ],
+        body: Container(
+          color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
+          child: Column(children: [Expanded(child: (widget.sliverList!))])
+        )
+    );
+  }
 
-class CustomAction {
-
-  CustomAction({required this.icon, required this.action});
-
-  final Icon icon;
-  final VoidCallback action;
-}
-
-class CustomTitleBar extends StatelessWidget {
-
-  final bool? back;
-  final Widget? actionBar;
-  final String? title;
-  final CustomAction? action;
-
-  const CustomTitleBar(
-      {super.key, this.back = true, this.actionBar, this.title, this.action});
-
-
-  @override
-  Widget build(BuildContext context) {
-    if (actionBar == null) {
-      return actions(context);
+  Widget left() {
+    if (widget.title.back) {
+      return IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: Icon(Icons.arrow_back, color: Provider.of<ThemeNotifier>(context).getTheme.iconTheme.color),
+      );
+    } else if (!widget.title.back && widget.title.left != null) {
+      return  widget.title.left!.build();
     } else {
-      return SizedBox(height: 48, child: actionBar);
+      return const SizedBox.shrink();
     }
   }
 
-  Widget actions(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        (back!) ?
-          IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.arrow_back)) :
-          const SizedBox.square(dimension: 48,),
-
-        Text(title!, style: const TextStyle(fontSize: 20),),
-
-        (action != null)
-            ? IconButton(onPressed: action?.action, icon: action!.icon)
-            : const SizedBox.square(dimension: 48,),
-      ],
-    );
+  Widget right() {
+    if (widget.title.right != null) {
+      return widget.title.right!.build();
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 }

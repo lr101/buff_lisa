@@ -8,6 +8,7 @@ import 'package:buff_lisa/Files/ServerCalls/fetch_pins.dart';
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 import 'pin.dart';
 
@@ -29,13 +30,18 @@ class Group {
   /// null: user is not a member or group is public
   String? inviteUrl;
 
+  DateTime? lastUpdated;
+
   /// String: group admin of a group
   /// null: group admin not yet loaded from server or user is not a member of the private group
   late final AsyncType<String> groupAdmin;
 
   /// String: description of a group
   /// null: description is not yet loaded from server or user is not a member of the private group
-  late final AsyncType<String> description;
+  late final AsyncType<String?> description;
+
+
+  late final AsyncType<String?> link;
 
   /// Uint8List: image profile picture byte data
   /// null: not yet loaded from server
@@ -70,19 +76,22 @@ class Group {
     pins,
     profileImage,
     pinImage,
-    saveOffline = true
+    link,
+    saveOffline = true,
+    this.lastUpdated
   }) {
     this.groupAdmin = AsyncType(value: groupAdmin, callback: () => FetchGroups.getGroupAdmin(groupId), callbackDefault: () async => "---", builder: (_) => Text(_));
     this.members = AsyncType(value: members, callback: _getMembers, callbackDefault: () async => []);
-    this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), callbackDefault: () async => "cannot be loaded", builder: (_) => Text(_));
+    this.description = AsyncType(value: description, callback: () => FetchGroups.getGroupDescription(groupId), builder: (v) => v != null ? Text(v) : const Icon(Icons.lock));
+    this.link = AsyncType(value: link, callback: () => FetchGroups.getGroupLink(groupId), builder: (v) => v != null ? Text(v) : const Icon(Icons.lock));
     this.pins = AsyncType(value: pins, callback: _getPinsCallback, callbackDefault: () async => <Pin>{});
-    this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: (saveOffline) ? _saveOffline : null);
-    this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: (saveOffline) ? _saveOffline : null, retry: false);
+    this.profileImage = AsyncType<Uint8List>(value: profileImage,callback: () => FetchGroups.getProfileImage(this), callbackDefault: _defaultProfileImage, builder: (_) => Image.memory(_), save: (saveOffline) ? saveGroupsOffline : null);
+    this.pinImage = AsyncType<Uint8List>(value: pinImage,callback: () => FetchGroups.getPinImage(this), callbackDefault: _defaultPinImage, builder: (image) => Image.memory(image), save: (saveOffline) ? saveGroupsOffline : null, retry: false);
   }
 
   /// Constructor of group when data is in json format
   static Group fromJson(Map<String, dynamic> json, [bool saveOffline = true]) {
-    return Group(
+    Group group =  Group(
         groupId: json['groupId'],
         name:  json['name'],
         visibility: json['visibility'],
@@ -92,8 +101,12 @@ class Group {
         members: _getMemberList(json['members']),
         pinImage: _getImageBinary(json['pinImage']),
         profileImage: _getImageBinary(json['profileImage']),
-        saveOffline: saveOffline
+        saveOffline: saveOffline,
+        link: json['link'],
+        lastUpdated: json['lastUpdated'] != Null && json['lastUpdated'] != null ? DateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(json['lastUpdated']) : null
     );
+    if (saveOffline) group.saveGroupsOffline();
+    return group;
   }
 
   /// Formats group data to json
@@ -105,7 +118,9 @@ class Group {
       "groupAdmin" : groupAdmin,
       "description" : description,
       "visibility" : visibility,
-      "inviteUrl" : inviteUrl
+      "inviteUrl" : inviteUrl,
+      "link" : link,
+      "lastUpdated": lastUpdated?.toIso8601String()
     };
   }
 
@@ -164,13 +179,14 @@ class Group {
   }
 
   int getNewOfflinePinId() {
-    int min = 0;
-    if (!pins.isEmpty) {
-      for (Pin p in pins.syncValue ?? {}) {
-        if (p.id < min) min = p.id;
-      }
+    Set<Pin>? list = pins.syncValue != null && pins.syncValue!.isNotEmpty ? pins.syncValue : null;
+    if (list != null) {
+      return (pins.syncValue ?? {})
+          .reduce((curr, next) => curr.id < next.id ? curr : next)
+          .id - 1;
+    } else {
+      return -1;
     }
-    return min - 1;
   }
 
   /// adds a pin to the set of pins of a group
@@ -200,8 +216,8 @@ class Group {
     }
   }
 
-  Future<void> _saveOffline() async {
-    global.localData.repo.setGroup(this);
+  Future<void> saveGroupsOffline() async {
+    global.localData.groupRepo.setGroup(this);
   }
 
   Future<Set<Pin>> _filter(Set<Pin> pins) async{

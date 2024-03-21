@@ -21,4 +21,8 @@ class Ranking {
   addOnePoint() {
     points++;
   }
+
+  subOnePoint() {
+    points--;
+  }
 }

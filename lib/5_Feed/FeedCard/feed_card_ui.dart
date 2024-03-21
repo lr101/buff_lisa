@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:buff_lisa/5_Feed/FeedCard/feed_card_logic.dart';
 import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:buff_lisa/Files/Other/global.dart' as global;
+import 'package:buff_lisa/Files/Widgets/custom_round_image.dart';
+import 'package:buff_lisa/Providers/map_notifier.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:configurable_expansion_tile_null_safety/configurable_expansion_tile_null_safety.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
+import '../../Files/Widgets/custom_layer.dart';
 import '../../Files/Widgets/custom_popup_menu_button.dart';
 import '../../Providers/theme_provider.dart';
 
@@ -45,15 +48,13 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                           Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                GestureDetector(
-                                    onTap: state.handleOpenUserProfile,
-                                    child:Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                      child:Provider.of<UserNotifier>(context, listen: false).getUser(state.widget.pin.username).profileImageSmall.customWidget(
-                                          callback: (image) =>  CircleAvatar(backgroundImage: Image.memory(image).image, radius: 18,),
-                                          elseFunc: () => CircleAvatar(backgroundImage: const Image(image: AssetImage("images/profile.jpg"),).image, radius: 18,)
-                                      ),
-                                    ),
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child:CustomRoundImage(
+                                    size: 16,
+                                    imageCallback: Provider.of<UserNotifier>(context).getUser(state.widget.pin.username).profileImageSmall.asyncValue,
+                                    imageCallbackClickable: Provider.of<UserNotifier>(context).getUser(state.widget.pin.username).profileImage.asyncValue,
+                                  ),
                                 ),
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -61,11 +62,17 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                   children: [
                                     GestureDetector(
                                       onTap: state.handleOpenUserProfile,
-                                      child: Text(widget.pin.username),
+                                      child: SizedBox(
+                                        height: 22,
+                                        child: FittedBox(fit: BoxFit.fitHeight, child: Text(widget.pin.username))
+                                      )
                                     ),
                                     GestureDetector(
                                       onTap: state.handleOpenGroup,
-                                      child: Text(widget.pin.group.name, style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),),
+                                      child: SizedBox(
+                                        height: 18,
+                                        child: FittedBox(fit: BoxFit.fitHeight, child: Text(widget.pin.group.name, style: const TextStyle(fontStyle: FontStyle.italic),))
+                                      )
                                     )
                                   ],
                                 )
@@ -132,7 +139,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                 Positioned(
                   top: 40,
                     child: ConfigurableExpansionTile(
-                        header: SizedBox(
+                        header: (isExpanded, iconTurns, heightFactor, controller) => SizedBox(
                             height: 38,
                             width: MediaQuery.of(p0).size.width,
                             child: Row(
@@ -144,22 +151,22 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                   child: Icon(Icons.pin_drop),
                                 ),
                                 FutureBuilder<List<Placemark>>(
-                                    future: placemarkFromCoordinates(state.widget.pin.latitude, state.widget.pin.longitude),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData && snapshot.requireData.isNotEmpty) {
-                                        Placemark first = snapshot.requireData.first;
-                                        String near = "";
-                                        if (first.locality != null) {
-                                          near += first.locality!;
-                                          if (first.isoCountryCode != null) near += " (${first.isoCountryCode})";
-                                        } else if (first.country != null) {
-                                          near += first.country!;
-                                        }
-                                        return Text(near);
-                                      } else {
-                                        return const Text("...");
+                                  future: placemarkFromCoordinates(state.widget.pin.latitude, state.widget.pin.longitude),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData && snapshot.requireData.isNotEmpty) {
+                                      Placemark first = snapshot.requireData.first;
+                                      String near = "";
+                                      if (first.locality != null) {
+                                        near += first.locality!;
+                                        if (first.isoCountryCode != null) near += " (${first.isoCountryCode})";
+                                      } else if (first.country != null) {
+                                        near += first.country!;
                                       }
-                                    },
+                                      return Text(near);
+                                    } else {
+                                      return const Text("...");
+                                    }
+                                  },
                                 )
                               ],
                             )
@@ -186,9 +193,9 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                           ),
                                           children: [
                                             TileLayer(
-                                                urlTemplate: "${Provider.of<ThemeNotifier>(context).getCustomTheme.mapUrl}?api_key={api_key}",
+                                                urlTemplate: "${Provider.of<MapNotifier>(context).getMapUrl(Provider.of<ThemeNotifier>(context).getTheme.brightness)}?api_key={api_key}",
                                                 additionalOptions: {
-                                                  "api_key": global.apiKey
+                                                  "api_key": global.localData.getMapApiKey() ?? ""
                                                 }
                                             ),
                                             MarkerLayer(
@@ -197,10 +204,11 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                                       point: LatLng(state.widget.pin.latitude, state.widget.pin.longitude),
                                                       width: 50,
                                                       height: 50,
-                                                      builder: (BuildContext context) => state.widget.pin.group.pinImage.getWidget()
+                                                      child: state.widget.pin.group.pinImage.getWidget()
                                                   )
                                                 ]
-                                            )
+                                            ),
+                                            const CustomLayer(height: 18),
                                           ],
                                           ),
                                         ),

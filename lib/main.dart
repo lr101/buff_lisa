@@ -4,6 +4,8 @@ import 'package:buff_lisa/0_ScreenSignIn/login_logic.dart';
 import 'package:buff_lisa/1_BottomNavigationBar/navbar_logic.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/date_notifier.dart';
+import 'package:buff_lisa/Providers/map_notifier.dart';
+import 'package:buff_lisa/Providers/marker_notifier.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:buff_lisa/Providers/user_notifier.dart';
 import 'package:camera/camera.dart';
@@ -14,6 +16,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
+import '1_BottomNavigationBar/splash_loading.dart';
 import 'Files/DTOClasses/groupDTO.dart';
 import 'Files/DTOClasses/pinDTO.dart';
 import 'Files/Other/global.dart' as global;
@@ -35,6 +38,7 @@ Future<void> main() async {
   Hive.registerAdapter(GroupDTOAdapter());
   Hive.registerAdapter(PinDTOAdapter());
   global.localData = await LocalData.fromInit();
+  await global.basicGroup.profileImage.setValue((await rootBundle.load('images/profile.jpg')).buffer.asUint8List());
   runApp(MyApp(isLoggedIn: global.localData.username != ""));
 }
 
@@ -60,28 +64,25 @@ class MyApp extends StatelessWidget {
     /// create [ClusterNotifier] used to save all important information
     return MultiProvider(
             providers: [
-              ChangeNotifierProvider.value(
-                value: ClusterNotifier(),
-              ),
-              ChangeNotifierProvider.value(
-                value: ThemeNotifier(global.localData.theme == Brightness.dark),
-              ),
-              ChangeNotifierProvider.value(
-                value: UserNotifier(),
-              ),
-              ChangeNotifierProvider.value(
-                value: DateNotifier(),
-              )
+              ChangeNotifierProvider(create: (_) => ClusterNotifier(),),
+              ChangeNotifierProvider(create: (_) => ThemeNotifier(global.localData.theme == Brightness.dark),),
+              ChangeNotifierProvider(create: (_) => UserNotifier(),),
+              ChangeNotifierProvider(create: (_) => DateNotifier(),),
+              ChangeNotifierProvider(create: (_) => MarkerNotifier()),
+              ChangeNotifierProvider(create: (_) => MapNotifier()),
             ],
             builder: (context, child) {
-              Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>());
+              Provider.of<ClusterNotifier>(context, listen: false).init(context.read<UserNotifier>(), context.read<MarkerNotifier>());
               return MaterialApp(
+                debugShowCheckedModeBanner: false,
                 theme: Provider.of<ThemeNotifier>(context).getTheme,
                 title: 'Mona App',
                 initialRoute: isLoggedIn ? '/home' : '/login',
                 routes: {
                   '/login': (context) => const LoginScreen(),
-                  '/home': (context) => const BottomNavigationWidget()
+                  '/home': (context) {
+                    return const SplashLoading();
+                  }
                 },
                 navigatorKey: navigatorKey, // Setting a global key for navigator
               );

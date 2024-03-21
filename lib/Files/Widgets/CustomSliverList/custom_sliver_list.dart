@@ -1,88 +1,94 @@
-import 'package:buff_lisa/Files/Widgets/CustomSliverList/custom_easy_title.dart';
+import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:provider/provider.dart';
 
 class CustomSliverList extends StatefulWidget {
-
-  final CustomEasyTitle title;
-  final Widget appBar;
-  final double appBarHeight;
-  final PagingController<dynamic, Widget> pagingController;
+  final PagingController<dynamic, Widget>? pagingController;
   final Future<bool?> Function()? initPagedList;
+  final List<Widget>? items;
+  final int? itemCount;
+  final Widget Function(int index)? itemBuilder;
+  final bool nestedScrollView;
 
   const CustomSliverList({
     super.key,
-    required this.title,
-    required this.appBar,
-    required this.pagingController,
-    this.appBarHeight = 100,
-    this.initPagedList
-  });
-
-  static CustomSliverList builder({required CustomEasyTitle title,required Widget appBar,required int itemCount, double? appBarHeight, required Widget Function(int index) itemBuilder}) {
-    PagingController<dynamic, Widget> controller = PagingController(firstPageKey: 0, invisibleItemsThreshold: 50);
-    controller.addPageRequestListener((pageKey) {
-      if (pageKey + 50 < itemCount) {
-        controller.appendPage(List.generate(50, (index) => itemBuilder(index + pageKey as int)), pageKey + 50);
-      } else {
-        controller.appendLastPage(List.generate(itemCount - pageKey as int, (index) => itemBuilder(index + pageKey as int)));
-      }
-    });
-    return CustomSliverList(title: title, appBar: appBar, pagingController: controller, appBarHeight: appBarHeight ?? 100);
-  }
+    this.nestedScrollView = true,
+    this.pagingController,
+    this.itemCount,
+    this.itemBuilder,
+    this.initPagedList,
+    this.items
+  }) : assert(pagingController != null || (itemCount != null && itemBuilder != null) || items != null);
 
   @override
   CustomSliverListState createState() => CustomSliverListState();
 }
 
 class CustomSliverListState extends State<CustomSliverList> {
+
+
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child:
-        Column(
-        children: [
-          widget.title,
-          Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    pinned: true,
-                    toolbarHeight: 0,
-                    collapsedHeight: 0,
-                    expandedHeight: widget.appBarHeight,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: widget.appBar,
-                    ),
-                  ),
-                  FutureBuilder<bool?>(
-                    future: refreshList(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
-                      } else {
-                        return PagedSliverList(
-                          pagingController: widget.pagingController,
-                          builderDelegate: PagedChildBuilderDelegate<Widget>(
-                              animateTransitions: false,
-                              itemBuilder: (context, item, index)  => item
-                          ),
-                        );
-                      }
-                    },
-                  )
-                ],
-              )
-          )
-        ]
-      )
+    List<Widget> slivers = [];
+    if (widget.nestedScrollView) {
+      slivers.add(SliverOverlapInjector(
+        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+      ),);
+    }
+    slivers.add(
+        FutureBuilder<bool?>(
+          future: refreshList(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const SliverToBoxAdapter(child: Center(child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator())));
+            } else {
+              return _list();
+            }
+          },
+        )
+    );
+    return Container(
+          color: Provider.of<ThemeNotifier>(context).getTheme.canvasColor,
+          child:CustomScrollView(
+          slivers: slivers
+        )
     );
   }
 
-  Future<bool?> refreshList() {
-    final result = widget.initPagedList != null ? widget.initPagedList!() : Future(() => true);
-    widget.pagingController.refresh();
+  Widget _list() {
+    if (widget.pagingController != null) {
+      return PagedSliverList(
+        pagingController: widget.pagingController!,
+        builderDelegate: PagedChildBuilderDelegate<Widget>(
+            animateTransitions: false,
+            itemBuilder: (context, item, index)  => item
+        ),
+      );
+    } else if (widget.items != null) {
+      return SliverList(
+        delegate: SliverChildListDelegate.fixed(widget.items!),
+      );
+    } else {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) => widget.itemBuilder!(index),
+          childCount: widget.itemCount!
+        ),
+      );
+    }
+  }
+
+  Future<bool?> refreshList() async {
+    bool? result = widget.initPagedList != null
+        ? await widget.initPagedList!()
+        : true;
+    if (widget.pagingController != null) {
+      widget.pagingController!.refresh();
+    } else {
+      setState(() {});
+    }
     return result;
   }
 }

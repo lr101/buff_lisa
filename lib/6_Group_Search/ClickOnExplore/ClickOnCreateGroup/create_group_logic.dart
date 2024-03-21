@@ -1,4 +1,5 @@
 import 'package:buff_lisa/Files/ServerCalls/fetch_groups.dart';
+import 'package:buff_lisa/Files/Widgets/custom_error_message.dart';
 import 'package:buff_lisa/Providers/cluster_notifier.dart';
 import 'package:buff_lisa/Providers/create_group_notifier.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,9 @@ class CreateGroupPageState extends State<CreateGroupPage> {
         final controller2 = Provider
             .of<CreateGroupNotifier>(context, listen: false)
             .getText2;
+        final controller3 = Provider
+            .of<CreateGroupNotifier>(context, listen: false)
+            .getText3;
         final image = Provider
             .of<CreateGroupNotifier>(context, listen: false)
             .getImage;
@@ -57,14 +61,22 @@ class CreateGroupPageState extends State<CreateGroupPage> {
         if (controller1.text.isNotEmpty && controller2.text.isNotEmpty &&
             image != null) {
           FetchGroups.postGroup(
-              controller1.text, controller2.text, image, sliderValue.toInt())
+              controller1.text, controller2.text, image, sliderValue.toInt(), controller3.text == "" ? null : controller3.text)
               .then((group) {
             if (group != null) {
               Provider.of<ClusterNotifier>(context, listen: false).addGroup(
                   group);
               Navigator.pop(context);
+            } else {
+              CustomErrorMessage.message(context: context, message: "Group name already exists");
             }
-          });
+          }, onError: (e) => CustomErrorMessage.message(context: context, message: e.toString()));
+        } else if (controller1.text.isEmpty) {
+          CustomErrorMessage.message(context: context, message: "Group name to short");
+        } else if (controller2.text.isEmpty) {
+          CustomErrorMessage.message(context: context, message: "Group description to short");
+        } else if (image == null) {
+          CustomErrorMessage.message(context: context, message: "Group image missing");
         }
       } finally{
         uploading = false;
