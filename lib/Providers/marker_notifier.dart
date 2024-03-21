@@ -40,7 +40,7 @@ MarkerNotifier with ChangeNotifier {
         Marker(
             key: Key((pin.isOffline ? "${pin.group.groupId}${pin.id.toString()}" : pin.id.toString())),
             point: LatLng(pin.latitude, pin.longitude),
-            builder: (_)  => GestureDetector(
+            child: GestureDetector(
               child: pin.group.pinImage.getWidget(),
               onTap: () => Navigator.push(
                 navigatorKey.currentContext!,

@@ -139,7 +139,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                 Positioned(
                   top: 40,
                     child: ConfigurableExpansionTile(
-                        header: SizedBox(
+                        header: (isExpanded, iconTurns, heightFactor, controller) => SizedBox(
                             height: 38,
                             width: MediaQuery.of(p0).size.width,
                             child: Row(
@@ -151,22 +151,22 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                   child: Icon(Icons.pin_drop),
                                 ),
                                 FutureBuilder<List<Placemark>>(
-                                    future: placemarkFromCoordinates(state.widget.pin.latitude, state.widget.pin.longitude),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData && snapshot.requireData.isNotEmpty) {
-                                        Placemark first = snapshot.requireData.first;
-                                        String near = "";
-                                        if (first.locality != null) {
-                                          near += first.locality!;
-                                          if (first.isoCountryCode != null) near += " (${first.isoCountryCode})";
-                                        } else if (first.country != null) {
-                                          near += first.country!;
-                                        }
-                                        return Text(near);
-                                      } else {
-                                        return const Text("...");
+                                  future: placemarkFromCoordinates(state.widget.pin.latitude, state.widget.pin.longitude),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData && snapshot.requireData.isNotEmpty) {
+                                      Placemark first = snapshot.requireData.first;
+                                      String near = "";
+                                      if (first.locality != null) {
+                                        near += first.locality!;
+                                        if (first.isoCountryCode != null) near += " (${first.isoCountryCode})";
+                                      } else if (first.country != null) {
+                                        near += first.country!;
                                       }
-                                    },
+                                      return Text(near);
+                                    } else {
+                                      return const Text("...");
+                                    }
+                                  },
                                 )
                               ],
                             )
@@ -204,7 +204,7 @@ class FeedCardUI extends StatefulUI<FeedCard, FeedCardState>{
                                                       point: LatLng(state.widget.pin.latitude, state.widget.pin.longitude),
                                                       width: 50,
                                                       height: 50,
-                                                      builder: (BuildContext context) => state.widget.pin.group.pinImage.getWidget()
+                                                      child: state.widget.pin.group.pinImage.getWidget()
                                                   )
                                                 ]
                                             ),

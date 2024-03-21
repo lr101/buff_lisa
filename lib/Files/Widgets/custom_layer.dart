@@ -1,7 +1,5 @@
-import 'package:buff_lisa/Files/Themes/custom_theme.dart';
 import 'package:buff_lisa/Providers/theme_provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_map/plugin_api.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,7 +10,6 @@ class CustomLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FlutterMapState.maybeOf(context);
     return LayoutBuilder(builder: (context, p1) =>  Align(
         alignment: Alignment.bottomLeft,
         child: Container(

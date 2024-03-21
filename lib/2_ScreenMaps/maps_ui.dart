@@ -64,9 +64,7 @@ class MapsUI extends StatefulUI<MapsWidget, MapsWidgetState> {
                         disableClusteringAtZoom: 17,
                         maxClusterRadius: 45,
                         size: const Size(40, 40),
-                        fitBoundsOptions: const FitBoundsOptions(
-                          padding: EdgeInsets.all(50),
-                        ),
+                        padding: const EdgeInsets.all(50),
                         markers: Provider.of<MarkerNotifier>(context).getMarkers,
                         builder: (context, markers) {
                           return FloatingActionButton(
