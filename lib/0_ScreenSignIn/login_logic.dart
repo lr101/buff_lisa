@@ -5,6 +5,7 @@ import 'package:buff_lisa/Files/Other/global.dart' as global;
 import 'package:buff_lisa/Files/ServerCalls/fetch_users.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:string_validator/string_validator.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -83,6 +84,8 @@ class LoginScreen extends StatelessWidget {
       return "at least 2 characters";
     } else if (s.length > 29) {
       return "shorter than 30 characters";
+    } else  if (!alphanumeric.hasMatch(s.characters.first)) {
+      return "must start with a letter";
     } else  if (!alphanumeric.hasMatch(s)) {
       return "start with a letter - allowed: 0-9!?#\$%&+";
     }
@@ -92,7 +95,7 @@ class LoginScreen extends StatelessWidget {
   /// Validator method for validating emails
   /// returns true on success or false for an incorrect input
   static bool emailValidator(String? s) {
-    if (s != null && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(s)){
+    if (s != null && isEmail(s)){
       return true;
     } else {
       return false;
@@ -100,7 +103,7 @@ class LoginScreen extends StatelessWidget {
   }
 
   static String? emailValidatorWithErrorMessage(String? s) {
-    if (s != null && RegExp(r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$").hasMatch(s)){
+    if (s != null && isEmail(s)){
       return null;
     } else {
       return "does not match email format";

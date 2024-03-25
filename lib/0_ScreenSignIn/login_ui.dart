@@ -3,7 +3,7 @@ import 'package:buff_lisa/Files/AbstractClasses/abstract_widget_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-
+import '../Files/Other/global.dart' as global;
 import '../7_Settings/WebView/show_web_widget.dart';
 
 class LoginUI extends StatelessUI<LoginScreen> {
@@ -12,19 +12,22 @@ class LoginUI extends StatelessUI<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      title: 'Login',
+      title: 'Tag the World',
       termsOfService: [
-        TermOfService(id: "0", text: "Terms of Service", mandatory: true),
-        TermOfService(id: "0", text: "Privacy Policy", mandatory: true)
+        TermOfService(id: "0", text: "Terms of Service", mandatory: true, linkUrl: "https://${global.host}/public/agb"),
+        TermOfService(id: "1", text: "Privacy Policy", mandatory: true, linkUrl: "https://${global.host}/public/privacy-policy")
       ],
       onLogin: widget.authUser,
       onSignup: widget.signupUser,
       userType: LoginUserType.name,
       userValidator: LoginScreen.validator,
-      passwordValidator: LoginScreen.validator,
       onSubmitAnimationCompleted: () => widget.handleLoginComplete(context),
+      validateUserImmediately: true,
       onRecoverPassword: widget.recoverPassword,
-      messages: LoginMessages(recoverPasswordDescription: "Type your username here and than check your emails", recoverPasswordSuccess: "Check your emails for a recovery link"),
+      messages: LoginMessages(
+          recoverPasswordDescription: "Type your username here and than check your emails",
+          recoverPasswordSuccess: "Check your emails for a recovery link"
+      ),
       additionalSignupFields: const [UserFormField(keyName: "email", userType: LoginUserType.email)],
       children: [ Positioned.fill(
           child: Align(

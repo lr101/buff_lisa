@@ -32,6 +32,8 @@ dependencies:
 
   async_builder:
 
+  string_validator:
+
   native_exif:
 
   super_tooltip:
